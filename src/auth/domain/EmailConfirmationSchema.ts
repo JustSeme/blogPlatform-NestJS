@@ -5,13 +5,13 @@ import {
 
 @Schema()
 export class EmailConfirmation {
-    @Prop()
+    @Prop({ required: true })
     confirmationCode: string
 
-    @Prop()
+    @Prop({ default: new Date() })
     expirationDate: Date
 
-    @Prop()
+    @Prop({ default: false })
     isConfirmed: boolean
 }
 

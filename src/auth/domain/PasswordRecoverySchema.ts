@@ -5,10 +5,10 @@ import {
 
 @Schema()
 export class PasswordRecovery {
-    @Prop()
+    @Prop({ required: true })
     confirmationCode: string
 
-    @Prop()
+    @Prop({ default: new Date() })
     expirationDate: Date
 }
 

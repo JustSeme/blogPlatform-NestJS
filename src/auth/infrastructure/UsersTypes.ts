@@ -1,4 +1,4 @@
 import { HydratedDocument } from "mongoose"
-import { UserDBMethodsType, UserDTO } from "../domain/UsersTypes"
+import { User } from "../domain/UsersSchema"
 
-export type HydratedUser = HydratedDocument<UserDTO, UserDBMethodsType>
+export type HydratedUser = HydratedDocument<User>

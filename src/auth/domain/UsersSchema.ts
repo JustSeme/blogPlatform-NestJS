@@ -1,8 +1,8 @@
 import { HydratedDocument } from "mongoose"
 import {
-    UserDBMethodsType, UserDTO, UserModelFullType
+    UserDTO, UserModelStaticType, UserModelType
 } from "./UsersTypes"
-import { EmailConfirmation } from "./EmailConfirmationSchema"
+import { EmailConfirmation, EmailConfirmationSchema } from "./EmailConfirmationSchema"
 import { PasswordRecovery } from "./PasswordRecoverySchema"
 import {
     Schema, Prop, SchemaFactory
@@ -39,34 +39,39 @@ export class User {
     @Prop({ required: true })
     createdAt: string
 
-    @Prop()
-    emailConfirmation: typeof EmailConfirmation
+    @Prop({ required: true, type: EmailConfirmationSchema })
+    emailConfirmation: EmailConfirmation
 
-    @Prop()
-    passwordRecovery: typeof PasswordRecovery
+    @Prop({ required: true, type: EmailConfirmationSchema })
+    passwordRecovery: PasswordRecovery
 
+    canBeConfirmed(code: string) {
+        if (this.emailConfirmation.isConfirmed) return false
+        if (this.emailConfirmation.confirmationCode !== code) return false
+        if (this.emailConfirmation.expirationDate < new Date()) return false
+
+        return true
+    }
+
+    updateIsConfirmed() {
+        this.emailConfirmation.isConfirmed = true
+        return true
+    }
+
+    static makeInstance(login: string, email: string, passwordHash: string, isConfirmed: boolean, UserModel: UserModelType) {
+        const userDTO = new UserDTO(login, email, passwordHash, isConfirmed)
+        return new UserModel(userDTO)
+    }
 }
 
-export const UsersSchema = SchemaFactory.createForClass(User)
+export const UsersSchema = SchemaFactory.createForClass<UserDTO>(User)
+UsersSchema.methods = {
+    canBeConfirmed: User.prototype.canBeConfirmed,
+    updateIsConfirmed: User.prototype.updateIsConfirmed
+}
 
-UsersSchema.method('canBeConfirmed', function canBeConfirmed(code: string) {
-    const that = this as UserDTO & UserDBMethodsType
-    if (that.emailConfirmation.isConfirmed) return false
-    if (that.emailConfirmation.confirmationCode !== code) return false
-    if (that.emailConfirmation.expirationDate < new Date()) return false
-
-    return true
-})
-
-UsersSchema.method('updateIsConfirmed', function updateIsConfirmed() {
-    const that = this as UserDTO & UserDBMethodsType
-
-    that.emailConfirmation.isConfirmed = true
-    return true
-})
+const userStaticMethods: UserModelStaticType = { makeInstance: User.makeInstance }
+UsersSchema.statics = userStaticMethods
 
 
-/* UsersSchema.static('makeInstance', function makeInstance(login: string, email: string, passwordHash: string, isConfirmed: boolean) {
-    const userDTO = new UserDTO(login, email, passwordHash, isConfirmed)
-    return new UserModel(userDTO)
-}) */
+/* UsersSchema.static('makeInstance', function ) */

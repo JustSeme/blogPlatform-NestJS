@@ -1,7 +1,8 @@
-import { Model } from "mongoose"
 import { add } from 'date-fns'
+import { Model } from 'mongoose'
 import { v4 as uuidv4 } from 'uuid'
-import { HydratedUser } from "../infrastructure/UsersTypes"
+import { User } from './UsersSchema'
+import { HydratedUser } from '../infrastructure/UsersTypes'
 
 export class UserDTO {
     public id: string
@@ -44,15 +45,8 @@ export type PasswordConfirmationType = {
     expirationDate: Date
 }
 
-export type UserDBMethodsType = {
-    updateIsConfirmed: () => boolean
-    canBeConfirmed: (code: string) => boolean
+export type UserModelStaticType = {
+    makeInstance: (login: string, email: string, passwordHash: string, isConfirmed: boolean, UserModel: UserModelType) => HydratedUser
 }
 
-export type UserModelType = Model<UserDTO, UserDBMethodsType>
-
-type UserModelStaticType = Model<UserDTO> & {
-    makeInstance(login: string, email: string, passwordHash: string, isConfirmed: boolean): HydratedUser
-}
-
-export type UserModelFullType = UserModelType & UserModelStaticType
+export type UserModelType = Model<User> & UserModelStaticType

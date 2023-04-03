@@ -1,14 +1,14 @@
 import { add } from "date-fns"
-import { Model } from "mongoose"
 import { HydratedUser } from "./UsersTypes"
 import { Injectable } from "@nestjs/common"
 import { InjectModel } from "@nestjs/mongoose/dist"
 import { User } from "../domain/UsersSchema"
+import { UserModelType } from "../domain/UsersTypes"
 
 //transaction script
 @Injectable()
 export class UsersRepository {
-    constructor(@InjectModel(User.name) private UserModel: Model<User>) { }
+    constructor(@InjectModel(User.name) private UserModel: UserModelType) { }
 
     async deleteUser(id: string): Promise<boolean> {
         const deletedUser = this.UserModel.find({ id })

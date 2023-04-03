@@ -8,6 +8,7 @@ import { UsersQueryRepository } from './auth/infrastructure/users-query-reposito
 import { MongooseModule } from '@nestjs/mongoose'
 import { settings } from './settings'
 import { User, UsersSchema } from './auth/domain/UsersSchema'
+import { UsersRepository } from './auth/infrastructure/users-db-repository'
 
 @Module({
   imports: [
@@ -20,6 +21,6 @@ import { User, UsersSchema } from './auth/domain/UsersSchema'
     ])
   ],
   controllers: [AppController, UsersController],
-  providers: [AppService, AuthService, EmailManager, UsersQueryRepository],
+  providers: [AppService, AuthService, EmailManager, UsersQueryRepository, UsersRepository],
 })
 export class AppModule { }

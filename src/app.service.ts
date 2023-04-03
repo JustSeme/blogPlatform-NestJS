@@ -1,8 +1,12 @@
 import { Injectable } from '@nestjs/common'
-import { UsersModel } from './auth/domain/UsersSchema'
+import { InjectModel } from '@nestjs/mongoose'
+import { User } from './auth/domain/UsersSchema'
+import { UserModelType } from './auth/domain/UsersTypes'
 
 @Injectable()
 export class AppService {
+  constructor(@InjectModel(User.name) private UsersModel: UserModelType) { }
+
   getHello(): string {
     return `
       <h1>Привет! Это мой учебный проект по бэкенду</h1>
@@ -14,7 +18,7 @@ export class AppService {
   async deleteTestingData() {
     //await PostsModel.deleteMany({})
     //await BlogsModel.deleteMany({})
-    await UsersModel.deleteMany({})
+    await this.UsersModel.deleteMany({})
     //await AttemptsModel.deleteMany({})
   }
 }

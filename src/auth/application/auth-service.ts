@@ -6,17 +6,17 @@ import { Injectable } from '@nestjs/common'
 import { EmailManager } from 'src/managers/emailManager'
 import { InjectModel } from '@nestjs/mongoose/dist'
 import { User } from '../domain/UsersSchema'
-import { Model } from 'mongoose'
+import { UserModelType } from '../domain/UsersTypes'
 
 //transaction script
 @Injectable()
 export class AuthService {
-    constructor(@InjectModel(User.name) private UserModel: Model<User>, protected usersRepository: UsersRepository, protected emailManager: EmailManager) { }
+    constructor(@InjectModel(User.name) private UserModel: UserModelType, protected usersRepository: UsersRepository, protected emailManager: EmailManager) { }
 
     async createUser(login: string, password: string, email: string): Promise<boolean> {
         const passwordHash = await bcryptAdapter.generatePasswordHash(password, 10)
 
-        const newUser = this.UserModel.makeInstance(login, email, passwordHash, false)
+        const newUser = this.UserModel.makeInstance(login, email, passwordHash, false, this.UserModel)
 
         this.usersRepository.save(newUser)
 
@@ -28,7 +28,7 @@ export class AuthService {
     async createUserWithBasicAuth(login: string, password: string, email: string): Promise<UserViewModelType | null> {
         const passwordHash = await bcryptAdapter.generatePasswordHash(password, 10)
 
-        const newUser = this.UserModel.makeInstance(login, email, passwordHash, true)
+        const newUser = this.UserModel.makeInstance(login, email, passwordHash, true, this.UserModel)
 
         await this.usersRepository.save(newUser)
         const displayedUser: UserViewModelType = {

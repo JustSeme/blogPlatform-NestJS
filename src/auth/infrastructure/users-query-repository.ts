@@ -3,11 +3,11 @@ import { ReadUsersQuery } from "../api/models/ReadUsersQuery"
 import { UsersWithQueryOutputModel } from "../api/models/UsersViewModel"
 import { InjectModel } from "@nestjs/mongoose/dist"
 import { User } from "../domain/UsersSchema"
-import { Model } from "mongoose"
+import { UserModelType } from "../domain/UsersTypes"
 
 @Injectable()
 export class UsersQueryRepository {
-    constructor(@InjectModel(User.name) private UserModel: Model<User>) { }
+    constructor(@InjectModel(User.name) private UserModel: UserModelType) { }
 
     async findUsers(queryParams: ReadUsersQuery): Promise<UsersWithQueryOutputModel> {
         const {
