@@ -1,8 +1,18 @@
-import mongoose from "mongoose";
-import { EmailConfirmationType } from "./UsersTypes";
+import { EmailConfirmationType } from "./UsersTypes"
+import {
+    Prop, Schema, SchemaFactory
+} from "@nestjs/mongoose"
 
-export const EmailConfirmationSchema = new mongoose.Schema<EmailConfirmationType>({
-    confirmationCode: { type: String, required: true },
-    expirationDate: { type: Date, required: true },
-    isConfirmed: { type: Boolean, required: true }
-})
+@Schema()
+export class EmailConfirmation {
+    @Prop()
+    confirmationCode: string
+
+    @Prop()
+    expirationDate: Date
+
+    @Prop()
+    isConfirmed: boolean
+}
+
+export const EmailConfirmationSchema = SchemaFactory.createForClass<EmailConfirmationType>(EmailConfirmation)

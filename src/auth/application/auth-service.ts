@@ -1,20 +1,22 @@
 import { UserViewModelType } from '../api/models/UsersViewModel'
 import { UsersRepository } from '../infrastructure/users-db-repository'
 import { v4 as uuidv4 } from 'uuid'
-import { UsersModel } from '../domain/UsersSchema'
 import { bcryptAdapter } from 'src/adapters/bcryptAdapter'
 import { Injectable } from '@nestjs/common'
 import { EmailManager } from 'src/managers/emailManager'
+import { InjectModel } from '@nestjs/mongoose/dist'
+import { User } from '../domain/UsersSchema'
+import { Model } from 'mongoose'
 
 //transaction script
 @Injectable()
 export class AuthService {
-    constructor(protected usersRepository: UsersRepository, protected emailManager: EmailManager) { }
+    constructor(@InjectModel(User.name) private UserModel: Model<User>, protected usersRepository: UsersRepository, protected emailManager: EmailManager) { }
 
     async createUser(login: string, password: string, email: string): Promise<boolean> {
         const passwordHash = await bcryptAdapter.generatePasswordHash(password, 10)
 
-        const newUser = UsersModel.makeInstance(login, email, passwordHash, false)
+        const newUser = this.UserModel.makeInstance(login, email, passwordHash, false)
 
         this.usersRepository.save(newUser)
 
@@ -26,7 +28,7 @@ export class AuthService {
     async createUserWithBasicAuth(login: string, password: string, email: string): Promise<UserViewModelType | null> {
         const passwordHash = await bcryptAdapter.generatePasswordHash(password, 10)
 
-        const newUser = UsersModel.makeInstance(login, email, passwordHash, true)
+        const newUser = this.UserModel.makeInstance(login, email, passwordHash, true)
 
         await this.usersRepository.save(newUser)
         const displayedUser: UserViewModelType = {
@@ -47,7 +49,7 @@ export class AuthService {
         if (!user.canBeConfirmed(code)) {
             return false
         }
-        const isConfirmed = user.updateIsConfirmed(code)
+        const isConfirmed = user.updateIsConfirmed()
         if (isConfirmed) {
             this.usersRepository.save(user)
         }

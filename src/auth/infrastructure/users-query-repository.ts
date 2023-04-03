@@ -1,10 +1,14 @@
 import { Injectable } from "@nestjs/common"
 import { ReadUsersQuery } from "../api/models/ReadUsersQuery"
 import { UsersWithQueryOutputModel } from "../api/models/UsersViewModel"
-import { UsersModel } from "../domain/UsersSchema"
+import { InjectModel } from "@nestjs/mongoose/dist"
+import { User } from "../domain/UsersSchema"
+import { Model } from "mongoose"
 
 @Injectable()
 export class UsersQueryRepository {
+    constructor(@InjectModel(User.name) private UserModel: Model<User>) { }
+
     async findUsers(queryParams: ReadUsersQuery): Promise<UsersWithQueryOutputModel> {
         const {
             sortDirection = 'desc', sortBy = 'createdAt', pageNumber = 1, pageSize = 10, searchLoginTerm = null, searchEmailTerm = null
@@ -20,13 +24,13 @@ export class UsersQueryRepository {
 
         const filterObject = filterArray.length ? { $or: filterArray } : {}
 
-        const totalCount = await UsersModel.countDocuments(filterObject)
+        const totalCount = await this.UserModel.countDocuments(filterObject)
         const pagesCount = Math.ceil(totalCount / +pageSize)
 
         const skipCount = (+pageNumber - 1) * +pageSize
         const sortDirectionNumber = sortDirection === 'asc' ? 1 : -1
 
-        const resultedUsers = await UsersModel.find(filterObject).skip(skipCount).limit(+pageSize).sort({ [sortBy]: sortDirectionNumber }).lean()
+        const resultedUsers = await this.UserModel.find(filterObject).skip(skipCount).limit(+pageSize).sort({ [sortBy]: sortDirectionNumber }).lean()
 
         const displayedUsers = resultedUsers.map(el => ({
             id: el.id,
@@ -45,18 +49,18 @@ export class UsersQueryRepository {
     }
 
     async findUserById(userId: string) {
-        return UsersModel.findOne({ id: userId }, { _id: 0, __v: 0 }).lean()
+        return this.UserModel.findOne({ id: userId }, { _id: 0, __v: 0 }).lean()
     }
 
     async findUserByLogin(login: string) {
-        return UsersModel.findOne({ login: login }).lean()
+        return this.UserModel.findOne({ login: login }).lean()
     }
 
     async findUserByRecoveryPasswordCode(code: string) {
-        return UsersModel.findOne({ 'passwordRecovery.confirmationCode': code }).lean()
+        return this.UserModel.findOne({ 'passwordRecovery.confirmationCode': code }).lean()
     }
 
     async findUserByEmail(email: string) {
-        return UsersModel.findOne({ email: email }).lean()
+        return this.UserModel.findOne({ email: email }).lean()
     }
 }

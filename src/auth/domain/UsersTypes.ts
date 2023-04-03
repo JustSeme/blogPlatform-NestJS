@@ -45,11 +45,11 @@ export type PasswordConfirmationType = {
 }
 
 export type UserDBMethodsType = {
-    updateIsConfirmed: (code: string) => boolean
+    updateIsConfirmed: () => boolean
     canBeConfirmed: (code: string) => boolean
 }
 
-export type UserModelType = Model<UserDTO, {}, UserDBMethodsType>
+export type UserModelType = Model<UserDTO, UserDBMethodsType>
 
 type UserModelStaticType = Model<UserDTO> & {
     makeInstance(login: string, email: string, passwordHash: string, isConfirmed: boolean): HydratedUser

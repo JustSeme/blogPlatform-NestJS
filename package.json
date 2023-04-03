@@ -22,9 +22,12 @@
   "dependencies": {
     "@nestjs/common": "^9.0.0",
     "@nestjs/core": "^9.0.0",
+    "@nestjs/mongoose": "^9.2.2",
     "@nestjs/platform-express": "^9.0.0",
+    "bcrypt": "^5.1.0",
     "cookie-parser": "^1.4.6",
     "date-fns": "^2.29.3",
+    "mongoose": "^7.0.3",
     "nodemailer": "^6.9.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0",
