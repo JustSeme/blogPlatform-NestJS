@@ -1,14 +1,19 @@
 import { PostInputModel } from '../application/dto/PostInputModel'
-import { ExtendedLikeObjectType, PostDBModel } from '../domain/entities/PostDBModel'
-import { PostsModel } from '../../../repositories/db'
-import { injectable } from 'inversify/lib/annotation/injectable';
-import { Document } from 'mongoose';
-import { ReadPostsQueryParams } from '../api/models/ReadPostsQuery';
+import { Document } from 'mongoose'
+import { ReadPostsQueryParams } from '../api/models/ReadPostsQuery'
+import { Injectable } from '@nestjs/common'
+import { InjectModel } from '@nestjs/mongoose/dist'
+import { Blog } from '../domain/blogsSchema'
+import { BlogModelType } from '../domain/BlogsTypes'
 
-@injectable()
+@Injectable()
 export class PostsRepository {
+    constructor(@InjectModel(Blog.name) private BlogModel: BlogModelType) { }
+
     async findPosts(queryParams: ReadPostsQueryParams, blogId: string | null) {
-        const { sortDirection = 'desc', sortBy = 'createdAt', pageNumber = 1, pageSize = 10 } = queryParams
+        const {
+            sortDirection = 'desc', sortBy = 'createdAt', pageNumber = 1, pageSize = 10
+        } = queryParams
 
         const filter: any = {}
         if (blogId) {
@@ -20,7 +25,7 @@ export class PostsRepository {
 
         const skipCount = (+pageNumber - 1) * +pageSize
         const sortDirectionNumber = sortDirection === 'asc' ? 1 : -1
-        let resultedPosts = await PostsModel.find(filter, { _id: 0, __v: 0 }).skip(skipCount).limit(+pageSize).sort({ [sortBy]: sortDirectionNumber }).lean()
+        const resultedPosts = await PostsModel.find(filter, { _id: 0, __v: 0 }).skip(skipCount).limit(+pageSize).sort({ [sortBy]: sortDirectionNumber }).lean()
 
         return {
             pagesCount: pagesCount,
@@ -36,7 +41,7 @@ export class PostsRepository {
     }
 
     async deletePosts(id: string) {
-        let result = await PostsModel.deleteOne({ id: id })
+        const result = await PostsModel.deleteOne({ id: id })
         return result.deletedCount === 1
     }
 
@@ -45,7 +50,11 @@ export class PostsRepository {
     }
 
     async updatePost(id: string, body: PostInputModel) {
-        const result = await PostsModel.updateOne({ id: id }, { $set: { content: body.content, title: body.title, shortDescription: body.shortDescription, blogId: body.blogId } })
+        const result = await PostsModel.updateOne({ id: id }, {
+            $set: {
+                content: body.content, title: body.title, shortDescription: body.shortDescription, blogId: body.blogId
+            }
+        })
         return result.matchedCount === 1
     }
 

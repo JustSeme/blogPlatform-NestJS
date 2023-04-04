@@ -1,4 +1,3 @@
-import { HydratedDocument } from "mongoose"
 import {
     UserDTO, UserModelStaticType, UserModelType
 } from "./UsersTypes"
@@ -7,20 +6,6 @@ import { PasswordRecovery } from "./PasswordRecoverySchema"
 import {
     Schema, Prop, SchemaFactory
 } from "@nestjs/mongoose"
-
-/* const usersSchema = new mongoose.Schema<UserDTO, UserModelFullType, UserDBMethodsType>({
-    id: { type: String, required: true },
-    login: { type: String, required: true },
-    email: { type: String, required: true },
-    passwordHash: { type: String, required: true },
-    createdAt: { type: String, required: true },
-    emailConfirmation: EmailConfirmationSchema,
-    passwordRecovery: PasswordRecoverySchema,
-}, { autoCreate: false, autoIndex: false })
-
-export const UsersModel = mongoose.model<UserDTO, UserModelFullType>('users', usersSchema) */
-
-export type CatDocument = HydratedDocument<User>
 
 @Schema()
 export class User {

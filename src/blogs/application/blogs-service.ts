@@ -2,6 +2,7 @@ import { BlogInputModel } from "./dto/BlogInputModel"
 import { BlogViewModel } from "../api/models/BlogViewModel"
 import { BlogsRepository } from "../infrastructure/blogs-db-repository"
 import { Injectable } from "@nestjs/common"
+import { BlogDBModel } from "../domain/BlogsTypes"
 
 @Injectable()
 export class BlogsService {
@@ -12,14 +13,7 @@ export class BlogsService {
     }
 
     async createBlog(body: BlogInputModel): Promise<BlogViewModel> {
-        const createdBlog: BlogViewModel = {
-            id: Date.now().toString(),
-            name: body.name,
-            description: body.description,
-            websiteUrl: body.websiteUrl,
-            createdAt: new Date().toISOString(),
-            isMembership: false
-        }
+        const createdBlog: BlogViewModel = new BlogDBModel(body.name, body.description, body.websiteUrl, false)
 
         await this.blogsRepository.createBlog(createdBlog)
 

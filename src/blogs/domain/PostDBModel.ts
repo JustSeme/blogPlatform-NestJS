@@ -1,6 +1,5 @@
 import { v4 as uuidv4 } from "uuid"
-import { LikeObjectType } from "./CommentDBModel"
-import { PostsViewModel } from "../../api/models/PostViewModel"
+import { PostsViewModel } from "../api/models/PostViewModel"
 
 //data transfer object
 export class PostDBModel {

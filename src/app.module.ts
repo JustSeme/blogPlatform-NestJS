@@ -13,6 +13,7 @@ import { BlogsService } from './blogs/application/blogs-service'
 import { BlogsQueryRepository } from './blogs/infrastructure/blogs-query-repository'
 import { BlogsRepository } from './blogs/infrastructure/blogs-db-repository'
 import { BlogsController } from './blogs/api/blogs-controller'
+import { Blog, BlogsSchema } from './blogs/domain/blogsSchema'
 
 @Module({
   imports: [
@@ -21,6 +22,10 @@ import { BlogsController } from './blogs/api/blogs-controller'
       {
         name: User.name,
         schema: UsersSchema
+      },
+      {
+        name: Blog.name,
+        schema: BlogsSchema
       }
     ]),
   ],
