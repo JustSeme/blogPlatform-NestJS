@@ -1,6 +1,6 @@
 import { Model } from "mongoose"
 import { v4 as uuidv4 } from "uuid"
-import { Blog } from "./blogsSchema"
+import { Blog } from "./BlogsSchema"
 
 // data transfer object
 export class BlogDBModel {

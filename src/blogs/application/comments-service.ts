@@ -5,7 +5,7 @@ import { CommentsRepository } from "../infrastructure/comments-db-repository"
 import { UserDTO } from "../../auth/domain/UsersTypes"
 import { Injectable } from "@nestjs/common"
 import { JwtService } from "src/adapters/jwtService"
-import { CommentDBModel, LikeObjectType } from "../domain/CommentDBModel"
+import { CommentDBModel, LikeObjectType } from "../domain/comments/CommentDBModel"
 
 @Injectable()
 export class CommentsService {

@@ -10,10 +10,11 @@ import { settings } from './settings'
 import { User, UsersSchema } from './auth/domain/UsersSchema'
 import { UsersRepository } from './auth/infrastructure/users-db-repository'
 import { BlogsService } from './blogs/application/blogs-service'
-import { BlogsQueryRepository } from './blogs/infrastructure/blogs-query-repository'
-import { BlogsRepository } from './blogs/infrastructure/blogs-db-repository'
+import { BlogsQueryRepository } from './blogs/infrastructure/blogs/blogs-query-repository'
+import { BlogsRepository } from './blogs/infrastructure/blogs/blogs-db-repository'
 import { BlogsController } from './blogs/api/blogs-controller'
-import { Blog, BlogsSchema } from './blogs/domain/blogsSchema'
+import { Blog, BlogSchema } from './blogs/domain/blogs/BlogsSchema'
+import { Post, PostSchema } from './blogs/domain/posts/PostsSchema'
 
 @Module({
   imports: [
@@ -25,7 +26,11 @@ import { Blog, BlogsSchema } from './blogs/domain/blogsSchema'
       },
       {
         name: Blog.name,
-        schema: BlogsSchema
+        schema: BlogSchema
+      },
+      {
+        name: Post.name,
+        schema: PostSchema
       }
     ]),
   ],

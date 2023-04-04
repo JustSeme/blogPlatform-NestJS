@@ -1,5 +1,7 @@
 import { v4 as uuidv4 } from "uuid"
-import { PostsViewModel } from "../api/models/PostViewModel"
+import { PostsViewModel } from "../../api/models/PostViewModel"
+import { Model } from "mongoose"
+import { Post } from "./PostsSchema"
 
 //data transfer object
 export class PostDBModel {
@@ -33,7 +35,7 @@ export type PostsWithQueryOutputModel = {
     items: PostsViewModel[]
 }
 
-type ExtendedLikesInfoDBType = {
+export type ExtendedLikesInfoDBType = {
     likes: ExtendedLikeObjectType[],
     dislikes: ExtendedLikeObjectType[],
     noneEntities: ExtendedLikeObjectType[]
@@ -44,3 +46,5 @@ export type ExtendedLikeObjectType = {
     createdAt: string
     login: string
 }
+
+export type PostModelType = Model<Post>

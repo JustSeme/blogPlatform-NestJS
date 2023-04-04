@@ -3,21 +3,6 @@ import {
 } from "@nestjs/mongoose"
 import { BlogDBModel } from "./BlogsTypes"
 
-/* export const blogsSchema = new mongoose.Schema<BlogViewModel>({
-    id: { type: String, required: true },
-    name: {
-        type: String, required: true, min: 3, max: 15
-    },
-    description: {
-        type: String, required: true, min: 3, max: 500
-    },
-    websiteUrl: {
-        type: String, required: true, min: 3, max: 100
-    },
-    createdAt: { type: String, required: true },
-    isMembership: { type: Boolean, required: true }
-}) */
-
 @Schema()
 export class Blog {
     @Prop({ required: true })
@@ -51,4 +36,4 @@ export class Blog {
     isMembership: boolean
 }
 
-export const BlogsSchema = SchemaFactory.createForClass<BlogDBModel>(Blog)
+export const BlogSchema = SchemaFactory.createForClass<BlogDBModel>(Blog)

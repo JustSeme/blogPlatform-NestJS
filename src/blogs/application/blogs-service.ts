@@ -1,8 +1,8 @@
 import { BlogInputModel } from "./dto/BlogInputModel"
 import { BlogViewModel } from "../api/models/BlogViewModel"
-import { BlogsRepository } from "../infrastructure/blogs-db-repository"
+import { BlogsRepository } from "../infrastructure/blogs/blogs-db-repository"
 import { Injectable } from "@nestjs/common"
-import { BlogDBModel } from "../domain/BlogsTypes"
+import { BlogDBModel } from "../domain/blogs/BlogsTypes"
 
 @Injectable()
 export class BlogsService {

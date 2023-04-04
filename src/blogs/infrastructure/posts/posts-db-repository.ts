@@ -1,14 +1,17 @@
-import { PostInputModel } from '../application/dto/PostInputModel'
+import { PostInputModel } from '../../application/dto/PostInputModel'
 import { Document } from 'mongoose'
-import { ReadPostsQueryParams } from '../api/models/ReadPostsQuery'
+import { ReadPostsQueryParams } from '../../api/models/ReadPostsQuery'
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose/dist'
-import { Blog } from '../domain/blogsSchema'
-import { BlogModelType } from '../domain/BlogsTypes'
+import { Post } from 'src/blogs/domain/posts/PostsSchema'
+import {
+    ExtendedLikeObjectType, PostDBModel, PostModelType
+} from 'src/blogs/domain/posts/PostsTypes'
+import { PostDocument } from './PostsTypes'
 
 @Injectable()
 export class PostsRepository {
-    constructor(@InjectModel(Blog.name) private BlogModel: BlogModelType) { }
+    constructor(@InjectModel(Post.name) private PostModel: PostModelType) { }
 
     async findPosts(queryParams: ReadPostsQueryParams, blogId: string | null) {
         const {
@@ -20,12 +23,12 @@ export class PostsRepository {
             filter.blogId = blogId
         }
 
-        const totalCount = await PostsModel.count(filter)
+        const totalCount = await this.PostModel.count(filter)
         const pagesCount = Math.ceil(totalCount / +pageSize)
 
         const skipCount = (+pageNumber - 1) * +pageSize
         const sortDirectionNumber = sortDirection === 'asc' ? 1 : -1
-        const resultedPosts = await PostsModel.find(filter, { _id: 0, __v: 0 }).skip(skipCount).limit(+pageSize).sort({ [sortBy]: sortDirectionNumber }).lean()
+        const resultedPosts = await this.PostModel.find(filter, { _id: 0, __v: 0 }).skip(skipCount).limit(+pageSize).sort({ [sortBy]: sortDirectionNumber }).lean()
 
         return {
             pagesCount: pagesCount,
@@ -37,20 +40,20 @@ export class PostsRepository {
     }
 
     async getPostById(postId: string) {
-        return PostsModel.findOne({ id: postId })
+        return this.PostModel.findOne({ id: postId })
     }
 
     async deletePosts(id: string) {
-        const result = await PostsModel.deleteOne({ id: id })
+        const result = await this.PostModel.deleteOne({ id: id })
         return result.deletedCount === 1
     }
 
     async createPost(createdPost: PostDBModel) {
-        await PostsModel.create(createdPost)
+        await this.PostModel.create(createdPost)
     }
 
     async updatePost(id: string, body: PostInputModel) {
-        const result = await PostsModel.updateOne({ id: id }, {
+        const result = await this.PostModel.updateOne({ id: id }, {
             $set: {
                 content: body.content, title: body.title, shortDescription: body.shortDescription, blogId: body.blogId
             }
@@ -72,7 +75,7 @@ export class PostsRepository {
         return true
     }
 
-    async setNone(editablePost: Document<unknown, {}, PostDBModel> & Omit<PostDBModel, never>, likeIndex: number, dislikeIndex: number) {
+    async setNone(editablePost: PostDocument, likeIndex: number, dislikeIndex: number) {
         if (likeIndex > -1) {
             const noneData = editablePost.extendedLikesInfo.likes.splice(likeIndex, 1)[0]
             editablePost.extendedLikesInfo.noneEntities.push(noneData)
@@ -87,7 +90,7 @@ export class PostsRepository {
         return true
     }
 
-    async updateToLike(updatablePost: Document<unknown, {}, PostDBModel> & Omit<PostDBModel, never>, dislikeIndex: number, noneIndex: number) {
+    async updateToLike(updatablePost: PostDocument, dislikeIndex: number, noneIndex: number) {
         if (noneIndex > -1) {
             const likeData = updatablePost.extendedLikesInfo.noneEntities.splice(noneIndex, 1)[0]
             updatablePost.extendedLikesInfo.likes.push(likeData)
@@ -102,7 +105,7 @@ export class PostsRepository {
         return true
     }
 
-    async updateToDislike(updatablePost: Document<unknown, {}, PostDBModel> & Omit<PostDBModel, never>, likeIndex: number, noneIndex: number) {
+    async updateToDislike(updatablePost: PostDocument, likeIndex: number, noneIndex: number) {
         if (noneIndex > -1) {
             const dislikeData = updatablePost.extendedLikesInfo.noneEntities.splice(noneIndex, 1)[0]
             updatablePost.extendedLikesInfo.dislikes.push(dislikeData)

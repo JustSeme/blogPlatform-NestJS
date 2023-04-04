@@ -1,6 +1,6 @@
 import { PostInputModel } from './dto/PostInputModel'
-import { PostsRepository } from '../infrastructure/posts-db-repository'
-import { BlogsRepository } from '../infrastructure/blogs-db-repository'
+import { PostsRepository } from '../infrastructure/posts/posts-db-repository'
+import { BlogsRepository } from '../infrastructure/blogs/blogs-db-repository'
 import { LikeType } from './dto/LikeInputModel'
 import { ReadPostsQueryParams } from '../api/models/ReadPostsQuery'
 import { PostsViewModel } from '../api/models/PostViewModel'
@@ -9,7 +9,7 @@ import { Injectable } from '@nestjs/common'
 import { JwtService } from 'src/adapters/jwtService'
 import {
     ExtendedLikeObjectType, PostDBModel, PostsWithQueryOutputModel
-} from '../domain/PostDBModel'
+} from '../domain/posts/PostsTypes'
 
 @Injectable()
 export class PostsService {

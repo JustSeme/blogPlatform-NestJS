@@ -2,7 +2,7 @@ import { HTTP_STATUSES } from "src/settings"
 import { BlogInputModel } from "../application/dto/BlogInputModel"
 import { BlogViewModel } from "./models/BlogViewModel"
 import { BlogsService } from "../application/blogs-service"
-import { BlogsQueryRepository } from "../infrastructure/blogs-query-repository"
+import { BlogsQueryRepository } from "../infrastructure/blogs/blogs-query-repository"
 import { BlogsWithQueryOutputModel } from './models/BlogViewModel'
 import { PostInputModel } from "../application/dto/PostInputModel"
 import { PostsService } from "../application/posts-service"
@@ -12,7 +12,7 @@ import { PostsViewModel } from './models/PostViewModel'
 import {
     Controller, Get, Param, Query, NotFoundException, Headers, Post, Body, HttpCode, Put, Delete
 } from '@nestjs/common'
-import { PostsWithQueryOutputModel } from "src/blogs/domain/PostDBModel"
+import { PostsWithQueryOutputModel } from "src/blogs/domain/posts/PostsTypes"
 
 @Controller('blogs')
 export class BlogsController {
