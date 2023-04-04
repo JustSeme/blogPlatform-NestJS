@@ -1,106 +1,122 @@
-import { JwtService } from "../../../../application/jwtService";
-import { usersQueryRepository } from "../../auth/infrastructure/users-query-repository";
-import { ReadCommentsQueryParams } from "./models/ReadCommentsQuery";
-import { CommentsWithQueryOutputModel } from "./models/CommentViewModel";
-import { CommentInputModel } from "../application/dto/CommentInputModel";
-import { CommentViewModel } from "./models/CommentViewModel";
-import { CommentsService } from "../application/comments-service";
-import { HTTP_STATUSES } from "../../../../settings";
-import { ErrorMessagesOutputModel } from "../../../../models/ErrorMessagesOutputModel";
-import { PostInputModel } from "../application/dto/PostInputModel";
-import { PostsWithQueryOutputModel } from "../../domain/entities/PostDBModel";
-import { RequestWithBody, RequestWithParams, RequestWithParamsAndBody, RequestWithParamsAndQuery, RequestWithQuery } from "../../../../types/types";
-import { PostsService } from "../application/posts-service";
-import { ReadPostsQueryParams } from "./models/ReadPostsQuery";
-import { Response } from "express";
-import { injectable } from 'inversify/lib/annotation/injectable';
-import { LikeInputModel } from "../application/dto/LikeInputModel";
-import { PostsViewModel } from "./models/PostViewModel";
+import {
+    Controller, Get, Post, Put, Delete, Param, Query, Body, Headers, HttpStatus, NotFoundException, HttpCode, NotImplementedException
+} from '@nestjs/common'
+import { ReadCommentsQueryParams } from "./models/ReadCommentsQuery"
+import { CommentsWithQueryOutputModel } from "./models/CommentViewModel"
+import { CommentInputModel } from "../application/dto/CommentInputModel"
+import { CommentViewModel } from "./models/CommentViewModel"
+import { CommentsService } from "../application/comments-service"
+import { PostInputModel } from "../application/dto/PostInputModel"
+import { PostsService } from "../application/posts-service"
+import { ReadPostsQueryParams } from "./models/ReadPostsQuery"
+import { LikeInputModel } from "../application/dto/LikeInputModel"
+import { PostsViewModel } from "./models/PostViewModel"
+import { UsersQueryRepository } from 'src/auth/infrastructure/users-query-repository'
+import { JwtService } from 'src/adapters/jwtService'
 
-@injectable()
+@Controller('posts')
 export class PostsController {
-    constructor(protected jwtService: JwtService, protected postsService: PostsService, protected commentsService: CommentsService) { }
+    constructor(protected jwtService: JwtService, protected postsService: PostsService, protected commentsService: CommentsService, protected usersQueryRepository: UsersQueryRepository) { }
 
-    async getPosts(req: RequestWithQuery<ReadPostsQueryParams>, res: Response<PostsWithQueryOutputModel>) {
-        const accessToken = req.headers.authorization ? req.headers.authorization.split(' ')[1] : null
-        const findedPosts = await this.postsService.findPosts(req.query, null, accessToken)
+    @Get()
+    async getPosts(
+        @Query() query: ReadPostsQueryParams,
+        @Headers('Authorization') authorizationHeader: string,
+    ) {
+        const accessToken = authorizationHeader ? authorizationHeader.split(' ')[1] : null
+        const findedPosts = await this.postsService.findPosts(query, null, accessToken)
 
         if (!findedPosts.items.length) {
-            res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-            return
+            throw new NotFoundException()
         }
-        res.json(findedPosts)
+
+        return findedPosts
     }
 
-    async getPostById(req: RequestWithParams<{ id: string }>, res: Response<PostsViewModel>) {
-        const accessToken = req.headers.authorization ? req.headers.authorization.split(' ')[1] : null
-        const findedPosts = await this.postsService.findPostById(req.params.id, accessToken)
-
+    @Get(':postId')
+    async getPostById(
+        @Param('postId') postId: string,
+        @Headers('Authorization') authorizationHeader: string,
+    ): Promise<PostsViewModel> {
+        const accessToken = authorizationHeader ? authorizationHeader.split(' ')[1] : null
+        const findedPosts = await this.postsService.findPostById(postId, accessToken)
         if (!findedPosts) {
-            res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-            return
+            throw new NotFoundException()
         }
-        res.json(findedPosts)
+        return findedPosts
     }
 
-    async getCommentsForPost(req: RequestWithParamsAndQuery<{ postId: string }, ReadCommentsQueryParams>, res: Response<CommentsWithQueryOutputModel>) {
-        const accessToken = req.headers.authorization ? req.headers.authorization.split(' ')[1] : null
-
-        const findedComments = await this.commentsService.getComments(req.query, req.params.postId, accessToken)
-        res.send(findedComments)
+    @Get(':postId/comments')
+    async getCommentsForPost(
+        @Param('postId') postId: string,
+        @Query() commentsQueryParams: ReadCommentsQueryParams,
+        @Headers('Authorization') authorizationHeader: string,
+    ): Promise<CommentsWithQueryOutputModel> {
+        const accessToken = authorizationHeader ? authorizationHeader.split(' ')[1] : null
+        const findedComments = await this.commentsService.getComments(commentsQueryParams, postId, accessToken)
+        return findedComments
     }
 
-    async createPost(req: RequestWithBody<PostInputModel>, res: Response<PostsViewModel | ErrorMessagesOutputModel>) {
-        const createdPost = await this.postsService.createPost(req.body, null)
-
-        res
-            .status(HTTP_STATUSES.CREATED_201)
-            .send(createdPost)
+    @Post()
+    @HttpCode(HttpStatus.CREATED)
+    async createPost(
+        @Body() post: PostInputModel
+    ): Promise<PostsViewModel> {
+        return this.postsService.createPost(post, null)
     }
 
-    async createCommentForPost(req: RequestWithParamsAndBody<{ postId: string }, CommentInputModel>, res: Response<CommentViewModel | ErrorMessagesOutputModel>) {
-        const token = req.headers.authorization!.split(' ')[1]
-        const userId = await this.jwtService.getUserIdByToken(token)
-        const commentator = await usersQueryRepository.findUserById(userId)
+    @Post(':postId/comments')
+    async createCommentForPost(
+        @Param('postId') postId: string,
+        @Body() comment: CommentInputModel,
+        @Headers('Authorization') authorizationHeader: string,
+    ): Promise<CommentViewModel> {
+        const accessToken = authorizationHeader ? authorizationHeader.split(' ')[1] : null
+        const userId = await this.jwtService.getUserIdByToken(accessToken)
+        const commentator = await this.usersQueryRepository.findUserById(userId)
 
-        const createdComment = await this.commentsService.createComment(req.body.content, commentator, req.params.postId)
+        const createdComment = await this.commentsService.createComment(comment.content, commentator, postId)
         if (!createdComment) {
-            res.sendStatus(HTTP_STATUSES.NOT_IMPLEMENTED_501)
-            return
+            throw new NotImplementedException()
         }
-
-        res
-            .status(HTTP_STATUSES.CREATED_201)
-            .send(createdComment)
+        return createdComment
     }
 
-    async updatePost(req: RequestWithParamsAndBody<{ id: string }, PostInputModel>, res: Response<PostsViewModel | ErrorMessagesOutputModel>) {
-        const isUpdated = await this.postsService.updatePost(req.params.id, req.body)
+    @Put(':postId')
+    async updatePost(
+        @Param('postId') postId: string,
+        @Body() postInputModel: PostInputModel
+    ): Promise<void> {
+        const isUpdated = await this.postsService.updatePost(postId, postInputModel)
         if (!isUpdated) {
-            res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-            return
+            throw new NotFoundException()
         }
-        res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
+        return
     }
 
-    async deletePost(req: RequestWithParams<{ id: string }>, res: Response<ErrorMessagesOutputModel>) {
-        const isDeleted = await this.postsService.deletePosts(req.params.id)
-        if (isDeleted) {
-            res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
-            return
+    @Delete(':id')
+    @HttpCode(HttpStatus.NO_CONTENT)
+    async deletePost(
+        @Param('id') id: string
+    ): Promise<void> {
+        const isDeleted = await this.postsService.deletePosts(id)
+        if (!isDeleted) {
+            throw new NotFoundException()
         }
-
-        res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+        return
     }
 
-    async updateLikeStatus(req: RequestWithParamsAndBody<{ postId: string }, LikeInputModel>, res: Response) {
-        const accessToken = req.headers.authorization!.split(' ')[1]
-        const isUpdated = await this.postsService.updateLike(accessToken, req.params.postId, req.body.likeStatus)
+    @Put(':postId/like')
+    async updateLikeStatus(
+        @Param('postId') postId: string,
+        @Body() like: LikeInputModel,
+        @Headers('Authorization') authorizationHeader: string,
+    ): Promise<void> {
+        const accessToken = authorizationHeader ? authorizationHeader.split(' ')[1] : null
+        const isUpdated = await this.postsService.updateLike(accessToken, postId, like.likeStatus)
         if (!isUpdated) {
-            res.sendStatus(HTTP_STATUSES.NOT_IMPLEMENTED_501)
-            return
+            throw new NotImplementedException()
         }
-
-        res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
+        return
     }
 }

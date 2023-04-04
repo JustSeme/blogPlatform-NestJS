@@ -1,13 +1,13 @@
-import { JwtService } from "../../../application/jwtService";
-import { CommentDBModel, LikeObjectType } from "../domain/entities/CommentDBModel";
-import { CommentsWithQueryOutputModel, CommentViewModel } from "../api/models/CommentViewModel";
-import { LikeType } from "./dto/LikeInputModel";
-import { ReadCommentsQueryParams } from "../api/models/ReadCommentsQuery";
-import { CommentsRepository } from "../infrastructure/comments-db-repository";
-import { injectable } from 'inversify/lib/annotation/injectable';
-import { UserDTO } from "../../auth/domain/UsersTypes";
+import { CommentsWithQueryOutputModel, CommentViewModel } from "../api/models/CommentViewModel"
+import { LikeType } from "./dto/LikeInputModel"
+import { ReadCommentsQueryParams } from "../api/models/ReadCommentsQuery"
+import { CommentsRepository } from "../infrastructure/comments-db-repository"
+import { UserDTO } from "../../auth/domain/UsersTypes"
+import { Injectable } from "@nestjs/common"
+import { JwtService } from "src/adapters/jwtService"
+import { CommentDBModel, LikeObjectType } from "../domain/CommentDBModel"
 
-@injectable()
+@Injectable()
 export class CommentsService {
     constructor(protected jwtService: JwtService, protected commentsRepository: CommentsRepository) { }
 

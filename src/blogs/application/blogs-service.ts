@@ -1,9 +1,9 @@
-import { BlogInputModel } from "./dto/BlogInputModel";
-import { BlogViewModel } from "../api/models/BlogViewModel";
-import { BlogsRepository } from "../infrastructure/blogs-db-repository";
-import { injectable } from 'inversify/lib/annotation/injectable';
+import { BlogInputModel } from "./dto/BlogInputModel"
+import { BlogViewModel } from "../api/models/BlogViewModel"
+import { BlogsRepository } from "../infrastructure/blogs-db-repository"
+import { Injectable } from "@nestjs/common"
 
-@injectable()
+@Injectable()
 export class BlogsService {
     constructor(protected blogsRepository: BlogsRepository) { }
 

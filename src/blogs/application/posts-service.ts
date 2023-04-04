@@ -1,15 +1,17 @@
 import { PostInputModel } from './dto/PostInputModel'
-import { ExtendedLikeObjectType, PostDBModel, PostsWithQueryOutputModel } from '../domain/entities/PostDBModel'
 import { PostsRepository } from '../infrastructure/posts-db-repository'
 import { BlogsRepository } from '../infrastructure/blogs-db-repository'
-import { injectable } from 'inversify/lib/annotation/injectable';
-import { LikeType } from './dto/LikeInputModel';
-import { JwtService } from '../../../application/jwtService';
-import { ReadPostsQueryParams } from '../api/models/ReadPostsQuery';
-import { PostsViewModel } from '../api/models/PostViewModel';
-import { UsersRepository } from '../../auth/infrastructure/users-db-repository';
+import { LikeType } from './dto/LikeInputModel'
+import { ReadPostsQueryParams } from '../api/models/ReadPostsQuery'
+import { PostsViewModel } from '../api/models/PostViewModel'
+import { UsersRepository } from '../../auth/infrastructure/users-db-repository'
+import { Injectable } from '@nestjs/common'
+import { JwtService } from 'src/adapters/jwtService'
+import {
+    ExtendedLikeObjectType, PostDBModel, PostsWithQueryOutputModel
+} from '../domain/PostDBModel'
 
-@injectable()
+@Injectable()
 export class PostsService {
     constructor(protected blogsRepository: BlogsRepository, protected postsRepository: PostsRepository, protected jwtService: JwtService, protected usersRepository: UsersRepository) { }
 
@@ -25,12 +27,12 @@ export class PostsService {
     }
 
     async findPostById(postId: string, accessToken: string | null): Promise<PostsViewModel | null> {
-        let findedPost = await this.postsRepository.getPostById(postId)
+        const findedPost = await this.postsRepository.getPostById(postId)
         if (!findedPost) {
             return null
         }
         if (findedPost.title === 'anyTitle1') {
-            console.log(findedPost, 'findedPost');
+            console.log(findedPost, 'findedPost')
 
         }
 
@@ -78,7 +80,7 @@ export class PostsService {
         const likeData: ExtendedLikeObjectType = {
             createdAt: new Date().toISOString(),
             userId,
-            login: likedUser!.login
+            login: likedUser.login
         }
 
         const likeIndex = updatablePost.extendedLikesInfo.likes.findIndex((like: ExtendedLikeObjectType) => like.userId === userId)
@@ -152,7 +154,7 @@ export class PostsService {
                 }
             }).slice(0, 3)
 
-            let newest3Likes = last3Likes.map((like: ExtendedLikeObjectType) => {
+            const newest3Likes = last3Likes.map((like: ExtendedLikeObjectType) => {
                 return {
                     addedAt: like.createdAt,
                     userId: like.userId,
