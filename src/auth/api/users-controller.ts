@@ -33,7 +33,7 @@ export class UsersController {
 
     @Delete(':id')
     @HttpCode(HTTP_STATUSES.NO_CONTENT_204)
-    async deleteUser(@Param('id') id: string)/* : Promise<number> */ {
+    async deleteUser(@Param('id') id: string): Promise<void> {
         const isDeleted = await this.authService.deleteUsers(id)
         if (!isDeleted) {
             throw new NotFoundException()

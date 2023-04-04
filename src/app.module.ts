@@ -9,10 +9,10 @@ import { MongooseModule } from '@nestjs/mongoose'
 import { settings } from './settings'
 import { User, UsersSchema } from './auth/domain/UsersSchema'
 import { UsersRepository } from './auth/infrastructure/users-db-repository'
-/* import { BlogsService } from './blogs/application/blogs-service'
+import { BlogsService } from './blogs/application/blogs-service'
 import { BlogsQueryRepository } from './blogs/infrastructure/blogs-query-repository'
 import { BlogsRepository } from './blogs/infrastructure/blogs-db-repository'
-import { BlogsController } from './blogs/api/controllers/blogs-controller' */
+import { BlogsController } from './blogs/api/blogs-controller'
 
 @Module({
   imports: [
@@ -24,10 +24,10 @@ import { BlogsController } from './blogs/api/controllers/blogs-controller' */
       }
     ]),
   ],
-  controllers: [AppController, UsersController, /* BlogsController */],
+  controllers: [AppController, UsersController, BlogsController],
   providers: [
     AppService, AuthService, EmailManager, UsersQueryRepository, UsersRepository,
-    /* BlogsService, BlogsQueryRepository, BlogsRepository */
+    BlogsService, BlogsQueryRepository, BlogsRepository
   ],
 })
 export class AppModule { }
