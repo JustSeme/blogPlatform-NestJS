@@ -72,6 +72,3 @@ UsersSchema.methods = {
 
 const userStaticMethods: UserModelStaticType = { makeInstance: User.makeInstance }
 UsersSchema.statics = userStaticMethods
-
-
-/* UsersSchema.static('makeInstance', function ) */

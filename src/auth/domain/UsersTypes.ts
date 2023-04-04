@@ -28,7 +28,7 @@ export class UserDTO {
             isConfirmed: isConfirmed
         }
         this.passwordRecovery = {
-            confirmationCode: null,
+            confirmationCode: '',
             expirationDate: new Date()
         }
     }

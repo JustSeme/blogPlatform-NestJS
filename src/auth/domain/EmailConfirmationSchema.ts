@@ -5,7 +5,7 @@ import {
 
 @Schema()
 export class EmailConfirmation {
-    @Prop({ required: true })
+    @Prop()
     confirmationCode: string
 
     @Prop({ default: new Date() })
