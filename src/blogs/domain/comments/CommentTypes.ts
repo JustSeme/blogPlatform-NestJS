@@ -1,4 +1,6 @@
+import { Model } from 'mongoose'
 import { v4 as uuidv4 } from 'uuid'
+import { Comment } from './commentsSchema'
 
 export class CommentDBModel {
     public id: string
@@ -26,12 +28,12 @@ export class CommentDBModel {
     }
 }
 
-type CommentatorInfoType = {
+export type CommentatorInfoType = {
     userId: string
     userLogin: string
 }
 
-type LikesInfoType = {
+export type LikesInfoType = {
     likes: LikeObjectType[],
     dislikes: LikeObjectType[],
 }
@@ -40,3 +42,5 @@ export type LikeObjectType = {
     userId: string
     createdAt: string
 }
+
+export type CommentModelType = Model<Comment>

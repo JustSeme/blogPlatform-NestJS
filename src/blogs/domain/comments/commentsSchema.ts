@@ -1,21 +1,31 @@
-import mongoose from "mongoose";
-import { CommentDBModel } from "./CommentDBModel";
+import {
+    Prop, Schema, SchemaFactory
+} from "@nestjs/mongoose"
+import { CommentDBModel } from "./CommentTypes"
+import { CommentatorInfo, CommentatorInfoSchema } from "./CommentatorInfoSchema"
+import { LikesInfo, LikesInfoSchema } from "./LikesInfoSchema"
 
-export const commentsSchema = new mongoose.Schema<CommentDBModel>({
-    id: { type: String, required: true },
-    content: { type: String, required: true, min: 20, max: 300 },
-    commentatorInfo: {
-        userId: { type: String, required: true },
-        userLogin: { type: String, required: true },
-    },
-    createdAt: { type: String, required: true },
-    postId: { type: String, required: true },
-    likesInfo: {
-        likes: [
-            { userId: String, createdAt: String }
-        ],
-        dislikes: [
-            { userId: String, createdAt: String }
-        ]
-    }
-})
+@Schema()
+export class Comment {
+    @Prop({ required: true })
+    id: string
+
+    @Prop({
+        required: true, min: 20, max: 300
+    })
+    content: string
+
+    @Prop({ required: true, default: new Date().toISOString() })
+    createdAt: string
+
+    @Prop({ required: true })
+    postId: string
+
+    @Prop({ required: true, type: CommentatorInfoSchema })
+    commentatorInfo: CommentatorInfo
+
+    @Prop({ required: true, type: LikesInfoSchema })
+    likesInfo: LikesInfo
+}
+
+export const CommentsSchema = SchemaFactory.createForClass<CommentDBModel>(Comment)

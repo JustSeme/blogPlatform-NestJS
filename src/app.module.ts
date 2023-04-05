@@ -15,6 +15,15 @@ import { BlogsRepository } from './blogs/infrastructure/blogs/blogs-db-repositor
 import { BlogsController } from './blogs/api/blogs-controller'
 import { Blog, BlogSchema } from './blogs/domain/blogs/BlogsSchema'
 import { Post, PostSchema } from './blogs/domain/posts/PostsSchema'
+import { Comment, CommentsSchema } from './blogs/domain/comments/commentsSchema'
+import { PostsService } from './blogs/application/posts-service'
+import { PostsRepository } from './blogs/infrastructure/posts/posts-db-repository'
+import { JwtService } from './adapters/jwtService'
+import { PostsController } from './blogs/api/posts-controller'
+import { CommentsController } from './blogs/api/comments-controller'
+import { CommentsService } from './blogs/application/comments-service'
+import { CommentsQueryRepository } from './blogs/infrastructure/comments-query-repository'
+import { CommentsRepository } from './blogs/infrastructure/comments-db-repository'
 
 @Module({
   imports: [
@@ -24,6 +33,7 @@ import { Post, PostSchema } from './blogs/domain/posts/PostsSchema'
         name: User.name,
         schema: UsersSchema
       },
+
       {
         name: Blog.name,
         schema: BlogSchema
@@ -31,13 +41,20 @@ import { Post, PostSchema } from './blogs/domain/posts/PostsSchema'
       {
         name: Post.name,
         schema: PostSchema
+      },
+      {
+        name: Comment.name,
+        schema: CommentsSchema
       }
     ]),
   ],
-  controllers: [AppController, UsersController, BlogsController],
+  controllers: [AppController, UsersController, BlogsController, PostsController, CommentsController],
   providers: [
     AppService, AuthService, EmailManager, UsersQueryRepository, UsersRepository,
-    BlogsService, BlogsQueryRepository, BlogsRepository
+    JwtService,
+    BlogsService, BlogsQueryRepository, BlogsRepository,
+    PostsService, PostsRepository,
+    CommentsService, CommentsQueryRepository, CommentsRepository
   ],
 })
 export class AppModule { }

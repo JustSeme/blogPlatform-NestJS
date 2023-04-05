@@ -1,38 +1,45 @@
-import { CommentDBModel, LikeObjectType } from "../domain/entities/CommentDBModel";
-import { ReadCommentsQueryParams } from "../api/models/ReadCommentsQuery";
-import { CommentsModel } from "../../../repositories/db";
-import { injectable } from 'inversify/lib/annotation/injectable';
+import { ReadCommentsQueryParams } from "../api/models/ReadCommentsQuery"
+import { Injectable } from "@nestjs/common"
+import { InjectModel } from "@nestjs/mongoose"
+import { Comment } from "../domain/comments/commentsSchema"
+import {
+    CommentDBModel, CommentModelType, LikeObjectType
+} from "../domain/comments/CommentTypes"
 
-@injectable()
+@Injectable()
 export class CommentsRepository {
+    constructor(@InjectModel(Comment.name) protected CommentModel: CommentModelType) { }
+
     async createComment(createdComment: CommentDBModel) {
-        await CommentsModel.create(createdComment)
+        await this.CommentModel.create(createdComment)
     }
 
     async deleteComment(commentId: string) {
-        const result = await CommentsModel.deleteOne({ id: commentId })
+        const result = await this.CommentModel.deleteOne({ id: commentId })
         return result.deletedCount === 1
     }
 
     async updateComment(commentId: string, content: string) {
-        const result = await CommentsModel.updateOne({ id: commentId }, { content: content })
+        const result = await this.CommentModel.updateOne({ id: commentId }, { content: content })
         return result.matchedCount === 1
     }
 
     async getComments(queryParams: ReadCommentsQueryParams, postId: string) {
-        const { sortDirection = 'desc', sortBy = 'createdAt', pageNumber = 1, pageSize = 10 } = queryParams
+        const {
+            sortDirection = 'desc', sortBy = 'createdAt', pageNumber = 1, pageSize = 10
+        } = queryParams
 
-        const filter: any = {
-            postId: postId
-        }
+        const filter: any = { postId: postId }
 
-        const totalCount = await CommentsModel.count(filter)
+        const totalCount = await this.CommentModel.count(filter)
         const pagesCount = Math.ceil(totalCount / +pageSize)
 
         const skipCount = (+pageNumber - 1) * +pageSize
 
         const sortDirectionNumber = sortDirection === 'asc' ? 1 : -1
-        let resultedComments = await CommentsModel.find(filter, { _id: 0, postId: 0, __v: 0 }).skip(skipCount).limit(+pageSize).sort({ [sortBy]: sortDirectionNumber }).lean()
+        const resultedComments = await this.CommentModel.find(filter, {
+            _id: 0, postId: 0, __v: 0
+        }).skip(skipCount).limit(+pageSize).sort({ [sortBy]: sortDirectionNumber }).lean()
 
         return {
             pagesCount: pagesCount,
@@ -44,11 +51,11 @@ export class CommentsRepository {
     }
 
     async getCommentById(commentId: string) {
-        return CommentsModel.findOne({ id: commentId }).lean()
+        return this.CommentModel.findOne({ id: commentId }).lean()
     }
 
     async setLike(likeData: LikeObjectType, commentId: string) {
-        const likedComment = await CommentsModel.findOne({ id: commentId })
+        const likedComment = await this.CommentModel.findOne({ id: commentId })
         if (!likedComment) return false
 
         likedComment.likesInfo.likes.push(likeData)
@@ -58,7 +65,7 @@ export class CommentsRepository {
     }
 
     async setDislike(likeData: LikeObjectType, commentId: string) {
-        const dislikedComment = await CommentsModel.findOne({ id: commentId })
+        const dislikedComment = await this.CommentModel.findOne({ id: commentId })
         if (!dislikedComment) return false
 
         // TODO Почитать про $push mongoose
@@ -70,7 +77,7 @@ export class CommentsRepository {
     }
 
     async setNoneLike(userId: string, commentId: string) {
-        const editableComment = await CommentsModel.findOne({ id: commentId })
+        const editableComment = await this.CommentModel.findOne({ id: commentId })
         if (!editableComment) return false
 
         // TODO Почитать про $pull mongoose
