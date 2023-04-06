@@ -2,10 +2,16 @@ import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { User } from './auth/domain/UsersSchema'
 import { UserModelType } from './auth/domain/UsersTypes'
+import { Post } from './blogs/domain/posts/PostsSchema'
+import { PostModelType } from './blogs/domain/posts/PostsTypes'
+import { Blog } from './blogs/domain/blogs/BlogsSchema'
+import { BlogModelType } from './blogs/domain/blogs/BlogsTypes'
+import { Comment } from './blogs/domain/comments/commentsSchema'
+import { CommentModelType } from './blogs/domain/comments/CommentTypes'
 
 @Injectable()
 export class AppService {
-  constructor(@InjectModel(User.name) private UsersModel: UserModelType) { }
+  constructor(@InjectModel(User.name) private UsersModel: UserModelType, @InjectModel(Post.name) protected PostModel: PostModelType, @InjectModel(Blog.name) protected BlogModel: BlogModelType, @InjectModel(Comment.name) protected CommentModel: CommentModelType) { }
 
   getHello(): string {
     return `
@@ -16,9 +22,10 @@ export class AppService {
   }
 
   async deleteTestingData() {
-    //await PostsModel.deleteMany({})
-    //await BlogsModel.deleteMany({})
+    await this.PostModel.deleteMany({})
+    await this.BlogModel.deleteMany({})
     await this.UsersModel.deleteMany({})
+    await this.CommentModel.deleteMany({})
     //await AttemptsModel.deleteMany({})
   }
 }

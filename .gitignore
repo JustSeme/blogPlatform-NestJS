@@ -34,5 +34,5 @@ lerna-debug.log*
 !.vscode/launch.json
 !.vscode/extensions.json
 
-# setting secret file
-/src/settings.ts
+# env
+.env
