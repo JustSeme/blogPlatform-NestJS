@@ -13,7 +13,7 @@ export class AppController {
     return this.appService.getHello()
   }
 
-  @Delete()
+  @Delete('testing-all-data')
   async deleteTestingData(): Promise<number> {
     await this.appService.deleteTestingData()
     return HTTP_STATUSES.NO_CONTENT_204
