@@ -83,6 +83,7 @@ export class PostsController {
     }
 
     @Put(':postId')
+    @HttpCode(HttpStatus.NO_CONTENT)
     async updatePost(
         @Param('postId') postId: string,
         @Body() postInputModel: PostInputModel

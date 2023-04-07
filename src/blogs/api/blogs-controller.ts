@@ -67,6 +67,11 @@ export class BlogsController {
         @Body() postInputModel: PostInputModel,
         @Param('blogId') blogId: string,
     ): Promise<PostsViewModel> {
+        const blogById = await this.blogsQueryRepository.findBlogById(blogId)
+        if (!blogById) {
+            throw new NotFoundException()
+        }
+
         const createdPost = await this.postsService.createPost(postInputModel, blogId)
 
         return createdPost
