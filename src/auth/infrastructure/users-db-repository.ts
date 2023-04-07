@@ -66,7 +66,9 @@ export class UsersRepository {
     }
 
     async findUserById(userId: string) {
-        return this.UserModel.findOne({ id: userId }, { _id: 0, __v: 0 })
+        return this.UserModel.findOne({ id: userId }, {
+ _id: 0, __v: 0 
+})
     }
 
     async save(user: HydratedUser) {

@@ -1,7 +1,9 @@
 import {
     UserDTO, UserModelStaticType, UserModelType
 } from "./UsersTypes"
-import { EmailConfirmation, EmailConfirmationSchema } from "./EmailConfirmationSchema"
+import {
+ EmailConfirmation, EmailConfirmationSchema 
+} from "./EmailConfirmationSchema"
 import { PasswordRecovery } from "./PasswordRecoverySchema"
 import {
     Schema, Prop, SchemaFactory
@@ -12,7 +14,9 @@ export class User {
     @Prop({ required: true })
     id: string
 
-    @Prop({ required: true })
+    @Prop({
+        required: true, min: 3, max: 10
+    })
     login: string
 
     @Prop({ required: true })
@@ -24,10 +28,14 @@ export class User {
     @Prop({ required: true })
     createdAt: string
 
-    @Prop({ required: true, type: EmailConfirmationSchema })
+    @Prop({
+ required: true, type: EmailConfirmationSchema 
+})
     emailConfirmation: EmailConfirmation
 
-    @Prop({ required: true, type: EmailConfirmationSchema })
+    @Prop({
+ required: true, type: EmailConfirmationSchema 
+})
     passwordRecovery: PasswordRecovery
 
     canBeConfirmed(code: string) {

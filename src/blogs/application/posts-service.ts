@@ -18,7 +18,9 @@ export class PostsService {
     async findPosts(queryParams: ReadPostsQueryParams, blogId: string | null, accessToken: string | null) {
         const postsDBQueryData = await this.postsRepository.findPosts(queryParams, blogId)
 
-        const postsViewQueryData: PostsWithQueryOutputModel = { ...postsDBQueryData, items: [] }
+        const postsViewQueryData: PostsWithQueryOutputModel = {
+            ...postsDBQueryData, items: []
+        }
 
         const displayedPosts = await this.transformLikeInfo(postsDBQueryData.items, accessToken)
         postsViewQueryData.items = displayedPosts
@@ -28,7 +30,6 @@ export class PostsService {
 
     async findPostById(postId: string, accessToken: string | null): Promise<PostsViewModel | null> {
         const findedPost = await this.postsRepository.getPostById(postId)
-        console.log(postId)
         if (!findedPost) {
             return null
         }

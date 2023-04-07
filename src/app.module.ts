@@ -7,15 +7,23 @@ import { EmailManager } from './managers/emailManager'
 import { UsersQueryRepository } from './auth/infrastructure/users-query-repository'
 import { MongooseModule } from '@nestjs/mongoose'
 import { settings } from './settings'
-import { User, UsersSchema } from './auth/domain/UsersSchema'
+import {
+ User, UsersSchema 
+} from './auth/domain/UsersSchema'
 import { UsersRepository } from './auth/infrastructure/users-db-repository'
 import { BlogsService } from './blogs/application/blogs-service'
 import { BlogsQueryRepository } from './blogs/infrastructure/blogs/blogs-query-repository'
 import { BlogsRepository } from './blogs/infrastructure/blogs/blogs-db-repository'
 import { BlogsController } from './blogs/api/blogs-controller'
-import { Blog, BlogSchema } from './blogs/domain/blogs/BlogsSchema'
-import { Post, PostSchema } from './blogs/domain/posts/PostsSchema'
-import { Comment, CommentsSchema } from './blogs/domain/comments/commentsSchema'
+import {
+ Blog, BlogSchema 
+} from './blogs/domain/blogs/BlogsSchema'
+import {
+ Post, PostSchema 
+} from './blogs/domain/posts/PostsSchema'
+import {
+ Comment, CommentsSchema 
+} from './blogs/domain/comments/commentsSchema'
 import { PostsService } from './blogs/application/posts-service'
 import { PostsRepository } from './blogs/infrastructure/posts/posts-db-repository'
 import { JwtService } from './adapters/jwtService'

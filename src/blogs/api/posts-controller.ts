@@ -13,10 +13,11 @@ import { LikeInputModel } from "../application/dto/LikeInputModel"
 import { PostsViewModel } from "./models/PostViewModel"
 import { UsersQueryRepository } from 'src/auth/infrastructure/users-query-repository'
 import { JwtService } from 'src/adapters/jwtService'
+import { BlogsQueryRepository } from '../infrastructure/blogs/blogs-query-repository'
 
 @Controller('posts')
 export class PostsController {
-    constructor(protected jwtService: JwtService, protected postsService: PostsService, protected commentsService: CommentsService, protected usersQueryRepository: UsersQueryRepository) { }
+    constructor(protected jwtService: JwtService, protected postsService: PostsService, protected commentsService: CommentsService, protected usersQueryRepository: UsersQueryRepository, protected blogsQueryRepository: BlogsQueryRepository) { }
 
     @Get()
     async getPosts(
@@ -62,6 +63,11 @@ export class PostsController {
     async createPost(
         @Body() post: PostInputModel
     ): Promise<PostsViewModel> {
+        const blogById = await this.blogsQueryRepository.findBlogById(post.blogId)
+        if (!blogById) {
+            throw new NotFoundException()
+        }
+
         return this.postsService.createPost(post, null)
     }
 

@@ -33,6 +33,8 @@ export class BlogsRepository {
     }
 
     async findBlogById(id: string): Promise<BlogViewModel | null> {
-        return await this.BlogsModel.findOne({ id: id }, { _id: 0, __v: 0 })
+        return await this.BlogsModel.findOne({ id: id }, {
+ _id: 0, __v: 0 
+})
     }
 }

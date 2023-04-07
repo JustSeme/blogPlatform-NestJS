@@ -1,4 +1,4 @@
-import { UserDTO } from "../features/auth/domain/entities/UserDTO";
+import { UserDTO } from "../features/auth/domain/entities/UserDTO"
 
 declare global {
     declare namespace Express {

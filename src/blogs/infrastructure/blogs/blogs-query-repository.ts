@@ -19,7 +19,9 @@ export class BlogsQueryRepository {
 
         const filter: any = {}
         if (searchNameTerm) {
-            filter.name = { $regex: searchNameTerm, $options: 'i' }
+            filter.name = {
+ $regex: searchNameTerm, $options: 'i' 
+}
         }
 
         const totalCount = await this.BlogsModel.count(filter)
@@ -27,7 +29,9 @@ export class BlogsQueryRepository {
 
         const skipCount = (+pageNumber - 1) * +pageSize
         const sortDirectionNumber = sortDirection === 'asc' ? 1 : -1
-        const resultedBlogs = await this.BlogsModel.find(filter, { _id: 0, __v: 0 }).skip(skipCount).limit(+pageSize).sort({ [sortBy]: sortDirectionNumber }).lean()
+        const resultedBlogs = await this.BlogsModel.find(filter, {
+ _id: 0, __v: 0 
+}).skip(skipCount).limit(+pageSize).sort({ [sortBy]: sortDirectionNumber }).lean()
 
         return {
             pagesCount: pagesCount,
@@ -39,6 +43,8 @@ export class BlogsQueryRepository {
     }
 
     async findBlogById(id: string): Promise<BlogViewModel | null> {
-        return await this.BlogsModel.findOne({ id: id }, { _id: 0, __v: 0 }).lean()
+        return await this.BlogsModel.findOne({ id: id }, {
+ _id: 0, __v: 0 
+}).lean()
     }
 }

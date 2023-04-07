@@ -2,7 +2,9 @@ import { PostDBModel } from "./PostsTypes"
 import {
     Prop, Schema, SchemaFactory
 } from "@nestjs/mongoose"
-import { ExtendedLikesInfo, ExtendedLikesInfoSchema } from "./ExtendedLikesInfoSchema"
+import {
+ ExtendedLikesInfo, ExtendedLikesInfoSchema 
+} from "./ExtendedLikesInfoSchema"
 
 @Schema()
 export class Post {
@@ -36,10 +38,14 @@ export class Post {
     @Prop({ required: true })
     blogName: string
 
-    @Prop({ required: true, default: new Date() })
+    @Prop({
+ required: true, default: new Date() 
+})
     createdAt: string
 
-    @Prop({ required: true, type: ExtendedLikesInfoSchema })
+    @Prop({
+ required: true, type: ExtendedLikesInfoSchema 
+})
     extendedLikesInfo: ExtendedLikesInfo
 }
 

@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common"
 import { ReadUsersQuery } from "../api/models/ReadUsersQuery"
-import { UsersWithQueryOutputModel } from "../api/models/UsersViewModel"
+import { UsersWithQueryOutputModel } from "../application/dto/UsersViewModel"
 import { InjectModel } from "@nestjs/mongoose/dist"
 import { User } from "../domain/UsersSchema"
 import { UserModelType } from "../domain/UsersTypes"
@@ -16,10 +16,18 @@ export class UsersQueryRepository {
 
         const filterArray: any = []
         if (searchEmailTerm) {
-            filterArray.push({ email: { $regex: searchEmailTerm, $options: 'i' } })
+            filterArray.push({
+ email: {
+ $regex: searchEmailTerm, $options: 'i' 
+} 
+})
         }
         if (searchLoginTerm) {
-            filterArray.push({ login: { $regex: searchLoginTerm, $options: 'i' } })
+            filterArray.push({
+ login: {
+ $regex: searchLoginTerm, $options: 'i' 
+} 
+})
         }
 
         const filterObject = filterArray.length ? { $or: filterArray } : {}
@@ -49,7 +57,9 @@ export class UsersQueryRepository {
     }
 
     async findUserById(userId: string) {
-        return this.UserModel.findOne({ id: userId }, { _id: 0, __v: 0 }).lean()
+        return this.UserModel.findOne({ id: userId }, {
+ _id: 0, __v: 0 
+}).lean()
     }
 
     async findUserByLogin(login: string) {

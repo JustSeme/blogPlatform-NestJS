@@ -1,4 +1,4 @@
-import { UserViewModelType } from '../api/models/UsersViewModel'
+import { UserViewModelType } from './dto/UsersViewModel'
 import { UsersRepository } from '../infrastructure/users-db-repository'
 import { v4 as uuidv4 } from 'uuid'
 import { bcryptAdapter } from 'src/adapters/bcryptAdapter'

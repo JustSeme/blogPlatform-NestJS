@@ -1,11 +1,15 @@
-import { CommentsWithQueryOutputModel, CommentViewModel } from "../api/models/CommentViewModel"
+import {
+ CommentsWithQueryOutputModel, CommentViewModel 
+} from "../api/models/CommentViewModel"
 import { LikeType } from "./dto/LikeInputModel"
 import { ReadCommentsQueryParams } from "../api/models/ReadCommentsQuery"
 import { CommentsRepository } from "../infrastructure/comments-db-repository"
 import { UserDTO } from "../../auth/domain/UsersTypes"
 import { Injectable } from "@nestjs/common"
 import { JwtService } from "src/adapters/jwtService"
-import { CommentDBModel, LikeObjectType } from "../domain/comments/CommentTypes"
+import {
+ CommentDBModel, LikeObjectType 
+} from "../domain/comments/CommentTypes"
 
 @Injectable()
 export class CommentsService {
@@ -71,7 +75,9 @@ export class CommentsService {
 
     async getComments(queryParams: ReadCommentsQueryParams, postId: string, accessToken: string | null): Promise<CommentsWithQueryOutputModel> {
         const commentsDBQueryData = await this.commentsRepository.getComments(queryParams, postId)
-        const commentsViewQueryData: CommentsWithQueryOutputModel = { ...commentsDBQueryData, items: [] }
+        const commentsViewQueryData: CommentsWithQueryOutputModel = {
+ ...commentsDBQueryData, items: [] 
+}
 
         const displayedComments = await this.transformLikeInfo(commentsDBQueryData.items, accessToken)
 

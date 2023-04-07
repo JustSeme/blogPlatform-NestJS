@@ -21,6 +21,6 @@ module.exports = {
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
     'semi': ['error', 'never'],
-    'object-curly-newline': ['error', { "multiline": true, 'minProperties': 3 }]
+    'object-curly-newline': ['error', { "multiline": true, 'minProperties': 2 }]
   },
 };
