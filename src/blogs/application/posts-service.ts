@@ -28,13 +28,11 @@ export class PostsService {
 
     async findPostById(postId: string, accessToken: string | null): Promise<PostsViewModel | null> {
         const findedPost = await this.postsRepository.getPostById(postId)
+        console.log(postId)
         if (!findedPost) {
             return null
         }
-        if (findedPost.title === 'anyTitle1') {
-            console.log(findedPost, 'findedPost')
 
-        }
 
         const displayedPost = await this.transformLikeInfo([findedPost], accessToken)
         return displayedPost[0]
@@ -51,7 +49,7 @@ export class PostsService {
             body.title,
             body.shortDescription,
             body.content,
-            blogId ? blogId : body.blogId,
+            blogById.id,
             blogById?.name ? blogById?.name : 'not found',
         )
 

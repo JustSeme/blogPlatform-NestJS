@@ -1,5 +1,4 @@
 import { PostInputModel } from '../../application/dto/PostInputModel'
-import { Document } from 'mongoose'
 import { ReadPostsQueryParams } from '../../api/models/ReadPostsQuery'
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose/dist'
@@ -40,7 +39,7 @@ export class PostsRepository {
     }
 
     async getPostById(postId: string) {
-        return this.PostModel.findOne({ id: postId })
+        return await this.PostModel.findOne({ id: postId })
     }
 
     async deletePosts(id: string) {
@@ -61,14 +60,14 @@ export class PostsRepository {
         return result.matchedCount === 1
     }
 
-    async createLike(likeData: ExtendedLikeObjectType, likedPost: Document<unknown, {}, PostDBModel> & Omit<PostDBModel, never>) {
+    async createLike(likeData: ExtendedLikeObjectType, likedPost: PostDocument) {
         likedPost.extendedLikesInfo.likes.push(likeData)
 
         await likedPost.save()
         return true
     }
 
-    async createDislike(likeData: ExtendedLikeObjectType, dislikedPost: Document<unknown, {}, PostDBModel> & Omit<PostDBModel, never>) {
+    async createDislike(likeData: ExtendedLikeObjectType, dislikedPost: PostDocument) {
         dislikedPost.extendedLikesInfo.dislikes.push(likeData)
 
         await dislikedPost.save()
