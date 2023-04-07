@@ -12,8 +12,8 @@ export class JwtService {
 
     async createRefreshToken(expiresTime: string, deviceId: string, userId: string) {
         return jwt.sign({
- deviceId, userId 
-}, settings.JWT_SECRET, { expiresIn: expiresTime })
+            deviceId, userId
+        }, settings.JWT_SECRET, { expiresIn: expiresTime })
     }
 
     async getUserIdByToken(token: string) {

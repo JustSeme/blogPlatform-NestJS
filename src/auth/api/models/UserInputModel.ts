@@ -1,10 +1,10 @@
 import {
-    Length, Matches, IsEmail
+    Length, IsEmail, IsAlphanumeric
 } from "class-validator"
 
 export class UserInputModel {
     @Length(3, 10)
-    @Matches(new RegExp('^[a-zA-Z0-9_-]*$'))
+    @IsAlphanumeric()
     login: string
 
     @Length(6, 20)

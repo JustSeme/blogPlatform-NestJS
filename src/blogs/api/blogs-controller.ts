@@ -1,4 +1,3 @@
-import { HTTP_STATUSES } from "src/settings"
 import { BlogInputModel } from "./models/BlogInputModel"
 import { BlogViewModel } from "../application/dto/BlogViewModel"
 import { BlogsService } from "../application/blogs-service"
@@ -10,7 +9,7 @@ import { ReadBlogsQueryParams } from "./models/ReadBlogsQuery"
 import { ReadPostsQueryParams } from "./models/ReadPostsQuery"
 import { PostsViewModel } from '../application/dto/PostViewModel'
 import {
-    Controller, Get, Param, Query, NotFoundException, Headers, Post, Body, HttpCode, Put, Delete
+    Controller, Get, Param, Query, NotFoundException, Headers, Post, Body, HttpCode, Put, Delete, HttpStatus
 } from '@nestjs/common'
 import { PostsWithQueryOutputModel } from "src/blogs/domain/posts/PostsTypes"
 
@@ -54,7 +53,7 @@ export class BlogsController {
     }
 
     @Post()
-    @HttpCode(HTTP_STATUSES.CREATED_201)
+    @HttpCode(HttpStatus.CREATED)
     async createBlog(@Body() blogInputModel: BlogInputModel): Promise<BlogViewModel> {
         const createdBlog = await this.blogsService.createBlog(blogInputModel)
 
@@ -62,7 +61,7 @@ export class BlogsController {
     }
 
     @Post(':blogId/posts')
-    @HttpCode(HTTP_STATUSES.CREATED_201)
+    @HttpCode(HttpStatus.CREATED)
     async createPostForBlog(
         @Body() postInputModel: PostInputModel,
         @Param('blogId') blogId: string,
@@ -78,7 +77,7 @@ export class BlogsController {
     }
 
     @Put(':blogId')
-    @HttpCode(HTTP_STATUSES.NO_CONTENT_204)
+    @HttpCode(HttpStatus.NO_CONTENT)
     async updateBlog(
         @Body() blogInputModel: BlogInputModel,
         @Param('blogId') blogId: string,
@@ -91,7 +90,7 @@ export class BlogsController {
     }
 
     @Delete(':id')
-    @HttpCode(HTTP_STATUSES.NO_CONTENT_204)
+    @HttpCode(HttpStatus.NO_CONTENT)
     async deleteBlog(@Param('id') id: string): Promise<void> {
         const isDeleted = await this.blogsService.deleteBlog(id)
         if (!isDeleted) {

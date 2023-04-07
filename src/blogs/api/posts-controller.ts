@@ -1,5 +1,5 @@
 import {
-    Controller, Get, Post, Put, Delete, Param, Query, Body, Headers, HttpStatus, NotFoundException, HttpCode, NotImplementedException
+    Controller, Get, Post, Put, Delete, Param, Query, Body, Headers, HttpStatus, NotFoundException, HttpCode, NotImplementedException, UnauthorizedException
 } from '@nestjs/common'
 import { ReadCommentsQueryParams } from "./models/ReadCommentsQuery"
 import { CommentsWithQueryOutputModel } from "../application/dto/CommentViewModel"
@@ -14,10 +14,11 @@ import { PostsViewModel } from "../application/dto/PostViewModel"
 import { UsersQueryRepository } from 'src/auth/infrastructure/users-query-repository'
 import { JwtService } from 'src/adapters/jwtService'
 import { BlogsQueryRepository } from '../infrastructure/blogs/blogs-query-repository'
+import { PostsRepository } from '../infrastructure/posts/posts-db-repository'
 
 @Controller('posts')
 export class PostsController {
-    constructor(protected jwtService: JwtService, protected postsService: PostsService, protected commentsService: CommentsService, protected usersQueryRepository: UsersQueryRepository, protected blogsQueryRepository: BlogsQueryRepository) { }
+    constructor(protected jwtService: JwtService, protected postsService: PostsService, protected commentsService: CommentsService, protected usersQueryRepository: UsersQueryRepository, protected blogsQueryRepository: BlogsQueryRepository, protected postsRepository: PostsRepository) { }
 
     @Get()
     async getPosts(
@@ -77,8 +78,17 @@ export class PostsController {
         @Body() comment: CommentInputModel,
         @Headers('Authorization') authorizationHeader: string,
     ): Promise<CommentViewModel> {
+        const postById = this.postsRepository.getPostById(postId)
+        if (!postById) {
+            throw new NotFoundException()
+        }
+
         const accessToken = authorizationHeader ? authorizationHeader.split(' ')[1] : null
         const userId = await this.jwtService.getUserIdByToken(accessToken)
+        if (!userId) {
+            throw new UnauthorizedException()
+        }
+
         const commentator = await this.usersQueryRepository.findUserById(userId)
 
         const createdComment = await this.commentsService.createComment(comment.content, commentator, postId)

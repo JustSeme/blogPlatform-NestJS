@@ -7,7 +7,7 @@ import {
 import { UsersQueryRepository } from "../infrastructure/users-query-repository"
 import { ErrorMessagesOutputModel } from "src/types/ErrorMessagesOutputModel"
 import {
-    Body, Controller, Delete, Get, Param, Post, Query, HttpCode, NotFoundException, HttpStatus, ParseUUIDPipe, NotImplementedException
+    Body, Controller, Delete, Get, Param, Post, Query, HttpCode, NotFoundException, HttpStatus, NotImplementedException
 } from "@nestjs/common"
 
 @Controller('users')
@@ -34,7 +34,7 @@ export class UsersController {
 
     @Delete(':id')
     @HttpCode(HttpStatus.NO_CONTENT)
-    async deleteUser(@Param('id', new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })) id: string): Promise<void> {
+    async deleteUser(@Param('id',) id: string): Promise<void> {
         const isDeleted = await this.authService.deleteUsers(id)
         if (!isDeleted) {
             throw new NotFoundException()

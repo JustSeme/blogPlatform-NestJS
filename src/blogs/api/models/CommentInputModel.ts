@@ -1,3 +1,6 @@
+import { Length } from "class-validator"
+
 export class CommentInputModel {
-    constructor(public content: string) { }
+    @Length(20, 300)
+    content: string
 }
