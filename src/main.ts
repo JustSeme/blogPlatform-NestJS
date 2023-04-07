@@ -6,7 +6,9 @@ import { settings } from "./settings"
 import {
   BadRequestException, ValidationPipe
 } from "@nestjs/common"
-import { HttpExceptionFilter } from "./exception.filter"
+import {
+  ErrorExceptionFilter, HttpExceptionFilter
+} from "./exception.filter"
 import { FieldError } from "./types/ErrorMessagesOutputModel"
 
 const customExceptionFactory = (errors) => {
@@ -36,7 +38,7 @@ async function bootstrap() {
     stopAtFirstError: false,
     exceptionFactory: customExceptionFactory
   }))
-  app.useGlobalFilters(new HttpExceptionFilter())
+  app.useGlobalFilters(new ErrorExceptionFilter(), new HttpExceptionFilter())
 
   await app.listen(settings.PORT)
 }
