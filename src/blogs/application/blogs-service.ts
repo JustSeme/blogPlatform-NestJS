@@ -1,5 +1,5 @@
-import { BlogInputModel } from "./dto/BlogInputModel"
-import { BlogViewModel } from "../api/models/BlogViewModel"
+import { BlogInputModel } from "../api/models/BlogInputModel"
+import { BlogViewModel } from "./dto/BlogViewModel"
 import { BlogsRepository } from "../infrastructure/blogs/blogs-db-repository"
 import { Injectable } from "@nestjs/common"
 import { BlogDBModel } from "../domain/blogs/BlogsTypes"

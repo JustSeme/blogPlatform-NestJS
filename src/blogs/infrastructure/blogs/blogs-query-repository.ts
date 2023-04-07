@@ -1,6 +1,6 @@
 import { InjectModel } from "@nestjs/mongoose"
-import { BlogsWithQueryOutputModel } from "../../api/models/BlogViewModel"
-import { BlogViewModel } from "../../api/models/BlogViewModel"
+import { BlogsWithQueryOutputModel } from "../../application/dto/BlogViewModel"
+import { BlogViewModel } from "../../application/dto/BlogViewModel"
 import { ReadBlogsQueryParams } from "../../api/models/ReadBlogsQuery"
 import { Blog } from "../../domain/blogs/BlogsSchema"
 import { BlogModelType } from "../../domain/blogs/BlogsTypes"
@@ -20,8 +20,8 @@ export class BlogsQueryRepository {
         const filter: any = {}
         if (searchNameTerm) {
             filter.name = {
- $regex: searchNameTerm, $options: 'i' 
-}
+                $regex: searchNameTerm, $options: 'i'
+            }
         }
 
         const totalCount = await this.BlogsModel.count(filter)
@@ -30,8 +30,8 @@ export class BlogsQueryRepository {
         const skipCount = (+pageNumber - 1) * +pageSize
         const sortDirectionNumber = sortDirection === 'asc' ? 1 : -1
         const resultedBlogs = await this.BlogsModel.find(filter, {
- _id: 0, __v: 0 
-}).skip(skipCount).limit(+pageSize).sort({ [sortBy]: sortDirectionNumber }).lean()
+            _id: 0, __v: 0
+        }).skip(skipCount).limit(+pageSize).sort({ [sortBy]: sortDirectionNumber }).lean()
 
         return {
             pagesCount: pagesCount,
@@ -44,7 +44,7 @@ export class BlogsQueryRepository {
 
     async findBlogById(id: string): Promise<BlogViewModel | null> {
         return await this.BlogsModel.findOne({ id: id }, {
- _id: 0, __v: 0 
-}).lean()
+            _id: 0, __v: 0
+        }).lean()
     }
 }

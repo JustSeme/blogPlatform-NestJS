@@ -1,14 +1,14 @@
 import { HTTP_STATUSES } from "src/settings"
-import { BlogInputModel } from "../application/dto/BlogInputModel"
-import { BlogViewModel } from "./models/BlogViewModel"
+import { BlogInputModel } from "./models/BlogInputModel"
+import { BlogViewModel } from "../application/dto/BlogViewModel"
 import { BlogsService } from "../application/blogs-service"
 import { BlogsQueryRepository } from "../infrastructure/blogs/blogs-query-repository"
-import { BlogsWithQueryOutputModel } from './models/BlogViewModel'
-import { PostInputModel } from "../application/dto/PostInputModel"
+import { BlogsWithQueryOutputModel } from '../application/dto/BlogViewModel'
+import { PostInputModel } from "./models/PostInputModel"
 import { PostsService } from "../application/posts-service"
 import { ReadBlogsQueryParams } from "./models/ReadBlogsQuery"
 import { ReadPostsQueryParams } from "./models/ReadPostsQuery"
-import { PostsViewModel } from './models/PostViewModel'
+import { PostsViewModel } from '../application/dto/PostViewModel'
 import {
     Controller, Get, Param, Query, NotFoundException, Headers, Post, Body, HttpCode, Put, Delete
 } from '@nestjs/common'

@@ -2,15 +2,15 @@ import {
     Controller, Get, Post, Put, Delete, Param, Query, Body, Headers, HttpStatus, NotFoundException, HttpCode, NotImplementedException
 } from '@nestjs/common'
 import { ReadCommentsQueryParams } from "./models/ReadCommentsQuery"
-import { CommentsWithQueryOutputModel } from "./models/CommentViewModel"
-import { CommentInputModel } from "../application/dto/CommentInputModel"
-import { CommentViewModel } from "./models/CommentViewModel"
+import { CommentsWithQueryOutputModel } from "../application/dto/CommentViewModel"
+import { CommentInputModel } from "./models/CommentInputModel"
+import { CommentViewModel } from "../application/dto/CommentViewModel"
 import { CommentsService } from "../application/comments-service"
-import { PostInputModel } from "../application/dto/PostInputModel"
+import { PostInputModel } from "./models/PostInputModel"
 import { PostsService } from "../application/posts-service"
 import { ReadPostsQueryParams } from "./models/ReadPostsQuery"
-import { LikeInputModel } from "../application/dto/LikeInputModel"
-import { PostsViewModel } from "./models/PostViewModel"
+import { LikeInputModel } from "./models/LikeInputModel"
+import { PostsViewModel } from "../application/dto/PostViewModel"
 import { UsersQueryRepository } from 'src/auth/infrastructure/users-query-repository'
 import { JwtService } from 'src/adapters/jwtService'
 import { BlogsQueryRepository } from '../infrastructure/blogs/blogs-query-repository'

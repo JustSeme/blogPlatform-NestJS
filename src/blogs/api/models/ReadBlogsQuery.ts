@@ -1,7 +1,5 @@
-export type ReadBlogsQueryParams = {
+import { ReadQuery } from "src/types/ReadQuery"
+
+export type ReadBlogsQueryParams = ReadQuery & {
     searchNameTerm: string
-    sortBy: string
-    sortDirection: 'asc' | 'desc'
-    pageNumber: number
-    pageSize: number
 }

@@ -1,5 +1,5 @@
 import { InjectModel } from "@nestjs/mongoose"
-import { CommentViewModel } from "../api/models/CommentViewModel"
+import { CommentViewModel } from "../application/dto/CommentViewModel"
 import { Comment } from "../domain/comments/commentsSchema"
 import { CommentModelType } from "../domain/comments/CommentTypes"
 

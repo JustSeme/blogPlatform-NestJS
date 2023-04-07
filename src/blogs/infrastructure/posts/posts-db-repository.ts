@@ -1,4 +1,4 @@
-import { PostInputModel } from '../../application/dto/PostInputModel'
+import { PostInputModel } from '../../api/models/PostInputModel'
 import { ReadPostsQueryParams } from '../../api/models/ReadPostsQuery'
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose/dist'
@@ -28,8 +28,8 @@ export class PostsRepository {
         const skipCount = (+pageNumber - 1) * +pageSize
         const sortDirectionNumber = sortDirection === 'asc' ? 1 : -1
         const resultedPosts = await this.PostModel.find(filter, {
- _id: 0, __v: 0 
-}).skip(skipCount).limit(+pageSize).sort({ [sortBy]: sortDirectionNumber }).lean()
+            _id: 0, __v: 0
+        }).skip(skipCount).limit(+pageSize).sort({ [sortBy]: sortDirectionNumber }).lean()
 
         return {
             pagesCount: pagesCount,

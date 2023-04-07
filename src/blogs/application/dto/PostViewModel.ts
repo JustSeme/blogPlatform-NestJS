@@ -1,4 +1,4 @@
-import { LikeType } from "../../application/dto/LikeInputModel"
+import { LikeType } from "../../api/models/LikeInputModel"
 
 export type PostsViewModel = {
     id: string,

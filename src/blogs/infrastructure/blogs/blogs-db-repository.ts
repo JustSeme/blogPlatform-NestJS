@@ -1,5 +1,5 @@
-import { BlogInputModel } from "../../application/dto/BlogInputModel"
-import { BlogViewModel } from "../../api/models/BlogViewModel"
+import { BlogInputModel } from "../../api/models/BlogInputModel"
+import { BlogViewModel } from "../../application/dto/BlogViewModel"
 import { Injectable } from "@nestjs/common"
 import { InjectModel } from "@nestjs/mongoose"
 import { Blog } from "../../domain/blogs/BlogsSchema"
@@ -34,7 +34,7 @@ export class BlogsRepository {
 
     async findBlogById(id: string): Promise<BlogViewModel | null> {
         return await this.BlogsModel.findOne({ id: id }, {
- _id: 0, __v: 0 
-})
+            _id: 0, __v: 0
+        })
     }
 }

@@ -1,6 +1,3 @@
-export type ReadCommentsQueryParams = {
-    pageNumber: number
-    pageSize: number
-    sortBy: string
-    sortDirection: 'asc' | 'desc'
-}
+import { ReadQuery } from "src/types/ReadQuery"
+
+export type ReadCommentsQueryParams = ReadQuery

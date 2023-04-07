@@ -3,9 +3,9 @@ import {
     Controller, Delete, Get, Headers, HttpCode, HttpStatus, NotFoundException, NotImplementedException, Param, Put
 } from "@nestjs/common"
 import { CommentsService } from "../application/comments-service"
-import { CommentInputModel } from "../application/dto/CommentInputModel"
-import { CommentViewModel } from "./models/CommentViewModel"
-import { LikeInputModel } from "../application/dto/LikeInputModel"
+import { CommentInputModel } from "./models/CommentInputModel"
+import { CommentViewModel } from "../application/dto/CommentViewModel"
+import { LikeInputModel } from "./models/LikeInputModel"
 
 @Controller('comments')
 export class CommentsController {
