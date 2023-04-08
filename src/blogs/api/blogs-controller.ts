@@ -9,9 +9,10 @@ import { ReadBlogsQueryParams } from "./models/ReadBlogsQuery"
 import { ReadPostsQueryParams } from "./models/ReadPostsQuery"
 import { PostsViewModel } from '../application/dto/PostViewModel'
 import {
-    Controller, Get, Param, Query, NotFoundException, Headers, Post, Body, HttpCode, Put, Delete, HttpStatus
+    Controller, Get, Param, Query, NotFoundException, Headers, Post, Body, HttpCode, Put, Delete, HttpStatus, UseGuards
 } from '@nestjs/common'
 import { PostsWithQueryOutputModel } from "src/blogs/domain/posts/PostsTypes"
+import { BasicAuthGuard } from "src/guards/basic.auth.guard"
 
 @Controller('blogs')
 export class BlogsController {
@@ -52,6 +53,7 @@ export class BlogsController {
         return findedPostsForBlog
     }
 
+    @UseGuards(BasicAuthGuard)
     @Post()
     @HttpCode(HttpStatus.CREATED)
     async createBlog(@Body() blogInputModel: BlogInputModel): Promise<BlogViewModel> {
@@ -60,6 +62,7 @@ export class BlogsController {
         return createdBlog
     }
 
+    @UseGuards(BasicAuthGuard)
     @Post(':blogId/posts')
     @HttpCode(HttpStatus.CREATED)
     async createPostForBlog(
@@ -76,6 +79,7 @@ export class BlogsController {
         return createdPost
     }
 
+    @UseGuards(BasicAuthGuard)
     @Put(':blogId')
     @HttpCode(HttpStatus.NO_CONTENT)
     async updateBlog(
@@ -89,6 +93,7 @@ export class BlogsController {
         return
     }
 
+    @UseGuards(BasicAuthGuard)
     @Delete(':id')
     @HttpCode(HttpStatus.NO_CONTENT)
     async deleteBlog(@Param('id') id: string): Promise<void> {

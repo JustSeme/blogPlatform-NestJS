@@ -1,5 +1,5 @@
 import {
-    Controller, Get, Post, Put, Delete, Param, Query, Body, Headers, HttpStatus, NotFoundException, HttpCode, NotImplementedException, UnauthorizedException
+    Controller, Get, Post, Put, Delete, Param, Query, Body, Headers, HttpStatus, NotFoundException, HttpCode, NotImplementedException, UnauthorizedException, UseGuards
 } from '@nestjs/common'
 import { ReadCommentsQueryParams } from "./models/ReadCommentsQuery"
 import { CommentsWithQueryOutputModel } from "../application/dto/CommentViewModel"
@@ -15,16 +15,15 @@ import { UsersQueryRepository } from 'src/auth/infrastructure/users-query-reposi
 import { JwtService } from 'src/adapters/jwtService'
 import { BlogsQueryRepository } from '../infrastructure/blogs/blogs-query-repository'
 import { PostsRepository } from '../infrastructure/posts/posts-db-repository'
+import { BasicAuthGuard } from 'src/guards/basic.auth.guard'
+import { JwtGuard } from 'src/guards/jwt.guard'
 
 @Controller('posts')
 export class PostsController {
     constructor(protected jwtService: JwtService, protected postsService: PostsService, protected commentsService: CommentsService, protected usersQueryRepository: UsersQueryRepository, protected blogsQueryRepository: BlogsQueryRepository, protected postsRepository: PostsRepository) { }
 
     @Get()
-    async getPosts(
-        @Query() query: ReadPostsQueryParams,
-        @Headers('Authorization') authorizationHeader: string,
-    ) {
+    async getPosts(@Query() query: ReadPostsQueryParams, @Headers('Authorization') authorizationHeader: string,) {
         const accessToken = authorizationHeader ? authorizationHeader.split(' ')[1] : null
         const findedPosts = await this.postsService.findPosts(query, null, accessToken)
 
@@ -36,10 +35,7 @@ export class PostsController {
     }
 
     @Get(':postId')
-    async getPostById(
-        @Param('postId') postId: string,
-        @Headers('Authorization') authorizationHeader: string,
-    ): Promise<PostsViewModel> {
+    async getPostById(@Param('postId') postId: string, @Headers('Authorization') authorizationHeader: string,): Promise<PostsViewModel> {
         const accessToken = authorizationHeader ? authorizationHeader.split(' ')[1] : null
         const findedPosts = await this.postsService.findPostById(postId, accessToken)
         if (!findedPosts) {
@@ -59,11 +55,10 @@ export class PostsController {
         return findedComments
     }
 
+    @UseGuards(BasicAuthGuard)
     @Post()
     @HttpCode(HttpStatus.CREATED)
-    async createPost(
-        @Body() post: PostInputModel
-    ): Promise<PostsViewModel> {
+    async createPost(@Body() post: PostInputModel): Promise<PostsViewModel> {
         const blogById = await this.blogsQueryRepository.findBlogById(post.blogId)
         if (!blogById) {
             throw new NotFoundException()
@@ -72,6 +67,7 @@ export class PostsController {
         return this.postsService.createPost(post, null)
     }
 
+    @UseGuards(JwtGuard)
     @Post(':postId/comments')
     async createCommentForPost(
         @Param('postId') postId: string,
@@ -83,7 +79,7 @@ export class PostsController {
             throw new NotFoundException()
         }
 
-        const accessToken = authorizationHeader ? authorizationHeader.split(' ')[1] : null
+        const accessToken = authorizationHeader.split(' ')[1]
         const userId = await this.jwtService.getUserIdByToken(accessToken)
         if (!userId) {
             throw new UnauthorizedException()
@@ -98,12 +94,10 @@ export class PostsController {
         return createdComment
     }
 
+    @UseGuards(BasicAuthGuard)
     @Put(':postId')
     @HttpCode(HttpStatus.NO_CONTENT)
-    async updatePost(
-        @Param('postId') postId: string,
-        @Body() postInputModel: PostInputModel
-    ): Promise<void> {
+    async updatePost(@Param('postId') postId: string, @Body() postInputModel: PostInputModel): Promise<void> {
         const isUpdated = await this.postsService.updatePost(postId, postInputModel)
         if (!isUpdated) {
             throw new NotFoundException()
@@ -111,11 +105,10 @@ export class PostsController {
         return
     }
 
+    @UseGuards(BasicAuthGuard)
     @Delete(':id')
     @HttpCode(HttpStatus.NO_CONTENT)
-    async deletePost(
-        @Param('id') id: string
-    ): Promise<void> {
+    async deletePost(@Param('id') id: string): Promise<void> {
         const isDeleted = await this.postsService.deletePosts(id)
         if (!isDeleted) {
             throw new NotFoundException()
@@ -123,13 +116,14 @@ export class PostsController {
         return
     }
 
-    @Put(':postId/like')
+    @UseGuards(JwtGuard)
+    @Put(':postId/like-status')
     async updateLikeStatus(
         @Param('postId') postId: string,
         @Body() like: LikeInputModel,
         @Headers('Authorization') authorizationHeader: string,
     ): Promise<void> {
-        const accessToken = authorizationHeader ? authorizationHeader.split(' ')[1] : null
+        const accessToken = authorizationHeader.split(' ')[1]
         const isUpdated = await this.postsService.updateLike(accessToken, postId, like.likeStatus)
         if (!isUpdated) {
             throw new NotImplementedException()
