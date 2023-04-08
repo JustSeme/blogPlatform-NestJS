@@ -25,19 +25,19 @@ export class JwtService {
         }
     }
 
-    /* async verifyRefreshToken(verifiedToken: string) {
+    async verifyRefreshToken(verifiedToken: string) {
         try {
             const result = await jwt.verify(verifiedToken, settings.JWT_SECRET) as JwtPayload
-            const issuedAtForDeviceId = await this.deviceRepository.getCurrentIssuedAt(result.deviceId)
+            /* const issuedAtForDeviceId = await this.deviceRepository.getCurrentIssuedAt(result.deviceId)
             if (issuedAtForDeviceId > result.iat) {
                 return null
-            }
+            } */
 
             return result
         } catch (err) {
             return null
         }
-    } */
+    }
 
     async verifyAccessToken(verifiedToken: string) {
         try {
@@ -48,7 +48,7 @@ export class JwtService {
         }
     }
 
-    /* async refreshTokens(verifiedToken: string) {
+    async refreshTokens(verifiedToken: string) {
         const result = await this.verifyRefreshToken(verifiedToken)
         if (!result) {
             return null
@@ -58,15 +58,15 @@ export class JwtService {
         const newAccessToken = await this.createAccessToken(settings.REFRESH_TOKEN_EXPIRE_TIME, result.userId)
         const resultOfCreatedToken = jwt.decode(newRefreshToken) as JwtPayload
 
-        const isUpdated = this.deviceRepository.updateSession(result.deviceId, resultOfCreatedToken.iat, resultOfCreatedToken.exp)
+        /* const isUpdated = this.deviceRepository.updateSession(result.deviceId, resultOfCreatedToken.iat, resultOfCreatedToken.exp)
 
         if (!isUpdated) {
             return null
-        }
+        } */
 
         return {
             newRefreshToken,
             newAccessToken
         }
-    } */
+    }
 }

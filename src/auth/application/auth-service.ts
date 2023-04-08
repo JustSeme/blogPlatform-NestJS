@@ -7,11 +7,13 @@ import { EmailManager } from 'src/managers/emailManager'
 import { InjectModel } from '@nestjs/mongoose/dist'
 import { User } from '../domain/UsersSchema'
 import { UserModelType } from '../domain/UsersTypes'
+import { settings } from 'src/settings'
+import { JwtService } from 'src/adapters/jwtService'
 
 //transaction script
 @Injectable()
 export class AuthService {
-    constructor(@InjectModel(User.name) private UserModel: UserModelType, protected usersRepository: UsersRepository, protected emailManager: EmailManager) { }
+    constructor(@InjectModel(User.name) private UserModel: UserModelType, protected usersRepository: UsersRepository, protected jwtService: JwtService, protected emailManager: EmailManager) { }
 
     async createUser(login: string, password: string, email: string): Promise<boolean> {
         const passwordHash = await bcryptAdapter.generatePasswordHash(password, 10)
@@ -109,19 +111,19 @@ export class AuthService {
         return this.usersRepository.deleteUser(userId)
     }
 
-    /* async login(userId: string, userIp: string, deviceName: string) {
+    async login(userId: string, userIp: string, deviceName: string) {
         const deviceId = uuidv4()
 
         const accessToken = await this.jwtService.createAccessToken(settings.ACCESS_TOKEN_EXPIRE_TIME, userId)
         const refreshToken = await this.jwtService.createRefreshToken(settings.REFRESH_TOKEN_EXPIRE_TIME, deviceId, userId)
         const result = await this.jwtService.verifyRefreshToken(refreshToken)
 
-        const newSession = new DeviceAuthSessionsModel(result!.iat!, result!.exp!, userId, userIp, deviceId, deviceName)
+        /* const newSession = new DeviceAuthSessionsModel(result!.iat!, result!.exp!, userId, userIp, deviceId, deviceName)
 
         const isAdded = await this.deviceRepository.addSession(newSession)
         if (!isAdded) {
             return null
-        }
+        } */
 
         return {
             accessToken,
@@ -135,11 +137,11 @@ export class AuthService {
             return false
         }
 
-        const isDeleted = this.deviceRepository.removeSession(result.deviceId)
+        /* const isDeleted = this.deviceRepository.removeSession(result.deviceId)
 
         if (!isDeleted) {
             return false
-        }
+        } */
         return true
-    } */
+    }
 }

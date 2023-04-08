@@ -17,17 +17,17 @@ export class UsersQueryRepository {
         const filterArray: any = []
         if (searchEmailTerm) {
             filterArray.push({
- email: {
- $regex: searchEmailTerm, $options: 'i' 
-} 
-})
+                email: {
+                    $regex: searchEmailTerm, $options: 'i'
+                }
+            })
         }
         if (searchLoginTerm) {
             filterArray.push({
- login: {
- $regex: searchLoginTerm, $options: 'i' 
-} 
-})
+                login: {
+                    $regex: searchLoginTerm, $options: 'i'
+                }
+            })
         }
 
         const filterObject = filterArray.length ? { $or: filterArray } : {}
@@ -58,8 +58,8 @@ export class UsersQueryRepository {
 
     async findUserById(userId: string) {
         return this.UserModel.findOne({ id: userId }, {
- _id: 0, __v: 0 
-}).lean()
+            _id: 0, __v: 0
+        }).lean()
     }
 
     async findUserByLogin(login: string) {
