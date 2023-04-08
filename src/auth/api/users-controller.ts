@@ -7,9 +7,11 @@ import {
 import { UsersQueryRepository } from "../infrastructure/users-query-repository"
 import { ErrorMessagesOutputModel } from "src/types/ErrorMessagesOutputModel"
 import {
-    Body, Controller, Delete, Get, Param, Post, Query, HttpCode, NotFoundException, HttpStatus, NotImplementedException
+    Body, Controller, Delete, Get, Param, Post, Query, HttpCode, NotFoundException, HttpStatus, NotImplementedException, UseGuards
 } from "@nestjs/common"
+import { BasicAuthGuard } from "src/guards/basic.auth.guard"
 
+@UseGuards(BasicAuthGuard)
 @Controller('users')
 export class UsersController {
     constructor(protected authService: AuthService, protected usersQueryRepository: UsersQueryRepository) { }
