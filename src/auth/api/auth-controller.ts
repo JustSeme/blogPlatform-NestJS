@@ -13,6 +13,7 @@ import { ErrorMessagesOutputModel } from "src/types/ErrorMessagesOutputModel"
 import { UsersQueryRepository } from "../infrastructure/users-query-repository"
 import { NewPasswordInputModel } from "./models/NewPasswordInputModel"
 import { MeOutputModel } from "../application/dto/MeViewModel"
+import { FieldError } from "src/types/ErrorMessagesOutputModel"
 
 @Controller('auth')
 export class AuthController {
@@ -81,7 +82,7 @@ export class AuthController {
         const userByLogin = await this.usersQueryRepository.findUserByLogin(userInput.login)
         const userByEmail = await this.usersQueryRepository.findUserByEmail(userInput.email)
         if (userByLogin || userByEmail) {
-            const errorsMessages = []
+            const errorsMessages: FieldError[] = []
             if (userByLogin) {
                 errorsMessages.push({
                     message: 'Login is already exist',
@@ -91,7 +92,7 @@ export class AuthController {
             if (userByEmail) {
                 errorsMessages.push({
                     message: 'Email is already exist',
-                    feld: 'email'
+                    field: 'email'
                 })
             }
             throw new BadRequestException(errorsMessages)
@@ -100,7 +101,7 @@ export class AuthController {
         await this.authService.createUser(userInput.login, userInput.password, userInput.email,)
     }
 
-    @Post('registration-confirm')
+    @Post('registration-confirmation')
     @HttpCode(HttpStatus.NO_CONTENT)
     async registrationConfirm(@Body('code') code: string) {
         const isConfirmed = await this.authService.confirmEmail(code)
@@ -116,11 +117,18 @@ export class AuthController {
     @Post('registration-email-resending')
     @HttpCode(HttpStatus.NO_CONTENT)
     async resendEmail(@Body() { email }: { email: string }): Promise<void | ErrorMessagesOutputModel> {
-        const userByEmail = this.usersQueryRepository.findUserByEmail(email)
+        const userByEmail = await this.usersQueryRepository.findUserByEmail(email)
         if (!userByEmail) {
             throw new BadRequestException({
                 message: 'User by email is doesnt exist',
                 field: 'email'
+            })
+        }
+
+        if (userByEmail.emailConfirmation.isConfirmed) {
+            throw new BadRequestException({
+                message: 'User email is already confirmed',
+                field: 'emails'
             })
         }
 

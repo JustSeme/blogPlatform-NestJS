@@ -2,7 +2,7 @@ import {
     UserDTO, UserModelStaticType, UserModelType
 } from "./UsersTypes"
 import {
- EmailConfirmation, EmailConfirmationSchema 
+    EmailConfirmation, EmailConfirmationSchema
 } from "./EmailConfirmationSchema"
 import { PasswordRecovery } from "./PasswordRecoverySchema"
 import {
@@ -29,13 +29,13 @@ export class User {
     createdAt: string
 
     @Prop({
- required: true, type: EmailConfirmationSchema 
-})
+        required: true, type: EmailConfirmationSchema
+    })
     emailConfirmation: EmailConfirmation
 
     @Prop({
- required: true, type: EmailConfirmationSchema 
-})
+        required: true, type: EmailConfirmationSchema
+    })
     passwordRecovery: PasswordRecovery
 
     canBeConfirmed(code: string) {
