@@ -3,7 +3,6 @@ import { settings } from "../settings"
 
 export const emailAdapter = {
     async sendEmail(email: string, subject: string, messageBody: string) {
-
         const transport = nodemailer.createTransport({
             service: 'gmail',
             auth: {

@@ -19,6 +19,7 @@ export class AuthController {
     constructor(protected authService: AuthService, protected jwtService: JwtService, protected usersQueryRepository: UsersQueryRepository) { }
 
     @Post('login')
+    @HttpCode(HttpStatus.OK)
     async login(
         @Body() loginInput: LoginInputModel,
         @Headers('user-agent') userAgent: string,
@@ -77,6 +78,25 @@ export class AuthController {
     @Post('registration')
     @HttpCode(HttpStatus.NO_CONTENT)
     async registration(@Body() userInput: UserInputModel) {
+        const userByLogin = await this.usersQueryRepository.findUserByLogin(userInput.login)
+        const userByEmail = await this.usersQueryRepository.findUserByEmail(userInput.email)
+        if (userByLogin || userByEmail) {
+            const errorsMessages = []
+            if (userByLogin) {
+                errorsMessages.push({
+                    message: 'Login is already exist',
+                    field: 'login'
+                })
+            }
+            if (userByEmail) {
+                errorsMessages.push({
+                    message: 'Email is already exist',
+                    feld: 'email'
+                })
+            }
+            throw new BadRequestException(errorsMessages)
+        }
+
         await this.authService.createUser(userInput.login, userInput.password, userInput.email,)
     }
 
@@ -96,15 +116,21 @@ export class AuthController {
     @Post('registration-email-resending')
     @HttpCode(HttpStatus.NO_CONTENT)
     async resendEmail(@Body() { email }: { email: string }): Promise<void | ErrorMessagesOutputModel> {
+        const userByEmail = this.usersQueryRepository.findUserByEmail(email)
+        if (!userByEmail) {
+            throw new BadRequestException({
+                message: 'User by email is doesnt exist',
+                field: 'email'
+            })
+        }
+
         const result = await this.authService.resendConfirmationCode(email)
 
         if (!result) {
-            return {
-                errorsMessages: [{
-                    message: 'Your email is already confirmed or doesn\'t exist',
-                    field: 'email',
-                }],
-            }
+            throw new BadRequestException({
+                message: 'Your email is already confirmed or doesn\'t exist',
+                field: 'email',
+            })
         }
     }
 
