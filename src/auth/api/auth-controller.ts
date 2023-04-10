@@ -107,10 +107,10 @@ export class AuthController {
         const isConfirmed = await this.authService.confirmEmail(code)
 
         if (!isConfirmed) {
-            throw new BadRequestException({
+            throw new BadRequestException([{
                 message: 'The confirmation code is incorrect, expired or already been applied',
                 field: 'code',
-            })
+            }])
         }
     }
 
@@ -119,26 +119,26 @@ export class AuthController {
     async resendEmail(@Body() { email }: { email: string }): Promise<void | ErrorMessagesOutputModel> {
         const userByEmail = await this.usersQueryRepository.findUserByEmail(email)
         if (!userByEmail) {
-            throw new BadRequestException({
+            throw new BadRequestException([{
                 message: 'User by email is doesnt exist',
                 field: 'email'
-            })
+            }])
         }
 
         if (userByEmail.emailConfirmation.isConfirmed) {
-            throw new BadRequestException({
+            throw new BadRequestException([{
                 message: 'User email is already confirmed',
                 field: 'emails'
-            })
+            }])
         }
 
         const result = await this.authService.resendConfirmationCode(email)
 
         if (!result) {
-            throw new BadRequestException({
+            throw new BadRequestException([{
                 message: 'Your email is already confirmed or doesn\'t exist',
                 field: 'email',
-            })
+            }])
         }
     }
 
@@ -157,14 +157,10 @@ export class AuthController {
         const user = await this.usersQueryRepository.findUserByRecoveryPasswordCode(newPasswordInputModel.recoveryCode)
 
         if (!user || user.passwordRecovery.expirationDate < new Date()) {
-            throw new BadRequestException({
-                errorsMessages: [
-                    {
-                        message: 'recoveryCode is incorrect',
-                        field: 'recoveryCode',
-                    },
-                ],
-            })
+            throw new BadRequestException([{
+                message: 'recoveryCode is incorrect',
+                field: 'recoveryCode',
+            }])
         }
 
         const isConfirmed = await this.authService.confirmRecoveryPassword(user.id, newPasswordInputModel.newPassword)

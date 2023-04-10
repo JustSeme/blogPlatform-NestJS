@@ -33,6 +33,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
         if (status === HttpStatus.BAD_REQUEST) {
             const exceptionBody: any = exception.getResponse()
+            console.log(exceptionBody)
+
 
             response
                 .status(status)
