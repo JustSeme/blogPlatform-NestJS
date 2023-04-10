@@ -8,7 +8,7 @@ import { UsersQueryRepository } from './auth/infrastructure/users-query-reposito
 import { MongooseModule } from '@nestjs/mongoose'
 import { settings } from './settings'
 import {
- User, UsersSchema 
+  User, UsersSchema
 } from './auth/domain/UsersSchema'
 import { UsersRepository } from './auth/infrastructure/users-db-repository'
 import { BlogsService } from './blogs/application/blogs-service'
@@ -16,13 +16,13 @@ import { BlogsQueryRepository } from './blogs/infrastructure/blogs/blogs-query-r
 import { BlogsRepository } from './blogs/infrastructure/blogs/blogs-db-repository'
 import { BlogsController } from './blogs/api/blogs-controller'
 import {
- Blog, BlogSchema 
+  Blog, BlogSchema
 } from './blogs/domain/blogs/BlogsSchema'
 import {
- Post, PostSchema 
+  Post, PostSchema
 } from './blogs/domain/posts/PostsSchema'
 import {
- Comment, CommentsSchema 
+  Comment, CommentsSchema
 } from './blogs/domain/comments/commentsSchema'
 import { PostsService } from './blogs/application/posts-service'
 import { PostsRepository } from './blogs/infrastructure/posts/posts-db-repository'
@@ -32,6 +32,7 @@ import { CommentsController } from './blogs/api/comments-controller'
 import { CommentsService } from './blogs/application/comments-service'
 import { CommentsQueryRepository } from './blogs/infrastructure/comments-query-repository'
 import { CommentsRepository } from './blogs/infrastructure/comments-db-repository'
+import { AuthController } from './auth/api/auth-controller'
 
 
 @Module({
@@ -57,7 +58,7 @@ import { CommentsRepository } from './blogs/infrastructure/comments-db-repositor
       }
     ]),
   ],
-  controllers: [AppController, UsersController, BlogsController, PostsController, CommentsController],
+  controllers: [AppController, UsersController, BlogsController, PostsController, CommentsController, AuthController],
   providers: [
     AppService, AuthService, EmailManager, UsersQueryRepository, UsersRepository,
     JwtService,
