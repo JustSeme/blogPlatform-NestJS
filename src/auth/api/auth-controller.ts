@@ -1,6 +1,6 @@
 import {
     BadRequestException,
-    Body, Controller, Get, Headers, HttpCode, HttpStatus, Ip, NotImplementedException, Post, Req, Res, UnauthorizedException
+    Body, Controller, Get, Headers, HttpCode, HttpStatus, Ip, NotImplementedException, Post, Req, Res, UnauthorizedException, UseGuards
 } from "@nestjs/common"
 import { JwtService } from "src/adapters/jwtService"
 import { AuthService } from "../application/auth-service"
@@ -14,29 +14,24 @@ import { UsersQueryRepository } from "../infrastructure/users-query-repository"
 import { NewPasswordInputModel } from "./models/NewPasswordInputModel"
 import { MeOutputModel } from "../application/dto/MeViewModel"
 import { FieldError } from "src/types/ErrorMessagesOutputModel"
+import { LocalAuthGuard } from "./guards/local-auth.guard"
 
 @Controller('auth')
 export class AuthController {
     constructor(protected authService: AuthService, protected jwtService: JwtService, protected usersQueryRepository: UsersQueryRepository) { }
 
+    @UseGuards(LocalAuthGuard)
     @Post('login')
     @HttpCode(HttpStatus.OK)
     async login(
         @Body() loginInput: LoginInputModel,
         @Headers('user-agent') userAgent: string,
         @Ip() ip: string,
+        @Req() req: Request,
         @Res() res: Response,
     ) {
-        const user = await this.authService.checkCredentials(
-            loginInput.loginOrEmail,
-            loginInput.password,
-        )
 
-        if (!user) {
-            throw new UnauthorizedException()
-        }
-
-        const pairOfTokens = await this.authService.login(user.id, ip, userAgent,)
+        const pairOfTokens = await this.authService.login(req.user.id, ip, userAgent)
 
         res.cookie('refreshToken', pairOfTokens.refreshToken, {
             httpOnly: true,
