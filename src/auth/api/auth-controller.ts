@@ -117,21 +117,6 @@ export class AuthController {
     @Post('registration-email-resending')
     @HttpCode(HttpStatus.NO_CONTENT)
     async resendEmail(@Body() { email }: { email: string }): Promise<void | ErrorMessagesOutputModel> {
-        const userByEmail = await this.usersQueryRepository.findUserByEmail(email)
-        if (!userByEmail) {
-            throw new BadRequestException([{
-                message: 'User by email is doesnt exist',
-                field: 'email'
-            }])
-        }
-
-        if (userByEmail.emailConfirmation.isConfirmed) {
-            throw new BadRequestException([{
-                message: 'User email is already confirmed',
-                field: 'emails'
-            }])
-        }
-
         const result = await this.authService.resendConfirmationCode(email)
 
         if (!result) {
