@@ -1,5 +1,5 @@
 import {
-    Controller, Get, Post, Put, Delete, Param, Query, Body, Headers, HttpStatus, NotFoundException, HttpCode, NotImplementedException, UnauthorizedException, UseGuards
+    Controller, Get, Post, Put, Delete, Param, Query, Body, Headers, HttpStatus, NotFoundException, HttpCode, NotImplementedException, UseGuards, Request
 } from '@nestjs/common'
 import { ReadCommentsQueryParams } from "./models/ReadCommentsQuery"
 import { CommentsWithQueryOutputModel } from "../application/dto/CommentViewModel"
@@ -16,7 +16,7 @@ import { JwtService } from 'src/adapters/jwtService'
 import { BlogsQueryRepository } from '../infrastructure/blogs/blogs-query-repository'
 import { PostsRepository } from '../infrastructure/posts/posts-db-repository'
 import { BasicAuthGuard } from 'src/guards/basic.auth.guard'
-import { JwtGuard } from 'src/guards/jwt.guard'
+import { JwtAuthGuard } from '../guards/jwt-auth.guard'
 
 @Controller('posts')
 export class PostsController {
@@ -67,25 +67,19 @@ export class PostsController {
         return this.postsService.createPost(post, null)
     }
 
-    @UseGuards(JwtGuard)
+    @UseGuards(JwtAuthGuard)
     @Post(':postId/comments')
     async createCommentForPost(
         @Param('postId') postId: string,
         @Body() comment: CommentInputModel,
-        @Headers('Authorization') authorizationHeader: string,
+        @Request() req,
     ): Promise<CommentViewModel> {
         const postById = this.postsRepository.getPostById(postId)
         if (!postById) {
             throw new NotFoundException()
         }
 
-        const accessToken = authorizationHeader.split(' ')[1]
-        const userId = await this.jwtService.getUserIdByToken(accessToken)
-        if (!userId) {
-            throw new UnauthorizedException()
-        }
-
-        const commentator = await this.usersQueryRepository.findUserById(userId)
+        const commentator = await this.usersQueryRepository.findUserById(req.user.userId)
 
         const createdComment = await this.commentsService.createComment(comment.content, commentator, postId)
         if (!createdComment) {
@@ -116,15 +110,14 @@ export class PostsController {
         return
     }
 
-    @UseGuards(JwtGuard)
+    @UseGuards(JwtAuthGuard)
     @Put(':postId/like-status')
     async updateLikeStatus(
         @Param('postId') postId: string,
         @Body() like: LikeInputModel,
-        @Headers('Authorization') authorizationHeader: string,
+        @Request() req
     ): Promise<void> {
-        const accessToken = authorizationHeader.split(' ')[1]
-        const isUpdated = await this.postsService.updateLike(accessToken, postId, like.likeStatus)
+        const isUpdated = await this.postsService.updateLike(req.user.userId, postId, like.likeStatus)
         if (!isUpdated) {
             throw new NotImplementedException()
         }

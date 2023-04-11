@@ -1,13 +1,9 @@
 import {
     BadRequestException,
-    Body, Controller, Get, Headers, HttpCode, HttpStatus, Ip, NotImplementedException, Post, Req, Res, UnauthorizedException, UseGuards
+    Body, Controller, Get, HttpCode, HttpStatus, NotImplementedException, Post, Request, Response, UnauthorizedException, UseGuards
 } from "@nestjs/common"
 import { JwtService } from "src/adapters/jwtService"
 import { AuthService } from "../application/auth-service"
-import { LoginInputModel } from "./models/LoginInputModel"
-import {
-    Request, Response
-} from "express"
 import { UserInputModel } from "./models/UserInputModel"
 import { ErrorMessagesOutputModel } from "src/types/ErrorMessagesOutputModel"
 import { UsersQueryRepository } from "../infrastructure/users-query-repository"
@@ -24,14 +20,12 @@ export class AuthController {
     @Post('login')
     @HttpCode(HttpStatus.OK)
     async login(
-        @Body() loginInput: LoginInputModel,
-        @Headers('user-agent') userAgent: string,
-        @Ip() ip: string,
-        @Req() req: Request,
-        @Res() res: Response,
+        @Request() req,
+        @Response() res,
     ) {
+        const deviceName = req.headers["user-agent"]
 
-        const pairOfTokens = await this.authService.login(req.user.id, ip, userAgent)
+        const pairOfTokens = await this.authService.login(req.user.id, req.ip, deviceName)
 
         res.cookie('refreshToken', pairOfTokens.refreshToken, {
             httpOnly: true,
@@ -42,7 +36,7 @@ export class AuthController {
     }
 
     @Post('refresh-tokens')
-    async refreshTokens(@Req() req: Request, @Res() res: Response) {
+    async refreshTokens(@Request() req, @Response() res) {
         const refreshToken = req.cookies.refreshToken
 
         const newTokens = await this.jwtService.refreshTokens(refreshToken)
@@ -61,7 +55,7 @@ export class AuthController {
 
     @Post('logout')
     @HttpCode(HttpStatus.NO_CONTENT)
-    async logout(@Req() req: Request) {
+    async logout(@Request() req) {
         const refreshToken = req.cookies.refreshToken
 
         const isLogout = this.authService.logout(refreshToken)
@@ -150,7 +144,7 @@ export class AuthController {
     }
 
     @Get('me')
-    async sendUserInfo(@Req() req: Request): Promise<MeOutputModel> {
+    async sendUserInfo(@Request() req): Promise<MeOutputModel> {
         const accessToken = req.cookies.accessToken
         const userId = await this.jwtService.getUserIdByToken(accessToken)
 

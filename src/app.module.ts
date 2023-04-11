@@ -33,6 +33,9 @@ import { CommentsService } from './blogs/application/comments-service'
 import { CommentsQueryRepository } from './blogs/infrastructure/comments-query-repository'
 import { CommentsRepository } from './blogs/infrastructure/comments-db-repository'
 import { AuthController } from './auth/api/auth-controller'
+import { PassportModule } from '@nestjs/passport'
+import { LocalStrategy } from './auth/api/strategies/local.strategy'
+import { JwtStrategy } from './blogs/strategies/jwt.strategy'
 
 
 @Module({
@@ -57,10 +60,11 @@ import { AuthController } from './auth/api/auth-controller'
         schema: CommentsSchema
       }
     ]),
+    PassportModule,
   ],
   controllers: [AppController, UsersController, BlogsController, PostsController, CommentsController, AuthController],
   providers: [
-    AppService, AuthService, EmailManager, UsersQueryRepository, UsersRepository,
+    AppService, AuthService, EmailManager, UsersQueryRepository, UsersRepository, LocalStrategy, JwtStrategy,
     JwtService,
     BlogsService, BlogsQueryRepository, BlogsRepository,
     PostsService, PostsRepository,

@@ -45,16 +45,11 @@ export class CommentsService {
         return this.commentsRepository.updateComment(commentId, content)
     }
 
-    async updateLike(accessToken: string, commentId: string, status: LikeType) {
+    async updateLike(userId: string, commentId: string, status: LikeType) {
         const updatingComment = await this.commentsRepository.getCommentById(commentId)
         if (!updatingComment) {
             return false
         }
-
-        const jwtResult = await this.jwtService.verifyAccessToken(accessToken)
-        if (!jwtResult) return false
-
-        const userId = jwtResult.userId
 
         const likeData: LikeObjectType = {
             userId,

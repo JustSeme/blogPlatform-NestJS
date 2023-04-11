@@ -64,16 +64,11 @@ export class PostsService {
         return await this.postsRepository.updatePost(id, body)
     }
 
-    async updateLike(accessToken: string, postId: string, status: LikeType) {
+    async updateLike(userId: string, postId: string, status: LikeType) {
         const updatablePost = await this.postsRepository.getPostById(postId)
         if (!updatablePost) {
             return false
         }
-
-        const jwtResult = await this.jwtService.verifyAccessToken(accessToken)
-        if (!jwtResult) return false
-
-        const userId = jwtResult.userId
 
         const likedUser = await this.usersRepository.findUserById(userId)
         const likeData: ExtendedLikeObjectType = {

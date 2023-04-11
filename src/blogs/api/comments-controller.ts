@@ -1,11 +1,12 @@
 import {
     Body,
-    Controller, Delete, Get, Headers, HttpCode, HttpStatus, NotFoundException, NotImplementedException, Param, Put
+    Controller, Delete, Get, Headers, HttpCode, HttpStatus, NotFoundException, NotImplementedException, Param, Put, Request, UseGuards
 } from "@nestjs/common"
 import { CommentsService } from "../application/comments-service"
 import { CommentInputModel } from "./models/CommentInputModel"
 import { CommentViewModel } from "../application/dto/CommentViewModel"
 import { LikeInputModel } from "./models/LikeInputModel"
+import { JwtAuthGuard } from "../guards/jwt-auth.guard"
 
 @Controller('comments')
 export class CommentsController {
@@ -24,6 +25,7 @@ export class CommentsController {
         return findedComment
     }
 
+    @UseGuards(JwtAuthGuard)
     @Delete(':commentId')
     @HttpCode(HttpStatus.NO_CONTENT)
     async deleteComment(@Param('commentId') commentId: string): Promise<void> {
@@ -33,6 +35,7 @@ export class CommentsController {
         }
     }
 
+    @UseGuards(JwtAuthGuard)
     @Put(':commentId')
     @HttpCode(HttpStatus.NO_CONTENT)
     async updateComment(
@@ -45,16 +48,15 @@ export class CommentsController {
         }
     }
 
-    @Put(':commentId/like')
+    @UseGuards(JwtAuthGuard)
+    @Put(':commentId/like-status')
     @HttpCode(HttpStatus.NO_CONTENT)
     async updateLikeStatus(
         @Param('commentId') commentId: string,
         @Body() body: LikeInputModel,
-        @Headers() authorizationHeader: string,
+        @Request() req
     ): Promise<void> {
-        const accessToken = authorizationHeader ? authorizationHeader.split(' ')[1] : null
-
-        const isUpdated = await this.commentsService.updateLike(accessToken, commentId, body.likeStatus)
+        const isUpdated = await this.commentsService.updateLike(req.user.userId, commentId, body.likeStatus)
         if (!isUpdated) {
             throw new NotImplementedException('Method not implemented.')
         }
