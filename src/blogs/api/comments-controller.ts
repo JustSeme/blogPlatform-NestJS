@@ -1,12 +1,13 @@
 import {
     Body,
-    Controller, Delete, Get, Headers, HttpCode, HttpStatus, NotFoundException, NotImplementedException, Param, Put, Request, UseGuards
+    Controller, Delete, Get, Headers, HttpCode, HttpStatus, NotFoundException, NotImplementedException, Param, Put, UseGuards
 } from "@nestjs/common"
 import { CommentsService } from "../application/comments-service"
 import { CommentInputModel } from "./models/CommentInputModel"
 import { CommentViewModel } from "../application/dto/CommentViewModel"
 import { LikeInputModel } from "./models/LikeInputModel"
-import { JwtAuthGuard } from "../guards/jwt-auth.guard"
+import { CurrentUserId } from "../current-userId.param.decorator"
+import { JwtAuthGuard } from "./guards/jwt-auth.guard"
 
 @Controller('comments')
 export class CommentsController {
@@ -54,9 +55,9 @@ export class CommentsController {
     async updateLikeStatus(
         @Param('commentId') commentId: string,
         @Body() body: LikeInputModel,
-        @Request() req
+        @CurrentUserId() userId: string
     ): Promise<void> {
-        const isUpdated = await this.commentsService.updateLike(req.user.userId, commentId, body.likeStatus)
+        const isUpdated = await this.commentsService.updateLike(userId, commentId, body.likeStatus)
         if (!isUpdated) {
             throw new NotImplementedException('Method not implemented.')
         }

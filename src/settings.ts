@@ -8,6 +8,8 @@ export const settings = {
     PORT: process.env.PORT || 3000,
     GMAIL_LOGIN: process.env.GMAIL_LOGIN,
     GMAIL_APP_PASSWORD: process.env.GMAIL_APP_PASSWORD,
+    SA_LOGIN: process.env.SA_LOGIN,
+    SA_PASSWORD: process.env.SA_PASSWORD,
     ACCESS_TOKEN_EXPIRE_TIME: '5min',
     REFRESH_TOKEN_EXPIRE_TIME: '20min',
 }

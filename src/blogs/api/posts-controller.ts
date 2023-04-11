@@ -1,5 +1,5 @@
 import {
-    Controller, Get, Post, Put, Delete, Param, Query, Body, Headers, HttpStatus, NotFoundException, HttpCode, NotImplementedException, UseGuards, Request
+    Controller, Get, Post, Put, Delete, Param, Query, Body, Headers, HttpStatus, NotFoundException, HttpCode, NotImplementedException, UseGuards
 } from '@nestjs/common'
 import { ReadCommentsQueryParams } from "./models/ReadCommentsQuery"
 import { CommentsWithQueryOutputModel } from "../application/dto/CommentViewModel"
@@ -15,8 +15,9 @@ import { UsersQueryRepository } from 'src/auth/infrastructure/users-query-reposi
 import { JwtService } from 'src/adapters/jwtService'
 import { BlogsQueryRepository } from '../infrastructure/blogs/blogs-query-repository'
 import { PostsRepository } from '../infrastructure/posts/posts-db-repository'
-import { BasicAuthGuard } from 'src/guards/basic.auth.guard'
-import { JwtAuthGuard } from '../guards/jwt-auth.guard'
+import { CurrentUserId } from '../current-userId.param.decorator'
+import { JwtAuthGuard } from './guards/jwt-auth.guard'
+import { BasicAuthGuard } from './guards/basic-auth.guard'
 
 @Controller('posts')
 export class PostsController {
@@ -72,14 +73,14 @@ export class PostsController {
     async createCommentForPost(
         @Param('postId') postId: string,
         @Body() comment: CommentInputModel,
-        @Request() req,
+        @CurrentUserId() userId: string,
     ): Promise<CommentViewModel> {
         const postById = this.postsRepository.getPostById(postId)
         if (!postById) {
             throw new NotFoundException()
         }
 
-        const commentator = await this.usersQueryRepository.findUserById(req.user.userId)
+        const commentator = await this.usersQueryRepository.findUserById(userId)
 
         const createdComment = await this.commentsService.createComment(comment.content, commentator, postId)
         if (!createdComment) {
@@ -115,9 +116,9 @@ export class PostsController {
     async updateLikeStatus(
         @Param('postId') postId: string,
         @Body() like: LikeInputModel,
-        @Request() req
+        @CurrentUserId() userId: string
     ): Promise<void> {
-        const isUpdated = await this.postsService.updateLike(req.user.userId, postId, like.likeStatus)
+        const isUpdated = await this.postsService.updateLike(userId, postId, like.likeStatus)
         if (!isUpdated) {
             throw new NotImplementedException()
         }
