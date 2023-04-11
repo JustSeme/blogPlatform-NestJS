@@ -108,6 +108,7 @@ export class PostsController {
 
     @UseGuards(JwtAuthGuard)
     @Put(':postId/like-status')
+    @HttpCode(HttpStatus.NO_CONTENT)
     async updateLikeStatus(
         @Param('postId') postId: string,
         @Body() likeInputModel: LikeInputModel,
