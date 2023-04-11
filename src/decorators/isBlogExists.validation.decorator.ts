@@ -12,8 +12,6 @@ export class IsBlogByIdExist implements ValidatorConstraintInterface {
     constructor(private blogsQueryRepository: BlogsQueryRepository) { }
 
     async validate(blogId: string) {
-        /* const blogId = args.object.blogId */
-
         const blogById = await this.blogsQueryRepository.findBlogById(blogId)
 
         if (!blogById) {

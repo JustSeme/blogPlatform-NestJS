@@ -3,7 +3,6 @@ import { BlogViewModel } from "../application/dto/BlogViewModel"
 import { BlogsService } from "../application/blogs-service"
 import { BlogsQueryRepository } from "../infrastructure/blogs/blogs-query-repository"
 import { BlogsWithQueryOutputModel } from '../application/dto/BlogViewModel'
-import { PostInputModel } from "./models/PostInputModel"
 import { PostsService } from "../application/posts-service"
 import { ReadBlogsQueryParams } from "./models/ReadBlogsQuery"
 import { ReadPostsQueryParams } from "./models/ReadPostsQuery"
@@ -13,6 +12,9 @@ import {
 } from '@nestjs/common'
 import { PostsWithQueryOutputModel } from "src/blogs/domain/posts/PostsTypes"
 import { BasicAuthGuard } from "./guards/basic-auth.guard"
+import { PostInputModelWithoutBlogId } from "./models/PostInputModelWithoutBlogId"
+import { PostInputModel } from "./models/PostInputModel"
+import { IsBlogByIdExistPipe } from "./pipes/isBlogExists.validation.pipe"
 
 @Controller('blogs')
 export class BlogsController {
@@ -66,15 +68,19 @@ export class BlogsController {
     @Post(':blogId/posts')
     @HttpCode(HttpStatus.CREATED)
     async createPostForBlog(
-        @Body() postInputModel: PostInputModel,
-        @Param('blogId') blogId: string,
+        @Body() postInputModelWithoutBlogId: PostInputModelWithoutBlogId,
+        @Param('blogId', IsBlogByIdExistPipe) blogId: string,
     ): Promise<PostsViewModel> {
         const blogById = await this.blogsQueryRepository.findBlogById(blogId)
         if (!blogById) {
             throw new NotFoundException()
         }
 
-        const createdPost = await this.postsService.createPost(postInputModel, blogId)
+        const postInputModel: PostInputModel = {
+            ...postInputModelWithoutBlogId, blogId: blogId
+        }
+
+        const createdPost = await this.postsService.createPost(postInputModel)
 
         return createdPost
     }

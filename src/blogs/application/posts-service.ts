@@ -43,8 +43,8 @@ export class PostsService {
         return await this.postsRepository.deletePosts(id)
     }
 
-    async createPost(body: PostInputModel, blogId: string | null): Promise<PostsViewModel> {
-        const blogById = await this.blogsRepository.findBlogById(blogId ? blogId : body.blogId)
+    async createPost(body: PostInputModel): Promise<PostsViewModel> {
+        const blogById = await this.blogsRepository.findBlogById(body.blogId)
 
         const createdPost: PostDBModel = new PostDBModel(
             body.title,
