@@ -9,7 +9,7 @@ import { ErrorMessagesOutputModel } from "src/types/ErrorMessagesOutputModel"
 import {
     Body, Controller, Delete, Get, Param, Post, Query, HttpCode, NotFoundException, HttpStatus, NotImplementedException, UseGuards
 } from "@nestjs/common"
-import { BasicAuthGuard } from "src/guards/basic.auth.guard"
+import { BasicAuthGuard } from "src/blogs/api/guards/basic-auth.guard"
 
 @UseGuards(BasicAuthGuard)
 @Controller('users')

@@ -12,7 +12,7 @@ import {
     Controller, Get, Param, Query, NotFoundException, Headers, Post, Body, HttpCode, Put, Delete, HttpStatus, UseGuards
 } from '@nestjs/common'
 import { PostsWithQueryOutputModel } from "src/blogs/domain/posts/PostsTypes"
-import { BasicAuthGuard } from "src/guards/basic.auth.guard"
+import { BasicAuthGuard } from "./guards/basic-auth.guard"
 
 @Controller('blogs')
 export class BlogsController {

@@ -36,6 +36,7 @@ import { AuthController } from './auth/api/auth-controller'
 import { PassportModule } from '@nestjs/passport'
 import { LocalStrategy } from './auth/api/strategies/local.strategy'
 import { JwtStrategy } from './blogs/strategies/jwt.strategy'
+import { BasicStrategy } from './blogs/api/strategies/basic.strategy'
 
 
 @Module({
@@ -64,7 +65,7 @@ import { JwtStrategy } from './blogs/strategies/jwt.strategy'
   ],
   controllers: [AppController, UsersController, BlogsController, PostsController, CommentsController, AuthController],
   providers: [
-    AppService, AuthService, EmailManager, UsersQueryRepository, UsersRepository, LocalStrategy, JwtStrategy,
+    AppService, AuthService, EmailManager, UsersQueryRepository, UsersRepository, LocalStrategy, JwtStrategy, BasicStrategy,
     JwtService,
     BlogsService, BlogsQueryRepository, BlogsRepository,
     PostsService, PostsRepository,
