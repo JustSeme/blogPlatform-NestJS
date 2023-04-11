@@ -3,7 +3,7 @@ import {
 } from "./dto/CommentViewModel"
 import { LikeType } from "../api/models/LikeInputModel"
 import { ReadCommentsQueryParams } from "../api/models/ReadCommentsQuery"
-import { CommentsRepository } from "../infrastructure/comments-db-repository"
+import { CommentsRepository } from "../infrastructure/comments/comments-db-repository"
 import { UserDTO } from "../../auth/domain/UsersTypes"
 import { Injectable } from "@nestjs/common"
 import { JwtService } from "src/adapters/jwtService"

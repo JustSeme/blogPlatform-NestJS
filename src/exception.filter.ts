@@ -31,10 +31,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
         const request = ctx.getRequest<Request>()
         const status = exception.getStatus()
 
-        if (status === HttpStatus.BAD_REQUEST) {
+        if (status === HttpStatus.BAD_REQUEST || status === HttpStatus.NOT_FOUND) {
             const exceptionBody: any = exception.getResponse()
-            console.log(exceptionBody)
-
 
             response
                 .status(status)

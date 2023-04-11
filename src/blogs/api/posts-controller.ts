@@ -62,7 +62,10 @@ export class PostsController {
     async createPost(@Body() post: PostInputModel): Promise<PostsViewModel> {
         const blogById = await this.blogsQueryRepository.findBlogById(post.blogId)
         if (!blogById) {
-            throw new NotFoundException()
+            throw new NotFoundException([{
+                message: 'blog by blogId is not found',
+                field: 'blogId'
+            }])
         }
 
         return this.postsService.createPost(post, null)

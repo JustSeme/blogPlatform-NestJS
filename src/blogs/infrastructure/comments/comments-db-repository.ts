@@ -1,10 +1,10 @@
-import { ReadCommentsQueryParams } from "../api/models/ReadCommentsQuery"
+import { ReadCommentsQueryParams } from "../../api/models/ReadCommentsQuery"
 import { Injectable } from "@nestjs/common"
 import { InjectModel } from "@nestjs/mongoose"
-import { Comment } from "../domain/comments/commentsSchema"
+import { Comment } from "../../domain/comments/commentsSchema"
 import {
     CommentDBModel, CommentModelType, LikeObjectType
-} from "../domain/comments/CommentTypes"
+} from "../../domain/comments/CommentTypes"
 
 @Injectable()
 export class CommentsRepository {

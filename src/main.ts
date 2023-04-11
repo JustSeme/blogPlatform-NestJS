@@ -10,6 +10,7 @@ import {
   ErrorExceptionFilter, HttpExceptionFilter
 } from "./exception.filter"
 import { FieldError } from "./types/ErrorMessagesOutputModel"
+import { useContainer } from "class-validator"
 
 const customExceptionFactory = (errors) => {
   const errorsArray = []
@@ -34,6 +35,9 @@ const customExceptionFactory = (errors) => {
 export let app: any
 async function bootstrap() {
   app = await NestFactory.create<NestExpressApplication>(AppModule)
+
+  useContainer(app.select(AppModule), { fallbackOnErrors: true })
+
   app.use(cookieParser())
   app.set('trust proxy', true)
 
