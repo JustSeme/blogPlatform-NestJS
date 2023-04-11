@@ -37,7 +37,7 @@ import { PassportModule } from '@nestjs/passport'
 import { LocalStrategy } from './auth/api/strategies/local.strategy'
 import { JwtStrategy } from './blogs/strategies/jwt.strategy'
 import { BasicStrategy } from './blogs/api/strategies/basic.strategy'
-import { IsBlogByIdExist } from './decorators/is-blogById-exists.pipe.decorator'
+import { IsBlogByIdExist } from './decorators/isBlogExists.validation.decorator'
 
 
 @Module({

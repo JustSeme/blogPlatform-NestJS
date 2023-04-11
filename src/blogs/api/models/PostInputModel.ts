@@ -1,19 +1,19 @@
-import { Transform } from "class-transformer"
 import {
     Length, Validate
 } from "class-validator"
-import { IsBlogByIdExist } from "src/decorators/is-blogById-exists.pipe.decorator"
+import { IsBlogByIdExist } from "src/decorators/isBlogExists.validation.decorator"
+import { TrimIfString } from "src/decorators/trimIfString.decorator"
 
 export class PostInputModel {
-    @Transform(({ value }) => value.trim())
+    @TrimIfString()
     @Length(3, 30)
     title: string
 
-    @Transform(({ value }) => value.trim())
+    @TrimIfString()
     @Length(3, 100)
     shortDescription: string
 
-    @Transform(({ value }) => value.trim())
+    @TrimIfString()
     @Length(3, 1000)
     content: string
 
