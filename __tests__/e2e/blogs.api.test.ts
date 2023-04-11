@@ -1,6 +1,5 @@
-import { server } from '../../src/app'
 import request from 'supertest'
-import { baseURL, HTTP_STATUSES, app } from "../../src/settings";
+import { app } from '../../src/main.js'
 
 describe('/blogs', () => {
     beforeAll(async () => {

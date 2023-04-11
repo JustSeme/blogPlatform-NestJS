@@ -1,8 +1,10 @@
 import {
     IsUrl, Length
 } from "class-validator"
+import { Transform } from "class-transformer"
 
 export class BlogInputModel {
+    @Transform(({ value }) => value.trim())
     @Length(3, 15)
     name: string
 

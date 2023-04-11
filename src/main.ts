@@ -27,8 +27,9 @@ const customExceptionFactory = (errors) => {
   throw new BadRequestException(errorsArray)
 }
 
+export let app: any
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule)
+  app = await NestFactory.create<NestExpressApplication>(AppModule)
   app.use(cookieParser())
   app.set('trust proxy', true)
 
@@ -42,4 +43,5 @@ async function bootstrap() {
 
   await app.listen(settings.PORT)
 }
+
 bootstrap()
