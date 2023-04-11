@@ -11,7 +11,7 @@ export class PostInputModel {
     shortDescription: string
 
     @Transform(({ value }) => value.trim())
-    @Length(100, 1000)
+    @Length(3, 1000)
     content: string
     blogId: string
 }

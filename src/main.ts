@@ -19,8 +19,12 @@ const customExceptionFactory = (errors) => {
       message: ''
     }
     const constrainsKeys = Object.keys(e.constraints)
-    constrainsKeys.forEach(ckey => {
-      displayedError.message = displayedError.message + '; ' + e.constraints[ckey]
+    constrainsKeys.forEach((ckey, index) => {
+      if (index === 0) {
+        displayedError.message = e.constraints[ckey]
+      } else {
+        displayedError.message = displayedError.message + '; ' + e.constraints[ckey]
+      }
     })
     errorsArray.push(displayedError)
   })

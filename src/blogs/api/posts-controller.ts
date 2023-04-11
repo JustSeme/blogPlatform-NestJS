@@ -115,12 +115,12 @@ export class PostsController {
     @Put(':postId/like-status')
     async updateLikeStatus(
         @Param('postId') postId: string,
-        @Body() like: LikeInputModel,
+        @Body() likeInputModel: LikeInputModel,
         @CurrentUserId() userId: string
     ): Promise<void> {
-        const isUpdated = await this.postsService.updateLike(userId, postId, like.likeStatus)
+        const isUpdated = await this.postsService.updateLike(userId, postId, likeInputModel.likeStatus)
         if (!isUpdated) {
-            throw new NotImplementedException()
+            throw new NotFoundException()
         }
         return
     }
