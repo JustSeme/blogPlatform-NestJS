@@ -1,6 +1,6 @@
 import {
     Body,
-    Controller, Delete, Get, Headers, HttpCode, HttpStatus, NotFoundException, NotImplementedException, Param, Put, UseGuards
+    Controller, Delete, ForbiddenException, Get, Headers, HttpCode, HttpStatus, NotFoundException, NotImplementedException, Param, Put, UseGuards
 } from "@nestjs/common"
 import { CommentsService } from "../application/comments-service"
 import { CommentInputModel } from "./models/CommentInputModel"
@@ -41,9 +41,18 @@ export class CommentsController {
     @Put(':commentId')
     @HttpCode(HttpStatus.NO_CONTENT)
     async updateComment(
-        @Param('commentId') commentId: string,
+        @Param('commentId', IsCommentExistsPipe) commentId: string,
         @Body() body: CommentInputModel,
+        @CurrentUserId() userId: string,
     ): Promise<void> {
+        const commentByCommentId = await this.commentsService.getCommentById(commentId, null)
+        if (commentByCommentId.commentatorInfo.userId !== userId) {
+            throw new ForbiddenException([{
+                message: 'that is not your own',
+                field: 'commentId'
+            }])
+        }
+
         const isUpdated = await this.commentsService.updateComment(commentId, body.content)
         if (!isUpdated) {
             throw new NotFoundException('Comment not found')

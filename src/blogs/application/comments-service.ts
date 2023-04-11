@@ -80,10 +80,10 @@ export class CommentsService {
         return commentsViewQueryData
     }
 
-    async getCommentById(commentId: string, accessToken: string | null) {
+    async getCommentById(commentId: string, accessToken: string | null): Promise<CommentViewModel | null> {
         const recivedComment = await this.commentsRepository.getCommentById(commentId)
         if (!recivedComment) {
-            return false
+            return null
         }
 
         const displayedComment: CommentViewModel[] = await this.transformLikeInfo([recivedComment], accessToken)
