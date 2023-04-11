@@ -1,0 +1,20 @@
+import {
+    Injectable, NotFoundException, PipeTransform
+} from "@nestjs/common"
+import { PostsRepository } from "src/blogs/infrastructure/posts/posts-db-repository"
+
+@Injectable()
+export class IsPostExistsPipe implements PipeTransform {
+    constructor(private postsRepository: PostsRepository) { }
+
+    async transform(postId: string): Promise<string> {
+        if (!(await this.postsRepository.isPostExists(postId))) {
+            throw new NotFoundException([{
+                message: 'post by postId parameter is not exists',
+                field: 'postId'
+            }])
+        }
+        return postId
+    }
+
+}

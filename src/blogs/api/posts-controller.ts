@@ -18,6 +18,7 @@ import { PostsRepository } from '../infrastructure/posts/posts-db-repository'
 import { CurrentUserId } from '../current-userId.param.decorator'
 import { JwtAuthGuard } from './guards/jwt-auth.guard'
 import { BasicAuthGuard } from './guards/basic-auth.guard'
+import { IsPostExistsPipe } from './pipes/isPostExists.validation.pipe'
 
 @Controller('posts')
 export class PostsController {
@@ -47,7 +48,7 @@ export class PostsController {
 
     @Get(':postId/comments')
     async getCommentsForPost(
-        @Param('postId') postId: string,
+        @Param('postId', IsPostExistsPipe) postId: string,
         @Query() commentsQueryParams: ReadCommentsQueryParams,
         @Headers('Authorization') authorizationHeader: string,
     ): Promise<CommentsWithQueryOutputModel> {

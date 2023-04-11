@@ -98,4 +98,9 @@ export class CommentsRepository {
             return true
         }
     }
+
+    async isCommentExists(commentId: string): Promise<boolean> {
+        const commentById = this.CommentModel.findOne({ id: commentId })
+        return commentById ? true : false
+    }
 }

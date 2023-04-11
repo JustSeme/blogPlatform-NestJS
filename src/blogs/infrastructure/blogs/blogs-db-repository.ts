@@ -37,4 +37,9 @@ export class BlogsRepository {
             _id: 0, __v: 0
         })
     }
+
+    async isBlogExist(blogId: string): Promise<boolean> {
+        const blogById = await this.BlogsModel.findOne({ id: blogId })
+        return blogById ? true : false
+    }
 }

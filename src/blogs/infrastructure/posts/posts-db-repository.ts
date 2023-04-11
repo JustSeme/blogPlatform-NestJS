@@ -120,4 +120,9 @@ export class PostsRepository {
         await updatablePost.save()
         return true
     }
+
+    async isPostExists(postId: string) {
+        const postById = this.PostModel.findOne({ id: postId })
+        return postById ? true : false
+    }
 }

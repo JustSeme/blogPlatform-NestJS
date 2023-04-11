@@ -8,6 +8,7 @@ import { CommentViewModel } from "../application/dto/CommentViewModel"
 import { LikeInputModel } from "./models/LikeInputModel"
 import { CurrentUserId } from "../current-userId.param.decorator"
 import { JwtAuthGuard } from "./guards/jwt-auth.guard"
+import { IsCommentExistsPipe } from "./pipes/isCommentExists.validation.pipe"
 
 @Controller('comments')
 export class CommentsController {
@@ -53,7 +54,7 @@ export class CommentsController {
     @Put(':commentId/like-status')
     @HttpCode(HttpStatus.NO_CONTENT)
     async updateLikeStatus(
-        @Param('commentId') commentId: string,
+        @Param('commentId', IsCommentExistsPipe) commentId: string,
         @Body() body: LikeInputModel,
         @CurrentUserId() userId: string
     ): Promise<void> {

@@ -115,7 +115,10 @@ export class CommentsService {
             const convertedComment: CommentViewModel = {
                 id: comment.id,
                 content: comment.content,
-                commentatorInfo: { ...comment.commentatorInfo },
+                commentatorInfo: {
+                    userId: comment.commentatorInfo.userId,
+                    userLogin: comment.commentatorInfo.userLogin
+                },
                 createdAt: comment.createdAt,
                 likesInfo: {
                     likesCount: likesInfoData.likes.length,
