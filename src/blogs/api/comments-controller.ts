@@ -9,6 +9,7 @@ import { LikeInputModel } from "./models/LikeInputModel"
 import { CurrentUserId } from "../current-userId.param.decorator"
 import { JwtAuthGuard } from "./guards/jwt-auth.guard"
 import { IsCommentExistsPipe } from "./pipes/isCommentExists.validation.pipe"
+import { generateErrorsMessages } from "src/helpers"
 
 @Controller('comments')
 export class CommentsController {
@@ -21,7 +22,7 @@ export class CommentsController {
 
         const findedComment = await this.commentsService.getCommentById(commentId, accessToken)
         if (!findedComment) {
-            throw new NotFoundException('Comment not found')
+            throw new NotFoundException(generateErrorsMessages('Comment by commentId paramether is not found', 'commentId'))
         }
 
         return findedComment
@@ -33,7 +34,7 @@ export class CommentsController {
     async deleteComment(@Param('commentId') commentId: string): Promise<void> {
         const isDeleted = await this.commentsService.deleteComment(commentId)
         if (!isDeleted) {
-            throw new NotFoundException('Comment not found')
+            throw new NotFoundException(generateErrorsMessages('Comment by commentId paramether is not found', 'commentId'))
         }
     }
 
@@ -47,16 +48,10 @@ export class CommentsController {
     ): Promise<void> {
         const commentByCommentId = await this.commentsService.getCommentById(commentId, null)
         if (commentByCommentId.commentatorInfo.userId !== userId) {
-            throw new ForbiddenException([{
-                message: 'that is not your own',
-                field: 'commentId'
-            }])
+            throw new ForbiddenException(generateErrorsMessages('That is not your own', 'commentId'))
         }
 
-        const isUpdated = await this.commentsService.updateComment(commentId, body.content)
-        if (!isUpdated) {
-            throw new NotFoundException('Comment not found')
-        }
+        await this.commentsService.updateComment(commentId, body.content)
     }
 
     @UseGuards(JwtAuthGuard)
