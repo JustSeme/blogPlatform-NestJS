@@ -2,6 +2,7 @@ import {
     Injectable, NotFoundException, PipeTransform
 } from "@nestjs/common"
 import { PostsRepository } from "src/blogs/infrastructure/posts/posts-db-repository"
+import { generateErrorsMessages } from "src/helpers"
 
 @Injectable()
 export class IsPostExistsPipe implements PipeTransform {
@@ -9,10 +10,7 @@ export class IsPostExistsPipe implements PipeTransform {
 
     async transform(postId: string): Promise<string> {
         if (!(await this.postsRepository.isPostExists(postId))) {
-            throw new NotFoundException([{
-                message: 'post by postId parameter is not exists',
-                field: 'postId'
-            }])
+            throw new NotFoundException(generateErrorsMessages('post by postId parameter is not exists', 'postId'))
         }
         return postId
     }

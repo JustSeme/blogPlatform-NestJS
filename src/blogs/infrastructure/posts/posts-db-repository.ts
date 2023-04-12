@@ -122,7 +122,7 @@ export class PostsRepository {
     }
 
     async isPostExists(postId: string) {
-        const postById = this.PostModel.findOne({ id: postId })
+        const postById = await this.PostModel.findOne({ id: postId })
         return postById ? true : false
     }
 }
