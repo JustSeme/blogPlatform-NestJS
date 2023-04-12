@@ -37,7 +37,7 @@ export class PostsController {
     }
 
     @Get(':postId')
-    async getPostById(@Param('postId') postId: string, @Headers('Authorization') authorizationHeader: string,): Promise<PostsViewModel> {
+    async getPostById(@Param('postId', IsPostExistsPipe) postId: string, @Headers('Authorization') authorizationHeader: string,): Promise<PostsViewModel> {
         const accessToken = authorizationHeader ? authorizationHeader.split(' ')[1] : null
         const findedPosts = await this.postsService.findPostById(postId, accessToken)
         if (!findedPosts) {
@@ -67,7 +67,7 @@ export class PostsController {
     @UseGuards(JwtAuthGuard)
     @Post(':postId/comments')
     async createCommentForPost(
-        @Param('postId') postId: string,
+        @Param('postId', IsPostExistsPipe) postId: string,
         @Body() comment: CommentInputModel,
         @CurrentUserId() userId: string,
     ): Promise<CommentViewModel> {
@@ -88,7 +88,7 @@ export class PostsController {
     @UseGuards(BasicAuthGuard)
     @Put(':postId')
     @HttpCode(HttpStatus.NO_CONTENT)
-    async updatePost(@Param('postId') postId: string, @Body() postInputModel: PostInputModel): Promise<void> {
+    async updatePost(@Param('postId', IsPostExistsPipe) postId: string, @Body() postInputModel: PostInputModel): Promise<void> {
         const isUpdated = await this.postsService.updatePost(postId, postInputModel)
         if (!isUpdated) {
             throw new NotFoundException()
@@ -99,7 +99,7 @@ export class PostsController {
     @UseGuards(BasicAuthGuard)
     @Delete(':id')
     @HttpCode(HttpStatus.NO_CONTENT)
-    async deletePost(@Param('id') id: string): Promise<void> {
+    async deletePost(@Param('id', IsPostExistsPipe) id: string): Promise<void> {
         const isDeleted = await this.postsService.deletePosts(id)
         if (!isDeleted) {
             throw new NotFoundException()
@@ -111,7 +111,7 @@ export class PostsController {
     @Put(':postId/like-status')
     @HttpCode(HttpStatus.NO_CONTENT)
     async updateLikeStatus(
-        @Param('postId') postId: string,
+        @Param('postId', IsPostExistsPipe) postId: string,
         @Body() likeInputModel: LikeInputModel,
         @CurrentUserId() userId: string
     ): Promise<void> {
