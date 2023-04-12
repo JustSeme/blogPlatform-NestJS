@@ -100,7 +100,7 @@ export class CommentsRepository {
     }
 
     async isCommentExists(commentId: string): Promise<boolean> {
-        const commentById = this.CommentModel.findOne({ id: commentId })
+        const commentById = await this.CommentModel.findOne({ id: commentId })
         return commentById ? true : false
     }
 }
