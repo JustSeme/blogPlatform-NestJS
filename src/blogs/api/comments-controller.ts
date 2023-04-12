@@ -16,7 +16,7 @@ export class CommentsController {
     constructor(protected commentsService: CommentsService) { }
 
     @Get(':commentId')
-    async getComment(@Param('commentId') commentId: string,
+    async getComment(@Param('commentId', IsCommentExistsPipe) commentId: string,
         @Headers('Authorization') authorizationHeader: string,): Promise<CommentViewModel> {
         const accessToken = authorizationHeader ? authorizationHeader.split(' ')[1] : null
 
@@ -31,7 +31,7 @@ export class CommentsController {
     @UseGuards(JwtAuthGuard)
     @Delete(':commentId')
     @HttpCode(HttpStatus.NO_CONTENT)
-    async deleteComment(@Param('commentId') commentId: string, @CurrentUserId() userId: string): Promise<void> {
+    async deleteComment(@Param('commentId', IsCommentExistsPipe) commentId: string, @CurrentUserId() userId: string): Promise<void> {
         const commentByCommentId = await this.commentsService.getCommentById(commentId, null)
         if (commentByCommentId.commentatorInfo.userId !== userId) {
             throw new ForbiddenException(generateErrorsMessages('That is not your own', 'commentId'))
