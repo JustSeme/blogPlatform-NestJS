@@ -1,5 +1,5 @@
 import 'reflect-metadata'
-import { DeviceAuthSessionsModel } from "../domain/entities/DeviceSessionsModel"
+import { DeviceAuthSessionsModel } from "../domain/DeviceSessionsType"
 import { DeviceAuthSessionsDBModel } from "../../../repositories/db"
 import { injectable } from 'inversify/lib/annotation/injectable';
 

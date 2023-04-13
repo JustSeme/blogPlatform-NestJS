@@ -1,11 +1,7 @@
-/* export type DeviceAuthSessionsModel = {
-    issuedAt: number
-    expireDate: number
-    userInfo: UserInfoType
-    deviceInfo: DeviceInfoType
-} */
+import { Model } from "mongoose"
+import { DeviceAuthSession } from "./DeviceAuthSessionsSchema"
 
-export class DeviceAuthSessionsModel {
+export class DeviceAuthSessionModel {
     public userInfo: UserInfoType
     public deviceInfo: DeviceInfoType
 
@@ -29,12 +25,14 @@ export class DeviceAuthSessionsModel {
     }
 }
 
-type UserInfoType = {
+export type UserInfoType = {
     userId: string
     userIp: string
 }
 
-type DeviceInfoType = {
+export type DeviceInfoType = {
     deviceId: string
     deviceName: string
 }
+
+export type DeviceAuthSessionModelType = Model<DeviceAuthSession>

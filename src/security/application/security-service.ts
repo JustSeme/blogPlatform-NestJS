@@ -1,8 +1,8 @@
 import { DeviceSessionsViewModel } from "./dto/DeviceSessionsViewModel"
 import { DeviceRepository } from "../infrastructure/device-db-repository"
-import { injectable } from 'inversify/lib/annotation/injectable';
+import { Injectable } from "@nestjs/common/decorators"
 
-@injectable()
+@Injectable()
 export class SecurityService {
     constructor(protected deviceRepository: DeviceRepository) { }
 
