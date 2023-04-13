@@ -10,11 +10,9 @@ export const settings = {
     GMAIL_APP_PASSWORD: process.env.GMAIL_APP_PASSWORD,
     SA_LOGIN: process.env.SA_LOGIN,
     SA_PASSWORD: process.env.SA_PASSWORD,
-    ACCESS_TOKEN_EXPIRE_TIME: '5min',
-    REFRESH_TOKEN_EXPIRE_TIME: '20min',
+    ACCESS_TOKEN_EXPIRE_TIME: '10s',
+    REFRESH_TOKEN_EXPIRE_TIME: '20s',
 }
-
-export const baseURL = '/homeworks/'
 
 export const HTTP_STATUSES = {
     OK_200: 200,
