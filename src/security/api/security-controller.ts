@@ -1,8 +1,9 @@
 import { SecurityService } from "../application/security-service"
 import { DeviceSessionsViewModel } from "../application/dto/DeviceSessionsViewModel"
-import { deviceQueryRepository } from "../infrastructure/device-query-repository"
 import {
-    ForbiddenException, Injectable, NotFoundException, NotImplementedException, UseGuards
+    Controller,
+    Delete,
+    ForbiddenException, Get, NotFoundException, NotImplementedException, Param, UseGuards
 } from "@nestjs/common"
 import { JwtService } from "src/general/adapters/jwtService"
 import { RefreshJwtAuthGuard } from "./guards/refresh-jwt-auth.guard"
@@ -10,12 +11,12 @@ import { CurrentUserId } from "src/general/decorators/current-userId.param.decor
 import { generateErrorsMessages } from "src/helpers"
 import { CurrentDeviceId } from "../current-deviceId.param.decorator"
 
-@Injectable()
+@Controller('security')
 @UseGuards(RefreshJwtAuthGuard)
 export class SecurityController {
-
     constructor(protected jwtService: JwtService, protected securityService: SecurityService) { }
 
+    @Get('devices')
     async getDevices(@CurrentUserId() userId: string): Promise<DeviceSessionsViewModel[]> {
         const activeDevicesForUser = await this.securityService.getActiveDevicesForUser(userId)
         if (!activeDevicesForUser) {
@@ -25,6 +26,7 @@ export class SecurityController {
         return activeDevicesForUser
     }
 
+    @Delete('devices')
     async deleteDevices(@CurrentUserId() userId: string, @CurrentDeviceId() deviceId: string): Promise<boolean> { // exclude current
         const isDeleted = await this.securityService.removeAllSessions(userId, deviceId) // exclude current
         if (!isDeleted) {
@@ -34,8 +36,9 @@ export class SecurityController {
         return true
     }
 
-    async deleteDeviceById(@CurrentDeviceId() deviceId: string, @CurrentUserId() userId: string): Promise<boolean> {
-        const deletingDevice = await deviceQueryRepository.getDeviceByDeviceId(deviceId)
+    @Delete('devices/:deviceId')
+    async deleteDeviceById(@Param('deviceId') deviceId: string, @CurrentUserId() userId: string): Promise<boolean> {
+        const deletingDevice = await this.securityService.getDeviceById(deviceId)
 
         if (!deletingDevice) {
             throw new NotFoundException(generateErrorsMessages('Deleting device is not found', 'deviceId'))

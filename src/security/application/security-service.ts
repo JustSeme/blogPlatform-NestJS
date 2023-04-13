@@ -28,4 +28,8 @@ export class SecurityService {
     async deleteDevice(deviceId: string) {
         return this.deviceRepository.removeSession(deviceId)
     }
+
+    async getDeviceById(deviceId: string) {
+        return this.deviceRepository.getDeviceById(deviceId)
+    }
 }

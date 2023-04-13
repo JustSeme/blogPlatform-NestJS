@@ -35,9 +35,19 @@ import { CommentsRepository } from './blogs/infrastructure/comments/comments-db-
 import { AuthController } from './auth/api/auth-controller'
 import { PassportModule } from '@nestjs/passport'
 import { LocalStrategy } from './auth/api/strategies/local.strategy'
-import { JwtStrategy } from './blogs/strategies/jwt.strategy'
 import { BasicStrategy } from './blogs/api/strategies/basic.strategy'
-import { IsBlogByIdExist } from './general/decorators/isBlogExists.validation.decorator'
+import {
+  DeviceAuthSession, DeviceAuthSessionsSchema
+} from './security/domain/DeviceAuthSessionSchema'
+import {
+  Attempt, AttemptSchema
+} from './security/domain/AttemptsSchema'
+import { JwtStrategy } from './blogs/api/strategies/jwt.strategy'
+import { RefreshJwtStrategy } from './security/api/strategies/refresh-jwt.strategy'
+import { SecurityController } from './security/api/security-controller'
+import { SecurityService } from './security/application/security-service'
+import { AttemptsRepository } from './security/infrastructure/attempts-db-repository'
+import { DeviceRepository } from './security/infrastructure/device-db-repository'
 
 
 @Module({
@@ -60,18 +70,27 @@ import { IsBlogByIdExist } from './general/decorators/isBlogExists.validation.de
       {
         name: Comment.name,
         schema: CommentsSchema
-      }
+      },
+
+      {
+        name: DeviceAuthSession.name,
+        schema: DeviceAuthSessionsSchema
+      },
+      {
+        name: Attempt.name,
+        schema: AttemptSchema
+      },
     ]),
     PassportModule,
   ],
-  controllers: [AppController, UsersController, BlogsController, PostsController, CommentsController, AuthController],
+  controllers: [AppController, UsersController, BlogsController, PostsController, CommentsController, AuthController, SecurityController],
   providers: [
-    AppService, AuthService, EmailManager, UsersQueryRepository, UsersRepository, LocalStrategy, JwtStrategy, BasicStrategy,
+    AppService, AuthService, EmailManager, UsersQueryRepository, UsersRepository, LocalStrategy, JwtStrategy, BasicStrategy, RefreshJwtStrategy,
     JwtService,
     BlogsService, BlogsQueryRepository, BlogsRepository,
     PostsService, PostsRepository,
     CommentsService, CommentsQueryRepository, CommentsRepository,
-    IsBlogByIdExist
+    SecurityService, AttemptsRepository, DeviceRepository
   ],
 })
 export class AppModule { }

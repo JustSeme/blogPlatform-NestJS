@@ -18,4 +18,4 @@ export class Attempt {
     requestDate: Date
 }
 
-export const AttemptsSchema = SchemaFactory.createForClass<AttemptsDBModel>(Attempt)
+export const AttemptSchema = SchemaFactory.createForClass<AttemptsDBModel>(Attempt)

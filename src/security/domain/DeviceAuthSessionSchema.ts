@@ -1,4 +1,3 @@
-import { DeviceAuthSessionModel } from "./DeviceSessionsType"
 import {
     Prop, Schema, SchemaFactory
 } from "@nestjs/mongoose"
@@ -30,4 +29,4 @@ export class DeviceAuthSession {
     deviceInfo: DeviceInfo
 }
 
-export const DeviceAuthSessionsSchema = SchemaFactory.createForClass(DeviceAuthSessionModel)
+export const DeviceAuthSessionsSchema = SchemaFactory.createForClass(DeviceAuthSession)

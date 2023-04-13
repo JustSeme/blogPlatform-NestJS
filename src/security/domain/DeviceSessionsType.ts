@@ -1,7 +1,7 @@
 import { Model } from "mongoose"
-import { DeviceAuthSession } from "./DeviceAuthSessionsSchema"
+import { DeviceAuthSession } from "./DeviceAuthSessionSchema"
 
-export class DeviceAuthSessionModel {
+export class DeviceAuthSessionDTO {
     public userInfo: UserInfoType
     public deviceInfo: DeviceInfoType
 
