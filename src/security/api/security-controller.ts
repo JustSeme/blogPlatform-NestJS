@@ -10,6 +10,7 @@ import { RefreshJwtAuthGuard } from "./guards/refresh-jwt-auth.guard"
 import { CurrentUserId } from "src/general/decorators/current-userId.param.decorator"
 import { generateErrorsMessages } from "src/helpers"
 import { CurrentDeviceId } from "../current-deviceId.param.decorator"
+import { IsDeviceExistsPipe } from "./pipes/isDeviceExists.validation.pipe"
 
 @Controller('security')
 @UseGuards(RefreshJwtAuthGuard)
@@ -37,12 +38,8 @@ export class SecurityController {
     }
 
     @Delete('devices/:deviceId')
-    async deleteDeviceById(@Param('deviceId') deviceId: string, @CurrentUserId() userId: string): Promise<boolean> {
+    async deleteDeviceById(@Param('deviceId', IsDeviceExistsPipe) deviceId: string, @CurrentUserId() userId: string): Promise<boolean> {
         const deletingDevice = await this.securityService.getDeviceById(deviceId)
-
-        if (!deletingDevice) {
-            throw new NotFoundException(generateErrorsMessages('Deleting device is not found', 'deviceId'))
-        }
 
         if (userId !== deletingDevice.userInfo.userId) {
             throw new ForbiddenException(generateErrorsMessages('That is not your own', 'userId'))

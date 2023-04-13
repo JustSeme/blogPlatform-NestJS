@@ -39,14 +39,10 @@ import { BasicStrategy } from './blogs/api/strategies/basic.strategy'
 import {
   DeviceAuthSession, DeviceAuthSessionsSchema
 } from './security/domain/DeviceAuthSessionSchema'
-import {
-  Attempt, AttemptSchema
-} from './security/domain/AttemptsSchema'
 import { JwtStrategy } from './blogs/api/strategies/jwt.strategy'
 import { RefreshJwtStrategy } from './security/api/strategies/refresh-jwt.strategy'
 import { SecurityController } from './security/api/security-controller'
 import { SecurityService } from './security/application/security-service'
-import { AttemptsRepository } from './security/infrastructure/attempts-db-repository'
 import { DeviceRepository } from './security/infrastructure/device-db-repository'
 import {
   ThrottlerGuard, ThrottlerModule
@@ -83,11 +79,7 @@ import { APP_GUARD } from '@nestjs/core'
       {
         name: DeviceAuthSession.name,
         schema: DeviceAuthSessionsSchema
-      },
-      {
-        name: Attempt.name,
-        schema: AttemptSchema
-      },
+      }
     ]),
     PassportModule,
   ],
@@ -98,7 +90,7 @@ import { APP_GUARD } from '@nestjs/core'
     BlogsService, BlogsQueryRepository, BlogsRepository,
     PostsService, PostsRepository,
     CommentsService, CommentsQueryRepository, CommentsRepository,
-    SecurityService, AttemptsRepository, DeviceRepository,
+    SecurityService, DeviceRepository,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,

@@ -35,12 +35,18 @@ export class DeviceRepository {
         return this.DeviceAuthSessionModel.find({ "userInfo.userId": userId })
     }
 
+    async getDeviceById(deviceId: string) {
+        return this.DeviceAuthSessionModel.findOne({ 'deviceInfo.deviceId': deviceId })
+    }
+
     async getCurrentIssuedAt(deviceId: string) {
-        const result = await this.DeviceAuthSessionModel.findOne({ 'deviceInfo.deviceId': deviceId })
+        const result = await this.getDeviceById(deviceId)
         return result.issuedAt
     }
 
-    async getDeviceById(deviceId: string) {
-        return this.DeviceAuthSessionModel.findOne({ 'deviceInfo.deviceId': deviceId })
+
+    async isDeviceExists(deviceId: string) {
+        const deviceByDeviceId = this.getDeviceById(deviceId)
+        return deviceByDeviceId ? true : false
     }
 }

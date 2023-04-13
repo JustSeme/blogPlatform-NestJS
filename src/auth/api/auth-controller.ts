@@ -11,14 +11,14 @@ import { NewPasswordInputModel } from "./models/NewPasswordInputModel"
 import { MeOutputModel } from "../application/dto/MeViewModel"
 import { FieldError } from "src/general/types/ErrorMessagesOutputModel"
 import { LocalAuthGuard } from "./guards/local-auth.guard"
-import { Throttle } from "@nestjs/throttler/dist/throttler.decorator"
+import { ThrottlerGuard } from "@nestjs/throttler"
 
 @Controller('auth')
 export class AuthController {
     constructor(protected authService: AuthService, protected jwtService: JwtService, protected usersQueryRepository: UsersQueryRepository) { }
 
+    @UseGuards(ThrottlerGuard)
     @UseGuards(LocalAuthGuard)
-    @Throttle(5, 10)
     @Post('login')
     @HttpCode(HttpStatus.OK)
     async login(
@@ -68,7 +68,7 @@ export class AuthController {
     }
 
     @Post('registration')
-    @Throttle(5, 10)
+    @UseGuards(ThrottlerGuard)
     @HttpCode(HttpStatus.NO_CONTENT)
     async registration(@Body() userInput: UserInputModel) {
         const userByLogin = await this.usersQueryRepository.findUserByLogin(userInput.login)
@@ -94,7 +94,7 @@ export class AuthController {
     }
 
     @Post('registration-confirmation')
-    @Throttle(5, 10)
+    @UseGuards(ThrottlerGuard)
     @HttpCode(HttpStatus.NO_CONTENT)
     async registrationConfirm(@Body('code') code: string) {
         const isConfirmed = await this.authService.confirmEmail(code)
@@ -108,7 +108,7 @@ export class AuthController {
     }
 
     @Post('registration-email-resending')
-    @Throttle(5, 10)
+    @UseGuards(ThrottlerGuard)
     @HttpCode(HttpStatus.NO_CONTENT)
     async resendEmail(@Body() { email }: { email: string }): Promise<void | ErrorMessagesOutputModel> {
         const result = await this.authService.resendConfirmationCode(email)
