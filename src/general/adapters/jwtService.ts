@@ -1,5 +1,5 @@
 import jwt, { JwtPayload } from 'jsonwebtoken'
-import { settings } from "../settings"
+import { settings } from "../../settings"
 import { Injectable } from '@nestjs/common/decorators'
 
 @Injectable()

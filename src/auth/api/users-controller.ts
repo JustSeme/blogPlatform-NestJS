@@ -5,7 +5,7 @@ import {
     UsersWithQueryOutputModel, UserViewModelType
 } from "../application/dto/UsersViewModel"
 import { UsersQueryRepository } from "../infrastructure/users-query-repository"
-import { ErrorMessagesOutputModel } from "src/types/ErrorMessagesOutputModel"
+import { ErrorMessagesOutputModel } from "src/general/types/ErrorMessagesOutputModel"
 import {
     Body, Controller, Delete, Get, Param, Post, Query, HttpCode, NotFoundException, HttpStatus, NotImplementedException, UseGuards
 } from "@nestjs/common"

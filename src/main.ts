@@ -9,7 +9,7 @@ import {
 import {
   ErrorExceptionFilter, HttpExceptionFilter
 } from "./exception.filter"
-import { FieldError } from "./types/ErrorMessagesOutputModel"
+import { FieldError } from "./general/types/ErrorMessagesOutputModel"
 import { useContainer } from "class-validator"
 
 const customExceptionFactory = (errors) => {

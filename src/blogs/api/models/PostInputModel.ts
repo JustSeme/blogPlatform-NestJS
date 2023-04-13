@@ -1,8 +1,8 @@
 import {
     Length, Validate
 } from "class-validator"
-import { IsBlogByIdExist } from "src/decorators/isBlogExists.validation.decorator"
-import { TrimIfString } from "src/decorators/trimIfString.decorator"
+import { IsBlogByIdExist } from "src/general/decorators/isBlogExists.validation.decorator"
+import { TrimIfString } from "src/general/decorators/trimIfString.decorator"
 
 export class PostInputModel {
     @TrimIfString()

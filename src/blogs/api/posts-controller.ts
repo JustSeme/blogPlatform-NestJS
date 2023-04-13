@@ -12,10 +12,10 @@ import { ReadPostsQueryParams } from "./models/ReadPostsQuery"
 import { LikeInputModel } from "./models/LikeInputModel"
 import { PostsViewModel } from "../application/dto/PostViewModel"
 import { UsersQueryRepository } from 'src/auth/infrastructure/users-query-repository'
-import { JwtService } from 'src/adapters/jwtService'
+import { JwtService } from 'src/general/adapters/jwtService'
 import { BlogsQueryRepository } from '../infrastructure/blogs/blogs-query-repository'
 import { PostsRepository } from '../infrastructure/posts/posts-db-repository'
-import { CurrentUserId } from '../current-userId.param.decorator'
+import { CurrentUserId } from '../../general/decorators/current-userId.param.decorator'
 import { JwtAuthGuard } from './guards/jwt-auth.guard'
 import { BasicAuthGuard } from './guards/basic-auth.guard'
 import { IsPostExistsPipe } from './pipes/isPostExists.validation.pipe'

@@ -1,5 +1,5 @@
 import { Length } from "class-validator"
-import { TrimIfString } from "src/decorators/trimIfString.decorator"
+import { TrimIfString } from "src/general/decorators/trimIfString.decorator"
 
 export class PostInputModelWithoutBlogId {
     @TrimIfString()

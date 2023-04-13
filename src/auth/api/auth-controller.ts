@@ -2,14 +2,14 @@ import {
     BadRequestException,
     Body, Controller, Get, HttpCode, HttpStatus, NotImplementedException, Post, Request, Response, UnauthorizedException, UseGuards
 } from "@nestjs/common"
-import { JwtService } from "src/adapters/jwtService"
+import { JwtService } from "src/general/adapters/jwtService"
 import { AuthService } from "../application/auth-service"
 import { UserInputModel } from "./models/UserInputModel"
-import { ErrorMessagesOutputModel } from "src/types/ErrorMessagesOutputModel"
+import { ErrorMessagesOutputModel } from "src/general/types/ErrorMessagesOutputModel"
 import { UsersQueryRepository } from "../infrastructure/users-query-repository"
 import { NewPasswordInputModel } from "./models/NewPasswordInputModel"
 import { MeOutputModel } from "../application/dto/MeViewModel"
-import { FieldError } from "src/types/ErrorMessagesOutputModel"
+import { FieldError } from "src/general/types/ErrorMessagesOutputModel"
 import { LocalAuthGuard } from "./guards/local-auth.guard"
 
 @Controller('auth')

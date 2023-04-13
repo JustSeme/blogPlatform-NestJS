@@ -1,14 +1,14 @@
 import { UserViewModelType } from './dto/UsersViewModel'
 import { UsersRepository } from '../infrastructure/users-db-repository'
 import { v4 as uuidv4 } from 'uuid'
-import { bcryptAdapter } from 'src/adapters/bcryptAdapter'
+import { bcryptAdapter } from 'src/general/adapters/bcryptAdapter'
 import { Injectable } from '@nestjs/common'
-import { EmailManager } from 'src/managers/emailManager'
+import { EmailManager } from 'src/general/managers/emailManager'
 import { InjectModel } from '@nestjs/mongoose/dist'
 import { User } from '../domain/UsersSchema'
 import { UserModelType } from '../domain/UsersTypes'
 import { settings } from 'src/settings'
-import { JwtService } from 'src/adapters/jwtService'
+import { JwtService } from 'src/general/adapters/jwtService'
 
 //transaction script
 @Injectable()
