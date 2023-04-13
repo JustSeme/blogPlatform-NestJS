@@ -48,11 +48,19 @@ import { SecurityController } from './security/api/security-controller'
 import { SecurityService } from './security/application/security-service'
 import { AttemptsRepository } from './security/infrastructure/attempts-db-repository'
 import { DeviceRepository } from './security/infrastructure/device-db-repository'
+import {
+  ThrottlerGuard, ThrottlerModule
+} from '@nestjs/throttler'
+import { APP_GUARD } from '@nestjs/core'
 
 
 @Module({
   imports: [
     MongooseModule.forRoot(settings.mongoURI),
+    ThrottlerModule.forRoot({
+      ttl: 10,
+      limit: 5
+    }),
     MongooseModule.forFeature([
       {
         name: User.name,
@@ -90,7 +98,12 @@ import { DeviceRepository } from './security/infrastructure/device-db-repository
     BlogsService, BlogsQueryRepository, BlogsRepository,
     PostsService, PostsRepository,
     CommentsService, CommentsQueryRepository, CommentsRepository,
-    SecurityService, AttemptsRepository, DeviceRepository
+    SecurityService, AttemptsRepository, DeviceRepository,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
   ],
 })
+
 export class AppModule { }
