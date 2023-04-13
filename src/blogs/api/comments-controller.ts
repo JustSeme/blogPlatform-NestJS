@@ -9,7 +9,7 @@ import { LikeInputModel } from "./models/LikeInputModel"
 import { CurrentUserId } from "../../general/decorators/current-userId.param.decorator"
 import { JwtAuthGuard } from "./guards/jwt-auth.guard"
 import { IsCommentExistsPipe } from "./pipes/isCommentExists.validation.pipe"
-import { generateErrorsMessages } from "src/helpers"
+import { generateErrorsMessages } from "src/general/helpers"
 
 @Controller('comments')
 export class CommentsController {

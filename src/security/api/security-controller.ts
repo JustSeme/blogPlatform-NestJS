@@ -8,7 +8,7 @@ import {
 import { JwtService } from "src/general/adapters/jwtService"
 import { RefreshJwtAuthGuard } from "./guards/refresh-jwt-auth.guard"
 import { CurrentUserId } from "src/general/decorators/current-userId.param.decorator"
-import { generateErrorsMessages } from "src/helpers"
+import { generateErrorsMessages } from "src/general/helpers"
 import { CurrentDeviceId } from "../current-deviceId.param.decorator"
 import { IsDeviceExistsPipe } from "./pipes/isDeviceExists.validation.pipe"
 

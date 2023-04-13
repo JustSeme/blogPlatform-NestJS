@@ -1,7 +1,7 @@
 import {
     Injectable, NotFoundException, PipeTransform
 } from "@nestjs/common"
-import { generateErrorsMessages } from "src/helpers"
+import { generateErrorsMessages } from "src/general/helpers"
 import { DeviceRepository } from "src/security/infrastructure/device-db-repository"
 
 @Injectable()
