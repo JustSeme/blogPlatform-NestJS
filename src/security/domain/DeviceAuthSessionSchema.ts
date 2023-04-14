@@ -7,6 +7,7 @@ import {
 import {
     DeviceInfo, DeviceInfoSchema
 } from "./DeviceInfoSchema"
+import { DeviceAuthSessionDTO } from "./DeviceSessionsType"
 
 @Schema()
 export class DeviceAuthSession {
@@ -29,4 +30,4 @@ export class DeviceAuthSession {
     deviceInfo: DeviceInfo
 }
 
-export const DeviceAuthSessionsSchema = SchemaFactory.createForClass(DeviceAuthSession)
+export const DeviceAuthSessionsSchema = SchemaFactory.createForClass<DeviceAuthSessionDTO>(DeviceAuthSession)

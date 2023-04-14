@@ -8,11 +8,11 @@ import { DeviceRepository } from 'src/security/infrastructure/device-db-reposito
 export class JwtService {
     constructor(protected deviceRepository: DeviceRepository) { }
 
-    async createAccessToken(expiresTime: string, userId: string) {
+    async createAccessToken(expiresTime: string | number, userId: string) {
         return jwt.sign({ userId }, settings.JWT_SECRET, { expiresIn: expiresTime })
     }
 
-    async createRefreshToken(expiresTime: string, deviceId: string, userId: string) {
+    async createRefreshToken(expiresTime: string | number, deviceId: string, userId: string) {
         return jwt.sign({
             deviceId, userId
         }, settings.JWT_SECRET, { expiresIn: expiresTime })

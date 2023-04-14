@@ -9,11 +9,15 @@ import { User } from '../domain/UsersSchema'
 import { UserModelType } from '../domain/UsersTypes'
 import { settings } from 'src/settings'
 import { JwtService } from 'src/general/adapters/jwtService'
+import { DeviceAuthSessionDTO } from 'src/security/domain/DeviceSessionsType'
+import { DeviceRepository } from 'src/security/infrastructure/device-db-repository'
+import jwt, { JwtPayload } from 'jsonwebtoken'
+
 
 //transaction script
 @Injectable()
 export class AuthService {
-    constructor(@InjectModel(User.name) private UserModel: UserModelType, protected usersRepository: UsersRepository, protected jwtService: JwtService, protected emailManager: EmailManager) { }
+    constructor(@InjectModel(User.name) private UserModel: UserModelType, protected usersRepository: UsersRepository, protected jwtService: JwtService, protected emailManager: EmailManager, private deviceRepository: DeviceRepository) { }
 
     async createUser(login: string, password: string, email: string): Promise<boolean> {
         const passwordHash = await bcryptAdapter.generatePasswordHash(password, 10)
@@ -116,14 +120,14 @@ export class AuthService {
 
         const accessToken = await this.jwtService.createAccessToken(settings.ACCESS_TOKEN_EXPIRE_TIME, userId)
         const refreshToken = await this.jwtService.createRefreshToken(settings.REFRESH_TOKEN_EXPIRE_TIME, deviceId, userId)
-        const result = await this.jwtService.verifyRefreshToken(refreshToken)
+        const result = await jwt.decode(refreshToken) as JwtPayload
 
-        /* const newSession = new DeviceAuthSessionsModel(result!.iat!, result!.exp!, userId, userIp, deviceId, deviceName)
+        const newSession = new DeviceAuthSessionDTO(result.iat, result.exp, userId, userIp, deviceId, deviceName)
 
         const isAdded = await this.deviceRepository.addSession(newSession)
         if (!isAdded) {
             return null
-        } */
+        }
 
         return {
             accessToken,
@@ -137,11 +141,11 @@ export class AuthService {
             return false
         }
 
-        /* const isDeleted = this.deviceRepository.removeSession(result.deviceId)
+        const isDeleted = this.deviceRepository.removeSession(result.deviceId)
 
         if (!isDeleted) {
             return false
-        } */
+        }
         return true
     }
 }
