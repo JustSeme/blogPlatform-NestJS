@@ -63,7 +63,7 @@ export class AuthController {
     async logout(@Request() req) {
         const refreshToken = req.cookies.refreshToken
 
-        const isLogout = this.authService.logout(refreshToken)
+        const isLogout = await this.authService.logout(refreshToken)
 
         if (!isLogout) {
             throw new UnauthorizedException()

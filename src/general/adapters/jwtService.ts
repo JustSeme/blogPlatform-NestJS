@@ -30,6 +30,8 @@ export class JwtService {
     async verifyRefreshToken(verifiedToken: string) {
         try {
             const result = await jwt.verify(verifiedToken, settings.JWT_SECRET) as JwtPayload
+            console.log(result)
+
             const issuedAtForDeviceId = await this.deviceRepository.getCurrentIssuedAt(result.deviceId)
             if (issuedAtForDeviceId > result.iat) {
                 return null

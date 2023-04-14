@@ -137,6 +137,7 @@ export class AuthService {
 
     async logout(usedToken: string) {
         const result = await this.jwtService.verifyRefreshToken(usedToken)
+
         if (!result) {
             return false
         }
