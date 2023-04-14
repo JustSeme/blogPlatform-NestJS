@@ -6,7 +6,6 @@ import { AuthService } from './auth/application/auth-service'
 import { EmailManager } from './general/managers/emailManager'
 import { UsersQueryRepository } from './auth/infrastructure/users-query-repository'
 import { MongooseModule } from '@nestjs/mongoose'
-import { Settings } from './settings'
 import {
   User, UsersSchema
 } from './auth/domain/UsersSchema'
@@ -49,12 +48,19 @@ import {
 import { APP_GUARD } from '@nestjs/core'
 import { BcryptAdapter } from './general/adapters/BcryptAdapter'
 import { EmailAdapter } from './general/adapters/EmailAdapter'
+import {
+  ConfigModule, ConfigService
+} from '@nestjs/config'
 
-const settings = new Settings()
 
 @Module({
   imports: [
-    MongooseModule.forRoot(settings.mongoURI),
+    ConfigModule.forRoot({ isGlobal: true }),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({ uri: configService.get<string>('mongoURI') }),
+      inject: [ConfigService],
+    }),
     ThrottlerModule.forRoot({
       ttl: 10,
       limit: 7
@@ -112,8 +118,6 @@ const settings = new Settings()
     BlogsRepository,
     CommentsRepository,
     DeviceRepository,
-    // settings
-    Settings,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,

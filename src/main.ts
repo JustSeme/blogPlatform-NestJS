@@ -2,7 +2,6 @@ import cookieParser from "cookie-parser"
 import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app.module'
 import { NestExpressApplication } from "@nestjs/platform-express"
-import { Settings } from "./Settings"
 import {
   BadRequestException, ValidationPipe
 } from "@nestjs/common"
@@ -11,6 +10,7 @@ import {
 } from "./exception.filter"
 import { FieldError } from "./general/types/ErrorMessagesOutputModel"
 import { useContainer } from "class-validator"
+import { ConfigService } from "@nestjs/config"
 
 const customExceptionFactory = (errors) => {
   const errorsArray = []
@@ -32,12 +32,11 @@ const customExceptionFactory = (errors) => {
   throw new BadRequestException(errorsArray)
 }
 
-const settings = new Settings()
 
-export let app: any
 async function bootstrap() {
-  app = await NestFactory.create<NestExpressApplication>(AppModule)
-
+  const app = await NestFactory.create<NestExpressApplication>(AppModule)
+  const configService = app.get(ConfigService)
+  const port = parseInt(configService.get('PORT'), 10)
   useContainer(app.select(AppModule), { fallbackOnErrors: true })
 
   app.use(cookieParser())
@@ -51,7 +50,7 @@ async function bootstrap() {
   }))
   app.useGlobalFilters(new ErrorExceptionFilter(), new HttpExceptionFilter())
 
-  await app.listen(settings.PORT)
+  await app.listen(port)
 }
 
 bootstrap()
