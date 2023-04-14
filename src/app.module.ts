@@ -6,7 +6,7 @@ import { AuthService } from './auth/application/auth-service'
 import { EmailManager } from './general/managers/emailManager'
 import { UsersQueryRepository } from './auth/infrastructure/users-query-repository'
 import { MongooseModule } from '@nestjs/mongoose'
-import { settings } from './settings'
+import { Settings } from './settings'
 import {
   User, UsersSchema
 } from './auth/domain/UsersSchema'
@@ -26,7 +26,7 @@ import {
 } from './blogs/domain/comments/commentsSchema'
 import { PostsService } from './blogs/application/posts-service'
 import { PostsRepository } from './blogs/infrastructure/posts/posts-db-repository'
-import { JwtService } from './general/adapters/jwtService'
+import { JwtService } from './general/adapters/JwtService'
 import { PostsController } from './blogs/api/posts-controller'
 import { CommentsController } from './blogs/api/comments-controller'
 import { CommentsService } from './blogs/application/comments-service'
@@ -40,7 +40,6 @@ import {
   DeviceAuthSession, DeviceAuthSessionsSchema
 } from './security/domain/DeviceAuthSessionSchema'
 import { JwtStrategy } from './blogs/api/strategies/jwt.strategy'
-import { RefreshJwtStrategy } from './security/api/strategies/refresh-jwt.strategy'
 import { SecurityController } from './security/api/security-controller'
 import { SecurityService } from './security/application/security-service'
 import { DeviceRepository } from './security/infrastructure/device-db-repository'
@@ -48,7 +47,10 @@ import {
   ThrottlerGuard, ThrottlerModule
 } from '@nestjs/throttler'
 import { APP_GUARD } from '@nestjs/core'
+import { BcryptAdapter } from './general/adapters/BcryptAdapter'
+import { EmailAdapter } from './general/adapters/EmailAdapter'
 
+const settings = new Settings()
 
 @Module({
   imports: [
@@ -85,12 +87,33 @@ import { APP_GUARD } from '@nestjs/core'
   ],
   controllers: [AppController, UsersController, BlogsController, PostsController, CommentsController, AuthController, SecurityController],
   providers: [
-    AppService, AuthService, EmailManager, UsersQueryRepository, UsersRepository, LocalStrategy, JwtStrategy, BasicStrategy, RefreshJwtStrategy,
+    // strategies
+    LocalStrategy,
+    JwtStrategy,
+    BasicStrategy,
+    // services
+    AppService,
+    AuthService,
     JwtService,
-    BlogsService, BlogsQueryRepository, BlogsRepository,
-    PostsService, PostsRepository,
-    CommentsService, CommentsQueryRepository, CommentsRepository,
-    SecurityService, DeviceRepository,
+    BlogsService,
+    PostsService,
+    CommentsService,
+    SecurityService,
+    // adapters
+    EmailManager,
+    BcryptAdapter,
+    EmailAdapter,
+    // repositories
+    BlogsQueryRepository,
+    CommentsQueryRepository,
+    UsersQueryRepository,
+    UsersRepository,
+    PostsRepository,
+    BlogsRepository,
+    CommentsRepository,
+    DeviceRepository,
+    // settings
+    Settings,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,

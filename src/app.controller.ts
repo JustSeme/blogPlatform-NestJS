@@ -1,8 +1,7 @@
 import {
-  Controller, Delete, Get, HttpCode
+  Controller, Delete, Get, HttpCode, HttpStatus
 } from '@nestjs/common'
 import { AppService } from './app.service'
-import { HTTP_STATUSES } from './settings'
 
 @Controller('')
 export class AppController {
@@ -14,7 +13,7 @@ export class AppController {
   }
 
   @Delete('testing/all-data')
-  @HttpCode(HTTP_STATUSES.NO_CONTENT_204)
+  @HttpCode(HttpStatus.NO_CONTENT)
   async deleteTestingData(): Promise<number> {
     await this.appService.deleteTestingData()
     return

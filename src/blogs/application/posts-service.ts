@@ -6,7 +6,7 @@ import { ReadPostsQueryParams } from '../api/models/ReadPostsQuery'
 import { PostsViewModel } from './dto/PostViewModel'
 import { UsersRepository } from '../../auth/infrastructure/users-db-repository'
 import { Injectable } from '@nestjs/common'
-import { JwtService } from 'src/general/adapters/jwtService'
+import { JwtService } from 'src/general/adapters/JwtService'
 import {
     ExtendedLikeObjectType, PostDBModel, PostsWithQueryOutputModel
 } from '../domain/posts/PostsTypes'

@@ -1,8 +1,9 @@
 import { Injectable } from "@nestjs/common"
-import { emailAdapter } from "../adapters/emailAdapter"
+import { EmailAdapter } from "../adapters/EmailAdapter"
 
 @Injectable()
 export class EmailManager {
+    constructor(private emailAdapter: EmailAdapter) { }
     async sendConfirmationCode(recipientEmail: string, recipientLogin: string, confirmationCode: string) {
         const messageBody = `
             <h1>Hello, dear ${recipientLogin}! Welcome to the Blog Platform!</h1>
@@ -10,7 +11,7 @@ export class EmailManager {
                 <p>To continue registration, </p><a href='https://some-front.com/confirm-registration?code=${confirmationCode}'>click here</a>
             </div>
         `
-        return emailAdapter.sendEmail(recipientEmail, 'ConfirmationCode', messageBody)
+        return this.emailAdapter.sendEmail(recipientEmail, 'ConfirmationCode', messageBody)
     }
 
     async sendPasswordRecoveryCode(recipientEmail: string, recipientLogin: string, confirmationCode: string) {
@@ -21,6 +22,6 @@ export class EmailManager {
                 <p>To continue password recovering, </p><a href='https://some-front.com/password-recovery?recoveryCode=${confirmationCode}'>click here</a>
             </div>
         `
-        return emailAdapter.sendEmail(recipientEmail, 'Recovery Password', messageBody)
+        return this.emailAdapter.sendEmail(recipientEmail, 'Recovery Password', messageBody)
     }
 }

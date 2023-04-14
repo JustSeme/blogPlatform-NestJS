@@ -1,26 +1,32 @@
 import { UserViewModelType } from './dto/UsersViewModel'
 import { UsersRepository } from '../infrastructure/users-db-repository'
 import { v4 as uuidv4 } from 'uuid'
-import { bcryptAdapter } from 'src/general/adapters/bcryptAdapter'
 import { Injectable } from '@nestjs/common'
-import { EmailManager } from 'src/general/managers/emailManager'
 import { InjectModel } from '@nestjs/mongoose/dist'
 import { User } from '../domain/UsersSchema'
 import { UserModelType } from '../domain/UsersTypes'
-import { settings } from 'src/settings'
-import { JwtService } from 'src/general/adapters/jwtService'
+import { Settings } from 'src/Settings'
+import { JwtService } from 'src/general/adapters/JwtService'
 import { DeviceAuthSessionDTO } from 'src/security/domain/DeviceSessionsType'
 import { DeviceRepository } from 'src/security/infrastructure/device-db-repository'
 import jwt, { JwtPayload } from 'jsonwebtoken'
+import { BcryptAdapter } from 'src/general/adapters/BcryptAdapter'
+import { EmailManager } from 'src/general/managers/emailManager'
 
 
 //transaction script
 @Injectable()
 export class AuthService {
-    constructor(@InjectModel(User.name) private UserModel: UserModelType, protected usersRepository: UsersRepository, protected jwtService: JwtService, protected emailManager: EmailManager, private deviceRepository: DeviceRepository) { }
+    constructor(@InjectModel(User.name) private UserModel: UserModelType,
+        protected usersRepository: UsersRepository,
+        protected jwtService: JwtService,
+        protected emailManager: EmailManager,
+        private deviceRepository: DeviceRepository,
+        private bcryptAdapter: BcryptAdapter,
+        private settings: Settings) { }
 
     async createUser(login: string, password: string, email: string): Promise<boolean> {
-        const passwordHash = await bcryptAdapter.generatePasswordHash(password, 10)
+        const passwordHash = await this.bcryptAdapter.generatePasswordHash(password, 10)
 
         const newUser = this.UserModel.makeInstance(login, email, passwordHash, false, this.UserModel)
 
@@ -32,7 +38,7 @@ export class AuthService {
     }
 
     async createUserWithBasicAuth(login: string, password: string, email: string): Promise<UserViewModelType | null> {
-        const passwordHash = await bcryptAdapter.generatePasswordHash(password, 10)
+        const passwordHash = await this.bcryptAdapter.generatePasswordHash(password, 10)
 
         const newUser = this.UserModel.makeInstance(login, email, passwordHash, true, this.UserModel)
 
@@ -83,7 +89,7 @@ export class AuthService {
         if (!user) return false
         if (!user.emailConfirmation.isConfirmed) return false
 
-        const isConfirmed = await bcryptAdapter.comparePassword(password, user.passwordHash)
+        const isConfirmed = await this.bcryptAdapter.comparePassword(password, user.passwordHash)
         if (isConfirmed) {
             return user
         }
@@ -106,7 +112,7 @@ export class AuthService {
     }
 
     async confirmRecoveryPassword(userId: string, newPassword: string) {
-        const newPasswordHash = await bcryptAdapter.generatePasswordHash(newPassword, 10)
+        const newPasswordHash = await this.bcryptAdapter.generatePasswordHash(newPassword, 10)
 
         return this.usersRepository.updateUserPassword(userId, newPasswordHash)
     }
@@ -118,8 +124,8 @@ export class AuthService {
     async login(userId: string, userIp: string, deviceName: string) {
         const deviceId = uuidv4()
 
-        const accessToken = await this.jwtService.createAccessToken(settings.ACCESS_TOKEN_EXPIRE_TIME, userId)
-        const refreshToken = await this.jwtService.createRefreshToken(settings.REFRESH_TOKEN_EXPIRE_TIME, deviceId, userId)
+        const accessToken = await this.jwtService.createAccessToken(this.settings.ACCESS_TOKEN_EXPIRE_TIME, userId)
+        const refreshToken = await this.jwtService.createRefreshToken(this.settings.REFRESH_TOKEN_EXPIRE_TIME, deviceId, userId)
         const result = await jwt.decode(refreshToken) as JwtPayload
 
         const newSession = new DeviceAuthSessionDTO(result.iat, result.exp, userId, userIp, deviceId, deviceName)

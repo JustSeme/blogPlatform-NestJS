@@ -2,7 +2,7 @@ import {
     BadRequestException,
     Body, Controller, Get, HttpCode, HttpStatus, NotImplementedException, Post, Request, Response, UnauthorizedException, UseGuards
 } from "@nestjs/common"
-import { JwtService } from "src/general/adapters/jwtService"
+import { JwtService } from "src/general/adapters/JwtService"
 import { AuthService } from "../application/auth-service"
 import { UserInputModel } from "./models/UserInputModel"
 import { ErrorMessagesOutputModel } from "src/general/types/ErrorMessagesOutputModel"

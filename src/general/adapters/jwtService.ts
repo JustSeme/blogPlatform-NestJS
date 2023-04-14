@@ -1,26 +1,29 @@
 import jwt, { JwtPayload } from 'jsonwebtoken'
-import { settings } from "../../settings"
+import { Settings } from "../../Settings"
 import { Injectable } from '@nestjs/common/decorators'
 import { DeviceRepository } from 'src/security/infrastructure/device-db-repository'
 
 
 @Injectable()
 export class JwtService {
-    constructor(protected deviceRepository: DeviceRepository) { }
+    constructor(
+        protected deviceRepository: DeviceRepository,
+        protected settings: Settings
+    ) { }
 
     async createAccessToken(expiresTime: string | number, userId: string) {
-        return jwt.sign({ userId }, settings.JWT_SECRET, { expiresIn: expiresTime })
+        return jwt.sign({ userId }, this.settings.JWT_SECRET, { expiresIn: expiresTime })
     }
 
     async createRefreshToken(expiresTime: string | number, deviceId: string, userId: string) {
         return jwt.sign({
             deviceId, userId
-        }, settings.JWT_SECRET, { expiresIn: expiresTime })
+        }, this.settings.JWT_SECRET, { expiresIn: expiresTime })
     }
 
     async getUserIdByToken(token: string) {
         try {
-            const result = await jwt.verify(token, settings.JWT_SECRET) as JwtPayload
+            const result = await jwt.verify(token, this.settings.JWT_SECRET) as JwtPayload
             return result.userId
         } catch (err) {
             return null
@@ -29,7 +32,7 @@ export class JwtService {
 
     async verifyRefreshToken(verifiedToken: string) {
         try {
-            const result = await jwt.verify(verifiedToken, settings.JWT_SECRET) as JwtPayload
+            const result = await jwt.verify(verifiedToken, this.settings.JWT_SECRET) as JwtPayload
             const issuedAtForDeviceId = await this.deviceRepository.getCurrentIssuedAt(result.deviceId)
             if (issuedAtForDeviceId > result.iat) {
                 return null
@@ -43,7 +46,7 @@ export class JwtService {
 
     async verifyAccessToken(verifiedToken: string) {
         try {
-            const result = await jwt.verify(verifiedToken, settings.JWT_SECRET) as JwtPayload
+            const result = await jwt.verify(verifiedToken, this.settings.JWT_SECRET) as JwtPayload
             return result
         } catch (err) {
             return null
@@ -56,8 +59,8 @@ export class JwtService {
             return null
         }
 
-        const newRefreshToken = await this.createRefreshToken(settings.ACCESS_TOKEN_EXPIRE_TIME, result.deviceId, result.userId)
-        const newAccessToken = await this.createAccessToken(settings.REFRESH_TOKEN_EXPIRE_TIME, result.userId)
+        const newRefreshToken = await this.createRefreshToken(this.settings.ACCESS_TOKEN_EXPIRE_TIME, result.deviceId, result.userId)
+        const newAccessToken = await this.createAccessToken(this.settings.REFRESH_TOKEN_EXPIRE_TIME, result.userId)
         const resultOfCreatedToken = jwt.decode(newRefreshToken) as JwtPayload
 
         const isUpdated = this.deviceRepository.updateSession(result.deviceId, resultOfCreatedToken.iat, resultOfCreatedToken.exp)

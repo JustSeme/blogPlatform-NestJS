@@ -5,7 +5,7 @@ import {
     Delete,
     ForbiddenException, Get, NotFoundException, NotImplementedException, Param, UseGuards
 } from "@nestjs/common"
-import { JwtService } from "src/general/adapters/jwtService"
+import { JwtService } from "src/general/adapters/JwtService"
 import { CurrentUserId } from "src/general/decorators/current-userId.param.decorator"
 import { generateErrorsMessages } from "src/general/helpers"
 import { CurrentDeviceId } from "../current-deviceId.param.decorator"

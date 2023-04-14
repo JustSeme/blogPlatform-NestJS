@@ -2,7 +2,7 @@ import cookieParser from "cookie-parser"
 import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app.module'
 import { NestExpressApplication } from "@nestjs/platform-express"
-import { settings } from "./settings"
+import { Settings } from "./Settings"
 import {
   BadRequestException, ValidationPipe
 } from "@nestjs/common"
@@ -31,6 +31,8 @@ const customExceptionFactory = (errors) => {
   })
   throw new BadRequestException(errorsArray)
 }
+
+const settings = new Settings()
 
 export let app: any
 async function bootstrap() {
