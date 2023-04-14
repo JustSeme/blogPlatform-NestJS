@@ -4,7 +4,7 @@ import {
 import { PassportStrategy } from "@nestjs/passport"
 import { BasicStrategy as Strategy } from 'passport-http'
 import { ConfigService } from '@nestjs/config'
-import { generateErrorsMessages } from "src/general/helpers"
+import { generateErrorsMessages } from "../../../general/helpers"
 
 @Injectable()
 export class BasicStrategy extends PassportStrategy(Strategy) {

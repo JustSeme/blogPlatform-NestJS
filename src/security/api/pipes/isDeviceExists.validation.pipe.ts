@@ -1,8 +1,8 @@
 import {
     Injectable, NotFoundException, PipeTransform
 } from "@nestjs/common"
-import { generateErrorsMessages } from "src/general/helpers"
-import { DeviceRepository } from "src/security/infrastructure/device-db-repository"
+import { DeviceRepository } from "../../infrastructure/device-db-repository"
+import { generateErrorsMessages } from "../../../general/helpers"
 
 @Injectable()
 export class IsDeviceExistsPipe implements PipeTransform {

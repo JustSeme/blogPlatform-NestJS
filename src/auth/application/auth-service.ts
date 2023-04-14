@@ -5,13 +5,13 @@ import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose/dist'
 import { User } from '../domain/UsersSchema'
 import { UserModelType } from '../domain/UsersTypes'
-import { JwtService } from 'src/general/adapters/JwtService'
-import { DeviceAuthSessionDTO } from 'src/security/domain/DeviceSessionsType'
-import { DeviceRepository } from 'src/security/infrastructure/device-db-repository'
 import jwt, { JwtPayload } from 'jsonwebtoken'
-import { BcryptAdapter } from 'src/general/adapters/BcryptAdapter'
-import { EmailManager } from 'src/general/managers/emailManager'
 import { ConfigService } from '@nestjs/config'
+import { JwtService } from '../../general/adapters/JwtService'
+import { EmailManager } from '../../general/managers/emailManager'
+import { DeviceRepository } from '../../security/infrastructure/device-db-repository'
+import { BcryptAdapter } from '../../general/adapters/BcryptAdapter'
+import { DeviceAuthSessionDTO } from '../../security/domain/DeviceSessionsType'
 
 
 //transaction script

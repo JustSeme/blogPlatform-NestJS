@@ -5,11 +5,11 @@ import {
     UsersWithQueryOutputModel, UserViewModelType
 } from "../application/dto/UsersViewModel"
 import { UsersQueryRepository } from "../infrastructure/users-query-repository"
-import { ErrorMessagesOutputModel } from "src/general/types/ErrorMessagesOutputModel"
 import {
     Body, Controller, Delete, Get, Param, Post, Query, HttpCode, NotFoundException, HttpStatus, NotImplementedException, UseGuards
 } from "@nestjs/common"
-import { BasicAuthGuard } from "src/blogs/api/guards/basic-auth.guard"
+import { ErrorMessagesOutputModel } from "../../general/types/ErrorMessagesOutputModel"
+import { BasicAuthGuard } from "../../blogs/api/guards/basic-auth.guard"
 
 @UseGuards(BasicAuthGuard)
 @Controller('users')

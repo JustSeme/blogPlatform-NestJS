@@ -6,10 +6,10 @@ import { ReadCommentsQueryParams } from "../api/models/ReadCommentsQuery"
 import { CommentsRepository } from "../infrastructure/comments/comments-db-repository"
 import { UserDTO } from "../../auth/domain/UsersTypes"
 import { Injectable } from "@nestjs/common"
-import { JwtService } from "src/general/adapters/JwtService"
 import {
     CommentDBModel, LikeObjectType
 } from "../domain/comments/CommentTypes"
+import { JwtService } from "../../general/adapters/JwtService"
 
 @Injectable()
 export class CommentsService {

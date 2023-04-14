@@ -6,10 +6,10 @@ import { ReadPostsQueryParams } from '../api/models/ReadPostsQuery'
 import { PostsViewModel } from './dto/PostViewModel'
 import { UsersRepository } from '../../auth/infrastructure/users-db-repository'
 import { Injectable } from '@nestjs/common'
-import { JwtService } from 'src/general/adapters/JwtService'
 import {
     ExtendedLikeObjectType, PostDBModel, PostsWithQueryOutputModel
 } from '../domain/posts/PostsTypes'
+import { JwtService } from '../../general/adapters/JwtService'
 
 @Injectable()
 export class PostsService {

@@ -2,18 +2,19 @@ import {
     BadRequestException,
     Body, Controller, Get, HttpCode, HttpStatus, NotImplementedException, Post, Request, Response, UnauthorizedException, UseGuards
 } from "@nestjs/common"
-import { JwtService } from "src/general/adapters/JwtService"
 import { AuthService } from "../application/auth-service"
 import { UserInputModel } from "./models/UserInputModel"
-import { ErrorMessagesOutputModel } from "src/general/types/ErrorMessagesOutputModel"
 import { UsersQueryRepository } from "../infrastructure/users-query-repository"
 import { NewPasswordInputModel } from "./models/NewPasswordInputModel"
 import { MeOutputModel } from "../application/dto/MeViewModel"
-import { FieldError } from "src/general/types/ErrorMessagesOutputModel"
 import { LocalAuthGuard } from "./guards/local-auth.guard"
 import { ThrottlerGuard } from "@nestjs/throttler"
-import { JwtAuthGuard } from "src/blogs/api/guards/jwt-auth.guard"
-import { CurrentUserId } from "src/general/decorators/current-userId.param.decorator"
+import {
+    ErrorMessagesOutputModel, FieldError
+} from "../../general/types/ErrorMessagesOutputModel"
+import { JwtAuthGuard } from "../../blogs/api/guards/jwt-auth.guard"
+import { CurrentUserId } from "../../general/decorators/current-userId.param.decorator"
+import { JwtService } from "../../general/adapters/JwtService"
 
 @Controller('auth')
 export class AuthController {

@@ -1,7 +1,7 @@
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import { Injectable } from '@nestjs/common/decorators'
-import { DeviceRepository } from 'src/security/infrastructure/device-db-repository'
 import { ConfigService } from '@nestjs/config'
+import { DeviceRepository } from '../../security/infrastructure/device-db-repository'
 
 
 @Injectable()

@@ -5,12 +5,12 @@ import {
     Delete,
     ForbiddenException, Get, NotFoundException, NotImplementedException, Param, UseGuards
 } from "@nestjs/common"
-import { JwtService } from "src/general/adapters/JwtService"
-import { CurrentUserId } from "src/general/decorators/current-userId.param.decorator"
-import { generateErrorsMessages } from "src/general/helpers"
 import { CurrentDeviceId } from "../current-deviceId.param.decorator"
 import { IsDeviceExistsPipe } from "./pipes/isDeviceExists.validation.pipe"
 import { RefreshAuthGuard } from "./guards/refresh-auth.guard"
+import { JwtService } from "../../general/adapters/JwtService"
+import { CurrentUserId } from "../../general/decorators/current-userId.param.decorator"
+import { generateErrorsMessages } from "../../general/helpers"
 
 @Controller('security')
 @UseGuards(RefreshAuthGuard)

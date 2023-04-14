@@ -3,18 +3,18 @@ import { BlogViewModel } from "../application/dto/BlogViewModel"
 import { BlogsService } from "../application/blogs-service"
 import { BlogsQueryRepository } from "../infrastructure/blogs/blogs-query-repository"
 import { BlogsWithQueryOutputModel } from '../application/dto/BlogViewModel'
-import { PostsService } from "../application/posts-service"
 import { ReadBlogsQueryParams } from "./models/ReadBlogsQuery"
-import { ReadPostsQueryParams } from "./models/ReadPostsQuery"
 import { PostsViewModel } from '../application/dto/PostViewModel'
 import {
     Controller, Get, Param, Query, NotFoundException, Headers, Post, Body, HttpCode, Put, Delete, HttpStatus, UseGuards
 } from '@nestjs/common'
-import { PostsWithQueryOutputModel } from "src/blogs/domain/posts/PostsTypes"
 import { BasicAuthGuard } from "./guards/basic-auth.guard"
 import { PostInputModelWithoutBlogId } from "./models/PostInputModelWithoutBlogId"
 import { PostInputModel } from "./models/PostInputModel"
 import { IsBlogByIdExistPipe } from "./pipes/isBlogExists.validation.pipe"
+import { PostsWithQueryOutputModel } from "../domain/posts/PostsTypes"
+import { PostsService } from "../application/posts-service"
+import { ReadPostsQueryParams } from "./models/ReadPostsQuery"
 
 @Controller('blogs')
 export class BlogsController {

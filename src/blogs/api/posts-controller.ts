@@ -11,14 +11,14 @@ import { PostsService } from "../application/posts-service"
 import { ReadPostsQueryParams } from "./models/ReadPostsQuery"
 import { LikeInputModel } from "./models/LikeInputModel"
 import { PostsViewModel } from "../application/dto/PostViewModel"
-import { UsersQueryRepository } from 'src/auth/infrastructure/users-query-repository'
-import { JwtService } from 'src/general/adapters/JwtService'
 import { BlogsQueryRepository } from '../infrastructure/blogs/blogs-query-repository'
 import { PostsRepository } from '../infrastructure/posts/posts-db-repository'
 import { CurrentUserId } from '../../general/decorators/current-userId.param.decorator'
 import { JwtAuthGuard } from './guards/jwt-auth.guard'
 import { BasicAuthGuard } from './guards/basic-auth.guard'
 import { IsPostExistsPipe } from './pipes/isPostExists.validation.pipe'
+import { JwtService } from '@nestjs/jwt'
+import { UsersQueryRepository } from '../../auth/infrastructure/users-query-repository'
 
 @Controller('posts')
 export class PostsController {

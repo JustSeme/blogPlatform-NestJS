@@ -2,11 +2,11 @@ import { PostInputModel } from '../../api/models/PostInputModel'
 import { ReadPostsQueryParams } from '../../api/models/ReadPostsQuery'
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose/dist'
-import { Post } from 'src/blogs/domain/posts/PostsSchema'
+import { PostDocument } from './PostsTypes'
+import { Post } from '../../domain/posts/PostsSchema'
 import {
     ExtendedLikeObjectType, PostDBModel, PostModelType
-} from 'src/blogs/domain/posts/PostsTypes'
-import { PostDocument } from './PostsTypes'
+} from '../../domain/posts/PostsTypes'
 
 @Injectable()
 export class PostsRepository {
