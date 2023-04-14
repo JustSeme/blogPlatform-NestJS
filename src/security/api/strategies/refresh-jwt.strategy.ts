@@ -10,15 +10,18 @@ import { settings } from "src/settings"
 export class RefreshJwtStrategy extends PassportStrategy(Strategy, 'refreshJwt') {
     constructor(private deviceRepository: DeviceRepository) {
         super({
-            jwtFromRequest: ExtractJwt.fromHeader('Cookie'),
+            jwtFromRequest: ExtractJwt.fromHeader('Cookies'),
             ignoreExpiration: false,
             secretOrKey: settings.JWT_SECRET
         })
     }
 
     async validate(payload: { userId: string, deviceId: string, iat: number }) {
+        console.log('hello world')
+
         const issuedAtForDeviceId = await this.deviceRepository.getCurrentIssuedAt(payload.deviceId)
         if (issuedAtForDeviceId > payload.iat) {
+
             return null
         }
         return payload

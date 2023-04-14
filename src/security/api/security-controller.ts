@@ -6,14 +6,14 @@ import {
     ForbiddenException, Get, NotFoundException, NotImplementedException, Param, UseGuards
 } from "@nestjs/common"
 import { JwtService } from "src/general/adapters/jwtService"
-import { RefreshJwtAuthGuard } from "./guards/refresh-jwt-auth.guard"
 import { CurrentUserId } from "src/general/decorators/current-userId.param.decorator"
 import { generateErrorsMessages } from "src/general/helpers"
 import { CurrentDeviceId } from "../current-deviceId.param.decorator"
 import { IsDeviceExistsPipe } from "./pipes/isDeviceExists.validation.pipe"
+import { RefreshAuthGuard } from "./guards/refresh-auth.guard"
 
 @Controller('security')
-@UseGuards(RefreshJwtAuthGuard)
+@UseGuards(RefreshAuthGuard)
 export class SecurityController {
     constructor(protected jwtService: JwtService, protected securityService: SecurityService) { }
 
@@ -28,17 +28,17 @@ export class SecurityController {
     }
 
     @Delete('devices')
-    async deleteDevices(@CurrentUserId() userId: string, @CurrentDeviceId() deviceId: string): Promise<boolean> { // exclude current
+    async deleteDevices(@CurrentUserId() userId: string, @CurrentDeviceId() deviceId: string) { // exclude current
         const isDeleted = await this.securityService.removeAllSessions(userId, deviceId) // exclude current
         if (!isDeleted) {
             throw new NotImplementedException('Device is wasn\'t deleted')
         }
 
-        return true
+        return
     }
 
     @Delete('devices/:deviceId')
-    async deleteDeviceById(@Param('deviceId', IsDeviceExistsPipe) deviceId: string, @CurrentUserId() userId: string): Promise<boolean> {
+    async deleteDeviceById(@Param('deviceId', IsDeviceExistsPipe) deviceId: string, @CurrentUserId() userId: string) {
         const deletingDevice = await this.securityService.getDeviceById(deviceId)
 
         if (userId !== deletingDevice.userInfo.userId) {
@@ -47,6 +47,6 @@ export class SecurityController {
 
         await this.securityService.deleteDevice(deviceId)
 
-        return true
+        return
     }
 }
