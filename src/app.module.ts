@@ -55,7 +55,7 @@ import { APP_GUARD } from '@nestjs/core'
     MongooseModule.forRoot(settings.mongoURI),
     ThrottlerModule.forRoot({
       ttl: 10,
-      limit: 5
+      limit: 7
     }),
     MongooseModule.forFeature([
       {
