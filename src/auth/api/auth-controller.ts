@@ -12,6 +12,8 @@ import { MeOutputModel } from "../application/dto/MeViewModel"
 import { FieldError } from "src/general/types/ErrorMessagesOutputModel"
 import { LocalAuthGuard } from "./guards/local-auth.guard"
 import { ThrottlerGuard } from "@nestjs/throttler"
+import { JwtAuthGuard } from "src/blogs/api/guards/jwt-auth.guard"
+import { CurrentUserId } from "src/general/decorators/current-userId.param.decorator"
 
 @Controller('auth')
 export class AuthController {
@@ -38,6 +40,7 @@ export class AuthController {
     }
 
     @Post('refresh-token')
+    @HttpCode(HttpStatus.OK)
     async refreshTokens(@Request() req, @Response() res) {
         const refreshToken = req.cookies.refreshToken
 
@@ -148,15 +151,9 @@ export class AuthController {
         }
     }
 
+    @UseGuards(JwtAuthGuard)
     @Get('me')
-    async sendUserInfo(@Request() req): Promise<MeOutputModel> {
-        const accessToken = req.cookies.accessToken
-        const userId = await this.jwtService.getUserIdByToken(accessToken)
-
-        if (!userId) {
-            throw new UnauthorizedException()
-        }
-
+    async sendUserInfo(@CurrentUserId() userId: string): Promise<MeOutputModel> {
         const user = await this.usersQueryRepository.findUserById(userId)
 
         return {

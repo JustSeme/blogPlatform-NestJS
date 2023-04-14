@@ -1,10 +1,12 @@
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import { settings } from "../../settings"
 import { Injectable } from '@nestjs/common/decorators'
+import { DeviceRepository } from 'src/security/infrastructure/device-db-repository'
+
 
 @Injectable()
 export class JwtService {
-    /* constructor(protected deviceRepository: DeviceRepository) { } */
+    constructor(protected deviceRepository: DeviceRepository) { }
 
     async createAccessToken(expiresTime: string, userId: string) {
         return jwt.sign({ userId }, settings.JWT_SECRET, { expiresIn: expiresTime })
@@ -28,10 +30,10 @@ export class JwtService {
     async verifyRefreshToken(verifiedToken: string) {
         try {
             const result = await jwt.verify(verifiedToken, settings.JWT_SECRET) as JwtPayload
-            /* const issuedAtForDeviceId = await this.deviceRepository.getCurrentIssuedAt(result.deviceId)
+            const issuedAtForDeviceId = await this.deviceRepository.getCurrentIssuedAt(result.deviceId)
             if (issuedAtForDeviceId > result.iat) {
                 return null
-            } */
+            }
 
             return result
         } catch (err) {
@@ -58,11 +60,11 @@ export class JwtService {
         const newAccessToken = await this.createAccessToken(settings.REFRESH_TOKEN_EXPIRE_TIME, result.userId)
         const resultOfCreatedToken = jwt.decode(newRefreshToken) as JwtPayload
 
-        /* const isUpdated = this.deviceRepository.updateSession(result.deviceId, resultOfCreatedToken.iat, resultOfCreatedToken.exp)
+        const isUpdated = this.deviceRepository.updateSession(result.deviceId, resultOfCreatedToken.iat, resultOfCreatedToken.exp)
 
         if (!isUpdated) {
             return null
-        } */
+        }
 
         return {
             newRefreshToken,
