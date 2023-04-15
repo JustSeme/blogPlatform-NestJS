@@ -2,7 +2,6 @@ import request from 'supertest';
 import { Test } from '@nestjs/testing';
 import { AppModule } from '../src/app.module';
 import { INestApplication } from '@nestjs/common';
-import { BlogsService } from '../src/blogs/application/blogs-service';
 
 describe('blogs', () => {
     let app: INestApplication;
@@ -27,6 +26,6 @@ describe('blogs', () => {
 
     it('/ (GET)', async () => {
         const res = await request(httpServer).get('/blogs')
-        expect(res.body.data).toBe(null)
+        expect(res.body).toBe(null)
     });
 });
