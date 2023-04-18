@@ -51,6 +51,7 @@ import { EmailAdapter } from './general/adapters/EmailAdapter'
 import {
   ConfigModule, ConfigService
 } from '@nestjs/config'
+import { IsBlogByIdExist } from './general/decorators/isBlogExists.validation.decorator'
 
 
 @Module({
@@ -118,6 +119,8 @@ import {
     BlogsRepository,
     CommentsRepository,
     DeviceRepository,
+    // decorators
+    IsBlogByIdExist,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,

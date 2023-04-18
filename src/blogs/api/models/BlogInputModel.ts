@@ -8,7 +8,7 @@ export class BlogInputModel {
     @Length(3, 15)
     name: string
 
-    @Length(10, 500)
+    @Length(3, 500)
     description: string
 
     @IsUrl()

@@ -28,7 +28,7 @@ export class AuthController {
         @Request() req,
         @Response() res,
     ) {
-        const deviceName = req.headers["user-agent"]
+        const deviceName = req.headers["user-agent"] ? req.headers["user-agent"] : 'undefined'
 
         const pairOfTokens = await this.authService.login(req.user.id, req.ip, deviceName)
 

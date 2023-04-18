@@ -4,7 +4,9 @@ import { BlogViewModel } from "../../application/dto/BlogViewModel"
 import { ReadBlogsQueryParams } from "../../api/models/ReadBlogsQuery"
 import { Blog } from "../../domain/blogs/BlogsSchema"
 import { BlogModelType } from "../../domain/blogs/BlogsTypes"
+import { Injectable } from '@nestjs/common'
 
+@Injectable()
 export class BlogsQueryRepository {
     constructor(@InjectModel(Blog.name) private BlogsModel: BlogModelType) { }
 
