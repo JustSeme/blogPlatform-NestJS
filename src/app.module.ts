@@ -67,8 +67,8 @@ import { APP_GUARD } from "@nestjs/core"
       inject: [ConfigService],
     }),
     ThrottlerModule.forRoot({
-      ttl: 10,
-      limit: 7
+      ttl: 1,
+      limit: 10
     }),
     MongooseModule.forFeature([
       {

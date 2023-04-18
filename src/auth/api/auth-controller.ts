@@ -8,7 +8,9 @@ import { UsersQueryRepository } from "../infrastructure/users-query-repository"
 import { NewPasswordInputModel } from "./models/NewPasswordInputModel"
 import { MeOutputModel } from "../application/dto/MeViewModel"
 import { LocalAuthGuard } from "./guards/local-auth.guard"
-import { ThrottlerGuard } from "@nestjs/throttler"
+import {
+    Throttle, ThrottlerGuard
+} from "@nestjs/throttler"
 import {
     ErrorMessagesOutputModel, FieldError
 } from "../../general/types/ErrorMessagesOutputModel"
@@ -22,6 +24,7 @@ export class AuthController {
 
     @UseGuards(ThrottlerGuard)
     @UseGuards(LocalAuthGuard)
+    @Throttle(5, 10)
     @Post('login')
     @HttpCode(HttpStatus.OK)
     async login(
@@ -71,6 +74,7 @@ export class AuthController {
         }
     }
 
+    @Throttle(5, 10)
     @Post('registration')
     @UseGuards(ThrottlerGuard)
     @HttpCode(HttpStatus.NO_CONTENT)
@@ -97,6 +101,7 @@ export class AuthController {
         await this.authService.createUser(userInput.login, userInput.password, userInput.email,)
     }
 
+    @Throttle(5, 10)
     @Post('registration-confirmation')
     @UseGuards(ThrottlerGuard)
     @HttpCode(HttpStatus.NO_CONTENT)
@@ -111,6 +116,7 @@ export class AuthController {
         }
     }
 
+    @Throttle(5, 10)
     @Post('registration-email-resending')
     @UseGuards(ThrottlerGuard)
     @HttpCode(HttpStatus.NO_CONTENT)
@@ -125,6 +131,7 @@ export class AuthController {
         }
     }
 
+    @Throttle(5, 10)
     @Post('password-recovery')
     @HttpCode(HttpStatus.NO_CONTENT)
     async recoveryPassword(@Body() { email }: { email: string }): Promise<void> {
@@ -134,6 +141,7 @@ export class AuthController {
         }
     }
 
+    @Throttle(5, 10)
     @Post('new-password')
     @HttpCode(HttpStatus.NO_CONTENT)
     async generateNewPassword(@Body() newPasswordInputModel: NewPasswordInputModel): Promise<void> {
