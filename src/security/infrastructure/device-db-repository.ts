@@ -46,7 +46,7 @@ export class DeviceRepository {
 
 
     async isDeviceExists(deviceId: string) {
-        const deviceByDeviceId = this.getDeviceById(deviceId)
+        const deviceByDeviceId = await this.getDeviceById(deviceId)
         return deviceByDeviceId ? true : false
     }
 }

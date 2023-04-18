@@ -54,6 +54,7 @@ import {
 import { IsBlogByIdExist } from './general/decorators/isBlogExists.validation.decorator'
 import { IsEmailAlreadyInUse } from './auth/api/decorators/IsEmailAlreadyInUse'
 import { IsLoginAlreadyInUse } from './auth/api/decorators/IsLoginAlreadyInUse'
+import { IsDeviceExistsPipe } from './security/api/pipes/isDeviceExists.validation.pipe'
 
 
 @Module({
@@ -125,6 +126,7 @@ import { IsLoginAlreadyInUse } from './auth/api/decorators/IsLoginAlreadyInUse'
     IsBlogByIdExist,
     IsEmailAlreadyInUse,
     IsLoginAlreadyInUse,
+    IsDeviceExistsPipe,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,

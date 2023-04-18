@@ -3,7 +3,7 @@ import { DeviceSessionsViewModel } from "../application/dto/DeviceSessionsViewMo
 import {
     Controller,
     Delete,
-    ForbiddenException, Get, NotFoundException, NotImplementedException, Param, UseGuards
+    ForbiddenException, Get, HttpCode, NotFoundException, NotImplementedException, Param, UseGuards
 } from "@nestjs/common"
 import { CurrentDeviceId } from "../current-deviceId.param.decorator"
 import { IsDeviceExistsPipe } from "./pipes/isDeviceExists.validation.pipe"
@@ -11,6 +11,7 @@ import { RefreshAuthGuard } from "./guards/refresh-auth.guard"
 import { JwtService } from "../../general/adapters/JwtService"
 import { CurrentUserId } from "../../general/decorators/current-userId.param.decorator"
 import { generateErrorsMessages } from "../../general/helpers"
+import { HttpStatus } from '@nestjs/common'
 
 @Controller('security')
 @UseGuards(RefreshAuthGuard)
@@ -28,6 +29,7 @@ export class SecurityController {
     }
 
     @Delete('devices')
+    @HttpCode(HttpStatus.NO_CONTENT)
     async deleteDevices(@CurrentUserId() userId: string, @CurrentDeviceId() deviceId: string) { // exclude current
         const isDeleted = await this.securityService.removeAllSessions(userId, deviceId) // exclude current
         if (!isDeleted) {
@@ -38,6 +40,7 @@ export class SecurityController {
     }
 
     @Delete('devices/:deviceId')
+    @HttpCode(HttpStatus.NO_CONTENT)
     async deleteDeviceById(@Param('deviceId', IsDeviceExistsPipe) deviceId: string, @CurrentUserId() userId: string) {
         const deletingDevice = await this.securityService.getDeviceById(deviceId)
 
