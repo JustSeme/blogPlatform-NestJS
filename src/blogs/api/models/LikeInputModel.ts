@@ -7,7 +7,7 @@ enum LikeTypeEnum {
 }
 
 export class LikeInputModel {
-    @IsEnum(LikeTypeEnum)
+    @IsEnum(LikeTypeEnum, { message: 'likeStatus is incorrect' })
     likeStatus: LikeType
 }
 

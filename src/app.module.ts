@@ -52,6 +52,8 @@ import {
   ConfigModule, ConfigService
 } from '@nestjs/config'
 import { IsBlogByIdExist } from './general/decorators/isBlogExists.validation.decorator'
+import { IsEmailAlreadyInUse } from './auth/api/decorators/IsEmailAlreadyInUse'
+import { IsLoginAlreadyInUse } from './auth/api/decorators/IsLoginAlreadyInUse'
 
 
 @Module({
@@ -121,6 +123,8 @@ import { IsBlogByIdExist } from './general/decorators/isBlogExists.validation.de
     DeviceRepository,
     // decorators
     IsBlogByIdExist,
+    IsEmailAlreadyInUse,
+    IsLoginAlreadyInUse,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,

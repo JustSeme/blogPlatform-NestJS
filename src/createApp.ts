@@ -45,7 +45,3 @@ export const createApp = (app: NestExpressApplication): NestExpressApplication =
     app.useGlobalFilters(new ErrorExceptionFilter(), new HttpExceptionFilter())
     return app
 }
-
-export const funcSleep = (delay: number) => {
-    return new Promise((resolve) => setTimeout(resolve, delay))
-}

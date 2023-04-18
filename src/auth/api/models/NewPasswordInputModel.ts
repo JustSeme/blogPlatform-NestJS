@@ -1,8 +1,8 @@
 import { Length } from "class-validator"
-import { Transform } from "class-transformer"
+import { TrimIfString } from "../../../general/decorators/trimIfString.decorator"
 
 export class NewPasswordInputModel {
-    @Transform(({ value }) => value.trim())
+    @TrimIfString()
     @Length(6, 20)
     newPassword: string
 

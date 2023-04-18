@@ -3,11 +3,12 @@ import { Test } from '@nestjs/testing';
 import { AppModule } from '../src/app.module';
 import { HttpStatus } from '@nestjs/common';
 import { NestExpressApplication } from "@nestjs/platform-express"
-import { createApp, funcSleep } from '../src/createApp'
+import { createApp } from '../src/createApp'
 import { BlogInputModel } from '../src/blogs/api/models/BlogInputModel';
 import { PostInputModel } from '../src/blogs/api/models/PostInputModel';
 import { CommentInputModel } from '../src/blogs/api/models/CommentInputModel';
 import { LikeInputModel } from '../src/blogs/api/models/LikeInputModel';
+import { funcSleep } from '../src/general/helpers';
 
 describe('posts', () => {
     let app: NestExpressApplication;
