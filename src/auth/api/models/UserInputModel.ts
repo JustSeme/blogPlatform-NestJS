@@ -14,9 +14,9 @@ export class UserInputModel {
 
     @TrimIfString()
     @Length(6, 20)
-    @Validate(IsEmailAlreadyInUse)
     password: string
 
     @IsEmail()
+    @Validate(IsEmailAlreadyInUse)
     email: string
 }
