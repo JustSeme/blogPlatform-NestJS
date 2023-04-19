@@ -55,6 +55,9 @@ import { IsEmailAlreadyInUse } from "./auth/api/decorators/IsEmailAlreadyInUse"
 import { IsLoginAlreadyInUse } from "./auth/api/decorators/IsLoginAlreadyInUse"
 import { IsDeviceExistsPipe } from "./security/api/pipes/isDeviceExists.validation.pipe"
 import { APP_GUARD } from "@nestjs/core"
+import {
+  Attempt, AttemptsSchema
+} from "./security/domain/AttemptsSchema"
 
 
 
@@ -92,7 +95,11 @@ import { APP_GUARD } from "@nestjs/core"
       {
         name: DeviceAuthSession.name,
         schema: DeviceAuthSessionsSchema
-      }
+      },
+      {
+        name: Attempt.name,
+        schema: AttemptsSchema
+      },
     ]),
     PassportModule,
   ],

@@ -7,7 +7,7 @@ import {
 import {
     DeviceInfo, DeviceInfoSchema
 } from "./DeviceInfoSchema"
-import { DeviceAuthSessionDTO } from "./DeviceSessionsType"
+import { DeviceAuthSessionDTO } from "./DeviceAuthSessionType"
 
 @Schema()
 export class DeviceAuthSession {

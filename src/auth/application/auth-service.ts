@@ -11,7 +11,7 @@ import { JwtService } from '../../general/adapters/JwtService'
 import { EmailManager } from '../../general/managers/emailManager'
 import { DeviceRepository } from '../../security/infrastructure/device-db-repository'
 import { BcryptAdapter } from '../../general/adapters/BcryptAdapter'
-import { DeviceAuthSessionDTO } from '../../security/domain/DeviceSessionsType'
+import { DeviceAuthSessionDTO } from '../../security/domain/DeviceAuthSessionType'
 
 
 //transaction script
