@@ -34,7 +34,7 @@ describe('blogs', () => {
 
     const incorrectBlogInputModel: BlogInputModel = {
         name: '12',
-        description: '123456789',
+        description: '12',
         websiteUrl: 'this is not a websiteUrl'
     }
 

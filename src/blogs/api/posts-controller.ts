@@ -18,7 +18,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard'
 import { BasicAuthGuard } from './guards/basic-auth.guard'
 import { IsPostExistsPipe } from './pipes/isPostExists.validation.pipe'
 import { UsersQueryRepository } from '../../auth/infrastructure/users-query-repository'
-import { JwtService } from '../../general/adapters/JwtService'
+import { JwtService } from '../../general/adapters/jwt.sevice'
 
 @Controller('posts')
 export class PostsController {

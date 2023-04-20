@@ -7,10 +7,10 @@ import { User } from '../domain/UsersSchema'
 import { UserModelType } from '../domain/UsersTypes'
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import { ConfigService } from '@nestjs/config'
-import { JwtService } from '../../general/adapters/JwtService'
+import { JwtService } from '../../general/adapters/jwt.sevice'
 import { EmailManager } from '../../general/managers/emailManager'
 import { DeviceRepository } from '../../security/infrastructure/device-db-repository'
-import { BcryptAdapter } from '../../general/adapters/BcryptAdapter'
+import { BcryptAdapter } from '../../general/adapters/bcrypt.adapter'
 import { DeviceAuthSessionDTO } from '../../security/domain/DeviceAuthSessionType'
 
 

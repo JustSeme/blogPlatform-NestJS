@@ -13,7 +13,7 @@ import {
 } from "../../general/types/ErrorMessagesOutputModel"
 import { JwtAuthGuard } from "../../blogs/api/guards/jwt-auth.guard"
 import { CurrentUserId } from "../../general/decorators/current-userId.param.decorator"
-import { JwtService } from "../../general/adapters/JwtService"
+import { JwtService } from "../../general/adapters/jwt.sevice"
 import { IpRestrictionGuard } from "./guards/ip-restriction.guard"
 import { generateErrorsMessages } from "../../general/helpers"
 import { EmailInputModel } from "./models/EmailInputModel"

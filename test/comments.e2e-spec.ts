@@ -286,6 +286,7 @@ describe('comments', () => {
     })
 
     it('should delete comment by id', async () => {
+        //test fail if accessToken expire time is 10s
         await request(httpServer)
             .delete(`/comments/${createdCommentId}`)
             .set('Authorization', `Bearer ${recievedAccessToken}`)
@@ -297,6 +298,7 @@ describe('comments', () => {
     })
 
     it('shouldn\'t delete comment by id if it is already deleted', async () => {
+        //test fail if accessToken expire time is 10s
         await request(httpServer)
             .delete(`/comments/${createdCommentId}`)
             .set('Authorization', `Bearer ${recievedAccessToken}`)
