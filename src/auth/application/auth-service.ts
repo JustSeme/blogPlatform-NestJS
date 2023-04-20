@@ -27,8 +27,8 @@ export class AuthService {
         private deviceRepository: DeviceRepository,
         private bcryptAdapter: BcryptAdapter,
         private readonly configService: ConfigService) {
-        this.accessTokenExpireTime = this.configService.get('ACCESS_TOKEN_EXPIRE_TIME')
-        this.refreshTokenExpireTime = this.configService.get('REFRESH_TOKEN_EXPIRE_TIME')
+        this.accessTokenExpireTime = this.configService.get<string>('ACCESS_TOKEN_EXPIRE_TIME')
+        this.refreshTokenExpireTime = this.configService.get<string>('REFRESH_TOKEN_EXPIRE_TIME')
     }
 
     async createUser(login: string, password: string, email: string): Promise<boolean> {
@@ -130,8 +130,8 @@ export class AuthService {
     async login(userId: string, userIp: string, deviceName: string) {
         const deviceId = uuidv4()
 
-        const accessToken = await this.jwtService.createAccessToken(this.accessTokenExpireTime.toString(), userId)
-        const refreshToken = await this.jwtService.createRefreshToken(this.refreshTokenExpireTime.toString(), deviceId, userId)
+        const accessToken = await this.jwtService.createAccessToken(this.accessTokenExpireTime, userId)
+        const refreshToken = await this.jwtService.createRefreshToken(this.refreshTokenExpireTime, deviceId, userId)
         const result = await jwt.decode(refreshToken) as JwtPayload
 
         const newSession = new DeviceAuthSessionDTO(result.iat, result.exp, userId, userIp, deviceId, deviceName)
