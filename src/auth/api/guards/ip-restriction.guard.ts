@@ -19,17 +19,17 @@ const rateLimitValidation = async (clientIp: string, requestedUrl: string, attem
 
     setTimeout(async () => {
         await attemptsRepository.removeAttempts(clientIp, requestedUrl)
-    }, 20000)
+    }, 10000)
     return true
 }
 
 @Injectable()
-export class AuthGuard implements CanActivate {
+export class IpRestrictionGuard implements CanActivate {
     constructor(private attemptsRepository: AttemptsRepository) { }
 
     async canActivate(
         context: ExecutionContext,
-    ): Promise<Promise<boolean> | boolean> {
+    ): Promise<boolean> {
         const request = context.switchToHttp().getRequest()
         const clientIp = request.ip
         const requestedUrl = request.url

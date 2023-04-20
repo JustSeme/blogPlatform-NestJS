@@ -7,7 +7,6 @@
   "license": "UNLICENSED",
   "scripts": {
     "serveo": "ssh -R 80:localhost:3000 serveo.net",
-
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
@@ -21,7 +20,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --watch --config ./test/jest-e2e.json",
-    "testmatch:e2e": "jest --watch --config ./test/jest-e2e.json -t"
+    "testmatch:e2e": "jest --detectOpenHandles --watch --config ./test/jest-e2e.json -t"
   },
   "dependencies": {
     "@nestjs/common": "^9.0.0",
@@ -32,7 +31,6 @@
     "@nestjs/mongoose": "^9.2.2",
     "@nestjs/passport": "^9.0.3",
     "@nestjs/platform-express": "^9.0.0",
-    "@nestjs/throttler": "^4.0.0",
     "bcrypt": "^5.1.0",
     "bcryptjs": "^2.4.3",
     "class-transformer": "^0.5.1",

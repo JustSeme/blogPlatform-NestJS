@@ -1,8 +1,9 @@
 import {
-    Prop, SchemaFactory
+    Prop, Schema, SchemaFactory
 } from "@nestjs/mongoose"
 import { AttemptDTO } from "./AttemptsType"
 
+@Schema()
 export class Attempt {
     @Prop({ required: true })
     clientIp: string

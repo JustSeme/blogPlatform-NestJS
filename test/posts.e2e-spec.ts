@@ -8,7 +8,6 @@ import { BlogInputModel } from '../src/blogs/api/models/BlogInputModel';
 import { PostInputModel } from '../src/blogs/api/models/PostInputModel';
 import { CommentInputModel } from '../src/blogs/api/models/CommentInputModel';
 import { LikeInputModel } from '../src/blogs/api/models/LikeInputModel';
-import { funcSleep } from '../src/general/helpers';
 
 describe('posts', () => {
     let app: NestExpressApplication;
@@ -332,8 +331,6 @@ describe('posts', () => {
     })
 
     it('should like current post and add second like in newestLikes', async () => {
-        await funcSleep(11000)
-
         await request(httpServer)
             .put(`/posts/${createdPostId}/like-status`)
             .set('Authorization', `Bearer ${secondAccessToken}`)
@@ -484,8 +481,6 @@ describe('posts', () => {
     })
 
     it('should delete post', async () => {
-        await funcSleep(11000)
-
         await request(httpServer)
             .delete(`/posts/${createdPostId}`)
             .set('Authorization', `Basic YWRtaW46cXdlcnR5`)

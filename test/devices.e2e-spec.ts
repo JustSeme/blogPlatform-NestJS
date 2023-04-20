@@ -5,7 +5,6 @@ import { HttpStatus } from '@nestjs/common';
 import { NestExpressApplication } from "@nestjs/platform-express"
 import { createApp } from '../src/createApp'
 import { UserInputModel } from '../src/auth/api/models/UserInputModel';
-import { funcSleep } from '../src/general/helpers';
 
 describe('devices', () => {
     let app: NestExpressApplication;
@@ -127,7 +126,6 @@ describe('devices', () => {
     })
 
     it('should login for create the third session', async () => {
-        await funcSleep(11000)
         await request(httpServer)
             .post('/auth/login')
             .send({ loginOrEmail: correctUserInputData.email, password: correctUserInputData.password })

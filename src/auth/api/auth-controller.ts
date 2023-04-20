@@ -9,27 +9,25 @@ import { NewPasswordInputModel } from "./models/NewPasswordInputModel"
 import { MeOutputModel } from "../application/dto/MeViewModel"
 import { LocalAuthGuard } from "./guards/local-auth.guard"
 import {
-    Throttle, ThrottlerGuard
-} from "@nestjs/throttler"
-import {
     ErrorMessagesOutputModel, FieldError
 } from "../../general/types/ErrorMessagesOutputModel"
 import { JwtAuthGuard } from "../../blogs/api/guards/jwt-auth.guard"
 import { CurrentUserId } from "../../general/decorators/current-userId.param.decorator"
 import { JwtService } from "../../general/adapters/JwtService"
+import { IpRestrictionGuard } from "./guards/ip-restriction.guard"
+import { generateErrorsMessages } from "../../general/helpers"
+import { EmailInputModel } from "./models/EmailInputModel"
 
 @Controller('auth')
 export class AuthController {
     constructor(protected authService: AuthService, protected jwtService: JwtService, protected usersQueryRepository: UsersQueryRepository) { }
 
-    @UseGuards(ThrottlerGuard)
-    @UseGuards(LocalAuthGuard)
-    @Throttle(5, 10)
+    @UseGuards(IpRestrictionGuard, LocalAuthGuard)
     @Post('login')
     @HttpCode(HttpStatus.OK)
     async login(
         @Request() req,
-        @Response() res,
+        @Response({ passthrough: true }) res,
     ) {
         const deviceName = req.headers["user-agent"] ? req.headers["user-agent"] : 'undefined'
 
@@ -40,7 +38,7 @@ export class AuthController {
             secure: true,
         })
 
-        res.send({ accessToken: pairOfTokens.accessToken })
+        return { accessToken: pairOfTokens.accessToken }
     }
 
     @Post('refresh-token')
@@ -74,9 +72,8 @@ export class AuthController {
         }
     }
 
-    @Throttle(5, 10)
+    @UseGuards(IpRestrictionGuard)
     @Post('registration')
-    @UseGuards(ThrottlerGuard)
     @HttpCode(HttpStatus.NO_CONTENT)
     async registration(@Body() userInput: UserInputModel) {
         const userByLogin = await this.usersQueryRepository.findUserByLogin(userInput.login)
@@ -101,57 +98,46 @@ export class AuthController {
         await this.authService.createUser(userInput.login, userInput.password, userInput.email,)
     }
 
-    @Throttle(5, 10)
+    @UseGuards(IpRestrictionGuard)
     @Post('registration-confirmation')
-    @UseGuards(ThrottlerGuard)
     @HttpCode(HttpStatus.NO_CONTENT)
     async registrationConfirm(@Body('code') code: string) {
         const isConfirmed = await this.authService.confirmEmail(code)
 
         if (!isConfirmed) {
-            throw new BadRequestException([{
-                message: 'The confirmation code is incorrect, expired or already been applied',
-                field: 'code',
-            }])
+            throw new BadRequestException(generateErrorsMessages('The confirmation code is incorrect, expired or already been applied', 'code'))
         }
     }
 
-    @Throttle(5, 10)
+    @UseGuards(IpRestrictionGuard)
     @Post('registration-email-resending')
-    @UseGuards(ThrottlerGuard)
     @HttpCode(HttpStatus.NO_CONTENT)
-    async resendEmail(@Body() { email }: { email: string }): Promise<void | ErrorMessagesOutputModel> {
+    async resendEmail(@Body() { email }: EmailInputModel): Promise<void | ErrorMessagesOutputModel> {
         const result = await this.authService.resendConfirmationCode(email)
 
         if (!result) {
-            throw new BadRequestException([{
-                message: 'Your email is already confirmed or doesn\'t exist',
-                field: 'email',
-            }])
+            throw new BadRequestException(generateErrorsMessages('Your email is already confirmed or doesn\'t exist', 'email'))
         }
     }
 
-    @Throttle(5, 10)
+    @UseGuards(IpRestrictionGuard)
     @Post('password-recovery')
     @HttpCode(HttpStatus.NO_CONTENT)
-    async recoveryPassword(@Body() { email }: { email: string }): Promise<void> {
+    async recoveryPassword(@Body() { email }: EmailInputModel): Promise<void> {
         const isRecovering = await this.authService.sendPasswordRecoveryCode(email)
         if (!isRecovering) {
             throw new NotImplementedException()
         }
     }
 
-    @Throttle(5, 10)
+    @UseGuards(IpRestrictionGuard)
     @Post('new-password')
     @HttpCode(HttpStatus.NO_CONTENT)
     async generateNewPassword(@Body() newPasswordInputModel: NewPasswordInputModel): Promise<void> {
         const user = await this.usersQueryRepository.findUserByRecoveryPasswordCode(newPasswordInputModel.recoveryCode)
 
         if (!user || user.passwordRecovery.expirationDate < new Date()) {
-            throw new BadRequestException([{
-                message: 'recoveryCode is incorrect',
-                field: 'recoveryCode',
-            }])
+            throw new BadRequestException(generateErrorsMessages('recoveryCode is incorrect', 'recoveryCode'))
         }
 
         const isConfirmed = await this.authService.confirmRecoveryPassword(user.id, newPasswordInputModel.newPassword)

@@ -7,7 +7,6 @@ import { BlogInputModel } from '../src/blogs/api/models/BlogInputModel';
 import { createApp } from '../src/createApp'
 import { PostInputModel } from '../src/blogs/api/models/PostInputModel';
 import { CommentInputModel } from '../src/blogs/api/models/CommentInputModel';
-import { funcSleep } from '../src/general/helpers';
 
 describe('comments', () => {
     let app: NestExpressApplication;
@@ -267,7 +266,6 @@ describe('comments', () => {
     })
 
     it('should set None instead of Like/Dislike and display correct like info', async () => {
-        await funcSleep(11000)
         await request(httpServer)
             .put(`/comments/${createdCommentId}/like-status`)
             .set('Authorization', `Bearer ${recievedAccessToken}`)

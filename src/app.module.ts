@@ -4,9 +4,6 @@ import {
 } from "@nestjs/config"
 import { MongooseModule } from "@nestjs/mongoose"
 import {
-  ThrottlerGuard, ThrottlerModule
-} from "@nestjs/throttler"
-import {
   User, UsersSchema
 } from "./auth/domain/UsersSchema"
 import {
@@ -54,10 +51,11 @@ import { IsBlogByIdExist } from "./general/decorators/isBlogExists.validation.de
 import { IsEmailAlreadyInUse } from "./auth/api/decorators/IsEmailAlreadyInUse"
 import { IsLoginAlreadyInUse } from "./auth/api/decorators/IsLoginAlreadyInUse"
 import { IsDeviceExistsPipe } from "./security/api/pipes/isDeviceExists.validation.pipe"
-import { APP_GUARD } from "@nestjs/core"
 import {
   Attempt, AttemptsSchema
 } from "./security/domain/AttemptsSchema"
+import { AttemptsRepository } from "./security/infrastructure/attempts-db-repository"
+import { IpRestrictionGuard } from "./auth/api/guards/ip-restriction.guard"
 
 
 
@@ -68,10 +66,6 @@ import {
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({ uri: configService.get<string>('mongoURI') }),
       inject: [ConfigService],
-    }),
-    ThrottlerModule.forRoot({
-      ttl: 1,
-      limit: 10
     }),
     MongooseModule.forFeature([
       {
@@ -130,15 +124,14 @@ import {
     BlogsRepository,
     CommentsRepository,
     DeviceRepository,
+    AttemptsRepository,
     // decorators
     IsBlogByIdExist,
     IsEmailAlreadyInUse,
     IsLoginAlreadyInUse,
     IsDeviceExistsPipe,
-    {
-      provide: APP_GUARD,
-      useClass: ThrottlerGuard,
-    },
+    // guards
+    IpRestrictionGuard,
   ],
 })
 
