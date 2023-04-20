@@ -130,8 +130,8 @@ export class AuthService {
     async login(userId: string, userIp: string, deviceName: string) {
         const deviceId = uuidv4()
 
-        const accessToken = await this.jwtService.createAccessToken(this.accessTokenExpireTime, userId)
-        const refreshToken = await this.jwtService.createRefreshToken(this.refreshTokenExpireTime, deviceId, userId)
+        const accessToken = await this.jwtService.createAccessToken(this.accessTokenExpireTime.toString(), userId)
+        const refreshToken = await this.jwtService.createRefreshToken(this.refreshTokenExpireTime.toString(), deviceId, userId)
         const result = await jwt.decode(refreshToken) as JwtPayload
 
         const newSession = new DeviceAuthSessionDTO(result.iat, result.exp, userId, userIp, deviceId, deviceName)
