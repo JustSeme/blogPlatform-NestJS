@@ -8,7 +8,7 @@ export class PasswordRecovery {
     @Prop({ required: true })
     confirmationCode: string
 
-    @Prop({ default: new Date() })
+    @Prop({ default: () => new Date() })
     expirationDate: Date
 }
 

@@ -71,7 +71,7 @@ export class JwtService {
         const newAccessToken = await this.createAccessToken(this.accessTokenExpireTime, result.userId)
         const resultOfCreatedToken = jwt.decode(newRefreshToken) as JwtPayload
 
-        const isUpdated = this.deviceRepository.updateSession(result.deviceId, resultOfCreatedToken.iat, resultOfCreatedToken.exp)
+        const isUpdated = await this.deviceRepository.updateSession(result.deviceId, resultOfCreatedToken.iat, resultOfCreatedToken.exp)
 
         if (!isUpdated) {
             return null

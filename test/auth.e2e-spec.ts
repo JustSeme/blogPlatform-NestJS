@@ -7,6 +7,7 @@ import { createApp } from '../src/createApp'
 import { UserInputModel } from '../src/auth/api/models/UserInputModel';
 import { LoginInputDTO } from '../src/auth/api/models/LoginInputDTO'
 import { UsersRepository } from '../src/auth/infrastructure/users-db-repository';
+import { NewPasswordInputModel } from '../src/auth/api/models/NewPasswordInputModel';
 
 describe('e2e-auth', () => {
     let app: NestExpressApplication;
@@ -152,6 +153,23 @@ describe('e2e-auth', () => {
         refreshToken = response.header['set-cookie']
     })
 
+    it('shouldn\'t get user info, if accessToken is incorrect', async () => {
+        await request(httpServer)
+            .get('/auth/me')
+            .send({ accessToken: 'incorrect' })
+            .expect(HttpStatus.UNAUTHORIZED)
+    })
+
+    it('should get user info, using accessToken', async () => {
+        const response = await request(httpServer)
+            .get('/auth/me')
+            .set('Authorization', `Bearer ${accessToken}`)
+            .expect(HttpStatus.OK)
+
+        expect(response.body.email).toBe(correctUserInputData.email)
+        expect(response.body.login).toBe(correctUserInputData.login)
+    })
+
     it('shouldn\'t logout if refreshToken is incorrect, status 401', async () => {
         await request(httpServer)
             .post('/auth/logout')
@@ -159,10 +177,131 @@ describe('e2e-auth', () => {
             .expect(HttpStatus.UNAUTHORIZED)
     })
 
-    it('should logout using refreshToken, status 204', async () => {
+    it('shouldn\'t refresh tokens, if refreshToken is incorrect', async () => {
+        await request(httpServer)
+            .post('/auth/refresh-token')
+            .set('Cookie', 'incorrectRefreshToken')
+            .expect(HttpStatus.UNAUTHORIZED)
+    })
+
+    let correctAccessToken
+    let correctRefreshToken
+    it('should refresh tokens, using refreshToken', async () => {
+        const response = await request(httpServer)
+            .post('/auth/refresh-token')
+            .set('Cookie', refreshToken)
+            .expect(HttpStatus.OK)
+
+        correctAccessToken = response.body.accessToken
+        correctRefreshToken = response.header['set-cookie']
+    })
+
+    it('shouldn\'t refresh tokens, if refreshToken is already updated(expired)', async () => {
+        await request(httpServer)
+            .post('/auth/refresh-token')
+            .set('Cookie', refreshToken)
+            .expect(HttpStatus.UNAUTHORIZED)
+    })
+
+    let userPasswordRecoveryCode
+    it('should update passwordRecoveryCode for current user, status 204', async () => {
+        await request(httpServer)
+            .post('/auth/password-recovery')
+            .send({ email: correctUserInputData.email })
+            .expect(HttpStatus.NO_CONTENT)
+
+        const user = await usersRepository.findUserById(createdUserId)
+        userPasswordRecoveryCode = user?.passwordRecovery.confirmationCode
+    })
+
+    it('should throw 404 if email is invalid', async () => {
+        await request(app.getHttpServer())
+            .post('/password-recovery')
+            .send({ email: 'invalid-email' })
+            .expect(HttpStatus.NOT_FOUND)
+    })
+
+    it('shouldn\'t update user password if recoveryCode is incorrect', async () => {
+        const newPasswordInputModel: NewPasswordInputModel = {
+            newPassword: 'newPassword', // min 6 max 20
+            recoveryCode: 'incorrect revcoveryCode'
+        }
+
+        let user = await usersRepository.findUserById(createdUserId)
+        const oldUserPasswordHash = user?.passwordHash
+
+        await request(httpServer)
+            .post('/auth/new-password')
+            .send(newPasswordInputModel)
+            .expect(HttpStatus.BAD_REQUEST)
+
+        user = await usersRepository.findUserById(createdUserId)
+        const newUserPasswordHash = user?.passwordHash
+
+        expect(oldUserPasswordHash === newUserPasswordHash).toBe(true)
+    })
+
+    it('shouldn\'t update user password new password is incorrect', async () => {
+        const newPasswordInputModel: NewPasswordInputModel = {
+            newPassword: 'min6s', // min 6 max 20
+            recoveryCode: userPasswordRecoveryCode
+        }
+
+        let user = await usersRepository.findUserById(createdUserId)
+        const oldUserPasswordHash = user?.passwordHash
+
+        await request(httpServer)
+            .post('/auth/new-password')
+            .send(newPasswordInputModel)
+            .expect(HttpStatus.BAD_REQUEST)
+
+        user = await usersRepository.findUserById(createdUserId)
+        const newUserPasswordHash = user?.passwordHash
+
+        expect(oldUserPasswordHash === newUserPasswordHash).toBe(true)
+    })
+
+    it('should update user password, using userPasswordRecoveryCode', async () => {
+        const newPasswordInputModel: NewPasswordInputModel = {
+            newPassword: 'newPassword', // min 6 max 20
+            recoveryCode: userPasswordRecoveryCode
+        }
+
+        let user = await usersRepository.findUserById(createdUserId)
+        const oldUserPasswordHash = user?.passwordHash
+
+        await request(httpServer)
+            .post('/auth/new-password')
+            .send(newPasswordInputModel)
+            .expect(HttpStatus.NO_CONTENT)
+
+        user = await usersRepository.findUserById(createdUserId)
+        const newUserPasswordHash = user?.passwordHash
+
+        expect(oldUserPasswordHash === newUserPasswordHash).toBe(false)
+    })
+
+    it('shouldn\'t logout if refreshToken is expired, status 401', async () => {
         await request(httpServer)
             .post('/auth/logout')
             .set('Cookie', refreshToken)
+            .expect(HttpStatus.UNAUTHORIZED)
+    })
+
+    it('should refresh tokens for logout, using refreshToken', async () => {
+        const response = await request(httpServer)
+            .post('/auth/refresh-token')
+            .set('Cookie', correctRefreshToken)
+            .expect(HttpStatus.OK)
+
+        correctAccessToken = response.body.accessToken
+        correctRefreshToken = response.header['set-cookie']
+    })
+
+    it('should logout using refreshToken, status 204', async () => {
+        await request(httpServer)
+            .post('/auth/logout')
+            .set('Cookie', correctRefreshToken)
             .expect(HttpStatus.NO_CONTENT)
     })
 });
