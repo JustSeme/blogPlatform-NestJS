@@ -1,7 +1,9 @@
-import { Module } from "@nestjs/common"
+//this line should be the first in app
+import { configModule } from "./configuration/сonfigModule"
 import {
   ConfigModule, ConfigService
 } from "@nestjs/config"
+import { Module } from "@nestjs/common"
 import { MongooseModule } from "@nestjs/mongoose"
 import {
   User, UsersSchema
@@ -58,10 +60,9 @@ import { AttemptsRepository } from "./security/infrastructure/attempts-db-reposi
 import { IpRestrictionGuard } from "./auth/api/guards/ip-restriction.guard"
 
 
-
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    configModule,
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({ uri: configService.get<string>('mongoURI') }),
