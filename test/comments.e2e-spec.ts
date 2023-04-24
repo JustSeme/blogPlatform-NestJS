@@ -29,10 +29,11 @@ describe('comments', () => {
     });
 
     afterAll(async () => {
-        await app.close();
+        //await app.close();
     });
 
     let recievedAccessToken = ''
+    let recievedRefreshToken = ''
 
     const createUserInputData = {
         login: 'login',
@@ -55,6 +56,7 @@ describe('comments', () => {
             })
             .expect(HttpStatus.OK)
         recievedAccessToken = accessTokenResponseData.body.accessToken
+        recievedRefreshToken = accessTokenResponseData.headers['set-cookie']
     })
 
     let postId = ''
@@ -283,6 +285,16 @@ describe('comments', () => {
         expect(likedCommentData.body.likesInfo.likesCount).toEqual(0)
         expect(likedCommentData.body.likesInfo.dislikesCount).toEqual(0)
         expect(likedCommentData.body.likesInfo.myStatus).toEqual('None')
+    })
+
+    it('should refresh tokens, using refreshToken', async () => {
+        const response = await request(httpServer)
+            .post('/auth/refresh-token')
+            .set('Cookie', recievedRefreshToken)
+            .expect(HttpStatus.OK)
+
+        recievedAccessToken = response.body.accessToken
+        recievedRefreshToken = response.header['set-cookie']
     })
 
     it('should delete comment by id', async () => {

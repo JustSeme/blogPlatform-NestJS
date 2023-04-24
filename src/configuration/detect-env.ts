@@ -13,7 +13,7 @@ switch (process.env.NODE_ENV) {
         break
 
     default:
-        envFilePath = '.env'
+        envFilePath = '.env.development'
         break
 }
 

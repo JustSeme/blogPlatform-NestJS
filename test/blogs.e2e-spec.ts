@@ -29,7 +29,7 @@ describe('blogs', () => {
     });
 
     afterAll(async () => {
-        await app.close();
+        //await app.close();
     });
 
     const incorrectBlogInputModel: BlogInputModel = {

@@ -63,7 +63,6 @@ import { AuthConfig } from "./configuration/auth.config"
 import { EmailConfig } from "./configuration/Email.config"
 import { AppConfig } from "./configuration/app.config"
 
-
 @Module({
   imports: [
     configModule,

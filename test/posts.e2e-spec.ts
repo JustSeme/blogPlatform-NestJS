@@ -29,7 +29,7 @@ describe('posts', () => {
     });
 
     afterAll(async () => {
-        await app.close();
+        //await app.close();
     });
 
     const correctBlogBody: BlogInputModel = {

@@ -27,7 +27,7 @@ describe('devices', () => {
     });
 
     afterAll(async () => {
-        await app.close();
+        //await app.close();
     });
 
     const correctUserInputData: UserInputModel = {
