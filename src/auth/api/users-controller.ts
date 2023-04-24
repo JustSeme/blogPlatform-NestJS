@@ -1,4 +1,4 @@
-import { AuthService } from "../application/auth-service"
+import { AuthService } from "../application/auth.service"
 import { ReadUsersQuery } from "./models/ReadUsersQuery"
 import { UserInputModel } from "./models/UserInputModel"
 import {

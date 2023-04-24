@@ -1,5 +1,5 @@
 //this line should be the first in app
-import { configModule } from "./configuration/getConfigModule"
+import { configModule } from "./configuration/configModule"
 import {
   ConfigModule, ConfigService
 } from "@nestjs/config"
@@ -34,7 +34,7 @@ import { LocalStrategy } from "./auth/api/strategies/local.strategy"
 import { JwtStrategy } from "./blogs/api/strategies/jwt.strategy"
 import { BasicStrategy } from "./blogs/api/strategies/basic.strategy"
 import { AppService } from "./app.service"
-import { AuthService } from "./auth/application/auth-service"
+import { AuthService } from "./auth/application/auth.service"
 import { JwtService } from "./general/adapters/jwt.sevice"
 import { PostsService } from "./blogs/application/posts-service"
 import { CommentsService } from "./blogs/application/comments-service"
@@ -58,7 +58,10 @@ import {
 } from "./security/domain/AttemptsSchema"
 import { AttemptsRepository } from "./security/infrastructure/attempts-db-repository"
 import { IpRestrictionGuard } from "./auth/api/guards/ip-restriction.guard"
-import { ConfigType } from "./configuration/configuration"
+import { BlogsConfig } from "./configuration/blogs.config"
+import { AuthConfig } from "./configuration/auth.config"
+import { EmailConfig } from "./configuration/Email.config"
+import { AppConfig } from "./configuration/app.config"
 
 
 @Module({
@@ -66,8 +69,8 @@ import { ConfigType } from "./configuration/configuration"
     configModule,
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: async (ConfigService: ConfigService<ConfigType>) => ({ uri: ConfigService.get<string>('mongoURI') }),
-      inject: [ConfigService<ConfigType>],
+      useFactory: async (ConfigService: ConfigService) => ({ uri: ConfigService.get<string>('mongoURI') }),
+      inject: [ConfigService],
     }),
     MongooseModule.forFeature([
       {
@@ -134,6 +137,11 @@ import { ConfigType } from "./configuration/configuration"
     IsDeviceExistsPipe,
     // guards
     IpRestrictionGuard,
+    //configs
+    BlogsConfig,
+    AuthConfig,
+    EmailConfig,
+    AppConfig,
   ],
 })
 

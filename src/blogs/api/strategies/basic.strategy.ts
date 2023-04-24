@@ -3,9 +3,8 @@ import {
 } from "@nestjs/common"
 import { PassportStrategy } from "@nestjs/passport"
 import { BasicStrategy as Strategy } from 'passport-http'
-import { ConfigService } from '@nestjs/config'
 import { generateErrorsMessages } from "../../../general/helpers"
-import { ConfigType } from "../../../configuration/configuration"
+import { BlogsConfig } from "../../../configuration/blogs.config"
 
 @Injectable()
 export class BasicStrategy extends PassportStrategy(Strategy) {
@@ -13,9 +12,9 @@ export class BasicStrategy extends PassportStrategy(Strategy) {
         SA_LOGIN: string,
         SA_PASSWORD: string
     }
-    constructor(private configService: ConfigService<ConfigType>) {
+    constructor(private blogsConfig: BlogsConfig) {
         super()
-        this.superAdminSettings = this.configService.get('superAdmin')
+        this.superAdminSettings = this.blogsConfig.getSuperAdminData()
     }
 
     validate(login: string, password: string) {

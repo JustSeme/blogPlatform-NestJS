@@ -1,8 +1,7 @@
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import { Injectable } from '@nestjs/common/decorators'
 import { DeviceRepository } from '../../security/infrastructure/device-db-repository'
-import { ConfigType } from '../../configuration/configuration'
-import { ConfigService } from '@nestjs/config'
+import { AuthConfig } from '../../configuration/auth.config'
 
 
 @Injectable()
@@ -15,10 +14,10 @@ export class JwtService {
 
     constructor(
         protected deviceRepository: DeviceRepository,
-        private readonly ConfigService: ConfigService<ConfigType>
+        private readonly authConfig: AuthConfig
     ) {
-        this.jwtSecret = this.ConfigService.get('JWT_SECRET')
-        this.tokensSettings = this.ConfigService.get('tokens')
+        this.jwtSecret = this.authConfig.getJwtSecret()
+        this.tokensSettings = this.authConfig.getTokensSettings()
     }
 
     async createAccessToken(expiresTime: string | number, userId: string) {

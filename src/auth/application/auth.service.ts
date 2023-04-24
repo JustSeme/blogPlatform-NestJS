@@ -10,9 +10,8 @@ import { EmailManager } from '../../general/managers/emailManager'
 import { DeviceRepository } from '../../security/infrastructure/device-db-repository'
 import { BcryptAdapter } from '../../general/adapters/bcrypt.adapter'
 import { DeviceAuthSessionDTO } from '../../security/domain/DeviceAuthSessionType'
-import { ConfigType } from '../../configuration/configuration'
-import { ConfigService } from '@nestjs/config'
 import { JwtService } from '../../general/adapters/jwt.sevice'
+import { AuthConfig } from '../../configuration/auth.config'
 
 
 //transaction script
@@ -29,8 +28,8 @@ export class AuthService {
         protected emailManager: EmailManager,
         private deviceRepository: DeviceRepository,
         private bcryptAdapter: BcryptAdapter,
-        private readonly ConfigService: ConfigService<ConfigType>) {
-        this.tokensSettings = this.ConfigService.get('tokens')
+        private readonly authConfig: AuthConfig) {
+        this.tokensSettings = this.authConfig.getTokensSettings()
     }
 
     async createUser(login: string, password: string, email: string): Promise<boolean> {

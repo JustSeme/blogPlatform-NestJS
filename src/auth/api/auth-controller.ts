@@ -2,7 +2,7 @@ import {
     BadRequestException,
     Body, Controller, Get, HttpCode, HttpStatus, NotImplementedException, Post, Request, Response, UnauthorizedException, UseGuards
 } from "@nestjs/common"
-import { AuthService } from "../application/auth-service"
+import { AuthService } from "../application/auth.service"
 import { UserInputModel } from "./models/UserInputModel"
 import { UsersQueryRepository } from "../infrastructure/users-query-repository"
 import { NewPasswordInputModel } from "./models/NewPasswordInputModel"

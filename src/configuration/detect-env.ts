@@ -8,6 +8,10 @@ switch (process.env.NODE_ENV) {
         envFilePath = '.env.development'
         break
 
+    case ('testing'):
+        envFilePath = '.env.testing'
+        break
+
     default:
         envFilePath = '.env'
         break

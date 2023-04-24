@@ -1,7 +1,6 @@
 import nodemailer from 'nodemailer'
 import { Injectable } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
-import { ConfigType } from '../../configuration/configuration'
+import { EmailConfig } from '../../configuration/Email.config'
 
 @Injectable()
 export class EmailAdapter {
@@ -10,8 +9,8 @@ export class EmailAdapter {
         GMAIL_APP_PASSWORD: string
     }
 
-    constructor(private readonly configService: ConfigService<ConfigType>) {
-        this.gmailSettings = this.configService.get('gmail')
+    constructor(private readonly emailConfigService: EmailConfig) {
+        this.gmailSettings = this.emailConfigService.getGmailData()
     }
 
     async sendEmail(email: string, subject: string, messageBody: string) {
