@@ -5,19 +5,21 @@ import { PassportStrategy } from "@nestjs/passport"
 import { BasicStrategy as Strategy } from 'passport-http'
 import { ConfigService } from '@nestjs/config'
 import { generateErrorsMessages } from "../../../general/helpers"
+import { ConfigType } from "../../../configuration/configuration"
 
 @Injectable()
 export class BasicStrategy extends PassportStrategy(Strategy) {
-    private superAdminLogin: string
-    private superAdminPassword: string
-    constructor(private configService: ConfigService) {
+    private superAdminSettings: {
+        SA_LOGIN: string,
+        SA_PASSWORD: string
+    }
+    constructor(private configService: ConfigService<ConfigType>) {
         super()
-        this.superAdminLogin = this.configService.get('SA_LOGIN')
-        this.superAdminPassword = this.configService.get('SA_PASSWORD')
+        this.superAdminSettings = this.configService.get('superAdmin')
     }
 
     validate(login: string, password: string) {
-        if (login === this.superAdminLogin && password === this.superAdminPassword) {
+        if (login === this.superAdminSettings.SA_LOGIN && password === this.superAdminSettings.SA_PASSWORD) {
             return true
         }
         throw new UnauthorizedException(generateErrorsMessages('Super Admin logs is incorrect', 'authorization headers'))

@@ -1,22 +1,24 @@
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import { Injectable } from '@nestjs/common/decorators'
-import { ConfigService } from '@nestjs/config'
 import { DeviceRepository } from '../../security/infrastructure/device-db-repository'
+import { ConfigType } from '../../configuration/configuration'
+import { ConfigService } from '@nestjs/config'
 
 
 @Injectable()
 export class JwtService {
     private jwtSecret: string
-    private accessTokenExpireTime: string
-    private refreshTokenExpireTime: string
+    private tokensSettings: {
+        ACCESS_TOKEN_EXPIRE_TIME: string,
+        REFRESH_TOKEN_EXPIRE_TIME: string,
+    }
 
     constructor(
         protected deviceRepository: DeviceRepository,
-        private readonly configService: ConfigService
+        private readonly ConfigService: ConfigService<ConfigType>
     ) {
-        this.jwtSecret = this.configService.get('JWT_SECRET')
-        this.accessTokenExpireTime = this.configService.get('ACCESS_TOKEN_EXPIRE_TIME')
-        this.refreshTokenExpireTime = this.configService.get('REFRESH_TOKEN_EXPIRE_TIME')
+        this.jwtSecret = this.ConfigService.get('JWT_SECRET')
+        this.tokensSettings = this.ConfigService.get('tokens')
     }
 
     async createAccessToken(expiresTime: string | number, userId: string) {
@@ -67,8 +69,8 @@ export class JwtService {
             return null
         }
 
-        const newRefreshToken = await this.createRefreshToken(this.refreshTokenExpireTime, result.deviceId, result.userId)
-        const newAccessToken = await this.createAccessToken(this.accessTokenExpireTime, result.userId)
+        const newRefreshToken = await this.createRefreshToken(this.tokensSettings.REFRESH_TOKEN_EXPIRE_TIME, result.deviceId, result.userId)
+        const newAccessToken = await this.createAccessToken(this.tokensSettings.ACCESS_TOKEN_EXPIRE_TIME, result.userId)
         const resultOfCreatedToken = jwt.decode(newRefreshToken) as JwtPayload
 
         const isUpdated = await this.deviceRepository.updateSession(result.deviceId, resultOfCreatedToken.iat, resultOfCreatedToken.exp)

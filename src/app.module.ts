@@ -1,5 +1,5 @@
 //this line should be the first in app
-import { configModule } from "./configuration/сonfigModule"
+import { configModule } from "./configuration/getConfigModule"
 import {
   ConfigModule, ConfigService
 } from "@nestjs/config"
@@ -58,6 +58,7 @@ import {
 } from "./security/domain/AttemptsSchema"
 import { AttemptsRepository } from "./security/infrastructure/attempts-db-repository"
 import { IpRestrictionGuard } from "./auth/api/guards/ip-restriction.guard"
+import { ConfigType } from "./configuration/configuration"
 
 
 @Module({
@@ -65,8 +66,8 @@ import { IpRestrictionGuard } from "./auth/api/guards/ip-restriction.guard"
     configModule,
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({ uri: configService.get<string>('mongoURI') }),
-      inject: [ConfigService],
+      useFactory: async (ConfigService: ConfigService<ConfigType>) => ({ uri: ConfigService.get<string>('mongoURI') }),
+      inject: [ConfigService<ConfigType>],
     }),
     MongooseModule.forFeature([
       {

@@ -6,19 +6,22 @@ import { InjectModel } from '@nestjs/mongoose/dist'
 import { User } from '../domain/UsersSchema'
 import { UserModelType } from '../domain/UsersTypes'
 import jwt, { JwtPayload } from 'jsonwebtoken'
-import { ConfigService } from '@nestjs/config'
-import { JwtService } from '../../general/adapters/jwt.sevice'
 import { EmailManager } from '../../general/managers/emailManager'
 import { DeviceRepository } from '../../security/infrastructure/device-db-repository'
 import { BcryptAdapter } from '../../general/adapters/bcrypt.adapter'
 import { DeviceAuthSessionDTO } from '../../security/domain/DeviceAuthSessionType'
+import { ConfigType } from '../../configuration/configuration'
+import { ConfigService } from '@nestjs/config'
+import { JwtService } from '../../general/adapters/jwt.sevice'
 
 
 //transaction script
 @Injectable()
 export class AuthService {
-    private accessTokenExpireTime: string
-    private refreshTokenExpireTime: string
+    private tokensSettings: {
+        ACCESS_TOKEN_EXPIRE_TIME: string,
+        REFRESH_TOKEN_EXPIRE_TIME: string,
+    }
 
     constructor(@InjectModel(User.name) private UserModel: UserModelType,
         protected usersRepository: UsersRepository,
@@ -26,9 +29,8 @@ export class AuthService {
         protected emailManager: EmailManager,
         private deviceRepository: DeviceRepository,
         private bcryptAdapter: BcryptAdapter,
-        private readonly configService: ConfigService) {
-        this.accessTokenExpireTime = this.configService.get<string>('ACCESS_TOKEN_EXPIRE_TIME')
-        this.refreshTokenExpireTime = this.configService.get<string>('REFRESH_TOKEN_EXPIRE_TIME')
+        private readonly ConfigService: ConfigService<ConfigType>) {
+        this.tokensSettings = this.ConfigService.get('tokens')
     }
 
     async createUser(login: string, password: string, email: string): Promise<boolean> {
@@ -130,8 +132,8 @@ export class AuthService {
     async login(userId: string, userIp: string, deviceName: string) {
         const deviceId = uuidv4()
 
-        const accessToken = await this.jwtService.createAccessToken(this.accessTokenExpireTime, userId)
-        const refreshToken = await this.jwtService.createRefreshToken(this.refreshTokenExpireTime, deviceId, userId)
+        const accessToken = await this.jwtService.createAccessToken(this.tokensSettings.ACCESS_TOKEN_EXPIRE_TIME, userId)
+        const refreshToken = await this.jwtService.createRefreshToken(this.tokensSettings.REFRESH_TOKEN_EXPIRE_TIME, deviceId, userId)
         const result = await jwt.decode(refreshToken) as JwtPayload
 
         const newSession = new DeviceAuthSessionDTO(result.iat, result.exp, userId, userIp, deviceId, deviceName)
