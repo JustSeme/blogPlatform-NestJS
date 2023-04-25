@@ -11,7 +11,12 @@ import { CommentModelType } from './blogs/domain/comments/CommentTypes'
 
 @Injectable()
 export class AppService {
-  constructor(@InjectModel(User.name) private UsersModel: UserModelType, @InjectModel(Post.name) protected PostModel: PostModelType, @InjectModel(Blog.name) protected BlogModel: BlogModelType, @InjectModel(Comment.name) protected CommentModel: CommentModelType) { }
+  constructor(
+    @InjectModel(User.name) private UsersModel: UserModelType,
+    @InjectModel(Post.name) protected PostModel: PostModelType,
+    @InjectModel(Blog.name) protected BlogModel: BlogModelType,
+    @InjectModel(Comment.name) protected CommentModel: CommentModelType
+  ) { }
 
   getHello(): string {
     return `
