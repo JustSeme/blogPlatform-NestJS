@@ -9,7 +9,7 @@ import { Injectable } from '@nestjs/common'
 import {
     ExtendedLikeObjectType, PostDBModel, PostsWithQueryOutputModel
 } from '../domain/posts/PostsTypes'
-import { JwtService } from '../../general/adapters/jwt.sevice'
+import { JwtService } from '../../general/adapters/jwt.adapter'
 
 @Injectable()
 export class PostsService {

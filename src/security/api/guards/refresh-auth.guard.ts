@@ -2,7 +2,7 @@ import {
     Injectable, CanActivate, ExecutionContext
 } from '@nestjs/common'
 import { UnauthorizedException } from '@nestjs/common'
-import { JwtService } from '../../../general/adapters/jwt.sevice'
+import { JwtService } from '../../../general/adapters/jwt.adapter'
 
 @Injectable()
 export class RefreshAuthGuard implements CanActivate {

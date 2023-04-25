@@ -20,7 +20,7 @@
   },
   "include": [
     "src"
-  ],
+, "src/auth/application/use-cases/.ts"  ],
   "exclude": [
     "node_modules"
   ]

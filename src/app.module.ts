@@ -35,7 +35,7 @@ import { JwtStrategy } from "./blogs/api/strategies/jwt.strategy"
 import { BasicStrategy } from "./blogs/api/strategies/basic.strategy"
 import { AppService } from "./app.service"
 import { AuthService } from "./auth/application/auth.service"
-import { JwtService } from "./general/adapters/jwt.sevice"
+import { JwtService } from "./general/adapters/jwt.adapter"
 import { PostsService } from "./blogs/application/posts-service"
 import { CommentsService } from "./blogs/application/comments-service"
 import { SecurityService } from "./security/application/security-service"
@@ -62,6 +62,25 @@ import { BlogsConfig } from "./configuration/blogs.config"
 import { AuthConfig } from "./configuration/auth.config"
 import { EmailConfig } from "./configuration/Email.config"
 import { AppConfig } from "./configuration/app.config"
+import { LogoutUseCase } from "./auth/application/use-cases/logout.use-case"
+import { LoginUseCase } from "./auth/application/use-cases/login.use-case"
+import { ConfirmRecoveryPasswordUseCase } from "./auth/application/use-cases/confirm-recovery-password.use-case"
+import { SendPasswordRecoveryCode } from "./auth/application/use-cases/send-password-recovery-code.use-case"
+import { ResendConfirmationCodeUseCase } from "./auth/application/use-cases/resend-confirmation-code.use-case"
+import { ConfirmEmailUseCase } from "./auth/application/use-cases/confirm-email.use-case"
+import { SuperAdminCreateUserUseCase } from "./auth/application/use-cases/super-admin-create-user.use-case"
+import { RegistrationUserUseCase } from "./auth/application/use-cases/registration-user.use-case"
+
+const useCases = [
+  LogoutUseCase,
+  LoginUseCase,
+  ConfirmRecoveryPasswordUseCase,
+  SendPasswordRecoveryCode,
+  ResendConfirmationCodeUseCase,
+  ConfirmEmailUseCase,
+  SuperAdminCreateUserUseCase,
+  RegistrationUserUseCase,
+]
 
 const strategies = [
   LocalStrategy,
@@ -156,6 +175,7 @@ const configs = [
   controllers: [AppController, UsersController, BlogsController, PostsController, CommentsController, AuthController, SecurityController],
   providers: [
     ...strategies,
+    ...useCases,
     ...services,
     ...adapters,
     ...repositories,

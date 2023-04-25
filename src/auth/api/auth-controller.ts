@@ -2,7 +2,6 @@ import {
     BadRequestException,
     Body, Controller, Get, HttpCode, HttpStatus, NotImplementedException, Post, Request, Response, UnauthorizedException, UseGuards
 } from "@nestjs/common"
-import { AuthService } from "../application/auth.service"
 import { UserInputModel } from "./models/UserInputModel"
 import { UsersQueryRepository } from "../infrastructure/users-query-repository"
 import { NewPasswordInputModel } from "./models/NewPasswordInputModel"
@@ -13,14 +12,33 @@ import {
 } from "../../general/types/ErrorMessagesOutputModel"
 import { JwtAuthGuard } from "../../blogs/api/guards/jwt-auth.guard"
 import { CurrentUserId } from "../../general/decorators/current-userId.param.decorator"
-import { JwtService } from "../../general/adapters/jwt.sevice"
+import { JwtService } from "../../general/adapters/jwt.adapter"
 import { IpRestrictionGuard } from "./guards/ip-restriction.guard"
 import { generateErrorsMessages } from "../../general/helpers"
 import { EmailInputModel } from "./models/EmailInputModel"
+import { LogoutUseCase } from "../application/use-cases/logout.use-case"
+import { LoginUseCase } from "../application/use-cases/login.use-case"
+import { ConfirmRecoveryPasswordUseCase } from "../application/use-cases/confirm-recovery-password.use-case"
+import { SendPasswordRecoveryCode } from "../application/use-cases/send-password-recovery-code.use-case"
+import { ResendConfirmationCodeUseCase } from "../application/use-cases/resend-confirmation-code.use-case"
+import { ConfirmEmailUseCase } from "../application/use-cases/confirm-email.use-case"
+import { SuperAdminCreateUserUseCase } from "../application/use-cases/super-admin-create-user.use-case"
+import { RegistrationUserUseCase } from "../application/use-cases/registration-user.use-case"
 
 @Controller('auth')
 export class AuthController {
-    constructor(protected authService: AuthService, protected jwtService: JwtService, protected usersQueryRepository: UsersQueryRepository) { }
+    constructor(
+        protected jwtService: JwtService,
+        protected usersQueryRepository: UsersQueryRepository,
+        protected logoutUseCase: LogoutUseCase,
+        protected loginUseCase: LoginUseCase,
+        protected confirmRecoveryPasswordUseCase: ConfirmRecoveryPasswordUseCase,
+        protected sendPasswordRecoveryCodeUseCase: SendPasswordRecoveryCode,
+        protected resendConfirmationCodeUseCase: ResendConfirmationCodeUseCase,
+        protected confirmEmailUseCase: ConfirmEmailUseCase,
+        protected superAdminCreateUserUseCase: SuperAdminCreateUserUseCase,
+        protected registrationUserUseCase: RegistrationUserUseCase
+    ) { }
 
     @UseGuards(IpRestrictionGuard, LocalAuthGuard)
     @Post('login')
@@ -31,7 +49,7 @@ export class AuthController {
     ) {
         const deviceName = req.headers["user-agent"] ? req.headers["user-agent"] : 'undefined'
 
-        const pairOfTokens = await this.authService.login(req.user.id, req.ip, deviceName)
+        const pairOfTokens = await this.loginUseCase.execute(req.user.id, req.ip, deviceName)
 
         res.cookie('refreshToken', pairOfTokens.refreshToken, {
             httpOnly: true,
@@ -65,7 +83,7 @@ export class AuthController {
     async logout(@Request() req) {
         const refreshToken = req.cookies.refreshToken
 
-        const isLogout = await this.authService.logout(refreshToken)
+        const isLogout = await this.logoutUseCase.execute(refreshToken)
 
         if (!isLogout) {
             throw new UnauthorizedException()
@@ -95,14 +113,14 @@ export class AuthController {
             throw new BadRequestException(errorsMessages)
         }
 
-        await this.authService.createUser(userInput.login, userInput.password, userInput.email,)
+        await this.registrationUserUseCase.execute(userInput.login, userInput.password, userInput.email,)
     }
 
     @UseGuards(IpRestrictionGuard)
     @Post('registration-confirmation')
     @HttpCode(HttpStatus.NO_CONTENT)
     async registrationConfirm(@Body('code') code: string) {
-        const isConfirmed = await this.authService.confirmEmail(code)
+        const isConfirmed = await this.confirmEmailUseCase.execute(code)
 
         if (!isConfirmed) {
             throw new BadRequestException(generateErrorsMessages('The confirmation code is incorrect, expired or already been applied', 'code'))
@@ -113,7 +131,7 @@ export class AuthController {
     @Post('registration-email-resending')
     @HttpCode(HttpStatus.NO_CONTENT)
     async resendEmail(@Body() { email }: EmailInputModel): Promise<void | ErrorMessagesOutputModel> {
-        const result = await this.authService.resendConfirmationCode(email)
+        const result = await this.resendConfirmationCodeUseCase.execute(email)
 
         if (!result) {
             throw new BadRequestException(generateErrorsMessages('Your email is already confirmed or doesn\'t exist', 'email'))
@@ -124,7 +142,7 @@ export class AuthController {
     @Post('password-recovery')
     @HttpCode(HttpStatus.NO_CONTENT)
     async recoveryPassword(@Body() { email }: EmailInputModel): Promise<void> {
-        const isRecovering = await this.authService.sendPasswordRecoveryCode(email)
+        const isRecovering = await this.sendPasswordRecoveryCodeUseCase.execute(email)
         if (!isRecovering) {
             throw new NotImplementedException()
         }
@@ -140,7 +158,7 @@ export class AuthController {
             throw new BadRequestException(generateErrorsMessages('recoveryCode is incorrect', 'recoveryCode'))
         }
 
-        const isConfirmed = await this.authService.confirmRecoveryPassword(user.id, newPasswordInputModel.newPassword)
+        const isConfirmed = await this.confirmRecoveryPasswordUseCase.execute(user.id, newPasswordInputModel.newPassword)
         if (!isConfirmed) {
             throw new NotImplementedException()
         }

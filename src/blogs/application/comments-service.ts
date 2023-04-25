@@ -9,7 +9,7 @@ import { Injectable } from "@nestjs/common"
 import {
     CommentDBModel, LikeObjectType
 } from "../domain/comments/CommentTypes"
-import { JwtService } from "../../general/adapters/jwt.sevice"
+import { JwtService } from "../../general/adapters/jwt.adapter"
 
 @Injectable()
 export class CommentsService {
