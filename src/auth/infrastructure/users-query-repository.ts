@@ -1,9 +1,13 @@
 import { Injectable } from "@nestjs/common"
 import { ReadUsersQuery } from "../api/models/ReadUsersQuery"
-import { UsersWithQueryOutputModel } from "../application/dto/UsersViewModel"
+import {
+    UserViewModelType, UsersWithQueryOutputModel
+} from "../application/dto/UsersViewModel"
 import { InjectModel } from "@nestjs/mongoose/dist"
 import { User } from "../domain/UsersSchema"
-import { UserModelType } from "../domain/UsersTypes"
+import {
+    UserDTO, UserModelType
+} from "../domain/UsersTypes"
 
 @Injectable()
 export class UsersQueryRepository {
@@ -40,12 +44,7 @@ export class UsersQueryRepository {
 
         const resultedUsers = await this.UserModel.find(filterObject).skip(skipCount).limit(+pageSize).sort({ [sortBy]: sortDirectionNumber }).lean()
 
-        const displayedUsers = resultedUsers.map(el => ({
-            id: el.id,
-            login: el.login,
-            email: el.email,
-            createdAt: el.createdAt
-        }))
+        const displayedUsers = this.prepareUsersForDisplay(resultedUsers)
 
         return {
             pagesCount: pagesCount,
@@ -54,6 +53,15 @@ export class UsersQueryRepository {
             totalCount: totalCount,
             items: displayedUsers
         }
+    }
+
+    private prepareUsersForDisplay(resultedUsers: UserDTO[]): UserViewModelType[] {
+        return resultedUsers.map(el => ({
+            id: el.id,
+            login: el.login,
+            email: el.email,
+            createdAt: el.createdAt
+        }))
     }
 
     async findUserById(userId: string) {

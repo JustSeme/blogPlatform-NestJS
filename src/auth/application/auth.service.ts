@@ -4,7 +4,9 @@ import { v4 as uuidv4 } from 'uuid'
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose/dist'
 import { User } from '../domain/UsersSchema'
-import { UserModelType } from '../domain/UsersTypes'
+import {
+    UserDTO, UserModelType
+} from '../domain/UsersTypes'
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import { EmailManager } from '../../general/managers/emailManager'
 import { DeviceRepository } from '../../security/infrastructure/device-db-repository'
@@ -50,12 +52,7 @@ export class AuthService {
         const newUser = this.UserModel.makeInstance(login, email, passwordHash, true, this.UserModel)
 
         await this.usersRepository.save(newUser)
-        const displayedUser: UserViewModelType = {
-            id: newUser.id,
-            login: newUser.login,
-            email: newUser.email,
-            createdAt: newUser.createdAt
-        }
+        const displayedUser: UserViewModelType = this.prepareUserForDisplay(newUser)
 
         return displayedUser
     }
@@ -161,5 +158,14 @@ export class AuthService {
             return false
         }
         return true
+    }
+
+    private prepareUserForDisplay(newUser: UserDTO): UserViewModelType {
+        return {
+            id: newUser.id,
+            login: newUser.login,
+            email: newUser.email,
+            createdAt: newUser.createdAt
+        }
     }
 }

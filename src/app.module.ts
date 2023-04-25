@@ -63,6 +63,58 @@ import { AuthConfig } from "./configuration/auth.config"
 import { EmailConfig } from "./configuration/Email.config"
 import { AppConfig } from "./configuration/app.config"
 
+const strategies = [
+  LocalStrategy,
+  JwtStrategy,
+  BasicStrategy,
+]
+
+const services = [
+  AppService,
+  AuthService,
+  JwtService,
+  BlogsService,
+  PostsService,
+  CommentsService,
+  SecurityService,
+]
+
+const adapters = [
+  EmailManager,
+  BcryptAdapter,
+  EmailAdapter,
+]
+
+const repositories = [
+  BlogsQueryRepository,
+  CommentsQueryRepository,
+  UsersQueryRepository,
+  UsersRepository,
+  PostsRepository,
+  BlogsRepository,
+  CommentsRepository,
+  DeviceRepository,
+  AttemptsRepository,
+]
+
+const decorators = [
+  IsBlogByIdExist,
+  IsEmailAlreadyInUse,
+  IsLoginAlreadyInUse,
+  IsDeviceExistsPipe,
+]
+
+const guards = [
+  IpRestrictionGuard,
+]
+
+const configs = [
+  BlogsConfig,
+  AuthConfig,
+  EmailConfig,
+  AppConfig,
+]
+
 @Module({
   imports: [
     configModule,
@@ -103,44 +155,13 @@ import { AppConfig } from "./configuration/app.config"
   ],
   controllers: [AppController, UsersController, BlogsController, PostsController, CommentsController, AuthController, SecurityController],
   providers: [
-    // strategies
-    LocalStrategy,
-    JwtStrategy,
-    BasicStrategy,
-    // services
-    AppService,
-    AuthService,
-    JwtService,
-    BlogsService,
-    PostsService,
-    CommentsService,
-    SecurityService,
-    // adapters
-    EmailManager,
-    BcryptAdapter,
-    EmailAdapter,
-    // repositories
-    BlogsQueryRepository,
-    CommentsQueryRepository,
-    UsersQueryRepository,
-    UsersRepository,
-    PostsRepository,
-    BlogsRepository,
-    CommentsRepository,
-    DeviceRepository,
-    AttemptsRepository,
-    // decorators
-    IsBlogByIdExist,
-    IsEmailAlreadyInUse,
-    IsLoginAlreadyInUse,
-    IsDeviceExistsPipe,
-    // guards
-    IpRestrictionGuard,
-    //configs
-    BlogsConfig,
-    AuthConfig,
-    EmailConfig,
-    AppConfig,
+    ...strategies,
+    ...services,
+    ...adapters,
+    ...repositories,
+    ...decorators,
+    ...guards,
+    ...configs,
   ],
 })
 
