@@ -20,6 +20,7 @@ import { DeleteBlogCommand } from "../application/use-cases/blogs/delete-blog.us
 import { CreateBlogCommand } from "../application/use-cases/blogs/create-blog.use-case"
 import { UpdateBlogCommand } from "../application/use-cases/blogs/update-blog.use-case"
 import { PostsQueryRepository } from "../infrastructure/posts/posts-query-repository"
+import { CreatePostCommand } from "../application/use-cases/posts/create-post.use-case"
 
 @Controller('blogs')
 export class BlogsController {
@@ -93,7 +94,9 @@ export class BlogsController {
             ...postInputModelWithoutBlogId, blogId: blogId
         }
 
-        const createdPost = await this.postsService.createPost(postInputModel)
+        const createdPost = await this.commandBus.execute(
+            new CreatePostCommand(postInputModel)
+        )
 
         return createdPost
     }

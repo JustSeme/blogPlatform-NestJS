@@ -21,6 +21,11 @@ import { UsersQueryRepository } from '../../auth/infrastructure/users-query-repo
 import { JwtService } from '../../general/adapters/jwt.adapter'
 import { PostsQueryRepository } from '../infrastructure/posts/posts-query-repository'
 import { PostsWithQueryOutputModel } from '../domain/posts/PostsTypes'
+import { CommandBus } from '@nestjs/cqrs'
+import { DeletePostsCommand } from '../application/use-cases/posts/delete-post.use-case'
+import { CreatePostCommand } from '../application/use-cases/posts/create-post.use-case'
+import { UpdatePostCommand } from '../application/use-cases/posts/update-post.use-case'
+import { UpdateLikeStatusForPostCommand } from '../application/use-cases/posts/update-like-status-for-post.use-case'
 
 @Controller('posts')
 export class PostsController {
@@ -32,6 +37,7 @@ export class PostsController {
         protected blogsQueryRepository: BlogsQueryRepository,
         protected postsQueryRepository: PostsQueryRepository,
         protected postsRepository: PostsRepository,
+        protected commandBus: CommandBus,
     ) { }
 
     @Get()
@@ -78,7 +84,9 @@ export class PostsController {
     @Post()
     @HttpCode(HttpStatus.CREATED)
     async createPost(@Body() post: PostInputModel): Promise<PostsViewModel> {
-        return this.postsService.createPost(post)
+        return this.commandBus.execute(
+            new CreatePostCommand(post)
+        )
     }
 
     @UseGuards(JwtAuthGuard)
@@ -106,7 +114,9 @@ export class PostsController {
     @Put(':postId')
     @HttpCode(HttpStatus.NO_CONTENT)
     async updatePost(@Param('postId', IsPostExistsPipe) postId: string, @Body() postInputModel: PostInputModel): Promise<void> {
-        const isUpdated = await this.postsService.updatePost(postId, postInputModel)
+        const isUpdated = await this.commandBus.execute(
+            new UpdatePostCommand(postId, postInputModel)
+        )
         if (!isUpdated) {
             throw new NotFoundException()
         }
@@ -117,7 +127,10 @@ export class PostsController {
     @Delete(':id')
     @HttpCode(HttpStatus.NO_CONTENT)
     async deletePost(@Param('id', IsPostExistsPipe) id: string): Promise<void> {
-        const isDeleted = await this.postsService.deletePosts(id)
+        const isDeleted = await this.commandBus.execute(
+            new DeletePostsCommand(id)
+        )
+
         if (!isDeleted) {
             throw new NotFoundException()
         }
@@ -132,7 +145,9 @@ export class PostsController {
         @Body() likeInputModel: LikeInputModel,
         @CurrentUserId() userId: string
     ): Promise<void> {
-        const isUpdated = await this.postsService.updateLike(userId, postId, likeInputModel.likeStatus)
+        const isUpdated = await this.commandBus.execute(
+            new UpdateLikeStatusForPostCommand(userId, postId, likeInputModel.likeStatus)
+        )
         if (!isUpdated) {
             throw new NotFoundException()
         }

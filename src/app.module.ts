@@ -76,6 +76,9 @@ import { CreateBlogUseCase } from "./blogs/application/use-cases/blogs/create-bl
 import { UpdateBlogUseCase } from "./blogs/application/use-cases/blogs/update-blog.use-case"
 import { DeleteBlogUseCase } from "./blogs/application/use-cases/blogs/delete-blog.use-case"
 import { PostsQueryRepository } from "./blogs/infrastructure/posts/posts-query-repository"
+import { DeletePostUseCase } from "./blogs/application/use-cases/posts/delete-post.use-case"
+import { UpdatePostUseCase } from "./blogs/application/use-cases/posts/update-post.use-case"
+import { UpdateLikeStatusForPostUseCase } from "./blogs/application/use-cases/posts/update-like-status-for-post.use-case"
 
 const authUseCases = [
   LogoutUseCase,
@@ -92,7 +95,10 @@ const authUseCases = [
 const blogsUseCases = [
   DeleteBlogUseCase,
   CreateBlogUseCase,
-  UpdateBlogUseCase
+  UpdateBlogUseCase,
+  DeletePostUseCase,
+  UpdatePostUseCase,
+  UpdateLikeStatusForPostUseCase,
 ]
 
 const strategies = [
