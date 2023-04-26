@@ -16,41 +16,20 @@ import { JwtService } from "../../general/adapters/jwt.adapter"
 import { IpRestrictionGuard } from "./guards/ip-restriction.guard"
 import { generateErrorsMessages } from "../../general/helpers"
 import { EmailInputModel } from "./models/EmailInputModel"
-import { LogoutUseCase } from "../application/use-cases/logout.use-case"
-import {
-    LoginCommand, LoginUseCase
-} from "../application/use-cases/login.use-case"
-import {
-    ConfirmRecoveryPasswordCommand, ConfirmRecoveryPasswordUseCase
-} from "../application/use-cases/confirm-recovery-password.use-case"
-import {
-    SendPasswordRecoveryCodeCommand, SendPasswordRecoveryCodeUseCase
-} from "../application/use-cases/send-password-recovery-code.use-case"
-import {
-    ResendConfirmationCodeCommand, ResendConfirmationCodeUseCase
-} from "../application/use-cases/resend-confirmation-code.use-case"
-import {
-    ConfirmEmailCommand, ConfirmEmailUseCase
-} from "../application/use-cases/confirm-email.use-case"
-import { SuperAdminCreateUserUseCase } from "../application/use-cases/super-admin-create-user.use-case"
-import {
-    RegistrationUserCommand, RegistrationUserUseCase
-} from "../application/use-cases/registration-user.use-case"
+import { LoginCommand } from "../application/use-cases/login.use-case"
+import { ConfirmRecoveryPasswordCommand } from "../application/use-cases/confirm-recovery-password.use-case"
+import { SendPasswordRecoveryCodeCommand } from "../application/use-cases/send-password-recovery-code.use-case"
+import { ResendConfirmationCodeCommand } from "../application/use-cases/resend-confirmation-code.use-case"
+import { ConfirmEmailCommand } from "../application/use-cases/confirm-email.use-case"
+import { RegistrationUserCommand } from "../application/use-cases/registration-user.use-case"
 import { CommandBus } from "@nestjs/cqrs/dist/command-bus"
+import { LogoutCommand } from "../application/use-cases/logout.use-case"
 
 @Controller('auth')
 export class AuthController {
     constructor(
         protected jwtService: JwtService,
         protected usersQueryRepository: UsersQueryRepository,
-        protected logoutUseCase: LogoutUseCase,
-        protected loginUseCase: LoginUseCase,
-        protected confirmRecoveryPasswordUseCase: ConfirmRecoveryPasswordUseCase,
-        protected sendPasswordRecoveryCodeUseCase: SendPasswordRecoveryCodeUseCase,
-        protected resendConfirmationCodeUseCase: ResendConfirmationCodeUseCase,
-        protected confirmEmailUseCase: ConfirmEmailUseCase,
-        protected superAdminCreateUserUseCase: SuperAdminCreateUserUseCase,
-        protected registrationUserUseCase: RegistrationUserUseCase,
         protected commandBus: CommandBus,
     ) { }
 
@@ -63,7 +42,7 @@ export class AuthController {
     ) {
         const deviceName = req.headers["user-agent"] ? req.headers["user-agent"] : 'undefined'
 
-        const pairOfTokens = await this.loginUseCase.execute(
+        const pairOfTokens = await this.commandBus.execute(
             new LoginCommand(req.user.id, req.ip, deviceName)
         )
 
@@ -99,7 +78,9 @@ export class AuthController {
     async logout(@Request() req) {
         const refreshToken = req.cookies.refreshToken
 
-        const isLogout = await this.logoutUseCase.execute(refreshToken)
+        const isLogout = await this.commandBus.execute(
+            new LogoutCommand(refreshToken)
+        )
 
         if (!isLogout) {
             throw new UnauthorizedException()

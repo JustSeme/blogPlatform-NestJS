@@ -1,11 +1,12 @@
 import { v4 as uuidv4 } from 'uuid'
 import jwt, { JwtPayload } from "jsonwebtoken"
-import { Injectable } from "@nestjs/common"
 import { JwtService } from '../../../general/adapters/jwt.adapter'
 import { DeviceRepository } from '../../../security/infrastructure/device-db-repository'
 import { AuthConfig } from '../../../configuration/auth.config'
 import { DeviceAuthSessionDTO } from '../../../security/domain/DeviceAuthSessionType'
-import { ICommandHandler } from '@nestjs/cqrs'
+import {
+    CommandHandler, ICommandHandler
+} from '@nestjs/cqrs'
 
 export class LoginCommand {
     constructor(
@@ -15,7 +16,7 @@ export class LoginCommand {
     ) { }
 }
 
-@Injectable()
+@CommandHandler(LoginCommand)
 export class LoginUseCase implements ICommandHandler<LoginCommand> {
     private tokensSettings: {
         ACCESS_TOKEN_EXPIRE_TIME: string,
