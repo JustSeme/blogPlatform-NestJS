@@ -17,17 +17,25 @@ import { IpRestrictionGuard } from "./guards/ip-restriction.guard"
 import { generateErrorsMessages } from "../../general/helpers"
 import { EmailInputModel } from "./models/EmailInputModel"
 import { LogoutUseCase } from "../application/use-cases/logout.use-case"
-import { LoginUseCase } from "../application/use-cases/login.use-case"
-import { ConfirmRecoveryPasswordUseCase } from "../application/use-cases/confirm-recovery-password.use-case"
+import {
+    LoginCommand, LoginUseCase
+} from "../application/use-cases/login.use-case"
+import {
+    ConfirmRecoveryPasswordCommand, ConfirmRecoveryPasswordUseCase
+} from "../application/use-cases/confirm-recovery-password.use-case"
 import {
     SendPasswordRecoveryCodeCommand, SendPasswordRecoveryCodeUseCase
 } from "../application/use-cases/send-password-recovery-code.use-case"
 import {
     ResendConfirmationCodeCommand, ResendConfirmationCodeUseCase
 } from "../application/use-cases/resend-confirmation-code.use-case"
-import { ConfirmEmailUseCase } from "../application/use-cases/confirm-email.use-case"
+import {
+    ConfirmEmailCommand, ConfirmEmailUseCase
+} from "../application/use-cases/confirm-email.use-case"
 import { SuperAdminCreateUserUseCase } from "../application/use-cases/super-admin-create-user.use-case"
-import { RegistrationUserUseCase } from "../application/use-cases/registration-user.use-case"
+import {
+    RegistrationUserCommand, RegistrationUserUseCase
+} from "../application/use-cases/registration-user.use-case"
 import { CommandBus } from "@nestjs/cqrs/dist/command-bus"
 
 @Controller('auth')
@@ -55,7 +63,9 @@ export class AuthController {
     ) {
         const deviceName = req.headers["user-agent"] ? req.headers["user-agent"] : 'undefined'
 
-        const pairOfTokens = await this.loginUseCase.execute(req.user.id, req.ip, deviceName)
+        const pairOfTokens = await this.loginUseCase.execute(
+            new LoginCommand(req.user.id, req.ip, deviceName)
+        )
 
         res.cookie('refreshToken', pairOfTokens.refreshToken, {
             httpOnly: true,
@@ -119,14 +129,18 @@ export class AuthController {
             throw new BadRequestException(errorsMessages)
         }
 
-        await this.registrationUserUseCase.execute(userInput.login, userInput.password, userInput.email,)
+        await this.commandBus.execute(
+            new RegistrationUserCommand(userInput.login, userInput.password, userInput.email,)
+        )
     }
 
     @UseGuards(IpRestrictionGuard)
     @Post('registration-confirmation')
     @HttpCode(HttpStatus.NO_CONTENT)
     async registrationConfirm(@Body('code') code: string) {
-        const isConfirmed = await this.confirmEmailUseCase.execute(code)
+        const isConfirmed = await this.commandBus.execute(
+            new ConfirmEmailCommand(code)
+        )
 
         if (!isConfirmed) {
             throw new BadRequestException(generateErrorsMessages('The confirmation code is incorrect, expired or already been applied', 'code'))
@@ -168,7 +182,9 @@ export class AuthController {
             throw new BadRequestException(generateErrorsMessages('recoveryCode is incorrect', 'recoveryCode'))
         }
 
-        const isConfirmed = await this.confirmRecoveryPasswordUseCase.execute(user.id, newPasswordInputModel.newPassword)
+        const isConfirmed = await this.commandBus.execute(
+            new ConfirmRecoveryPasswordCommand(user.id, newPasswordInputModel.newPassword)
+        )
         if (!isConfirmed) {
             throw new NotImplementedException()
         }

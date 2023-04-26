@@ -1,15 +1,22 @@
-import { Injectable } from "@nestjs/common"
 import { JwtService } from "../../../general/adapters/jwt.adapter"
 import { DeviceRepository } from "../../../security/infrastructure/device-db-repository"
+import {
+    CommandHandler, ICommandHandler
+} from "@nestjs/cqrs"
 
-@Injectable()
-export class LogoutUseCase {
+export class LogoutCommand {
+    constructor(public readonly usedToken: string) { }
+}
+
+@CommandHandler(LogoutCommand)
+export class LogoutUseCase implements ICommandHandler<LogoutCommand>{
     constructor(
         private jwtService: JwtService,
         private deviceRepository: DeviceRepository
     ) { }
 
-    async execute(usedToken: string) {
+    async execute(command: LogoutCommand) {
+        const { usedToken } = command
         const result = await this.jwtService.verifyRefreshToken(usedToken)
 
         if (!result) {

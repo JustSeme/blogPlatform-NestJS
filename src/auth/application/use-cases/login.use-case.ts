@@ -5,9 +5,18 @@ import { JwtService } from '../../../general/adapters/jwt.adapter'
 import { DeviceRepository } from '../../../security/infrastructure/device-db-repository'
 import { AuthConfig } from '../../../configuration/auth.config'
 import { DeviceAuthSessionDTO } from '../../../security/domain/DeviceAuthSessionType'
+import { ICommandHandler } from '@nestjs/cqrs'
+
+export class LoginCommand {
+    constructor(
+        public readonly userId: string,
+        public readonly userIp: string,
+        public readonly deviceName: string
+    ) { }
+}
 
 @Injectable()
-export class LoginUseCase {
+export class LoginUseCase implements ICommandHandler<LoginCommand> {
     private tokensSettings: {
         ACCESS_TOKEN_EXPIRE_TIME: string,
         REFRESH_TOKEN_EXPIRE_TIME: string,
@@ -21,8 +30,13 @@ export class LoginUseCase {
         this.tokensSettings = this.authConfig.getTokensSettings()
     }
 
-    async execute(userId: string, userIp: string, deviceName: string) {
+    async execute(command: LoginCommand) {
         const deviceId = uuidv4()
+        const {
+            userId,
+            userIp,
+            deviceName
+        } = command
 
         const accessToken = await this.jwtService.createAccessToken(this.tokensSettings.ACCESS_TOKEN_EXPIRE_TIME, userId)
         const refreshToken = await this.jwtService.createRefreshToken(this.tokensSettings.REFRESH_TOKEN_EXPIRE_TIME, deviceId, userId)
