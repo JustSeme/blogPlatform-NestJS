@@ -19,11 +19,16 @@ import { EmailInputModel } from "./models/EmailInputModel"
 import { LogoutUseCase } from "../application/use-cases/logout.use-case"
 import { LoginUseCase } from "../application/use-cases/login.use-case"
 import { ConfirmRecoveryPasswordUseCase } from "../application/use-cases/confirm-recovery-password.use-case"
-import { SendPasswordRecoveryCode } from "../application/use-cases/send-password-recovery-code.use-case"
-import { ResendConfirmationCodeUseCase } from "../application/use-cases/resend-confirmation-code.use-case"
+import {
+    SendPasswordRecoveryCodeCommand, SendPasswordRecoveryCodeUseCase
+} from "../application/use-cases/send-password-recovery-code.use-case"
+import {
+    ResendConfirmationCodeCommand, ResendConfirmationCodeUseCase
+} from "../application/use-cases/resend-confirmation-code.use-case"
 import { ConfirmEmailUseCase } from "../application/use-cases/confirm-email.use-case"
 import { SuperAdminCreateUserUseCase } from "../application/use-cases/super-admin-create-user.use-case"
 import { RegistrationUserUseCase } from "../application/use-cases/registration-user.use-case"
+import { CommandBus } from "@nestjs/cqrs/dist/command-bus"
 
 @Controller('auth')
 export class AuthController {
@@ -33,11 +38,12 @@ export class AuthController {
         protected logoutUseCase: LogoutUseCase,
         protected loginUseCase: LoginUseCase,
         protected confirmRecoveryPasswordUseCase: ConfirmRecoveryPasswordUseCase,
-        protected sendPasswordRecoveryCodeUseCase: SendPasswordRecoveryCode,
+        protected sendPasswordRecoveryCodeUseCase: SendPasswordRecoveryCodeUseCase,
         protected resendConfirmationCodeUseCase: ResendConfirmationCodeUseCase,
         protected confirmEmailUseCase: ConfirmEmailUseCase,
         protected superAdminCreateUserUseCase: SuperAdminCreateUserUseCase,
-        protected registrationUserUseCase: RegistrationUserUseCase
+        protected registrationUserUseCase: RegistrationUserUseCase,
+        protected commandBus: CommandBus,
     ) { }
 
     @UseGuards(IpRestrictionGuard, LocalAuthGuard)
@@ -131,7 +137,9 @@ export class AuthController {
     @Post('registration-email-resending')
     @HttpCode(HttpStatus.NO_CONTENT)
     async resendEmail(@Body() { email }: EmailInputModel): Promise<void | ErrorMessagesOutputModel> {
-        const result = await this.resendConfirmationCodeUseCase.execute(email)
+        const result = await this.commandBus.execute(
+            new ResendConfirmationCodeCommand(email)
+        )
 
         if (!result) {
             throw new BadRequestException(generateErrorsMessages('Your email is already confirmed or doesn\'t exist', 'email'))
@@ -142,7 +150,9 @@ export class AuthController {
     @Post('password-recovery')
     @HttpCode(HttpStatus.NO_CONTENT)
     async recoveryPassword(@Body() { email }: EmailInputModel): Promise<void> {
-        const isRecovering = await this.sendPasswordRecoveryCodeUseCase.execute(email)
+        const isRecovering = await this.commandBus.execute(
+            new SendPasswordRecoveryCodeCommand(email)
+        )
         if (!isRecovering) {
             throw new NotImplementedException()
         }

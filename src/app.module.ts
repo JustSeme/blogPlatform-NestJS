@@ -65,21 +65,24 @@ import { AppConfig } from "./configuration/app.config"
 import { LogoutUseCase } from "./auth/application/use-cases/logout.use-case"
 import { LoginUseCase } from "./auth/application/use-cases/login.use-case"
 import { ConfirmRecoveryPasswordUseCase } from "./auth/application/use-cases/confirm-recovery-password.use-case"
-import { SendPasswordRecoveryCode } from "./auth/application/use-cases/send-password-recovery-code.use-case"
+import { SendPasswordRecoveryCodeUseCase } from "./auth/application/use-cases/send-password-recovery-code.use-case"
 import { ResendConfirmationCodeUseCase } from "./auth/application/use-cases/resend-confirmation-code.use-case"
 import { ConfirmEmailUseCase } from "./auth/application/use-cases/confirm-email.use-case"
 import { SuperAdminCreateUserUseCase } from "./auth/application/use-cases/super-admin-create-user.use-case"
 import { RegistrationUserUseCase } from "./auth/application/use-cases/registration-user.use-case"
+import { DeleteUserUseCase } from "./auth/application/use-cases/delete-user.use-case"
+import { CqrsModule } from "@nestjs/cqrs"
 
 const useCases = [
   LogoutUseCase,
   LoginUseCase,
   ConfirmRecoveryPasswordUseCase,
-  SendPasswordRecoveryCode,
+  SendPasswordRecoveryCodeUseCase,
   ResendConfirmationCodeUseCase,
   ConfirmEmailUseCase,
   SuperAdminCreateUserUseCase,
   RegistrationUserUseCase,
+  DeleteUserUseCase,
 ]
 
 const strategies = [
@@ -136,6 +139,7 @@ const configs = [
 
 @Module({
   imports: [
+    CqrsModule,
     configModule,
     MongooseModule.forRootAsync({
       imports: [ConfigModule],

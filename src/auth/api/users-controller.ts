@@ -10,7 +10,11 @@ import {
 } from "@nestjs/common"
 import { ErrorMessagesOutputModel } from "../../general/types/ErrorMessagesOutputModel"
 import { BasicAuthGuard } from "../../blogs/api/guards/basic-auth.guard"
-import { SuperAdminCreateUserUseCase } from "../application/use-cases/super-admin-create-user.use-case"
+import {
+    SuperAdminCreateUserCommand, SuperAdminCreateUserUseCase
+} from "../application/use-cases/super-admin-create-user.use-case"
+import { DeleteUserUseCase } from "../application/use-cases/delete-user.use-case"
+import { CommandBus } from "@nestjs/cqrs/dist"
 
 @UseGuards(BasicAuthGuard)
 @Controller('users')
@@ -19,12 +23,16 @@ export class UsersController {
         protected authService: AuthService,
         protected usersQueryRepository: UsersQueryRepository,
         protected superAdminCreateUserUseCase: SuperAdminCreateUserUseCase,
+        protected deleteUserUseCase: DeleteUserUseCase,
+        private commandBus: CommandBus,
     ) { }
 
     @Post()
     @HttpCode(HttpStatus.CREATED)
     async createUser(@Body() userInputModel: UserInputModel): Promise<UserViewModelType | ErrorMessagesOutputModel | number> {
-        const createdUser = await this.superAdminCreateUserUseCase.execute(userInputModel.login, userInputModel.password, userInputModel.email)
+        const createdUser = await this.commandBus.execute(
+            new SuperAdminCreateUserCommand(userInputModel.login, userInputModel.password, userInputModel.email)
+        )
         if (!createdUser) {
             throw new NotImplementedException()
         }
@@ -42,7 +50,7 @@ export class UsersController {
     @Delete(':id')
     @HttpCode(HttpStatus.NO_CONTENT)
     async deleteUser(@Param('id',) id: string): Promise<void> {
-        const isDeleted = await this.authService.deleteUser(id)
+        const isDeleted = await this.deleteUserUseCase.execute(id)
         if (!isDeleted) {
             throw new NotFoundException()
         }
