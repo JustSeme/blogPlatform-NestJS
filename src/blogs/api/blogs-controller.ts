@@ -15,10 +15,21 @@ import { IsBlogByIdExistPipe } from "./pipes/isBlogExists.validation.pipe"
 import { PostsWithQueryOutputModel } from "../domain/posts/PostsTypes"
 import { PostsService } from "../application/posts-service"
 import { ReadPostsQueryParams } from "./models/ReadPostsQuery"
+import { CommandBus } from "@nestjs/cqrs"
+import { DeleteBlogCommand } from "../application/use-cases/blogs/delete-blog.use-case"
+import { CreateBlogCommand } from "../application/use-cases/blogs/create-blog.use-case"
+import { UpdateBlogCommand } from "../application/use-cases/blogs/update-blog.use-case"
+import { PostsQueryRepository } from "../infrastructure/posts/posts-query-repository"
 
 @Controller('blogs')
 export class BlogsController {
-    constructor(protected blogsService: BlogsService, protected postsService: PostsService, protected blogsQueryRepository: BlogsQueryRepository) { }
+    constructor(
+        protected blogsService: BlogsService,
+        protected postsService: PostsService,
+        protected blogsQueryRepository: BlogsQueryRepository,
+        protected postsQueryRepository: PostsQueryRepository,
+        protected commandBus: CommandBus,
+    ) { }
 
     @Get()
     async getBlogs(@Query() blogsQueryParams: ReadBlogsQueryParams): Promise<BlogsWithQueryOutputModel> {
@@ -47,19 +58,26 @@ export class BlogsController {
         @Headers('Authorization') authorizationHeader: string,
     ): Promise<PostsWithQueryOutputModel> {
         const accessToken = authorizationHeader ? authorizationHeader.split(' ')[1] : null
-        const findedPostsForBlog = await this.postsService.findPosts(queryParams, blogId, accessToken)
+        const postsWithQueryData = await this.postsQueryRepository.findPosts(queryParams, blogId)
 
-        if (!findedPostsForBlog.items.length) {
+        if (!postsWithQueryData.items.length) {
             throw new NotFoundException()
         }
-        return findedPostsForBlog
+        const displayedPosts = await this.postsService.transformLikeInfo(postsWithQueryData.items, accessToken)
+        const postsViewQueryData = {
+            ...postsWithQueryData, items: displayedPosts
+        }
+
+        return postsViewQueryData
     }
 
     @UseGuards(BasicAuthGuard)
     @Post()
     @HttpCode(HttpStatus.CREATED)
     async createBlog(@Body() blogInputModel: BlogInputModel): Promise<BlogViewModel> {
-        const createdBlog = await this.blogsService.createBlog(blogInputModel)
+        const createdBlog = await this.commandBus.execute(
+            new CreateBlogCommand(blogInputModel)
+        )
 
         return createdBlog
     }
@@ -71,11 +89,6 @@ export class BlogsController {
         @Body() postInputModelWithoutBlogId: PostInputModelWithoutBlogId,
         @Param('blogId', IsBlogByIdExistPipe) blogId: string,
     ): Promise<PostsViewModel> {
-        const blogById = await this.blogsQueryRepository.findBlogById(blogId)
-        if (!blogById) {
-            throw new NotFoundException()
-        }
-
         const postInputModel: PostInputModel = {
             ...postInputModelWithoutBlogId, blogId: blogId
         }
@@ -92,7 +105,10 @@ export class BlogsController {
         @Body() blogInputModel: BlogInputModel,
         @Param('blogId') blogId: string,
     ): Promise<void> {
-        const isUpdated = await this.blogsService.updateBlog(blogId, blogInputModel)
+        const isUpdated = await this.commandBus.execute(
+            new UpdateBlogCommand(blogId, blogInputModel)
+        )
+
         if (!isUpdated) {
             throw new NotFoundException()
         }
@@ -103,7 +119,9 @@ export class BlogsController {
     @Delete(':id')
     @HttpCode(HttpStatus.NO_CONTENT)
     async deleteBlog(@Param('id') id: string): Promise<void> {
-        const isDeleted = await this.blogsService.deleteBlog(id)
+        const isDeleted = await this.commandBus.execute(
+            new DeleteBlogCommand(id)
+        )
         if (!isDeleted) {
             throw new NotFoundException()
         }

@@ -19,31 +19,48 @@ import { BasicAuthGuard } from './guards/basic-auth.guard'
 import { IsPostExistsPipe } from './pipes/isPostExists.validation.pipe'
 import { UsersQueryRepository } from '../../auth/infrastructure/users-query-repository'
 import { JwtService } from '../../general/adapters/jwt.adapter'
+import { PostsQueryRepository } from '../infrastructure/posts/posts-query-repository'
+import { PostsWithQueryOutputModel } from '../domain/posts/PostsTypes'
 
 @Controller('posts')
 export class PostsController {
-    constructor(protected jwtService: JwtService, protected postsService: PostsService, protected commentsService: CommentsService, protected usersQueryRepository: UsersQueryRepository, protected blogsQueryRepository: BlogsQueryRepository, protected postsRepository: PostsRepository) { }
+    constructor(
+        protected jwtService: JwtService,
+        protected postsService: PostsService,
+        protected commentsService: CommentsService,
+        protected usersQueryRepository: UsersQueryRepository,
+        protected blogsQueryRepository: BlogsQueryRepository,
+        protected postsQueryRepository: PostsQueryRepository,
+        protected postsRepository: PostsRepository,
+    ) { }
 
     @Get()
-    async getPosts(@Query() query: ReadPostsQueryParams, @Headers('Authorization') authorizationHeader: string,) {
+    async getPosts(@Query() query: ReadPostsQueryParams, @Headers('Authorization') authorizationHeader: string,): Promise<PostsWithQueryOutputModel> {
         const accessToken = authorizationHeader ? authorizationHeader.split(' ')[1] : null
-        const findedPosts = await this.postsService.findPosts(query, null, accessToken)
+        const postsWithQueryData = await this.postsQueryRepository.findPosts(query, null)
 
-        if (!findedPosts.items.length) {
+        if (!postsWithQueryData.items.length) {
             throw new NotFoundException()
         }
 
-        return findedPosts
+        const displayedPosts = await this.postsService.transformLikeInfo(postsWithQueryData.items, accessToken)
+        const postsViewQueryData = {
+            ...postsWithQueryData, items: displayedPosts
+        }
+
+        return postsViewQueryData
     }
 
     @Get(':postId')
     async getPostById(@Param('postId', IsPostExistsPipe) postId: string, @Headers('Authorization') authorizationHeader: string,): Promise<PostsViewModel> {
         const accessToken = authorizationHeader ? authorizationHeader.split(' ')[1] : null
-        const findedPosts = await this.postsService.findPostById(postId, accessToken)
-        if (!findedPosts) {
+        const findedPost = await this.postsQueryRepository.getPostById(postId)
+        if (!findedPost) {
             throw new NotFoundException()
         }
-        return findedPosts
+
+        const displayedPost = this.postsService.transformLikeInfo([findedPost], accessToken)[0]
+        return displayedPost
     }
 
     @Get(':postId/comments')
@@ -71,7 +88,7 @@ export class PostsController {
         @Body() comment: CommentInputModel,
         @CurrentUserId() userId: string,
     ): Promise<CommentViewModel> {
-        const postById = this.postsRepository.getPostById(postId)
+        const postById = this.postsQueryRepository.getPostById(postId)
         if (!postById) {
             throw new NotFoundException()
         }

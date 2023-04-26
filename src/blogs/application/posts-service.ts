@@ -2,42 +2,17 @@ import { PostInputModel } from '../api/models/PostInputModel'
 import { PostsRepository } from '../infrastructure/posts/posts-db-repository'
 import { BlogsRepository } from '../infrastructure/blogs/blogs-db-repository'
 import { LikeType } from '../api/models/LikeInputModel'
-import { ReadPostsQueryParams } from '../api/models/ReadPostsQuery'
 import { PostsViewModel } from './dto/PostViewModel'
 import { UsersRepository } from '../../auth/infrastructure/users-db-repository'
 import { Injectable } from '@nestjs/common'
 import {
-    ExtendedLikeObjectType, PostDBModel, PostsWithQueryOutputModel
+    ExtendedLikeObjectType, PostDBModel
 } from '../domain/posts/PostsTypes'
 import { JwtService } from '../../general/adapters/jwt.adapter'
 
 @Injectable()
 export class PostsService {
     constructor(protected blogsRepository: BlogsRepository, protected postsRepository: PostsRepository, protected jwtService: JwtService, protected usersRepository: UsersRepository) { }
-
-    async findPosts(queryParams: ReadPostsQueryParams, blogId: string | null, accessToken: string | null) {
-        const postsDBQueryData = await this.postsRepository.findPosts(queryParams, blogId)
-
-        const postsViewQueryData: PostsWithQueryOutputModel = {
-            ...postsDBQueryData, items: []
-        }
-
-        const displayedPosts = await this.transformLikeInfo(postsDBQueryData.items, accessToken)
-        postsViewQueryData.items = displayedPosts
-
-        return postsViewQueryData
-    }
-
-    async findPostById(postId: string, accessToken: string | null): Promise<PostsViewModel | null> {
-        const findedPost = await this.postsRepository.getPostById(postId)
-        if (!findedPost) {
-            return null
-        }
-
-
-        const displayedPost = await this.transformLikeInfo([findedPost], accessToken)
-        return displayedPost[0]
-    }
 
     async deletePosts(id: string) {
         return await this.postsRepository.deletePosts(id)

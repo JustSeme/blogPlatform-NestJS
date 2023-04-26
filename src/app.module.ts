@@ -72,8 +72,12 @@ import { SuperAdminCreateUserUseCase } from "./auth/application/use-cases/super-
 import { RegistrationUserUseCase } from "./auth/application/use-cases/registration-user.use-case"
 import { DeleteUserUseCase } from "./auth/application/use-cases/delete-user.use-case"
 import { CqrsModule } from "@nestjs/cqrs"
+import { CreateBlogUseCase } from "./blogs/application/use-cases/blogs/create-blog.use-case"
+import { UpdateBlogUseCase } from "./blogs/application/use-cases/blogs/update-blog.use-case"
+import { DeleteBlogUseCase } from "./blogs/application/use-cases/blogs/delete-blog.use-case"
+import { PostsQueryRepository } from "./blogs/infrastructure/posts/posts-query-repository"
 
-const useCases = [
+const authUseCases = [
   LogoutUseCase,
   LoginUseCase,
   ConfirmRecoveryPasswordUseCase,
@@ -83,6 +87,12 @@ const useCases = [
   SuperAdminCreateUserUseCase,
   RegistrationUserUseCase,
   DeleteUserUseCase,
+]
+
+const blogsUseCases = [
+  DeleteBlogUseCase,
+  CreateBlogUseCase,
+  UpdateBlogUseCase
 ]
 
 const strategies = [
@@ -108,6 +118,7 @@ const adapters = [
 ]
 
 const repositories = [
+  PostsQueryRepository,
   BlogsQueryRepository,
   CommentsQueryRepository,
   UsersQueryRepository,
@@ -179,7 +190,8 @@ const configs = [
   controllers: [AppController, UsersController, BlogsController, PostsController, CommentsController, AuthController, SecurityController],
   providers: [
     ...strategies,
-    ...useCases,
+    ...authUseCases,
+    ...blogsUseCases,
     ...services,
     ...adapters,
     ...repositories,
