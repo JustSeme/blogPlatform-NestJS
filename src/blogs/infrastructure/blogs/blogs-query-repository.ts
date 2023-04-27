@@ -48,8 +48,8 @@ export class BlogsQueryRepository {
     }
 
     async findBlogById(id: string): Promise<BlogViewModel | null> {
-        return await this.BlogsModel.findOne({ id: id }, {
-            _id: 0, __v: 0
+        return this.BlogsModel.findOne({ id: id }, {
+            _id: 0, creatorId: 0, __v: 0
         }).lean()
     }
 }

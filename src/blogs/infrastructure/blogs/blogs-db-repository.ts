@@ -1,9 +1,10 @@
 import { BlogInputModel } from "../../api/models/BlogInputModel"
-import { BlogViewModel } from "../../application/dto/BlogViewModel"
 import { Injectable } from "@nestjs/common"
 import { InjectModel } from "@nestjs/mongoose"
 import { Blog } from "../../domain/blogs/BlogsSchema"
-import { BlogModelType } from "../../domain/blogs/BlogsTypes"
+import {
+    BlogDBModel, BlogModelType
+} from "../../domain/blogs/BlogsTypes"
 
 @Injectable()
 export class BlogsRepository {
@@ -20,7 +21,7 @@ export class BlogsRepository {
         return result.deletedCount === 1
     }
 
-    async createBlog(createdBlog: BlogViewModel) {
+    async createBlog(createdBlog: BlogDBModel) {
         await this.BlogsModel.create(createdBlog)
     }
 
@@ -32,10 +33,11 @@ export class BlogsRepository {
         return result.matchedCount === 1
     }
 
-    async findBlogById(id: string): Promise<BlogViewModel | null> {
-        return await this.BlogsModel.findOne({ id: id }, {
+    async findBlogById(id: string): Promise<BlogDBModel | null> {
+        return this.BlogsModel.findOne({ id: id }, {
             _id: 0, __v: 0
         })
+
     }
 
     async isBlogExist(blogId: string): Promise<boolean> {

@@ -4,7 +4,11 @@ import {
     Get,
     Query,
     UseGuards,
-    Body
+    Body,
+    Put,
+    Param,
+    HttpCode,
+    HttpStatus
 } from "@nestjs/common"
 import { ReadBlogsQueryParams } from "../../blogs/api/models/ReadBlogsQuery"
 import { JwtAuthGuard } from "../../blogs/api/guards/jwt-auth.guard"
@@ -16,6 +20,7 @@ import { BlogsQueryRepository } from "../../blogs/infrastructure/blogs/blogs-que
 import { BlogInputModel } from "../../blogs/api/models/BlogInputModel"
 import { CommandBus } from "@nestjs/cqrs"
 import { CreateBlogForBloggerCommand } from "./use-cases/create-blog-for-blogger.use-case"
+import { UpdateBlogForBloggerCommand } from "./use-cases/update-blog-for-blogger.use-case"
 
 @Controller('blogger')
 export class BloggerBlogsController {
@@ -39,10 +44,23 @@ export class BloggerBlogsController {
 
     @UseGuards(JwtAuthGuard)
     @Get('blogs')
-    async getBlogsForOwner(
+    public async getBlogsForOwner(
         @Query() blogsQueryParams: ReadBlogsQueryParams,
         @CurrentUserId() userId: string,
     ): Promise<BlogsWithQueryOutputModel> {
         return this.blogsQueryRepository.findBlogs(blogsQueryParams, userId)
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @HttpCode(HttpStatus.NO_CONTENT)
+    @Put('blogs/:blogId')
+    public async updateBlog(
+        @Body() blogInputModel: BlogInputModel,
+        @Param('blogId') blogId: string,
+        @CurrentUserId() userId: string,
+    ) {
+        await this.commandBus.execute(
+            new UpdateBlogForBloggerCommand(blogInputModel, blogId, userId)
+        )
     }
 }

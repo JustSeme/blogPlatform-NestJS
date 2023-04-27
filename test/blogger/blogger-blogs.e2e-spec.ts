@@ -33,7 +33,7 @@ describe('blogger-blogs', () => {
 
     let recievedAccessToken = ''
 
-    const createUserInputData = {
+    const createUserInputData: UserInputModel = {
         login: 'login',
         password: 'password',
         email: 'email@email.ru'
@@ -81,12 +81,42 @@ describe('blogger-blogs', () => {
         secondRecievedAccessToken = accessTokenResponseData.body.accessToken
     })
 
+    const incorrectBlogInputModel: BlogInputModel = {
+        name: 'this name should be a greater then 15 symbols', // min 3 max 15
+        description: 'Te', // min 3 max 500
+        websiteUrl: 'notAUrl', // min 3 max 100 isUrl
+    };
+
+    it('blogger shouldn\'t create blog with incorrect input model', async () => {
+        const errorsMessagesData = await request(httpServer)
+            .post('/blogger/blogs')
+            .set('Authorization', `Bearer ${recievedAccessToken}`)
+            .send(incorrectBlogInputModel)
+            .expect(HttpStatus.BAD_REQUEST)
+
+        expect(errorsMessagesData.body).toEqual({
+            errorsMessages: [
+                { field: "name", message: "name must be shorter than or equal to 15 characters" },
+                { field: "description", message: "description must be longer than or equal to 3 characters" },
+                { field: "websiteUrl", message: "websiteUrl must be a URL address" }
+            ]
+        })
+    })
+
+    it('blogger shouldn\'t create blog without bearer token', async () => {
+        await request(httpServer)
+            .post('/blogger/blogs')
+            .send(incorrectBlogInputModel)
+            .expect(HttpStatus.UNAUTHORIZED)
+    })
+
     const correctBlogInputModel: BlogInputModel = {
         name: 'Test Blog name',
         description: 'Test Blog description',
         websiteUrl: 'www.url.com',
     };
 
+    let createdBlogId
     it('blogger should create blog and display blogViewModel', async () => {
         const createdBlogData = await request(httpServer)
             .post('/blogger/blogs')
@@ -98,8 +128,11 @@ describe('blogger-blogs', () => {
         expect(createdBlogData.body.description).toEqual(correctBlogInputModel.description)
         expect(createdBlogData.body.websiteUrl).toEqual(correctBlogInputModel.websiteUrl)
         expect(createdBlogData.body.creatorId).toBe(undefined)
+
+        createdBlogId = createdBlogData.body.id
     })
 
+    let createdBlogIdByAnotherUser
     it('another blogger should create blog and display blogViewModel', async () => {
         const createdBlogData = await request(httpServer)
             .post('/blogger/blogs')
@@ -111,6 +144,15 @@ describe('blogger-blogs', () => {
         expect(createdBlogData.body.description).toEqual(correctBlogInputModel.description)
         expect(createdBlogData.body.websiteUrl).toEqual(correctBlogInputModel.websiteUrl)
         expect(createdBlogData.body.creatorId).toBe(undefined)
+
+        createdBlogIdByAnotherUser = createdBlogData.body.id
+    })
+
+    it('should return 401 error if bearer token is incorrect', async () => {
+        await request(httpServer)
+            .get('/blogger/blogs')
+            .set('Authorization', `Bearer incorrect`)
+            .expect(HttpStatus.UNAUTHORIZED)
     })
 
     it('should return one blog for it owner', async () => {
@@ -123,5 +165,78 @@ describe('blogger-blogs', () => {
         expect(blogsData.body.items[0].name).toEqual(correctBlogInputModel.name)
         expect(blogsData.body.items[0].description).toEqual(correctBlogInputModel.description)
         expect(blogsData.body.items[0].websiteUrl).toEqual(correctBlogInputModel.websiteUrl)
+    })
+
+    it('blogger shouldn\'t update blog if that is not him own, should display old data', async () => {
+        await request(httpServer)
+            .put('/blogger/blogs/' + createdBlogIdByAnotherUser)
+            .set('Authorization', `Bearer ${recievedAccessToken}`)
+            .send(correctBlogInputModel)
+            .expect(HttpStatus.FORBIDDEN)
+
+        const blogsData = await request(httpServer)
+            .get('/blogger/blogs')
+            .set('Authorization', `Bearer ${recievedAccessToken}`)
+            .expect(HttpStatus.OK)
+
+        expect(blogsData.body.items[0].name).toEqual(correctBlogInputModel.name)
+        expect(blogsData.body.items[0].description).toEqual(correctBlogInputModel.description)
+        expect(blogsData.body.items[0].websiteUrl).toEqual(correctBlogInputModel.websiteUrl)
+    })
+
+    it('blogger shouldn\'t update blog without bearer auth token, should display old data', async () => {
+        await request(httpServer)
+            .put('/blogger/blogs/' + createdBlogId)
+            .send(correctBlogInputModel)
+            .expect(HttpStatus.UNAUTHORIZED)
+
+        const blogsData = await request(httpServer)
+            .get('/blogger/blogs')
+            .set('Authorization', `Bearer ${recievedAccessToken}`)
+            .expect(HttpStatus.OK)
+
+        expect(blogsData.body.items[0].name).toEqual(correctBlogInputModel.name)
+        expect(blogsData.body.items[0].description).toEqual(correctBlogInputModel.description)
+        expect(blogsData.body.items[0].websiteUrl).toEqual(correctBlogInputModel.websiteUrl)
+    })
+
+    it('blogger shouldn\'t update blog with incorrect input data, should display old data', async () => {
+        await request(httpServer)
+            .put('/blogger/blogs/' + createdBlogId)
+            .set('Authorization', `Bearer ${recievedAccessToken}`)
+            .send(incorrectBlogInputModel)
+            .expect(HttpStatus.BAD_REQUEST)
+
+        const blogsData = await request(httpServer)
+            .get('/blogger/blogs')
+            .set('Authorization', `Bearer ${recievedAccessToken}`)
+            .expect(HttpStatus.OK)
+
+        expect(blogsData.body.items[0].name).toEqual(correctBlogInputModel.name)
+        expect(blogsData.body.items[0].description).toEqual(correctBlogInputModel.description)
+        expect(blogsData.body.items[0].websiteUrl).toEqual(correctBlogInputModel.websiteUrl)
+    })
+
+    const correctBlogUpdateModel: BlogInputModel = {
+        name: 'correct name',
+        description: 'correct blog description',
+        websiteUrl: 'www.websiteUrl.com'
+    }
+
+    it('blogger should update blog and display updated data', async () => {
+        await request(httpServer)
+            .put('/blogger/blogs/' + createdBlogId)
+            .set('Authorization', `Bearer ${recievedAccessToken}`)
+            .send(correctBlogUpdateModel)
+            .expect(HttpStatus.NO_CONTENT)
+
+        const blogsData = await request(httpServer)
+            .get('/blogger/blogs')
+            .set('Authorization', `Bearer ${recievedAccessToken}`)
+            .expect(HttpStatus.OK)
+
+        expect(blogsData.body.items[0].name).toEqual(correctBlogUpdateModel.name)
+        expect(blogsData.body.items[0].description).toEqual(correctBlogUpdateModel.description)
+        expect(blogsData.body.items[0].websiteUrl).toEqual(correctBlogUpdateModel.websiteUrl)
     })
 });

@@ -36,6 +36,7 @@ export class CreateBlogForBloggerUseCase implements ICommandHandler<CreateBlogFo
             creatorId,
             false
         )
+
         await this.blogsRepository.createBlog(createdBlog)
 
         const displayedBlog = this.blogsService.prepareBlogForDisplay(createdBlog)
