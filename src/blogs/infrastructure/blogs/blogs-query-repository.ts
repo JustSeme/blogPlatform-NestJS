@@ -10,7 +10,7 @@ import { Injectable } from '@nestjs/common'
 export class BlogsQueryRepository {
     constructor(@InjectModel(Blog.name) private BlogsModel: BlogModelType) { }
 
-    async findBlogs(queryParams: ReadBlogsQueryParams): Promise<BlogsWithQueryOutputModel> {
+    async findBlogs(queryParams: ReadBlogsQueryParams, creatorId?: string | undefined): Promise<BlogsWithQueryOutputModel> {
         const {
             searchNameTerm = null,
             sortDirection = 'desc',
@@ -24,6 +24,9 @@ export class BlogsQueryRepository {
             filter.name = {
                 $regex: searchNameTerm, $options: 'i'
             }
+        }
+        if (creatorId) {
+            filter.creatorId = creatorId
         }
 
         const totalCount = await this.BlogsModel.count(filter)

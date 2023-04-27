@@ -12,7 +12,7 @@ export class CommentsService {
         protected jwtService: JwtService,
     ) { }
 
-    transformCommentWithDefaultLikeInfo(rawComment: CommentDBModel | CommentViewModel) {
+    transformCommentWithDefaultLikeInfo(rawComment: CommentDBModel | CommentViewModel): CommentViewModel {
         return {
             id: rawComment.id,
             content: rawComment.content,

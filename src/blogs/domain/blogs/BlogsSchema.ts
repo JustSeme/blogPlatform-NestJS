@@ -34,6 +34,12 @@ export class Blog {
 
     @Prop({ required: true, })
     isMembership: boolean
+
+    @Prop({
+        required: true,
+        default: 'superAdmin'
+    })
+    creatorId: string
 }
 
 export const BlogSchema = SchemaFactory.createForClass<BlogDBModel>(Blog)

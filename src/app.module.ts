@@ -31,7 +31,6 @@ import { CommentsController } from "./blogs/api/comments-controller"
 import { AuthController } from "./auth/api/auth-controller"
 import { SecurityController } from "./security/api/security-controller"
 import { LocalStrategy } from "./auth/api/strategies/local.strategy"
-import { JwtStrategy } from "./blogs/api/strategies/jwt.strategy"
 import { BasicStrategy } from "./blogs/api/strategies/basic.strategy"
 import { AppService } from "./app.service"
 import { AuthService } from "./auth/application/auth.service"
@@ -82,6 +81,9 @@ import { UpdateLikeStatusForPostUseCase } from "./blogs/application/use-cases/po
 import { CreateCommentUseCase } from "./blogs/application/use-cases/comments/create-comment.use-case"
 import { DeleteCommentUseCase } from "./blogs/application/use-cases/comments/delete-comment.use-case"
 import { UpdateLikeStatusForCommentUseCase } from "./blogs/application/use-cases/comments/update-like-status-for-comment.use-case"
+import { CreateBlogForBloggerUseCase } from "./Blogger/api/use-cases/create-blog-for-blogger.use-case"
+import { BloggerBlogsController } from "./Blogger/api/blogger-blogs.controller"
+import { JwtAuthGuard } from "./blogs/api/guards/jwt-auth.guard"
 
 const authUseCases = [
   LogoutUseCase,
@@ -98,6 +100,7 @@ const authUseCases = [
 const blogsUseCases = [
   DeleteBlogUseCase,
   CreateBlogUseCase,
+  CreateBlogForBloggerUseCase,
   UpdateBlogUseCase,
   DeletePostUseCase,
   UpdatePostUseCase,
@@ -109,7 +112,6 @@ const blogsUseCases = [
 
 const strategies = [
   LocalStrategy,
-  JwtStrategy,
   BasicStrategy,
 ]
 
@@ -151,6 +153,7 @@ const decorators = [
 
 const guards = [
   IpRestrictionGuard,
+  JwtAuthGuard,
 ]
 
 const configs = [
@@ -199,7 +202,7 @@ const configs = [
     ]),
     PassportModule,
   ],
-  controllers: [AppController, UsersController, BlogsController, PostsController, CommentsController, AuthController, SecurityController],
+  controllers: [AppController, UsersController, BlogsController, PostsController, CommentsController, AuthController, SecurityController, BloggerBlogsController,],
   providers: [
     ...strategies,
     ...authUseCases,

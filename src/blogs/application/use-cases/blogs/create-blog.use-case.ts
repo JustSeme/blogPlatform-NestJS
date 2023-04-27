@@ -4,6 +4,7 @@ import {
 import { BlogInputModel } from "../../../api/models/BlogInputModel"
 import { BlogsRepository } from "../../../infrastructure/blogs/blogs-db-repository"
 import { BlogViewModel } from "../../dto/BlogViewModel"
+import { BlogDBModel } from "../../../domain/blogs/BlogsTypes"
 
 // Command
 export class CreateBlogCommand implements ICommand {
@@ -21,10 +22,11 @@ export class CreateBlogUseCase implements ICommandHandler<CreateBlogCommand> {
 
     async execute(command: CreateBlogCommand): Promise<BlogViewModel> {
         const { blogInputModel } = command
-        const createdBlog = new BlogViewModel(
+        const createdBlog = new BlogDBModel(
             blogInputModel.name,
             blogInputModel.description,
             blogInputModel.websiteUrl,
+            'superAdmin',
             false
         )
         await this.blogsRepository.createBlog(createdBlog)

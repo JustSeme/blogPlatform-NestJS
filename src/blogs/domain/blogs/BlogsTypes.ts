@@ -11,6 +11,7 @@ export class BlogDBModel {
         public name: string,
         public description: string,
         public websiteUrl: string,
+        public creatorId: string,
         public isMembership: boolean,
     ) {
         this.id = uuidv4()
