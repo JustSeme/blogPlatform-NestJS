@@ -3,10 +3,10 @@ import {
 } from "@nestjs/mongoose"
 import { CommentDBModel } from "./CommentTypes"
 import {
- CommentatorInfo, CommentatorInfoSchema 
+    CommentatorInfo, CommentatorInfoSchema
 } from "./CommentatorInfoSchema"
 import {
- LikesInfo, LikesInfoSchema 
+    LikesInfo, LikesInfoSchema
 } from "./LikesInfoSchema"
 
 @Schema()
@@ -20,21 +20,21 @@ export class Comment {
     content: string
 
     @Prop({
- required: true, default: new Date().toISOString() 
-})
+        required: true, default: new Date().toISOString()
+    })
     createdAt: string
 
     @Prop({ required: true })
     postId: string
 
     @Prop({
- required: true, type: CommentatorInfoSchema 
-})
+        required: true, type: CommentatorInfoSchema
+    })
     commentatorInfo: CommentatorInfo
 
     @Prop({
- required: true, type: LikesInfoSchema 
-})
+        required: true, type: LikesInfoSchema
+    })
     likesInfo: LikesInfo
 }
 

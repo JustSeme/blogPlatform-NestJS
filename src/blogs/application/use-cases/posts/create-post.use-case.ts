@@ -32,7 +32,7 @@ export class CreatePostUseCase implements ICommandHandler<CreatePostCommand> {
 
         await this.postsRepository.createPost(createdPost)
 
-        const displayedPost = await this.postsService.transformLikeInfo([createdPost], null)
+        const displayedPost = await this.postsService.transformCommentsForDisplay([createdPost], null)
         return displayedPost[0]
     }
 }

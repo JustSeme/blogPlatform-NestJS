@@ -26,6 +26,8 @@ import { DeletePostsCommand } from '../application/use-cases/posts/delete-post.u
 import { CreatePostCommand } from '../application/use-cases/posts/create-post.use-case'
 import { UpdatePostCommand } from '../application/use-cases/posts/update-post.use-case'
 import { UpdateLikeStatusForPostCommand } from '../application/use-cases/posts/update-like-status-for-post.use-case'
+import { CreateCommentCommand } from '../application/use-cases/comments/create-comment.use-case'
+import { CommentsQueryRepository } from '../infrastructure/comments/comments-query-repository'
 
 @Controller('posts')
 export class PostsController {
@@ -36,6 +38,7 @@ export class PostsController {
         protected usersQueryRepository: UsersQueryRepository,
         protected blogsQueryRepository: BlogsQueryRepository,
         protected postsQueryRepository: PostsQueryRepository,
+        protected commentsQueryRepository: CommentsQueryRepository,
         protected postsRepository: PostsRepository,
         protected commandBus: CommandBus,
     ) { }
@@ -49,7 +52,7 @@ export class PostsController {
             throw new NotFoundException()
         }
 
-        const displayedPosts = await this.postsService.transformLikeInfo(postsWithQueryData.items, accessToken)
+        const displayedPosts = await this.postsService.transformCommentsForDisplay(postsWithQueryData.items, accessToken)
         const postsViewQueryData = {
             ...postsWithQueryData, items: displayedPosts
         }
@@ -65,7 +68,7 @@ export class PostsController {
             throw new NotFoundException()
         }
 
-        const displayedPost = this.postsService.transformLikeInfo([findedPost], accessToken)[0]
+        const displayedPost = this.postsService.transformCommentsForDisplay([findedPost], accessToken)[0]
         return displayedPost
     }
 
@@ -76,8 +79,12 @@ export class PostsController {
         @Headers('Authorization') authorizationHeader: string,
     ): Promise<CommentsWithQueryOutputModel> {
         const accessToken = authorizationHeader ? authorizationHeader.split(' ')[1] : null
-        const findedComments = await this.commentsService.getComments(commentsQueryParams, postId, accessToken)
-        return findedComments
+        const findedCommentsQueryData = await this.commentsQueryRepository.getComments(commentsQueryParams, postId)
+
+        const displayedPosts = await this.commentsService.transformCommentsForDisplay(findedCommentsQueryData.items, accessToken)
+
+        findedCommentsQueryData.items = displayedPosts
+        return findedCommentsQueryData
     }
 
     @UseGuards(BasicAuthGuard)
@@ -103,7 +110,9 @@ export class PostsController {
 
         const commentator = await this.usersQueryRepository.findUserById(userId)
 
-        const createdComment = await this.commentsService.createComment(comment.content, commentator, postId)
+        const createdComment = await this.commandBus.execute(
+            new CreateCommentCommand(comment.content, commentator, postId)
+        )
         if (!createdComment) {
             throw new NotImplementedException()
         }

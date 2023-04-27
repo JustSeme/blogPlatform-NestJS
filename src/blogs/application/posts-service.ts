@@ -12,7 +12,7 @@ export class PostsService {
         private jwtService: JwtService
     ) { }
 
-    async transformLikeInfo(postsArray: PostDBModel[], accessToken: string | null): Promise<PostsViewModel[]> {
+    async transformCommentsForDisplay(postsArray: PostDBModel[], accessToken: string | null): Promise<PostsViewModel[]> {
         let userId: string | null = null
         if (accessToken) {
             const jwtResult = await this.jwtService.verifyAccessToken(accessToken)
