@@ -60,7 +60,7 @@ import { AttemptsRepository } from "./security/infrastructure/attempts-db-reposi
 import { IpRestrictionGuard } from "./auth/api/guards/ip-restriction.guard"
 import { BlogsConfig } from "./configuration/blogs.config"
 import { AuthConfig } from "./configuration/auth.config"
-import { EmailConfig } from "./configuration/email.config"
+import { GmailConfig } from "./configuration/gmail.config"
 import { AppConfig } from "./configuration/app.config"
 import { LogoutUseCase } from "./auth/application/use-cases/logout.use-case"
 import { LoginUseCase } from "./auth/application/use-cases/login.use-case"
@@ -156,7 +156,7 @@ const guards = [
 const configs = [
   BlogsConfig,
   AuthConfig,
-  EmailConfig,
+  GmailConfig,
   AppConfig,
 ]
 

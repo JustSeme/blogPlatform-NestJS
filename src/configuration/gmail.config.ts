@@ -3,7 +3,7 @@ import { BaseConfig } from "./base.config"
 import { Injectable } from "@nestjs/common"
 
 @Injectable()
-export class EmailConfig extends BaseConfig {
+export class GmailConfig extends BaseConfig {
     constructor(protected appConfigService: ConfigService) {
         super(appConfigService)
     }
