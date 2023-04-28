@@ -64,12 +64,9 @@ export class PostsController {
     async getPostById(@Param('postId', IsPostExistsPipe) postId: string, @Headers('Authorization') authorizationHeader: string,): Promise<PostsViewModel> {
         const accessToken = authorizationHeader ? authorizationHeader.split(' ')[1] : null
         const findedPost = await this.postsQueryRepository.getPostById(postId)
-        if (!findedPost) {
-            throw new NotFoundException()
-        }
 
-        const displayedPost = this.postsService.transformPostsForDisplay([findedPost], accessToken)[0]
-        return displayedPost
+        const displayedPost = await this.postsService.transformPostsForDisplay([findedPost], accessToken)
+        return displayedPost[0]
     }
 
     @Get(':postId/comments')

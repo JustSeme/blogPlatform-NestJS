@@ -79,6 +79,7 @@ export class PostsService {
 
             return convertedPost
         })
+
         return convertedPosts
     }
 }

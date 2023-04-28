@@ -199,6 +199,7 @@ describe('blogger-posts', () => {
             .expect(HttpStatus.NOT_FOUND)
     })
 
+    let createdPostId
     it('blogger should create post for early created blog and display array with it post', async () => {
         const createdPostData = await request(httpServer)
             .post(`/blogger/blogs/${createdBlogId}/posts`)
@@ -210,6 +211,8 @@ describe('blogger-posts', () => {
         expect(createdPostData.body.shortDescription).toEqual(correctPostInputModel.shortDescription)
         expect(createdPostData.body.content).toEqual(correctPostInputModel.content)
 
+        createdPostId = createdPostData.body.id
+
         const postsViewData = await request(httpServer)
             .get(`/posts`)
             .expect(HttpStatus.OK)
@@ -217,5 +220,137 @@ describe('blogger-posts', () => {
         expect(postsViewData.body.items[0].title).toEqual(correctPostInputModel.title)
         expect(postsViewData.body.items[0].shortDescription).toEqual(correctPostInputModel.shortDescription)
         expect(postsViewData.body.items[0].content).toEqual(correctPostInputModel.content)
+    })
+
+    it('shouldn\'t update early created post if inputModel has incorrect values', async () => {
+        await request(httpServer)
+            .put(`/blogger/blogs/${createdBlogId}/posts/${createdPostId}`)
+            .set('Authorization', `Bearer ${recievedAccessToken}`)
+            .send(incorrectPostInputModel)
+            .expect(HttpStatus.BAD_REQUEST)
+
+        const updatedPostData = await request(httpServer)
+            .get(`/posts/${createdPostId}`)
+            .expect(HttpStatus.OK)
+
+        expect(updatedPostData.body.title).toEqual(correctPostInputModel.title)
+        expect(updatedPostData.body.shortDescription).toEqual(correctPostInputModel.shortDescription)
+        expect(updatedPostData.body.content).toEqual(correctPostInputModel.content)
+    })
+
+    it('blogger shouldn\'t update early created post if that is not him own', async () => {
+        await request(httpServer)
+            .put(`/blogger/blogs/${createdBlogId}/posts/${createdPostId}`)
+            .set('Authorization', `Bearer ${secondRecievedAccessToken}`)
+            .send(correctPostInputModel)
+            .expect(HttpStatus.FORBIDDEN)
+
+        const updatedPostData = await request(httpServer)
+            .get(`/posts/${createdPostId}`)
+            .expect(HttpStatus.OK)
+
+        expect(updatedPostData.body.title).toEqual(correctPostInputModel.title)
+        expect(updatedPostData.body.shortDescription).toEqual(correctPostInputModel.shortDescription)
+        expect(updatedPostData.body.content).toEqual(correctPostInputModel.content)
+    })
+
+    it('blogger shouldn\'t update early created post if postId is incorrect', async () => {
+        await request(httpServer)
+            .put(`/blogger/blogs/${createdBlogId}/posts/${createdPostId}`)
+            .set('Authorization', `Bearer ${secondRecievedAccessToken}`)
+            .send(correctPostInputModel)
+            .expect(HttpStatus.FORBIDDEN)
+
+        const updatedPostData = await request(httpServer)
+            .get(`/posts/${createdPostId}`)
+            .expect(HttpStatus.OK)
+
+        expect(updatedPostData.body.title).toEqual(correctPostInputModel.title)
+        expect(updatedPostData.body.shortDescription).toEqual(correctPostInputModel.shortDescription)
+        expect(updatedPostData.body.content).toEqual(correctPostInputModel.content)
+    })
+
+    it('shouldn\'t update early created post if bearer token is incorrect', async () => {
+        await request(httpServer)
+            .put(`/blogger/blogs/${createdBlogId}/posts/${createdPostId}`)
+            .set('Authorization', `Bearer incorrect`)
+            .send(correctPostInputModel)
+            .expect(HttpStatus.UNAUTHORIZED)
+
+        const updatedPostData = await request(httpServer)
+            .get(`/posts/${createdPostId}`)
+            .expect(HttpStatus.OK)
+
+        expect(updatedPostData.body.title).toEqual(correctPostInputModel.title)
+        expect(updatedPostData.body.shortDescription).toEqual(correctPostInputModel.shortDescription)
+        expect(updatedPostData.body.content).toEqual(correctPostInputModel.content)
+    })
+
+    it('shouldn\'t update early created post if post by postId is not found', async () => {
+        const errorsData = await request(httpServer)
+            .put(`/blogger/blogs/${createdBlogId}/posts/notAPostId`)
+            .set('Authorization', `Bearer ${recievedAccessToken}`)
+            .send(correctPostInputModel)
+            .expect(HttpStatus.NOT_FOUND)
+
+        expect(errorsData.body).toEqual({
+            errorsMessages: [{
+                field: "postId",
+                message: "post by postId parameter is not exists"
+            }]
+        })
+
+        const updatedPostData = await request(httpServer)
+            .get(`/posts/${createdPostId}`)
+            .expect(HttpStatus.OK)
+
+        expect(updatedPostData.body.title).toEqual(correctPostInputModel.title)
+        expect(updatedPostData.body.shortDescription).toEqual(correctPostInputModel.shortDescription)
+        expect(updatedPostData.body.content).toEqual(correctPostInputModel.content)
+    })
+
+    it('shouldn\'t update early created post if blog by blogId is not found', async () => {
+        const errorsData = await request(httpServer)
+            .put(`/blogger/blogs/notABlogId/posts/${createdPostId}`)
+            .set('Authorization', `Bearer ${recievedAccessToken}`)
+            .send(correctPostInputModel)
+            .expect(HttpStatus.NOT_FOUND)
+
+        expect(errorsData.body).toEqual({
+            errorsMessages: [{
+                field: "blogId",
+                message: "blog by blogId parameter is not exists"
+            }]
+        })
+
+        const updatedPostData = await request(httpServer)
+            .get(`/posts/${createdPostId}`)
+            .expect(HttpStatus.OK)
+
+        expect(updatedPostData.body.title).toEqual(correctPostInputModel.title)
+        expect(updatedPostData.body.shortDescription).toEqual(correctPostInputModel.shortDescription)
+        expect(updatedPostData.body.content).toEqual(correctPostInputModel.content)
+    })
+
+    const updatePostInputBody = {
+        title: 'updated title', // min 3 max 30
+        shortDescription: 'updated desc', // min 3 max 100
+        content: 'this is a updated content' // min 3 max 1000
+    }
+
+    it('should update early created post and display updated info', async () => {
+        await request(httpServer)
+            .put(`/blogger/blogs/${createdBlogId}/posts/${createdPostId}`)
+            .set('Authorization', `Bearer ${recievedAccessToken}`)
+            .send(updatePostInputBody)
+            .expect(HttpStatus.NO_CONTENT)
+
+        const updatedPostData = await request(httpServer)
+            .get(`/posts/${createdPostId}`)
+            .expect(HttpStatus.OK)
+
+        expect(updatedPostData.body.title).toEqual(updatePostInputBody.title)
+        expect(updatedPostData.body.shortDescription).toEqual(updatePostInputBody.shortDescription)
+        expect(updatedPostData.body.content).toEqual(updatePostInputBody.content)
     })
 })

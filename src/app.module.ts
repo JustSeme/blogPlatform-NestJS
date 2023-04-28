@@ -87,6 +87,7 @@ import { JwtAuthGuard } from "./blogs/api/guards/jwt-auth.guard"
 import { UpdateBlogForBloggerUseCase } from "./Blogger/api/use-cases/blogs/update-blog-for-blogger.use-case"
 import { DeleteBlogForBloggerUseCase } from "./Blogger/api/use-cases/blogs/delete-blog-for-blogger.use-case"
 import { CreatePostForBloggerUseCase } from "./Blogger/api/use-cases/posts/create-post-for-blogger.use-case"
+import { UpdatePostForBloggerUseCase } from "./Blogger/api/use-cases/posts/update-post-for-blogger.use-case"
 
 const authUseCases = [
   LogoutUseCase,
@@ -114,6 +115,7 @@ const blogsUseCases = [
   CreateCommentUseCase,
   DeleteCommentUseCase,
   UpdateLikeStatusForCommentUseCase,
+  UpdatePostForBloggerUseCase,
 ]
 
 const strategies = [

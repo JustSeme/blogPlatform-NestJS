@@ -1,7 +1,9 @@
 import { InjectModel } from "@nestjs/mongoose"
 import { ReadPostsQueryParams } from "../../api/models/ReadPostsQuery"
 import { Injectable } from "@nestjs/common"
-import { PostModelType } from "../../domain/posts/PostsTypes"
+import {
+    PostDBModel, PostModelType
+} from "../../domain/posts/PostsTypes"
 import { Post } from "../../domain/posts/PostsSchema"
 
 @Injectable()
@@ -38,7 +40,7 @@ export class PostsQueryRepository {
         }
     }
 
-    async getPostById(postId: string) {
+    async getPostById(postId: string): Promise<PostDBModel> {
         return await this.PostModel.findOne({ id: postId }).lean()
     }
 }

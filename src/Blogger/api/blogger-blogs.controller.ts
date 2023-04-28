@@ -27,6 +27,8 @@ import { IsBlogByIdExistPipe } from "../../blogs/api/pipes/isBlogExists.validati
 import { PostsViewModel } from "../../blogs/application/dto/PostViewModel"
 import { CreatePostForBloggerCommand } from "./use-cases/posts/create-post-for-blogger.use-case"
 import { PostInputModelWithoutBlogId } from "../../blogs/api/models/PostInputModelWithoutBlogId"
+import { UpdatePostForBloggerCommand } from "./use-cases/posts/update-post-for-blogger.use-case"
+import { IsPostExistsPipe } from "../../blogs/api/pipes/isPostExists.validation.pipe"
 
 @UseGuards(JwtAuthGuard)
 @Controller('blogger/blogs')
@@ -57,7 +59,7 @@ export class BloggerBlogsController {
     }
 
     @HttpCode(HttpStatus.NO_CONTENT)
-    @Put('/:blogId')
+    @Put(':blogId')
     public async updateBlog(
         @Body() blogInputModel: BlogInputModel,
         @Param('blogId', IsBlogByIdExistPipe) blogId: string,
@@ -69,7 +71,7 @@ export class BloggerBlogsController {
     }
 
     @HttpCode(HttpStatus.NO_CONTENT)
-    @Delete('/:blogId')
+    @Delete(':blogId')
     public async deleteBlog(
         @Param('blogId', IsBlogByIdExistPipe) blogId: string,
         @CurrentUserId() userId: string,
@@ -79,7 +81,7 @@ export class BloggerBlogsController {
         )
     }
 
-    @Post('/:blogId/posts')
+    @Post(':blogId/posts')
     public async createPost(
         @Body() postInputModel: PostInputModelWithoutBlogId,
         @Param('blogId', IsBlogByIdExistPipe) blogId,
@@ -89,5 +91,18 @@ export class BloggerBlogsController {
             new CreatePostForBloggerCommand(postInputModel, blogId, userId)
         )
         return createdPostViewModel
+    }
+
+    @HttpCode(HttpStatus.NO_CONTENT)
+    @Put(':blogId/posts/:postId')
+    public async updatePost(
+        @Body() postInputModel: PostInputModelWithoutBlogId,
+        @Param('blogId', IsBlogByIdExistPipe) blogId,
+        @Param('postId', IsPostExistsPipe) postId,
+        @CurrentUserId() userId
+    ) {
+        await this.commandBus.execute(
+            new UpdatePostForBloggerCommand(postInputModel, blogId, postId, userId)
+        )
     }
 }
