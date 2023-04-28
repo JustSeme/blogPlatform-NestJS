@@ -36,7 +36,7 @@ export class BlogsRepository {
     async findBlogById(id: string): Promise<BlogDBModel | null> {
         return this.BlogsModel.findOne({ id: id }, {
             _id: 0, __v: 0
-        })
+        }).lean()
 
     }
 

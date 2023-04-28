@@ -8,7 +8,8 @@ import {
     Put,
     Param,
     HttpCode,
-    HttpStatus
+    HttpStatus,
+    Delete
 } from "@nestjs/common"
 import { ReadBlogsQueryParams } from "../../blogs/api/models/ReadBlogsQuery"
 import { JwtAuthGuard } from "../../blogs/api/guards/jwt-auth.guard"
@@ -21,7 +22,10 @@ import { BlogInputModel } from "../../blogs/api/models/BlogInputModel"
 import { CommandBus } from "@nestjs/cqrs"
 import { CreateBlogForBloggerCommand } from "./use-cases/create-blog-for-blogger.use-case"
 import { UpdateBlogForBloggerCommand } from "./use-cases/update-blog-for-blogger.use-case"
+import { DeleteBlogForBloggerCommand } from "./use-cases/delete-blog-for-blogger.use-case"
+import { IsBlogByIdExistPipe } from "../../blogs/api/pipes/isBlogExists.validation.pipe"
 
+@UseGuards(JwtAuthGuard)
 @Controller('blogger')
 export class BloggerBlogsController {
     constructor(
@@ -29,7 +33,6 @@ export class BloggerBlogsController {
         private commandBus: CommandBus,
     ) { }
 
-    @UseGuards(JwtAuthGuard)
     @Post('blogs')
     public async createBlog(
         @Body() blogInputModel: BlogInputModel,
@@ -42,7 +45,6 @@ export class BloggerBlogsController {
         return createdBlog
     }
 
-    @UseGuards(JwtAuthGuard)
     @Get('blogs')
     public async getBlogsForOwner(
         @Query() blogsQueryParams: ReadBlogsQueryParams,
@@ -51,16 +53,26 @@ export class BloggerBlogsController {
         return this.blogsQueryRepository.findBlogs(blogsQueryParams, userId)
     }
 
-    @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.NO_CONTENT)
     @Put('blogs/:blogId')
     public async updateBlog(
         @Body() blogInputModel: BlogInputModel,
-        @Param('blogId') blogId: string,
+        @Param('blogId', IsBlogByIdExistPipe) blogId: string,
         @CurrentUserId() userId: string,
     ) {
         await this.commandBus.execute(
             new UpdateBlogForBloggerCommand(blogInputModel, blogId, userId)
+        )
+    }
+
+    @HttpCode(HttpStatus.NO_CONTENT)
+    @Delete('blogs/:blogId')
+    public async deleteBlog(
+        @Param('blogId', IsBlogByIdExistPipe) blogId: string,
+        @CurrentUserId() userId: string,
+    ) {
+        await this.commandBus.execute(
+            new DeleteBlogForBloggerCommand(blogId, userId)
         )
     }
 }

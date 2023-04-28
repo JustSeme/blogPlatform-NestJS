@@ -2,6 +2,7 @@ import {
     Injectable, NotFoundException, PipeTransform
 } from "@nestjs/common"
 import { BlogsRepository } from "../../infrastructure/blogs/blogs-db-repository"
+import { generateErrorsMessages } from "../../../general/helpers"
 
 @Injectable()
 export class IsBlogByIdExistPipe implements PipeTransform {
@@ -9,10 +10,7 @@ export class IsBlogByIdExistPipe implements PipeTransform {
 
     async transform(blogId: string): Promise<string> {
         if (!(await this.blogsRepository.isBlogExist(blogId))) {
-            throw new NotFoundException([{
-                message: 'blog by blogId parameter is not exists',
-                field: 'blogId'
-            }])
+            throw new NotFoundException(generateErrorsMessages('blog by blogId parameter is not exists', 'blogId'))
         }
         return blogId
     }

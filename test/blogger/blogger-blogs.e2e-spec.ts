@@ -239,4 +239,54 @@ describe('blogger-blogs', () => {
         expect(blogsData.body.items[0].description).toEqual(correctBlogUpdateModel.description)
         expect(blogsData.body.items[0].websiteUrl).toEqual(correctBlogUpdateModel.websiteUrl)
     })
+
+    it('blogger shouldn\'t delete blog if that is not him own, should display blogs array with one item', async () => {
+        const res = await request(httpServer)
+            .delete('/blogger/blogs/' + createdBlogId)
+            .set('Authorization', `Bearer ${secondRecievedAccessToken}`)
+            .expect(HttpStatus.FORBIDDEN)
+
+
+        const blogsData = await request(httpServer)
+            .get('/blogger/blogs')
+            .set('Authorization', `Bearer ${recievedAccessToken}`)
+            .expect(HttpStatus.OK)
+
+        expect(blogsData.body.items.length).toBe(1)
+    })
+
+    it('blogger shouldn\'t delete blog if bearer token is incorrect, should display blogs array with one item', async () => {
+        await request(httpServer)
+            .delete('/blogger/blogs/' + createdBlogId)
+            .set('Authorization', `Bearer incorrect`)
+            .expect(HttpStatus.UNAUTHORIZED)
+
+        const blogsData = await request(httpServer)
+            .get('/blogger/blogs')
+            .set('Authorization', `Bearer ${recievedAccessToken}`)
+            .expect(HttpStatus.OK)
+
+        expect(blogsData.body.items.length).toBe(1)
+    })
+
+    it('blogger should delete blog and display blogs array without deleted blog', async () => {
+        await request(httpServer)
+            .delete('/blogger/blogs/' + createdBlogId)
+            .set('Authorization', `Bearer ${recievedAccessToken}`)
+            .expect(HttpStatus.NO_CONTENT)
+
+        const blogsData = await request(httpServer)
+            .get('/blogger/blogs')
+            .set('Authorization', `Bearer ${recievedAccessToken}`)
+            .expect(HttpStatus.OK)
+
+        expect(blogsData.body.items.length).toBe(0)
+    })
+
+    it('sholdn\'t detele blog if it is already deleted', async () => {
+        await request(httpServer)
+            .delete('/blogger/blogs/' + createdBlogId)
+            .set('Authorization', `Bearer ${recievedAccessToken}`)
+            .expect(HttpStatus.NOT_FOUND)
+    })
 });

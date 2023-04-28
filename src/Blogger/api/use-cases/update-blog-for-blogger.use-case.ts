@@ -3,9 +3,7 @@ import {
 } from "@nestjs/cqrs"
 import { BlogInputModel } from "../../../blogs/api/models/BlogInputModel"
 import { BlogsRepository } from "../../../blogs/infrastructure/blogs/blogs-db-repository"
-import {
-    ForbiddenException, NotFoundException
-} from "@nestjs/common"
+import { ForbiddenException } from "@nestjs/common"
 import { generateErrorsMessages } from "../../../general/helpers"
 
 export class UpdateBlogForBloggerCommand {
@@ -26,12 +24,7 @@ export class UpdateBlogForBloggerUseCase implements ICommandHandler<UpdateBlogFo
     async execute(command: UpdateBlogForBloggerCommand): Promise<boolean> {
         const blogById = await this.blogsRepository.findBlogById(command.blogId)
 
-        if (!blogById) {
-            throw new NotFoundException('blog by blogId is not found')
-        }
-
         if (blogById.creatorId !== command.bloggerId) {
-
             throw new ForbiddenException(generateErrorsMessages('that is not your own', 'authorization header'))
         }
 
