@@ -88,6 +88,7 @@ import { UpdateBlogForBloggerUseCase } from "./Blogger/api/use-cases/blogs/updat
 import { DeleteBlogForBloggerUseCase } from "./Blogger/api/use-cases/blogs/delete-blog-for-blogger.use-case"
 import { CreatePostForBloggerUseCase } from "./Blogger/api/use-cases/posts/create-post-for-blogger.use-case"
 import { UpdatePostForBloggerUseCase } from "./Blogger/api/use-cases/posts/update-post-for-blogger.use-case"
+import { DeletePostForBloggerUseCase } from "./Blogger/api/use-cases/posts/delete-post-for-blogger.use-case"
 
 const authUseCases = [
   LogoutUseCase,
@@ -116,6 +117,7 @@ const blogsUseCases = [
   DeleteCommentUseCase,
   UpdateLikeStatusForCommentUseCase,
   UpdatePostForBloggerUseCase,
+  DeletePostForBloggerUseCase,
 ]
 
 const strategies = [

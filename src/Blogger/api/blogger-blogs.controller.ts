@@ -29,6 +29,7 @@ import { CreatePostForBloggerCommand } from "./use-cases/posts/create-post-for-b
 import { PostInputModelWithoutBlogId } from "../../blogs/api/models/PostInputModelWithoutBlogId"
 import { UpdatePostForBloggerCommand } from "./use-cases/posts/update-post-for-blogger.use-case"
 import { IsPostExistsPipe } from "../../blogs/api/pipes/isPostExists.validation.pipe"
+import { DeletePostForBloggerCommand } from "./use-cases/posts/delete-post-for-blogger.use-case"
 
 @UseGuards(JwtAuthGuard)
 @Controller('blogger/blogs')
@@ -103,6 +104,18 @@ export class BloggerBlogsController {
     ) {
         await this.commandBus.execute(
             new UpdatePostForBloggerCommand(postInputModel, blogId, postId, userId)
+        )
+    }
+
+    @HttpCode(HttpStatus.NO_CONTENT)
+    @Delete(':blogId/posts/:postId')
+    public async deletePost(
+        @Param('blogId', IsBlogByIdExistPipe) blogId,
+        @Param('postId', IsPostExistsPipe) postId,
+        @CurrentUserId() userId
+    ) {
+        await this.commandBus.execute(
+            new DeletePostForBloggerCommand(blogId, postId, userId)
         )
     }
 }

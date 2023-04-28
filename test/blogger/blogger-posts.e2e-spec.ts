@@ -353,4 +353,90 @@ describe('blogger-posts', () => {
         expect(updatedPostData.body.shortDescription).toEqual(updatePostInputBody.shortDescription)
         expect(updatedPostData.body.content).toEqual(updatePostInputBody.content)
     })
+
+    it('blogger shouldn\'t delete early created post if blog by blogId is not found, should display not deleted post', async () => {
+        await request(httpServer)
+            .delete(`/blogger/blogs/notABlogId/posts/${createdPostId}`)
+            .set('Authorization', `Bearer ${recievedAccessToken}`)
+            .expect(HttpStatus.NOT_FOUND)
+
+        const notDeletedPostData = await request(httpServer)
+            .get(`/posts/${createdPostId}`)
+            .expect(HttpStatus.OK)
+
+        expect(notDeletedPostData.body.title).toEqual(updatePostInputBody.title)
+        expect(notDeletedPostData.body.shortDescription).toEqual(updatePostInputBody.shortDescription)
+        expect(notDeletedPostData.body.content).toEqual(updatePostInputBody.content)
+    })
+
+    it('blogger shouldn\'t delete early created post if post by postId is not found, should display not deleted post', async () => {
+        await request(httpServer)
+            .delete(`/blogger/blogs/${createdBlogId}/posts/notAPostId`)
+            .set('Authorization', `Bearer ${recievedAccessToken}`)
+            .expect(HttpStatus.NOT_FOUND)
+
+        const notDeletedPostData = await request(httpServer)
+            .get(`/posts/${createdPostId}`)
+            .expect(HttpStatus.OK)
+
+        expect(notDeletedPostData.body.title).toEqual(updatePostInputBody.title)
+        expect(notDeletedPostData.body.shortDescription).toEqual(updatePostInputBody.shortDescription)
+        expect(notDeletedPostData.body.content).toEqual(updatePostInputBody.content)
+    })
+
+    it('blogger shouldn\'t delete early created post if bearer token is incorrect, should display not deleted post', async () => {
+        await request(httpServer)
+            .delete(`/blogger/blogs/${createdBlogId}/posts/${createdPostId}`)
+            .set('Authorization', `Bearer incorrect`)
+            .expect(HttpStatus.UNAUTHORIZED)
+
+        const notDeletedPostData = await request(httpServer)
+            .get(`/posts/${createdPostId}`)
+            .expect(HttpStatus.OK)
+
+        expect(notDeletedPostData.body.title).toEqual(updatePostInputBody.title)
+        expect(notDeletedPostData.body.shortDescription).toEqual(updatePostInputBody.shortDescription)
+        expect(notDeletedPostData.body.content).toEqual(updatePostInputBody.content)
+    })
+
+    it('blogger shouldn\'t delete early created post if that is not him own, should display not deleted post', async () => {
+        await request(httpServer)
+            .delete(`/blogger/blogs/${createdBlogId}/posts/${createdPostId}`)
+            .set('Authorization', `Bearer ${secondRecievedAccessToken}`)
+            .expect(HttpStatus.FORBIDDEN)
+
+        const notDeletedPostData = await request(httpServer)
+            .get(`/posts/${createdPostId}`)
+            .expect(HttpStatus.OK)
+
+        expect(notDeletedPostData.body.title).toEqual(updatePostInputBody.title)
+        expect(notDeletedPostData.body.shortDescription).toEqual(updatePostInputBody.shortDescription)
+        expect(notDeletedPostData.body.content).toEqual(updatePostInputBody.content)
+    })
+
+    it('blogger shouldn\'t delete early created post if bearer token is incorrect, should display not deleted post', async () => {
+        await request(httpServer)
+            .delete(`/blogger/blogs/${createdBlogId}/posts/${createdPostId}`)
+            .set('Authorization', `Bearer incorrect`)
+            .expect(HttpStatus.UNAUTHORIZED)
+
+        const notDeletedPostData = await request(httpServer)
+            .get(`/posts/${createdPostId}`)
+            .expect(HttpStatus.OK)
+
+        expect(notDeletedPostData.body.title).toEqual(updatePostInputBody.title)
+        expect(notDeletedPostData.body.shortDescription).toEqual(updatePostInputBody.shortDescription)
+        expect(notDeletedPostData.body.content).toEqual(updatePostInputBody.content)
+    })
+
+    it('blogger should delete early created post and post should be deleted', async () => {
+        await request(httpServer)
+            .delete(`/blogger/blogs/${createdBlogId}/posts/${createdPostId}`)
+            .set('Authorization', `Bearer ${recievedAccessToken}`)
+            .expect(HttpStatus.NO_CONTENT)
+
+        await request(httpServer)
+            .get(`/posts/${createdPostId}`)
+            .expect(HttpStatus.NOT_FOUND)
+    })
 })

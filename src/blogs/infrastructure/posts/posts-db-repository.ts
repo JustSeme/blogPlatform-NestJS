@@ -15,7 +15,7 @@ export class PostsRepository {
         return await this.PostModel.findOne({ id: postId })
     }
 
-    async deletePosts(id: string) {
+    async deletePost(id: string) {
         const result = await this.PostModel.deleteOne({ id: id })
         return result.deletedCount === 1
     }
