@@ -64,7 +64,7 @@ export class BlogsController {
         if (!postsWithQueryData.items.length) {
             throw new NotFoundException()
         }
-        const displayedPosts = await this.postsService.transformCommentsForDisplay(postsWithQueryData.items, accessToken)
+        const displayedPosts = await this.postsService.transformPostsForDisplay(postsWithQueryData.items, accessToken)
         const postsViewQueryData = {
             ...postsWithQueryData, items: displayedPosts
         }

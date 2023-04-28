@@ -12,7 +12,25 @@ export class PostsService {
         private jwtService: JwtService
     ) { }
 
-    async transformCommentsForDisplay(postsArray: PostDBModel[], accessToken: string | null): Promise<PostsViewModel[]> {
+    transformPostWithDefaultLikesInfo(rawPost: PostDBModel): PostsViewModel {
+        return {
+            id: rawPost.id,
+            content: rawPost.content,
+            title: rawPost.title,
+            shortDescription: rawPost.shortDescription,
+            blogId: rawPost.blogId,
+            blogName: rawPost.blogName,
+            createdAt: rawPost.createdAt,
+            extendedLikesInfo: {
+                likesCount: 0,
+                dislikesCount: 0,
+                myStatus: 'None',
+                newestLikes: []
+            }
+        }
+    }
+
+    async transformPostsForDisplay(postsArray: PostDBModel[], accessToken: string | null): Promise<PostsViewModel[]> {
         let userId: string | null = null
         if (accessToken) {
             const jwtResult = await this.jwtService.verifyAccessToken(accessToken)
@@ -50,25 +68,17 @@ export class PostsService {
                 }
             })
 
-            const convertedPost: PostsViewModel = {
-                id: post.id,
-                content: post.content,
-                title: post.title,
-                shortDescription: post.shortDescription,
-                blogId: post.blogId,
-                blogName: post.blogName,
-                createdAt: post.createdAt,
-                extendedLikesInfo: {
-                    likesCount: likesInfoData.likes.length,
-                    dislikesCount: likesInfoData.dislikes.length,
-                    myStatus: myStatus,
-                    newestLikes: newest3Likes
-                }
+            const convertedPost: PostsViewModel = this.transformPostWithDefaultLikesInfo(post)
+
+            convertedPost.extendedLikesInfo = {
+                likesCount: likesInfoData.likes.length,
+                dislikesCount: likesInfoData.dislikes.length,
+                myStatus: myStatus,
+                newestLikes: newest3Likes
             }
 
             return convertedPost
         })
-
         return convertedPosts
     }
 }

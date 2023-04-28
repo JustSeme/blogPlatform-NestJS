@@ -1,10 +1,10 @@
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
-import { BlogInputModel } from "../../../blogs/api/models/BlogInputModel"
-import { BlogsRepository } from "../../../blogs/infrastructure/blogs/blogs-db-repository"
+import { BlogInputModel } from "../../../../blogs/api/models/BlogInputModel"
+import { BlogsRepository } from "../../../../blogs/infrastructure/blogs/blogs-db-repository"
 import { ForbiddenException } from "@nestjs/common"
-import { generateErrorsMessages } from "../../../general/helpers"
+import { generateErrorsMessages } from "../../../../general/helpers"
 
 export class UpdateBlogForBloggerCommand {
     constructor(

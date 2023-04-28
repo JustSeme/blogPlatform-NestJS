@@ -246,7 +246,6 @@ describe('blogger-blogs', () => {
             .set('Authorization', `Bearer ${secondRecievedAccessToken}`)
             .expect(HttpStatus.FORBIDDEN)
 
-
         const blogsData = await request(httpServer)
             .get('/blogger/blogs')
             .set('Authorization', `Bearer ${recievedAccessToken}`)

@@ -52,7 +52,7 @@ export class PostsController {
             throw new NotFoundException()
         }
 
-        const displayedPosts = await this.postsService.transformCommentsForDisplay(postsWithQueryData.items, accessToken)
+        const displayedPosts = await this.postsService.transformPostsForDisplay(postsWithQueryData.items, accessToken)
         const postsViewQueryData = {
             ...postsWithQueryData, items: displayedPosts
         }
@@ -68,7 +68,7 @@ export class PostsController {
             throw new NotFoundException()
         }
 
-        const displayedPost = this.postsService.transformCommentsForDisplay([findedPost], accessToken)[0]
+        const displayedPost = this.postsService.transformPostsForDisplay([findedPost], accessToken)[0]
         return displayedPost
     }
 

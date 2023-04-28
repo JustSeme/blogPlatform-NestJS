@@ -81,11 +81,12 @@ import { UpdateLikeStatusForPostUseCase } from "./blogs/application/use-cases/po
 import { CreateCommentUseCase } from "./blogs/application/use-cases/comments/create-comment.use-case"
 import { DeleteCommentUseCase } from "./blogs/application/use-cases/comments/delete-comment.use-case"
 import { UpdateLikeStatusForCommentUseCase } from "./blogs/application/use-cases/comments/update-like-status-for-comment.use-case"
-import { CreateBlogForBloggerUseCase } from "./Blogger/api/use-cases/create-blog-for-blogger.use-case"
+import { CreateBlogForBloggerUseCase } from "./Blogger/api/use-cases/blogs/create-blog-for-blogger.use-case"
 import { BloggerBlogsController } from "./Blogger/api/blogger-blogs.controller"
 import { JwtAuthGuard } from "./blogs/api/guards/jwt-auth.guard"
-import { UpdateBlogForBloggerUseCase } from "./Blogger/api/use-cases/update-blog-for-blogger.use-case"
-import { DeleteBlogForBloggerUseCase } from "./Blogger/api/use-cases/delete-blog-for-blogger.use-case"
+import { UpdateBlogForBloggerUseCase } from "./Blogger/api/use-cases/blogs/update-blog-for-blogger.use-case"
+import { DeleteBlogForBloggerUseCase } from "./Blogger/api/use-cases/blogs/delete-blog-for-blogger.use-case"
+import { CreatePostForBloggerUseCase } from "./Blogger/api/use-cases/posts/create-post-for-blogger.use-case"
 
 const authUseCases = [
   LogoutUseCase,
@@ -108,6 +109,7 @@ const blogsUseCases = [
   UpdateBlogForBloggerUseCase,
   DeletePostUseCase,
   UpdatePostUseCase,
+  CreatePostForBloggerUseCase,
   UpdateLikeStatusForPostUseCase,
   CreateCommentUseCase,
   DeleteCommentUseCase,
