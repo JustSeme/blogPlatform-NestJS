@@ -36,7 +36,7 @@ export class CreatePostForBloggerUseCase implements ICommandHandler<CreatePostFo
 
         const blogById = await this.blogsRepository.findBlogById(blogId)
 
-        if (blogById.creatorId !== creatorId) {
+        if (blogById.blogOwnerInfo.userId !== creatorId) {
             throw new ForbiddenException('that is not your own')
         }
 

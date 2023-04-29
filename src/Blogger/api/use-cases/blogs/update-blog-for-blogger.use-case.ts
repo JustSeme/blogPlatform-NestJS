@@ -24,7 +24,7 @@ export class UpdateBlogForBloggerUseCase implements ICommandHandler<UpdateBlogFo
     async execute(command: UpdateBlogForBloggerCommand): Promise<boolean> {
         const blogById = await this.blogsRepository.findBlogById(command.blogId)
 
-        if (blogById.creatorId !== command.bloggerId) {
+        if (blogById.blogOwnerInfo.userId !== command.bloggerId) {
             throw new ForbiddenException(generateErrorsMessages('that is not your own', 'authorization header'))
         }
 

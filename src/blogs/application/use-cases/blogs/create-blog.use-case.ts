@@ -26,8 +26,9 @@ export class CreateBlogUseCase implements ICommandHandler<CreateBlogCommand> {
             blogInputModel.name,
             blogInputModel.description,
             blogInputModel.websiteUrl,
+            false,
             'superAdmin',
-            false
+            'superAdmin',
         )
         await this.blogsRepository.createBlog(createdBlog)
         return createdBlog

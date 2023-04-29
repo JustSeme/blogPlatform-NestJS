@@ -89,6 +89,10 @@ import { DeleteBlogForBloggerUseCase } from "./Blogger/api/use-cases/blogs/delet
 import { CreatePostForBloggerUseCase } from "./Blogger/api/use-cases/posts/create-post-for-blogger.use-case"
 import { UpdatePostForBloggerUseCase } from "./Blogger/api/use-cases/posts/update-post-for-blogger.use-case"
 import { DeletePostForBloggerUseCase } from "./Blogger/api/use-cases/posts/delete-post-for-blogger.use-case"
+import { SuperAdminBlogsController } from "./SuperAdmin/api/super-admin-blogs.controller"
+import { BindUserUseCase } from "./SuperAdmin/application/use-cases/bind-user.use-case"
+import { IsBlogExistOrThrow400Pipe } from "./SuperAdmin/api/pipes/isBlogExistsOrThrow400.validation.pipe"
+import { IsUserExistOrThrow400Pipe } from "./SuperAdmin/api/pipes/isUserExistsOrThrow400.validation.pipe"
 
 const authUseCases = [
   LogoutUseCase,
@@ -118,6 +122,7 @@ const blogsUseCases = [
   UpdateLikeStatusForCommentUseCase,
   UpdatePostForBloggerUseCase,
   DeletePostForBloggerUseCase,
+  BindUserUseCase,
 ]
 
 const strategies = [
@@ -159,6 +164,8 @@ const decorators = [
   IsEmailAlreadyInUse,
   IsLoginAlreadyInUse,
   IsDeviceExistsPipe,
+  IsBlogExistOrThrow400Pipe,
+  IsUserExistOrThrow400Pipe,
 ]
 
 const guards = [
@@ -212,7 +219,7 @@ const configs = [
     ]),
     PassportModule,
   ],
-  controllers: [AppController, UsersController, BlogsController, PostsController, CommentsController, AuthController, SecurityController, BloggerBlogsController,],
+  controllers: [AppController, UsersController, BlogsController, PostsController, CommentsController, AuthController, SecurityController, BloggerBlogsController, SuperAdminBlogsController,],
   providers: [
     ...strategies,
     ...authUseCases,

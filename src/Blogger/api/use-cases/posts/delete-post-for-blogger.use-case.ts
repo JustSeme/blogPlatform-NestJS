@@ -23,7 +23,7 @@ export class DeletePostForBloggerUseCase implements ICommandHandler<DeletePostFo
 
     async execute(command: DeletePostForBloggerCommand) {
         const blogById = await this.blogsRepository.findBlogById(command.blogId)
-        if (blogById.creatorId !== command.userId) {
+        if (blogById.blogOwnerInfo.userId !== command.userId) {
             throw new ForbiddenException('this is not your own')
         }
 

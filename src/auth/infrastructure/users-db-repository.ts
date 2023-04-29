@@ -74,4 +74,9 @@ export class UsersRepository {
     async save(user: HydratedUser) {
         return user.save()
     }
+
+    async isUserExists(userId: string) {
+        const user = await this.findUserById(userId)
+        return user ? true : false
+    }
 }

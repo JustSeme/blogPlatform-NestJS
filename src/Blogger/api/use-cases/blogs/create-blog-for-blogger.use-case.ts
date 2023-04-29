@@ -6,6 +6,7 @@ import { BlogsRepository } from "../../../../blogs/infrastructure/blogs/blogs-db
 import { BlogViewModel } from "../../../../blogs/application/dto/BlogViewModel"
 import { BlogDBModel } from "../../../../blogs/domain/blogs/BlogsTypes"
 import { BlogsService } from "../../../../blogs/application/blogs-service"
+import { UsersQueryRepository } from "../../../../auth/infrastructure/users-query-repository"
 
 // Command
 export class CreateBlogForBloggerCommand implements ICommand {
@@ -21,6 +22,7 @@ export class CreateBlogForBloggerUseCase implements ICommandHandler<CreateBlogFo
     constructor(
         private readonly blogsRepository: BlogsRepository,
         private readonly blogsService: BlogsService,
+        private readonly usersQueryRepository: UsersQueryRepository
     ) { }
 
     async execute(command: CreateBlogForBloggerCommand): Promise<BlogViewModel> {
@@ -29,12 +31,15 @@ export class CreateBlogForBloggerUseCase implements ICommandHandler<CreateBlogFo
             creatorId
         } = command
 
+        const creator = await this.usersQueryRepository.findUserById(creatorId)
+
         const createdBlog = new BlogDBModel(
             blogInputModel.name,
             blogInputModel.description,
             blogInputModel.websiteUrl,
-            creatorId,
-            false
+            false,
+            creator.login,
+            creator.id
         )
 
         await this.blogsRepository.createBlog(createdBlog)
