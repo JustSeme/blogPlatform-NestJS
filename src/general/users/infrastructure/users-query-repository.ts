@@ -60,7 +60,12 @@ export class UsersQueryRepository {
             id: el.id,
             login: el.login,
             email: el.email,
-            createdAt: el.createdAt
+            createdAt: el.createdAt,
+            banInfo: {
+                isBanned: el.banInfo.isBanned,
+                banDate: el.banInfo.banDate,
+                banReason: el.banInfo.banReason,
+            }
         }))
     }
 

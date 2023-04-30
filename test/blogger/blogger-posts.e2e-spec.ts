@@ -2,11 +2,11 @@ import { NestExpressApplication } from "@nestjs/platform-express";
 import { AppModule } from "../../src/app.module";
 import { Test } from "@nestjs/testing";
 import { createApp } from "../../src/createApp";
-import { UserInputModel } from "../../src/auth/api/models/UserInputModel";
 import { HttpStatus } from "@nestjs/common";
 import request from 'supertest'
 import { BlogInputModel } from "../../src/blogs/api/models/BlogInputModel";
 import { PostInputModelWithoutBlogId } from "../../src/blogs/api/models/PostInputModelWithoutBlogId";
+import { UserInputModel } from "../../src/SuperAdmin/api/models/UserInputModel";
 
 describe('blogger-posts', () => {
     let app: NestExpressApplication;

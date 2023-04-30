@@ -1,14 +1,14 @@
+import { AppModule } from '../../src/app.module';
+import { createApp } from '../../src/createApp';
 import request from 'supertest';
 import { Test } from '@nestjs/testing';
-import { AppModule } from '../src/app.module';
 import { HttpStatus } from '@nestjs/common';
 import { NestExpressApplication } from "@nestjs/platform-express"
-import { createApp } from '../src/createApp'
-import { UserInputModel } from '../src/SuperAdmin/api/models/UserInputModel';
+import { UserInputModel } from '../../src/SuperAdmin/api/models/UserInputModel';
 
 const generateEmail = (str: string) => `${str}@mail.ru`
 
-describe('users', () => {
+describe('super-admin-users', () => {
     let app: NestExpressApplication;
     let httpServer;
 
@@ -46,14 +46,14 @@ describe('users', () => {
 
     it(`shouldn't create new user without basic auth token`, async () => {
         await request(httpServer)
-            .post(`/users`)
+            .post(`/sa/users`)
             .send(correctUserInputData)
             .expect(HttpStatus.UNAUTHORIZED)
     })
 
     it(`shouldn't create new user with incorrect input data`, async () => {
         const response = await request(httpServer)
-            .post(`/users`)
+            .post(`/sa/users`)
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
             .send(incorrectUserInputData)
             .expect(HttpStatus.BAD_REQUEST)
@@ -79,7 +79,7 @@ describe('users', () => {
     let createdUser: any
     it('should create new user with basic auth token', async () => {
         const response = await request(httpServer)
-            .post(`/users`)
+            .post(`/sa/users`)
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
             .send(correctUserInputData)
             .expect(HttpStatus.CREATED)
@@ -95,7 +95,7 @@ describe('users', () => {
 
     it('should return array with one created user', async () => {
         const response = await request(httpServer)
-            .get(`/users`)
+            .get(`/sa/users`)
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
             .expect(HttpStatus.OK)
 
@@ -122,7 +122,7 @@ describe('users', () => {
         }
 
         const response1 = await request(httpServer)
-            .post(`/users`)
+            .post(`/sa/users`)
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
             .send(firstUser)
             .expect(HttpStatus.CREATED)
@@ -130,7 +130,7 @@ describe('users', () => {
         id1 = response1.body.id
 
         const response2 = await request(httpServer)
-            .post(`/users`)
+            .post(`/sa/users`)
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
             .send(secondUser)
             .expect(HttpStatus.CREATED)
@@ -138,7 +138,7 @@ describe('users', () => {
         id2 = response2.body.id
 
         const response3 = await request(httpServer)
-            .post(`/users`)
+            .post(`/sa/users`)
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
             .send(thirdUser)
             .expect(HttpStatus.CREATED)
@@ -146,7 +146,7 @@ describe('users', () => {
         id3 = response3.body.id
 
         const response4 = await request(httpServer)
-            .post(`/users`)
+            .post(`/sa/users`)
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
             .send(secondUser)
             .expect(HttpStatus.BAD_REQUEST)
@@ -166,7 +166,7 @@ describe('users', () => {
 
     it('should return array of users with asc sorting for login', async () => {
         const response = await request(httpServer)
-            .get(`/users?sortDirection=asc&sortBy=login`)
+            .get(`/sa/users?sortDirection=asc&sortBy=login`)
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
             .expect(HttpStatus.OK)
 
@@ -180,7 +180,7 @@ describe('users', () => {
 
     it('should return two users with email regex John', async () => {
         const response = await request(httpServer)
-            .get(`/users?searchEmailTerm=John&sortDirection=asc`)
+            .get(`/sa/users?searchEmailTerm=John&sortDirection=asc`)
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
             .expect(HttpStatus.OK)
 
@@ -192,17 +192,17 @@ describe('users', () => {
 
     it('should delete two users by id', async () => {
         await request(httpServer)
-            .delete(`/users/${id1}`)
+            .delete(`/sa/users/${id1}`)
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
             .expect(HttpStatus.NO_CONTENT)
 
         await request(httpServer)
-            .delete(`/users/${id2}`)
+            .delete(`/sa/users/${id2}`)
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
             .expect(HttpStatus.NO_CONTENT)
 
         const response = await request(httpServer)
-            .get(`/users`)
+            .get(`/sa/users`)
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
             .expect(HttpStatus.OK)
 
@@ -211,7 +211,7 @@ describe('users', () => {
 
     it('should return a error if user is already deleted', async () => {
         await request(httpServer)
-            .delete(`/users/${id1}`)
+            .delete(`/sa/users/${id1}`)
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
             .expect(HttpStatus.NOT_FOUND)
     })

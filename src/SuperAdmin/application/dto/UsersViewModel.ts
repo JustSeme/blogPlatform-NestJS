@@ -3,6 +3,13 @@ export type UserViewModelType = {
     login: string
     email: string
     createdAt: string
+    banInfo: BanInfoType
+}
+
+export type BanInfoType = {
+    isBanned: boolean,
+    banDate: Date,
+    banReason: string
 }
 
 export type UsersWithQueryOutputModel = {

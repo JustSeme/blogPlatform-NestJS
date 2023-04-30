@@ -4,10 +4,10 @@ import { AppModule } from '../src/app.module';
 import { HttpStatus } from '@nestjs/common';
 import { NestExpressApplication } from "@nestjs/platform-express"
 import { createApp } from '../src/createApp'
-import { UserInputModel } from '../src/auth/api/models/UserInputModel';
 import { LoginInputDTO } from '../src/auth/api/models/LoginInputDTO'
-import { UsersRepository } from '../src/auth/infrastructure/users-db-repository';
 import { NewPasswordInputModel } from '../src/auth/api/models/NewPasswordInputModel';
+import { UsersRepository } from '../src/general/users/infrastructure/users-db-repository';
+import { UserInputModel } from '../src/SuperAdmin/api/models/UserInputModel';
 
 describe('e2e-auth', () => {
     let app: NestExpressApplication;

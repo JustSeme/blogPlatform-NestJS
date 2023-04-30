@@ -3,11 +3,13 @@ import {
 } from "./UsersTypes"
 import {
     EmailConfirmation, EmailConfirmationSchema
-} from "../../../auth/domain/EmailConfirmationSchema"
-import { PasswordRecovery } from "../../../auth/domain/PasswordRecoverySchema"
+} from "./EmailConfirmationSchema"
+import { PasswordRecovery } from "./PasswordRecoverySchema"
 import {
     Schema, Prop, SchemaFactory
 } from "@nestjs/mongoose"
+import { BanInfoType } from "../../../SuperAdmin/application/dto/UsersViewModel"
+import { BanInfoSchema } from "./BanInfoSchema"
 
 @Schema()
 export class User {
@@ -37,6 +39,11 @@ export class User {
         required: true, type: EmailConfirmationSchema
     })
     passwordRecovery: PasswordRecovery
+
+    @Prop({
+        required: true, type: BanInfoSchema
+    })
+    banInfo: BanInfoType
 
     canBeConfirmed(code: string) {
         if (this.emailConfirmation.isConfirmed) return false

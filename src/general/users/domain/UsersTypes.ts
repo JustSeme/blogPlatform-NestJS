@@ -3,6 +3,7 @@ import { Model } from 'mongoose'
 import { v4 as uuidv4 } from 'uuid'
 import { User } from './UsersSchema'
 import { HydratedUser } from '../infrastructure/UsersTypes'
+import { BanInfoType } from '../../../SuperAdmin/application/dto/UsersViewModel'
 
 export class UserDTO {
     public id: string
@@ -10,6 +11,7 @@ export class UserDTO {
 
     public emailConfirmation: EmailConfirmationType
     public passwordRecovery: PasswordConfirmationType
+    public banInfo: BanInfoType
 
     constructor(
         public login: string,
@@ -27,9 +29,16 @@ export class UserDTO {
             }),
             isConfirmed: isConfirmed
         }
+
         this.passwordRecovery = {
             confirmationCode: '',
             expirationDate: new Date()
+        }
+
+        this.banInfo = {
+            isBanned: false,
+            banDate: new Date(),
+            banReason: 'not banned'
         }
     }
 }

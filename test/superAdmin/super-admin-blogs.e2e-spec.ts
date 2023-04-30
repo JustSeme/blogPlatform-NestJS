@@ -43,7 +43,7 @@ describe('super-admin-blogs', () => {
 
     it('should create user and should login, getting userId, userLogin', async () => {
         const createdUserData = await request(httpServer)
-            .post(`/users`)
+            .post(`/sa/users`)
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
             .send(createUserInputData)
             .expect(HttpStatus.CREATED)
@@ -68,7 +68,7 @@ describe('super-admin-blogs', () => {
     let anotherUserId
     it('should create another user and should login, getting anotherUserId', async () => {
         const createdUserData = await request(httpServer)
-            .post(`/users`)
+            .post(`/sa/users`)
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
             .send(anotherCreateUserInputData)
             .expect(HttpStatus.CREATED)

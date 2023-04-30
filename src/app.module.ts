@@ -180,6 +180,18 @@ const configs = [
   AppConfig,
 ]
 
+const controllers = [
+  AppController,
+  SuperAdminUsersController,
+  BlogsController,
+  PostsController,
+  CommentsController,
+  AuthController,
+  SecurityController,
+  BloggerBlogsController,
+  SuperAdminBlogsController,
+]
+
 @Module({
   imports: [
     CqrsModule,
@@ -219,7 +231,7 @@ const configs = [
     ]),
     PassportModule,
   ],
-  controllers: [AppController, SuperAdminUsersController, BlogsController, PostsController, CommentsController, AuthController, SecurityController, BloggerBlogsController, SuperAdminBlogsController,],
+  controllers: [...controllers],
   providers: [
     ...strategies,
     ...authUseCases,

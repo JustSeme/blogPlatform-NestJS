@@ -11,7 +11,12 @@ export class AuthService {
             id: newUser.id,
             login: newUser.login,
             email: newUser.email,
-            createdAt: newUser.createdAt
+            createdAt: newUser.createdAt,
+            banInfo: {
+                isBanned: newUser.banInfo.isBanned,
+                banDate: newUser.banInfo.banDate,
+                banReason: newUser.banInfo.banReason,
+            }
         }
     }
 }

@@ -4,7 +4,7 @@ import { AppModule } from '../src/app.module';
 import { HttpStatus } from '@nestjs/common';
 import { NestExpressApplication } from "@nestjs/platform-express"
 import { createApp } from '../src/createApp'
-import { UserInputModel } from '../src/auth/api/models/UserInputModel';
+import { UserInputModel } from '../src/SuperAdmin/api/models/UserInputModel';
 
 describe('devices', () => {
     let app: NestExpressApplication;
