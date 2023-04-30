@@ -1,5 +1,5 @@
 import { BcryptAdapter } from "../../../general/adapters/bcrypt.adapter"
-import { UsersRepository } from "../../infrastructure/users-db-repository"
+import { UsersRepository } from "../../../general/users/infrastructure/users-db-repository"
 import {
     CommandHandler,
     ICommand, ICommandHandler

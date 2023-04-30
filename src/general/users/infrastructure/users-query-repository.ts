@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common"
-import { ReadUsersQuery } from "../api/models/ReadUsersQuery"
+import { ReadUsersQuery } from "../../../SuperAdmin/api/models/ReadUsersQuery"
 import {
     UserViewModelType, UsersWithQueryOutputModel
-} from "../application/dto/UsersViewModel"
+} from "../../../SuperAdmin/application/dto/UsersViewModel"
 import { InjectModel } from "@nestjs/mongoose/dist"
 import { User } from "../domain/UsersSchema"
 import {

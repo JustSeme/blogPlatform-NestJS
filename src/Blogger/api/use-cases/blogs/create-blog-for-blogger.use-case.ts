@@ -6,7 +6,7 @@ import { BlogsRepository } from "../../../../blogs/infrastructure/blogs/blogs-db
 import { BlogViewModel } from "../../../../blogs/application/dto/BlogViewModel"
 import { BlogDBModel } from "../../../../blogs/domain/blogs/BlogsTypes"
 import { BlogsService } from "../../../../blogs/application/blogs-service"
-import { UsersQueryRepository } from "../../../../auth/infrastructure/users-query-repository"
+import { UsersQueryRepository } from "../../../../general/users/infrastructure/users-query-repository"
 
 // Command
 export class CreateBlogForBloggerCommand implements ICommand {

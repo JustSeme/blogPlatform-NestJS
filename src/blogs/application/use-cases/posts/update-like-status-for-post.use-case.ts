@@ -3,7 +3,7 @@ import {
 } from "@nestjs/cqrs"
 import { LikeType } from "../../../api/models/LikeInputModel"
 import { PostsRepository } from "../../../infrastructure/posts/posts-db-repository"
-import { UsersRepository } from "../../../../auth/infrastructure/users-db-repository"
+import { UsersRepository } from "../../../../general/users/infrastructure/users-db-repository"
 import { ExtendedLikeObjectType } from "../../../domain/posts/PostsTypes"
 
 export class UpdateLikeStatusForPostCommand {

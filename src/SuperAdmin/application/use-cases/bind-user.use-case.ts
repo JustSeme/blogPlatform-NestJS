@@ -2,7 +2,7 @@ import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
 import { BlogsRepository } from "../../../blogs/infrastructure/blogs/blogs-db-repository"
-import { UsersRepository } from "../../../auth/infrastructure/users-db-repository"
+import { UsersRepository } from "../../../general/users/infrastructure/users-db-repository"
 import { generateErrorsMessages } from "../../../general/helpers"
 import { BadRequestException } from '@nestjs/common'
 

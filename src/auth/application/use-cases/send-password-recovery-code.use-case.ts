@@ -1,5 +1,5 @@
 import { EmailManager } from "../../../general/managers/emailManager"
-import { UsersRepository } from "../../infrastructure/users-db-repository"
+import { UsersRepository } from "../../../general/users/infrastructure/users-db-repository"
 import { v4 as uuidv4 } from 'uuid'
 import {
     CommandHandler, ICommandHandler

@@ -3,8 +3,8 @@ import {
 } from "@nestjs/common"
 import { PassportStrategy } from '@nestjs/passport'
 import { Strategy } from 'passport-local'
-import { User } from "../../domain/UsersSchema"
-import { UsersRepository } from "../../infrastructure/users-db-repository"
+import { User } from "../../../general/users/domain/UsersSchema"
+import { UsersRepository } from "../../../general/users/infrastructure/users-db-repository"
 import { BcryptAdapter } from "../../../general/adapters/bcrypt.adapter"
 
 @Injectable()

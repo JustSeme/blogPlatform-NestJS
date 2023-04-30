@@ -7,7 +7,7 @@ import { Module } from "@nestjs/common"
 import { MongooseModule } from "@nestjs/mongoose"
 import {
   User, UsersSchema
-} from "./auth/domain/UsersSchema"
+} from "./general/users/domain/UsersSchema"
 import {
   Blog, BlogSchema
 } from "./blogs/domain/blogs/BlogsSchema"
@@ -22,7 +22,6 @@ import {
 } from "./security/domain/DeviceAuthSessionSchema"
 import { PassportModule } from "@nestjs/passport"
 import { AppController } from "./app.controller"
-import { UsersController } from "./auth/api/users-controller"
 import { BlogsController } from "./blogs/api/blogs-controller"
 import { BlogsService } from './blogs/application/blogs-service'
 import { BlogsRepository } from './blogs/infrastructure/blogs/blogs-db-repository'
@@ -43,8 +42,8 @@ import { BcryptAdapter } from "./general/adapters/bcrypt.adapter"
 import { EmailAdapter } from "./general/adapters/email.adapter"
 import { BlogsQueryRepository } from "./blogs/infrastructure/blogs/blogs-query-repository"
 import { CommentsQueryRepository } from "./blogs/infrastructure/comments/comments-query-repository"
-import { UsersQueryRepository } from "./auth/infrastructure/users-query-repository"
-import { UsersRepository } from "./auth/infrastructure/users-db-repository"
+import { UsersQueryRepository } from "./general/users/infrastructure/users-query-repository"
+import { UsersRepository } from "./general/users/infrastructure/users-db-repository"
 import { PostsRepository } from "./blogs/infrastructure/posts/posts-db-repository"
 import { CommentsRepository } from "./blogs/infrastructure/comments/comments-db-repository"
 import { DeviceRepository } from "./security/infrastructure/device-db-repository"
@@ -67,9 +66,9 @@ import { ConfirmRecoveryPasswordUseCase } from "./auth/application/use-cases/con
 import { SendPasswordRecoveryCodeUseCase } from "./auth/application/use-cases/send-password-recovery-code.use-case"
 import { ResendConfirmationCodeUseCase } from "./auth/application/use-cases/resend-confirmation-code.use-case"
 import { ConfirmEmailUseCase } from "./auth/application/use-cases/confirm-email.use-case"
-import { SuperAdminCreateUserUseCase } from "./auth/application/use-cases/super-admin-create-user.use-case"
+import { SuperAdminCreateUserUseCase } from "./SuperAdmin/application/use-cases/super-admin-create-user.use-case"
 import { RegistrationUserUseCase } from "./auth/application/use-cases/registration-user.use-case"
-import { DeleteUserUseCase } from "./auth/application/use-cases/delete-user.use-case"
+import { DeleteUserUseCase } from "./SuperAdmin/application/use-cases/delete-user.use-case"
 import { CqrsModule } from "@nestjs/cqrs"
 import { CreateBlogUseCase } from "./blogs/application/use-cases/blogs/create-blog.use-case"
 import { UpdateBlogUseCase } from "./blogs/application/use-cases/blogs/update-blog.use-case"
@@ -93,6 +92,7 @@ import { SuperAdminBlogsController } from "./SuperAdmin/api/super-admin-blogs.co
 import { BindUserUseCase } from "./SuperAdmin/application/use-cases/bind-user.use-case"
 import { IsBlogExistOrThrow400Pipe } from "./SuperAdmin/api/pipes/isBlogExistsOrThrow400.validation.pipe"
 import { IsUserExistOrThrow400Pipe } from "./SuperAdmin/api/pipes/isUserExistsOrThrow400.validation.pipe"
+import { SuperAdminUsersController } from "./SuperAdmin/api/super-admin-users.controller"
 
 const authUseCases = [
   LogoutUseCase,
@@ -219,7 +219,7 @@ const configs = [
     ]),
     PassportModule,
   ],
-  controllers: [AppController, UsersController, BlogsController, PostsController, CommentsController, AuthController, SecurityController, BloggerBlogsController, SuperAdminBlogsController,],
+  controllers: [AppController, SuperAdminUsersController, BlogsController, PostsController, CommentsController, AuthController, SecurityController, BloggerBlogsController, SuperAdminBlogsController,],
   providers: [
     ...strategies,
     ...authUseCases,

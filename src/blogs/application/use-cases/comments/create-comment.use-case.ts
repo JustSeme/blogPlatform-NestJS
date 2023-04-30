@@ -1,7 +1,7 @@
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
-import { UserDTO } from "../../../../auth/domain/UsersTypes"
+import { UserDTO } from "../../../../general/users/domain/UsersTypes"
 import { CommentsRepository } from "../../../infrastructure/comments/comments-db-repository"
 import { CommentDBModel } from "../../../domain/comments/CommentTypes"
 import { CommentViewModel } from "../../dto/CommentViewModel"

@@ -4,7 +4,7 @@ import { HttpStatus } from '@nestjs/common';
 import { NestExpressApplication } from "@nestjs/platform-express"
 import { AppModule } from '../../src/app.module';
 import { createApp } from '../../src/createApp';
-import { UserInputModel } from '../../src/auth/api/models/UserInputModel';
+import { UserInputModel } from '../../src/SuperAdmin/api/models/UserInputModel';
 import { BlogInputModel } from '../../src/blogs/api/models/BlogInputModel';
 import { BlogViewModel } from '../../src/blogs/application/dto/BlogViewModel';
 

@@ -1,8 +1,8 @@
 import { InjectModel } from "@nestjs/mongoose"
-import { User } from "../../domain/UsersSchema"
-import { UserModelType } from "../../domain/UsersTypes"
+import { User } from "../../../general/users/domain/UsersSchema"
+import { UserModelType } from "../../../general/users/domain/UsersTypes"
 import { BcryptAdapter } from "../../../general/adapters/bcrypt.adapter"
-import { UsersRepository } from "../../infrastructure/users-db-repository"
+import { UsersRepository } from "../../../general/users/infrastructure/users-db-repository"
 import { EmailManager } from "../../../general/managers/emailManager"
 import {
     CommandHandler, ICommandHandler

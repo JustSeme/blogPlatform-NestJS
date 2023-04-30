@@ -1,10 +1,10 @@
 import { BcryptAdapter } from "../../../general/adapters/bcrypt.adapter"
 import { UserViewModelType } from "../dto/UsersViewModel"
 import { InjectModel } from "@nestjs/mongoose"
-import { User } from "../../domain/UsersSchema"
-import { UserModelType } from "../../domain/UsersTypes"
-import { UsersRepository } from "../../infrastructure/users-db-repository"
-import { AuthService } from "../auth.service"
+import { User } from "../../../general/users/domain/UsersSchema"
+import { UserModelType } from "../../../general/users/domain/UsersTypes"
+import { UsersRepository } from "../../../general/users/infrastructure/users-db-repository"
+import { AuthService } from "../../../auth/application/auth.service"
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs/dist"

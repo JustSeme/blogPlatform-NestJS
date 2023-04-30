@@ -3,7 +3,7 @@ import {
     Injectable, PipeTransform
 } from "@nestjs/common"
 import { generateErrorsMessages } from "../../../general/helpers"
-import { UsersRepository } from "../../../auth/infrastructure/users-db-repository"
+import { UsersRepository } from "../../../general/users/infrastructure/users-db-repository"
 
 @Injectable()
 export class IsUserExistOrThrow400Pipe implements PipeTransform {

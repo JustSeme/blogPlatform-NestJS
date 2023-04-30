@@ -1,4 +1,4 @@
-import { EmailConfirmationType } from "./UsersTypes"
+import { EmailConfirmationType } from "../../general/users/domain/UsersTypes"
 import {
     Prop, Schema, SchemaFactory
 } from "@nestjs/mongoose"

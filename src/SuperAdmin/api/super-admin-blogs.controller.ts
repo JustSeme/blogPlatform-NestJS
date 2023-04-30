@@ -8,7 +8,7 @@ import {
     Query,
     UseGuards
 } from '@nestjs/common'
-import { BasicAuthGuard } from '../../blogs/api/guards/basic-auth.guard'
+import { BasicAuthGuard } from '../../general/guards/basic-auth.guard'
 import { IsBlogExistOrThrow400Pipe } from './pipes/isBlogExistsOrThrow400.validation.pipe'
 import { IsUserExistOrThrow400Pipe } from './pipes/isUserExistsOrThrow400.validation.pipe'
 import { CommandBus } from '@nestjs/cqrs'

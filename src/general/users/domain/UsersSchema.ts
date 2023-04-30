@@ -3,8 +3,8 @@ import {
 } from "./UsersTypes"
 import {
     EmailConfirmation, EmailConfirmationSchema
-} from "./EmailConfirmationSchema"
-import { PasswordRecovery } from "./PasswordRecoverySchema"
+} from "../../../auth/domain/EmailConfirmationSchema"
+import { PasswordRecovery } from "../../../auth/domain/PasswordRecoverySchema"
 import {
     Schema, Prop, SchemaFactory
 } from "@nestjs/mongoose"

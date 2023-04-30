@@ -8,7 +8,7 @@ import { PostsViewModel } from '../application/dto/PostViewModel'
 import {
     Controller, Get, Param, Query, NotFoundException, Headers, Post, Body, HttpCode, Put, Delete, HttpStatus, UseGuards
 } from '@nestjs/common'
-import { BasicAuthGuard } from "./guards/basic-auth.guard"
+import { BasicAuthGuard } from "../../general/guards/basic-auth.guard"
 import { PostInputModelWithoutBlogId } from "./models/PostInputModelWithoutBlogId"
 import { PostInputModel } from "./models/PostInputModel"
 import { IsBlogByIdExistPipe } from "./pipes/isBlogExists.validation.pipe"
