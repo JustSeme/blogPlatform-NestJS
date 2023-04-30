@@ -65,10 +65,8 @@ export class UsersRepository {
         return this.UserModel.findOne({ $or: [{ login: loginOrEmail }, { email: loginOrEmail }] })
     }
 
-    async findUserById(userId: string) {
-        return this.UserModel.findOne({ id: userId }, {
-            _id: 0, __v: 0
-        })
+    async findUserById(userId: string): Promise<HydratedUser> {
+        return this.UserModel.findOne({ id: userId })
     }
 
     async save(user: HydratedUser) {

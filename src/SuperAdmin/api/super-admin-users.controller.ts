@@ -1,6 +1,6 @@
 import {
     Body,
-    Controller, Delete, Get, HttpCode, HttpStatus, NotFoundException, NotImplementedException, Param, Post, Query, UseGuards
+    Controller, Delete, Get, HttpCode, HttpStatus, NotFoundException, NotImplementedException, Param, Post, Put, Query, UseGuards
 } from '@nestjs/common'
 import { BasicAuthGuard } from '../../general/guards/basic-auth.guard'
 import { CommandBus } from '@nestjs/cqrs'
@@ -13,6 +13,10 @@ import {
 import { ErrorMessagesOutputModel } from '../../general/types/ErrorMessagesOutputModel'
 import { SuperAdminCreateUserCommand } from '../application/use-cases/super-admin-create-user.use-case'
 import { ReadUsersQuery } from './models/ReadUsersQuery'
+import { IsUserExistOrThrow400Pipe } from './pipes/isUserExistsOrThrow400.validation.pipe'
+import { IsUserExistPipe } from './pipes/isUserExists.validation.pipe'
+import { BanInputModel } from './models/BanInputModel'
+import { BanUserCommand } from '../application/use-cases/ban-user.use.case'
 
 @UseGuards(BasicAuthGuard)
 @Controller('sa/users')
@@ -44,12 +48,24 @@ export class SuperAdminUsersController {
 
     @Delete(':id')
     @HttpCode(HttpStatus.NO_CONTENT)
-    async deleteUser(@Param('id',) id: string): Promise<void> {
+    async deleteUser(
+        @Param('id', IsUserExistPipe) id: string): Promise<void> {
         const isDeleted = await this.commandBus.execute(
             new DeleteUserCommand(id)
         )
         if (!isDeleted) {
             throw new NotFoundException()
         }
+    }
+
+    @Put(':userId/ban')
+    @HttpCode(HttpStatus.NO_CONTENT)
+    async banUser(
+        @Param('userId', IsUserExistOrThrow400Pipe) userId: string,
+        @Body() banInputModel: BanInputModel
+    ) {
+        await this.commandBus.execute(
+            new BanUserCommand(banInputModel, userId)
+        )
     }
 }

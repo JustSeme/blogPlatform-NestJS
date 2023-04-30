@@ -1,12 +1,21 @@
+import mongoose from "mongoose"
+
 export type UserViewModelType = {
     id: string
     login: string
     email: string
     createdAt: string
-    banInfo: BanInfoType
+    banInfo: BanInfoViewType
 }
 
-export type BanInfoType = {
+type BanInfoViewType = {
+    isBanned: boolean,
+    banDate: Date,
+    banReason: string
+}
+
+export type BanInfoDBType = {
+    _id: mongoose.Types.ObjectId,
     isBanned: boolean,
     banDate: Date,
     banReason: string

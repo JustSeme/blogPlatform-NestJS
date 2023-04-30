@@ -1,9 +1,9 @@
 import { add } from 'date-fns'
-import { Model } from 'mongoose'
+import mongoose, { Model } from 'mongoose'
 import { v4 as uuidv4 } from 'uuid'
 import { User } from './UsersSchema'
 import { HydratedUser } from '../infrastructure/UsersTypes'
-import { BanInfoType } from '../../../SuperAdmin/application/dto/UsersViewModel'
+import { BanInfoDBType } from '../../../SuperAdmin/application/dto/UsersViewModel'
 
 export class UserDTO {
     public id: string
@@ -11,7 +11,7 @@ export class UserDTO {
 
     public emailConfirmation: EmailConfirmationType
     public passwordRecovery: PasswordConfirmationType
-    public banInfo: BanInfoType
+    public banInfo: BanInfoDBType
 
     constructor(
         public login: string,
@@ -36,6 +36,7 @@ export class UserDTO {
         }
 
         this.banInfo = {
+            _id: new mongoose.Types.ObjectId(),
             isBanned: false,
             banDate: new Date(),
             banReason: 'not banned'

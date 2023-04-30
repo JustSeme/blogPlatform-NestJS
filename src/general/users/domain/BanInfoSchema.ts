@@ -1,10 +1,17 @@
 import {
     Prop, Schema, SchemaFactory
 } from "@nestjs/mongoose"
-import { BanInfoType } from "../../../SuperAdmin/application/dto/UsersViewModel"
+import mongoose from "mongoose"
+import { BanInfoDBType } from "../../../SuperAdmin/application/dto/UsersViewModel"
 
 @Schema()
 export class BanInfo {
+    @Prop({
+        required: true,
+        default: () => new mongoose.Types.ObjectId()
+    })
+    _id: mongoose.Types.ObjectId
+
     @Prop({
         required: true,
         default: false
@@ -18,4 +25,4 @@ export class BanInfo {
     banReason: string
 }
 
-export const BanInfoSchema = SchemaFactory.createForClass<BanInfoType>(BanInfo)
+export const BanInfoSchema = SchemaFactory.createForClass<BanInfoDBType>(BanInfo)

@@ -8,8 +8,9 @@ import { PasswordRecovery } from "./PasswordRecoverySchema"
 import {
     Schema, Prop, SchemaFactory
 } from "@nestjs/mongoose"
-import { BanInfoType } from "../../../SuperAdmin/application/dto/UsersViewModel"
 import { BanInfoSchema } from "./BanInfoSchema"
+import { BanInputModel } from "../../../SuperAdmin/api/models/BanInputModel"
+import { BanInfoDBType } from "../../../SuperAdmin/application/dto/UsersViewModel"
 
 @Schema()
 export class User {
@@ -43,7 +44,7 @@ export class User {
     @Prop({
         required: true, type: BanInfoSchema
     })
-    banInfo: BanInfoType
+    banInfo: BanInfoDBType
 
     canBeConfirmed(code: string) {
         if (this.emailConfirmation.isConfirmed) return false
@@ -58,6 +59,16 @@ export class User {
         return true
     }
 
+    banCurrentUser(banInputModel: BanInputModel): boolean {
+        this.banInfo = {
+            _id: this.banInfo._id,
+            isBanned: banInputModel.isBanned,
+            banReason: banInputModel.banReason,
+            banDate: new Date(),
+        }
+        return true
+    }
+
     static makeInstance(login: string, email: string, passwordHash: string, isConfirmed: boolean, UserModel: UserModelType) {
         const userDTO = new UserDTO(login, email, passwordHash, isConfirmed)
         return new UserModel(userDTO)
@@ -67,7 +78,8 @@ export class User {
 export const UsersSchema = SchemaFactory.createForClass<UserDTO>(User)
 UsersSchema.methods = {
     canBeConfirmed: User.prototype.canBeConfirmed,
-    updateIsConfirmed: User.prototype.updateIsConfirmed
+    updateIsConfirmed: User.prototype.updateIsConfirmed,
+    banCurrentUser: User.prototype.banCurrentUser,
 }
 
 const userStaticMethods: UserModelStaticType = { makeInstance: User.makeInstance }

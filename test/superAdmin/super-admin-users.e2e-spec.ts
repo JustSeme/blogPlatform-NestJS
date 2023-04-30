@@ -5,6 +5,7 @@ import { Test } from '@nestjs/testing';
 import { HttpStatus } from '@nestjs/common';
 import { NestExpressApplication } from "@nestjs/platform-express"
 import { UserInputModel } from '../../src/SuperAdmin/api/models/UserInputModel';
+import { BanInputModel } from '../../src/SuperAdmin/api/models/BanInputModel'
 
 const generateEmail = (str: string) => `${str}@mail.ru`
 
@@ -214,5 +215,100 @@ describe('super-admin-users', () => {
             .delete(`/sa/users/${id1}`)
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
             .expect(HttpStatus.NOT_FOUND)
+    })
+
+    const incorrectBanInputModel = {
+        isBanned: 'not a boolean',
+        banReason: 'this reason should be greater then 20 symbols'
+    }
+
+    it('shouldn\'t ban the last created user if inputModel has incorrect values, should display unbanned banInfo', async () => {
+        await request(httpServer)
+            .put(`/sa/users/${id3}/ban`)
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .send(incorrectBanInputModel)
+            .expect(HttpStatus.BAD_REQUEST)
+
+        const usersData = await request(httpServer)
+            .get('/sa/users')
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .expect(HttpStatus.OK)
+
+        expect(usersData.body.items[0].banInfo.isBanned).toEqual(false)
+        expect(usersData.body.items[0].banInfo.banReason).toEqual('not banned')
+    })
+
+    const banInputModel: BanInputModel = {
+        isBanned: true,
+        banReason: 'bad guy'
+    }
+
+    it('shouldn\'t ban the last created user if auth header is not provided, should display unbanned banInfo', async () => {
+        await request(httpServer)
+            .put(`/sa/users/${id3}/ban`)
+            .send(banInputModel)
+            .expect(HttpStatus.UNAUTHORIZED)
+
+        const usersData = await request(httpServer)
+            .get('/sa/users')
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .expect(HttpStatus.OK)
+
+        expect(usersData.body.items[0].banInfo.isBanned).toEqual(false)
+        expect(usersData.body.items[0].banInfo.banReason).toEqual('not banned')
+    })
+
+    it('shouldn\'t ban the last created user if userId from param is incorrect, should display unbanned banInfo', async () => {
+        await request(httpServer)
+            .put(`/sa/users/incorrect/ban`)
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .send(banInputModel)
+            .expect(HttpStatus.BAD_REQUEST)
+
+        const usersData = await request(httpServer)
+            .get('/sa/users')
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .expect(HttpStatus.OK)
+
+        expect(usersData.body.items[0].banInfo.isBanned).toEqual(false)
+        expect(usersData.body.items[0].banInfo.banReason).toEqual('not banned')
+    })
+
+    it('should ban the last created user and display banned banInfo', async () => {
+        await request(httpServer)
+            .put(`/sa/users/${id3}/ban`)
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .send(banInputModel)
+            .expect(HttpStatus.NO_CONTENT)
+
+
+        const usersData = await request(httpServer)
+            .get('/sa/users')
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .expect(HttpStatus.OK)
+
+        expect(usersData.body.items[0].banInfo.isBanned).toEqual(true)
+        expect(usersData.body.items[0].banInfo.banReason).toEqual(banInputModel.banReason)
+    })
+
+    const unbanInputModel: BanInputModel = {
+        isBanned: false,
+        banReason: 'You re forgiven'
+    }
+
+    it('should unban the last created user and display unbanned banInfo', async () => {
+        await request(httpServer)
+            .put(`/sa/users/${id3}/ban`)
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .send(unbanInputModel)
+            .expect(HttpStatus.NO_CONTENT)
+
+        const usersData = await request(httpServer)
+            .get('/sa/users')
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .expect(HttpStatus.OK)
+
+        expect(usersData.body.items[0].banInfo.isBanned).toEqual(false)
+        expect(usersData.body.items[0].banInfo.banReason).toEqual(unbanInputModel.banReason)
     })
 });
