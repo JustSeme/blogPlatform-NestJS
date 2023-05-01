@@ -7,6 +7,9 @@ import { DeviceAuthSessionDTO } from '../../../security/domain/DeviceAuthSession
 import {
     CommandHandler, ICommandHandler
 } from '@nestjs/cqrs'
+import { UsersRepository } from '../../../general/users/infrastructure/users-db-repository'
+import { UnauthorizedException } from '@nestjs/common'
+import { generateErrorsMessages } from '../../../general/helpers'
 
 export class LoginCommand {
     constructor(
@@ -26,6 +29,7 @@ export class LoginUseCase implements ICommandHandler<LoginCommand> {
     constructor(
         private jwtService: JwtService,
         private deviceRepository: DeviceRepository,
+        private usersRepository: UsersRepository,
         private readonly authConfig: AuthConfig,
     ) {
         this.tokensSettings = this.authConfig.getTokensSettings()
@@ -38,6 +42,13 @@ export class LoginUseCase implements ICommandHandler<LoginCommand> {
             userIp,
             deviceName
         } = command
+
+        const user = await this.usersRepository.findUserById(userId)
+        const isBanned = user.isBanned()
+
+        if (isBanned) {
+            throw new UnauthorizedException(generateErrorsMessages(`You are banned by banReason: ${user.banInfo.banReason}`, 'userId'))
+        }
 
         const accessToken = await this.jwtService.createAccessToken(this.tokensSettings.ACCESS_TOKEN_EXPIRE_TIME, userId)
         const refreshToken = await this.jwtService.createRefreshToken(this.tokensSettings.REFRESH_TOKEN_EXPIRE_TIME, deviceId, userId)

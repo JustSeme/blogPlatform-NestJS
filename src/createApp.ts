@@ -42,6 +42,7 @@ export const createApp = (app: NestExpressApplication): NestExpressApplication =
         stopAtFirstError: false,
         exceptionFactory: customExceptionFactory
     }))
+
     app.useGlobalFilters(new ErrorExceptionFilter(), new HttpExceptionFilter())
     return app
 }

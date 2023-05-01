@@ -59,6 +59,10 @@ export class User {
         return true
     }
 
+    isBanned() {
+        return this.banInfo.isBanned
+    }
+
     banCurrentUser(banInputModel: BanInputModel): boolean {
         this.banInfo = {
             _id: this.banInfo._id,
@@ -80,6 +84,7 @@ UsersSchema.methods = {
     canBeConfirmed: User.prototype.canBeConfirmed,
     updateIsConfirmed: User.prototype.updateIsConfirmed,
     banCurrentUser: User.prototype.banCurrentUser,
+    isBanned: User.prototype.isBanned
 }
 
 const userStaticMethods: UserModelStaticType = { makeInstance: User.makeInstance }
