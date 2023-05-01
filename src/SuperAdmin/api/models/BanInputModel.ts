@@ -8,6 +8,6 @@ export class BanInputModel {
     isBanned: boolean
 
     @TrimIfString()
-    @Length(3, 20)
+    @Length(20, 100)
     banReason: string
 }

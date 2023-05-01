@@ -6,6 +6,7 @@ import { HttpStatus } from '@nestjs/common';
 import { NestExpressApplication } from "@nestjs/platform-express"
 import { UserInputModel } from '../../src/SuperAdmin/api/models/UserInputModel';
 import { BanInputModel } from '../../src/SuperAdmin/api/models/BanInputModel'
+import { LoginInputDTO } from '../../src/auth/api/models/LoginInputDTO'
 
 const generateEmail = (str: string) => `${str}@mail.ru`
 
@@ -104,6 +105,12 @@ describe('super-admin-users', () => {
         expect(response.body.items[0]).toEqual(createdUser)
     })
 
+    const thirdUser = {
+        login: 'ghi',
+        password: '123123123',
+        email: generateEmail('justCena')
+    }
+
     let id1: string, id2: string, id3: string
     it('should create three users and return error if email adress and login is already use', async () => {
         const firstUser = {
@@ -115,11 +122,6 @@ describe('super-admin-users', () => {
             login: 'def',
             password: '123123123',
             email: generateEmail('JohnDoe')
-        }
-        const thirdUser = {
-            login: 'ghi',
-            password: '123123123',
-            email: generateEmail('justCena')
         }
 
         const response1 = await request(httpServer)
@@ -219,15 +221,20 @@ describe('super-admin-users', () => {
 
     const incorrectBanInputModel = {
         isBanned: 'not a boolean',
-        banReason: 'this reason should be greater then 20 symbols'
+        banReason: 'lowerThen20'
     }
 
     it('shouldn\'t ban the last created user if inputModel has incorrect values, should display unbanned banInfo', async () => {
-        await request(httpServer)
+        const errorsMessagesData = await request(httpServer)
             .put(`/sa/users/${id3}/ban`)
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
             .send(incorrectBanInputModel)
             .expect(HttpStatus.BAD_REQUEST)
+
+        expect(errorsMessagesData.body.errorsMessages[0].field).toEqual('isBanned')
+        expect(errorsMessagesData.body.errorsMessages[0].message).toEqual('isBanned must be a boolean value')
+        expect(errorsMessagesData.body.errorsMessages[1].field).toEqual('banReason')
+        expect(errorsMessagesData.body.errorsMessages[1].message).toEqual('banReason must be longer than or equal to 20 characters')
 
         const usersData = await request(httpServer)
             .get('/sa/users')
@@ -240,7 +247,7 @@ describe('super-admin-users', () => {
 
     const banInputModel: BanInputModel = {
         isBanned: true,
-        banReason: 'bad guy'
+        banReason: 'bad guy this reason should be greather then 20 symbols'
     }
 
     it('shouldn\'t ban the last created user if auth header is not provided, should display unbanned banInfo', async () => {
@@ -293,8 +300,20 @@ describe('super-admin-users', () => {
 
     const unbanInputModel: BanInputModel = {
         isBanned: false,
-        banReason: 'You re forgiven'
+        banReason: 'You re forgiven this reason should be greather then 20 symbols'
     }
+
+    const loginInputData = new LoginInputDTO(thirdUser.login, thirdUser.password)
+
+    it('user shouldn\'t login if he is banned', async () => {
+        const errorsMessages = await request(httpServer)
+            .post('/auth/login')
+            .send(loginInputData)
+            .expect(HttpStatus.UNAUTHORIZED)
+
+        expect(errorsMessages.body.errorsMessages[0].field).toEqual('userId')
+        expect(errorsMessages.body.errorsMessages[0].message).toEqual(`You are banned by banReason: ${banInputModel.banReason}`)
+    })
 
     it('should unban the last created user and display unbanned banInfo', async () => {
         await request(httpServer)
@@ -310,5 +329,12 @@ describe('super-admin-users', () => {
 
         expect(usersData.body.items[0].banInfo.isBanned).toEqual(false)
         expect(usersData.body.items[0].banInfo.banReason).toEqual(unbanInputModel.banReason)
+    })
+
+    it('user should login if he is unbanned', async () => {
+        await request(httpServer)
+            .post('/auth/login')
+            .send(loginInputData)
+            .expect(HttpStatus.OK)
     })
 });
