@@ -9,12 +9,12 @@ import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs/dist"
 
-export class SuperAdminCreateUserCommand {
+export class CreateUserCommand {
     constructor(public login: string, public password: string, public email: string) { }
 }
 
-@CommandHandler(SuperAdminCreateUserCommand)
-export class SuperAdminCreateUserUseCase implements ICommandHandler<SuperAdminCreateUserCommand> {
+@CommandHandler(CreateUserCommand)
+export class CreateUserUseCase implements ICommandHandler<CreateUserCommand> {
     constructor(
         @InjectModel(User.name) private UserModel: UserModelType,
         private bcryptAdapter: BcryptAdapter,
@@ -22,7 +22,7 @@ export class SuperAdminCreateUserUseCase implements ICommandHandler<SuperAdminCr
         private authService: AuthService,
     ) { }
 
-    async execute(command: SuperAdminCreateUserCommand): Promise<UserViewModelType | null> {
+    async execute(command: CreateUserCommand): Promise<UserViewModelType | null> {
         const passwordHash = await this.bcryptAdapter.generatePasswordHash(command.password, 10)
 
         const newUser = this.UserModel.makeInstance(command.login, command.email, passwordHash, true, this.UserModel)

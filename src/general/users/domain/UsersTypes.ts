@@ -38,8 +38,8 @@ export class UserDTO {
         this.banInfo = {
             _id: new mongoose.Types.ObjectId(),
             isBanned: false,
-            banDate: new Date(),
-            banReason: 'not banned'
+            banDate: null,
+            banReason: null,
         }
     }
 }

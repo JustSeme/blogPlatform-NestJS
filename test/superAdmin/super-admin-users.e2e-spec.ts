@@ -235,7 +235,7 @@ describe('super-admin-users', () => {
             .expect(HttpStatus.OK)
 
         expect(usersData.body.items[0].banInfo.isBanned).toEqual(false)
-        expect(usersData.body.items[0].banInfo.banReason).toEqual('not banned')
+        expect(usersData.body.items[0].banInfo.banReason).toEqual(null)
     })
 
     const banInputModel: BanInputModel = {
@@ -255,7 +255,7 @@ describe('super-admin-users', () => {
             .expect(HttpStatus.OK)
 
         expect(usersData.body.items[0].banInfo.isBanned).toEqual(false)
-        expect(usersData.body.items[0].banInfo.banReason).toEqual('not banned')
+        expect(usersData.body.items[0].banInfo.banReason).toEqual(null)
     })
 
     it('shouldn\'t ban the last created user if userId from param is incorrect, should display unbanned banInfo', async () => {
@@ -271,7 +271,7 @@ describe('super-admin-users', () => {
             .expect(HttpStatus.OK)
 
         expect(usersData.body.items[0].banInfo.isBanned).toEqual(false)
-        expect(usersData.body.items[0].banInfo.banReason).toEqual('not banned')
+        expect(usersData.body.items[0].banInfo.banReason).toEqual(null)
     })
 
     it('should ban the last created user and display banned banInfo', async () => {

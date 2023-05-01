@@ -66,7 +66,7 @@ import { ConfirmRecoveryPasswordUseCase } from "./auth/application/use-cases/con
 import { SendPasswordRecoveryCodeUseCase } from "./auth/application/use-cases/send-password-recovery-code.use-case"
 import { ResendConfirmationCodeUseCase } from "./auth/application/use-cases/resend-confirmation-code.use-case"
 import { ConfirmEmailUseCase } from "./auth/application/use-cases/confirm-email.use-case"
-import { SuperAdminCreateUserUseCase } from "./SuperAdmin/application/use-cases/super-admin-create-user.use-case"
+import { CreateUserUseCase } from "./SuperAdmin/application/use-cases/create-user.use-case"
 import { RegistrationUserUseCase } from "./auth/application/use-cases/registration-user.use-case"
 import { DeleteUserUseCase } from "./SuperAdmin/application/use-cases/delete-user.use-case"
 import { CqrsModule } from "@nestjs/cqrs"
@@ -102,7 +102,7 @@ const authUseCases = [
   SendPasswordRecoveryCodeUseCase,
   ResendConfirmationCodeUseCase,
   ConfirmEmailUseCase,
-  SuperAdminCreateUserUseCase,
+  CreateUserUseCase,
   RegistrationUserUseCase,
   DeleteUserUseCase,
 ]

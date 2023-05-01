@@ -11,7 +11,7 @@ import {
     UserViewModelType, UsersWithQueryOutputModel
 } from '../application/dto/UsersViewModel'
 import { ErrorMessagesOutputModel } from '../../general/types/ErrorMessagesOutputModel'
-import { SuperAdminCreateUserCommand } from '../application/use-cases/super-admin-create-user.use-case'
+import { CreateUserCommand } from '../application/use-cases/create-user.use-case'
 import { ReadUsersQuery } from './models/ReadUsersQuery'
 import { IsUserExistOrThrow400Pipe } from './pipes/isUserExistsOrThrow400.validation.pipe'
 import { IsUserExistPipe } from './pipes/isUserExists.validation.pipe'
@@ -30,7 +30,7 @@ export class SuperAdminUsersController {
     @HttpCode(HttpStatus.CREATED)
     async createUser(@Body() userInputModel: UserInputModel): Promise<UserViewModelType | ErrorMessagesOutputModel> {
         const createdUser = await this.commandBus.execute(
-            new SuperAdminCreateUserCommand(userInputModel.login, userInputModel.password, userInputModel.email)
+            new CreateUserCommand(userInputModel.login, userInputModel.password, userInputModel.email)
         )
         if (!createdUser) {
             throw new NotImplementedException()
