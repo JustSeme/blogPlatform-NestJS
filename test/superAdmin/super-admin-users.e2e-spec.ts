@@ -219,6 +219,32 @@ describe('super-admin-users', () => {
             .expect(HttpStatus.NOT_FOUND)
     })
 
+    let recievedAccessToken
+    let recievedRefreshToken
+    it(`should login user, getting accessToken, refreshToken`, async () => {
+        const loginInputData: LoginInputDTO = {
+            loginOrEmail: thirdUser.login,
+            password: thirdUser.password
+        }
+
+        const tokensData = await request(httpServer)
+            .post('/auth/login')
+            .send(loginInputData)
+            .expect(HttpStatus.OK)
+
+        recievedAccessToken = tokensData.body.accessToken
+        recievedRefreshToken = tokensData.header['set-cookie']
+    })
+
+    it('should return one active session for user', async () => {
+        const sessionsData = await request(httpServer)
+            .get('/security/devices')
+            .set('Cookie', recievedRefreshToken)
+            .expect(HttpStatus.OK)
+
+        expect(sessionsData.body.length).toBe(1)
+    })
+
     const incorrectBanInputModel = {
         isBanned: 'not a boolean',
         banReason: 'lowerThen20'
@@ -288,7 +314,6 @@ describe('super-admin-users', () => {
             .send(banInputModel)
             .expect(HttpStatus.NO_CONTENT)
 
-
         const usersData = await request(httpServer)
             .get('/sa/users')
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
@@ -296,6 +321,15 @@ describe('super-admin-users', () => {
 
         expect(usersData.body.items[0].banInfo.isBanned).toEqual(true)
         expect(usersData.body.items[0].banInfo.banReason).toEqual(banInputModel.banReason)
+    })
+
+    it('should return zero active session for user becouse user is banned', async () => {
+        const sessionsData = await request(httpServer)
+            .get('/security/devices')
+            .set('Cookie', recievedRefreshToken)
+            .expect(HttpStatus.OK)
+
+        expect(sessionsData.body.length).toBe(0)
     })
 
     const unbanInputModel: BanInputModel = {
@@ -328,7 +362,8 @@ describe('super-admin-users', () => {
             .expect(HttpStatus.OK)
 
         expect(usersData.body.items[0].banInfo.isBanned).toEqual(false)
-        expect(usersData.body.items[0].banInfo.banReason).toEqual(unbanInputModel.banReason)
+        expect(usersData.body.items[0].banInfo.banReason).toEqual(null)
+        expect(usersData.body.items[0].banInfo.banDate).toEqual(null)
     })
 
     it('user should login if he is unbanned', async () => {

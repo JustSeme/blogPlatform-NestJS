@@ -19,7 +19,7 @@ export class DeviceRepository {
         return result.deletedCount === 1
     }
 
-    async deleteAllSessions(userId: string, deviceId: string) { // exclude current session
+    async deleteAllSessionsExcludeCurrent(userId: string, deviceId: string) {
         const result = await this.DeviceAuthSessionModel.deleteMany({ $and: [{ 'userInfo.userId': userId }, { 'deviceInfo.deviceId': { $ne: deviceId } }] })
         return result.deletedCount > 0
     }

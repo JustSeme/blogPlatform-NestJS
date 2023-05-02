@@ -16,7 +16,8 @@ import { ReadUsersQuery } from './models/ReadUsersQuery'
 import { IsUserExistOrThrow400Pipe } from './pipes/isUserExistsOrThrow400.validation.pipe'
 import { IsUserExistPipe } from './pipes/isUserExists.validation.pipe'
 import { BanInputModel } from './models/BanInputModel'
-import { BanUserCommand } from '../application/use-cases/ban-user.use.case'
+import { BanUserCommand } from '../application/use-cases/ban-user.use-case'
+import { UnbanUserCommand } from '../application/use-cases/unban-user.use-case'
 
 @UseGuards(BasicAuthGuard)
 @Controller('sa/users')
@@ -64,8 +65,14 @@ export class SuperAdminUsersController {
         @Param('userId', IsUserExistOrThrow400Pipe) userId: string,
         @Body() banInputModel: BanInputModel
     ) {
-        await this.commandBus.execute(
-            new BanUserCommand(banInputModel, userId)
-        )
+        if (banInputModel.isBanned) {
+            await this.commandBus.execute(
+                new BanUserCommand(banInputModel, userId)
+            )
+        } else {
+            await this.commandBus.execute(
+                new UnbanUserCommand(userId)
+            )
+        }
     }
 }

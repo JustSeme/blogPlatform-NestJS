@@ -93,7 +93,9 @@ import { BindUserUseCase } from "./SuperAdmin/application/use-cases/bind-user.us
 import { IsBlogExistOrThrow400Pipe } from "./SuperAdmin/api/pipes/isBlogExistsOrThrow400.validation.pipe"
 import { IsUserExistOrThrow400Pipe } from "./SuperAdmin/api/pipes/isUserExistsOrThrow400.validation.pipe"
 import { SuperAdminUsersController } from "./SuperAdmin/api/super-admin-users.controller"
-import { BanUserUseCase } from "./SuperAdmin/application/use-cases/ban-user.use.case"
+import { BanUserUseCase } from "./SuperAdmin/application/use-cases/ban-user.use-case"
+import { UnbanUserUseCase } from "./SuperAdmin/application/use-cases/unban-user.use-case"
+import { RemoveAllSessionsExcludeCurrentUseCase } from "./security/application/use-cases/remove-all-sessions-exclude-current.use-case"
 
 const authUseCases = [
   LogoutUseCase,
@@ -125,6 +127,11 @@ const blogsUseCases = [
   DeletePostForBloggerUseCase,
   BindUserUseCase,
   BanUserUseCase,
+  UnbanUserUseCase,
+]
+
+const securityUseCases = [
+  RemoveAllSessionsExcludeCurrentUseCase
 ]
 
 const strategies = [
@@ -238,6 +245,7 @@ const controllers = [
     ...strategies,
     ...authUseCases,
     ...blogsUseCases,
+    ...securityUseCases,
     ...services,
     ...adapters,
     ...repositories,

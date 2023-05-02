@@ -22,7 +22,7 @@ export class SecurityService {
     }
 
     async removeAllSessions(userId: string, deviceId: string) { // exclude current session
-        return this.deviceRepository.deleteAllSessions(userId, deviceId)
+        return this.deviceRepository.deleteAllSessionsExcludeCurrent(userId, deviceId)
     }
 
     async deleteDevice(deviceId: string) {

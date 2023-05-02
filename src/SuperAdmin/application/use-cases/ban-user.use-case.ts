@@ -3,6 +3,7 @@ import {
 } from "@nestjs/cqrs"
 import { UsersRepository } from "../../../general/users/infrastructure/users-db-repository"
 import { BanInputModel } from "../../api/models/BanInputModel"
+import { DeviceRepository } from '../../../security/infrastructure/device-db-repository'
 
 export class BanUserCommand {
     constructor(
@@ -15,6 +16,7 @@ export class BanUserCommand {
 export class BanUserUseCase implements ICommandHandler<BanUserCommand> {
     constructor(
         private usersRepository: UsersRepository,
+        private deviceRepository: DeviceRepository,
     ) { }
 
     async execute(command: BanUserCommand) {
@@ -27,7 +29,9 @@ export class BanUserUseCase implements ICommandHandler<BanUserCommand> {
 
         const isBanned = userById.banCurrentUser(banInputModel)
         if (isBanned) {
-            this.usersRepository.save(userById)
+            await this.usersRepository.save(userById)
         }
+
+        /* this.deviceRepository. */
     }
 }

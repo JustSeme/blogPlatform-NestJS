@@ -73,6 +73,13 @@ export class User {
         return true
     }
 
+    unbanCurrentUser(): boolean {
+        this.banInfo.banDate = null
+        this.banInfo.banReason = null
+        this.banInfo.isBanned = false
+        return true
+    }
+
     static makeInstance(login: string, email: string, passwordHash: string, isConfirmed: boolean, UserModel: UserModelType) {
         const userDTO = new UserDTO(login, email, passwordHash, isConfirmed)
         return new UserModel(userDTO)
@@ -84,6 +91,7 @@ UsersSchema.methods = {
     canBeConfirmed: User.prototype.canBeConfirmed,
     updateIsConfirmed: User.prototype.updateIsConfirmed,
     banCurrentUser: User.prototype.banCurrentUser,
+    unbanCurrentUser: User.prototype.unbanCurrentUser,
     isBanned: User.prototype.isBanned
 }
 

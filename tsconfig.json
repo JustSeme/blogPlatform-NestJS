@@ -18,9 +18,7 @@
     "noFallthroughCasesInSwitch": false,
     "esModuleInterop": true
   },
-  "include": [
-    "src"
-, "src/auth/application/use-cases/.ts"  ],
+  "include": [ "src" ],
   "exclude": [
     "node_modules"
   ]
