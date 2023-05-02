@@ -43,13 +43,13 @@ describe('devices', () => {
 
     it('should create user for login', async () => {
         await request(httpServer)
-            .post('/users')
+            .post('/sa/users')
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
             .send(correctUserInputData)
             .expect(HttpStatus.CREATED)
 
         const usersResponseData = await request(httpServer)
-            .get('/users')
+            .get('/sa/users')
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
             .expect(HttpStatus.OK)
 
@@ -59,13 +59,13 @@ describe('devices', () => {
 
     it('should create the second user for login', async () => {
         await request(httpServer)
-            .post('/users')
+            .post('/sa/users')
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
             .send(secondCorrectUserInputData)
             .expect(HttpStatus.CREATED)
 
         const usersResponseData = await request(httpServer)
-            .get('/users')
+            .get('/sa/users')
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
             .expect(HttpStatus.OK)
 
@@ -96,7 +96,7 @@ describe('devices', () => {
     it('shouldn\'t login with incorrect data', async () => {
         await request(httpServer)
             .post('/auth/login')
-            .send({ loginOrEmail: 'notAEmail', password: 'notAPasspord' })
+            .send({ loginOrEmail: 'notAEmail', password: 'notAPassword' })
             .expect(HttpStatus.UNAUTHORIZED)
     })
 

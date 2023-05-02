@@ -1,6 +1,8 @@
-export type DeviceSessionsViewModel = {
-    ip: string
-    title: string
-    lastActiveDate: Date
-    deviceId: string
+export class DeviceSessionsViewModel {
+    constructor(
+        public ip: string,
+        public title: string,
+        public lastActiveDate: Date,
+        public deviceId: string,
+    ) { }
 }

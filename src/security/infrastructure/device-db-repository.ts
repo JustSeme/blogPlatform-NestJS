@@ -2,14 +2,14 @@ import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { DeviceAuthSession } from '../domain/DeviceAuthSessionSchema'
 import {
-    DeviceAuthSessionDTO, DeviceAuthSessionModelType
+    DeviceAuthSessionDBModel, DeviceAuthSessionModelType
 } from '../domain/DeviceAuthSessionType'
 
 @Injectable()
 export class DeviceRepository {
     constructor(@InjectModel(DeviceAuthSession.name) private DeviceAuthSessionModel: DeviceAuthSessionModelType) { }
 
-    async addSession(newSession: DeviceAuthSessionDTO) {
+    async addSession(newSession: DeviceAuthSessionDBModel) {
         const result = await this.DeviceAuthSessionModel.create(newSession)
         return result ? true : false
     }

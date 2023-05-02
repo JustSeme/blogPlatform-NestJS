@@ -3,13 +3,13 @@ import jwt, { JwtPayload } from "jsonwebtoken"
 import { JwtService } from '../../../general/adapters/jwt.adapter'
 import { DeviceRepository } from '../../../security/infrastructure/device-db-repository'
 import { AuthConfig } from '../../../configuration/auth.config'
-import { DeviceAuthSessionDTO } from '../../../security/domain/DeviceAuthSessionType'
 import {
     CommandHandler, ICommandHandler
 } from '@nestjs/cqrs'
 import { UsersRepository } from '../../../general/users/infrastructure/users-db-repository'
 import { UnauthorizedException } from '@nestjs/common'
 import { generateErrorsMessages } from '../../../general/helpers'
+import { DeviceAuthSessionDBModel } from '../../../security/domain/DeviceAuthSessionType'
 
 export class LoginCommand {
     constructor(
@@ -54,7 +54,7 @@ export class LoginUseCase implements ICommandHandler<LoginCommand> {
         const refreshToken = await this.jwtService.createRefreshToken(this.tokensSettings.REFRESH_TOKEN_EXPIRE_TIME, deviceId, userId)
         const result = await jwt.decode(refreshToken) as JwtPayload
 
-        const newSession = new DeviceAuthSessionDTO(result.iat, result.exp, userId, userIp, deviceId, deviceName)
+        const newSession = new DeviceAuthSessionDBModel(result.iat, result.exp, userId, userIp, deviceId, deviceName)
 
         const isAdded = await this.deviceRepository.addSession(newSession)
         if (!isAdded) {

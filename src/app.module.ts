@@ -96,6 +96,8 @@ import { SuperAdminUsersController } from "./SuperAdmin/api/super-admin-users.co
 import { BanUserUseCase } from "./SuperAdmin/application/use-cases/ban-user.use-case"
 import { UnbanUserUseCase } from "./SuperAdmin/application/use-cases/unban-user.use-case"
 import { RemoveAllSessionsExcludeCurrentUseCase } from "./security/application/use-cases/remove-all-sessions-exclude-current.use-case"
+import { DeleteDeviceUseCase } from "./security/application/use-cases/delete-device.use-case"
+import { GetActiveDevicesUseCase } from "./security/application/use-cases/get-active-devices-for-user.use-case"
 
 const authUseCases = [
   LogoutUseCase,
@@ -131,7 +133,9 @@ const blogsUseCases = [
 ]
 
 const securityUseCases = [
-  RemoveAllSessionsExcludeCurrentUseCase
+  RemoveAllSessionsExcludeCurrentUseCase,
+  DeleteDeviceUseCase,
+  GetActiveDevicesUseCase,
 ]
 
 const strategies = [
