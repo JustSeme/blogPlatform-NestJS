@@ -15,7 +15,6 @@ import { BlogsQueryRepository } from '../infrastructure/blogs/blogs-query-reposi
 import { PostsRepository } from '../infrastructure/posts/posts-db-repository'
 import { CurrentUserId } from '../../general/decorators/current-userId.param.decorator'
 import { JwtAuthGuard } from './guards/jwt-auth.guard'
-import { BasicAuthGuard } from '../../general/guards/basic-auth.guard'
 import { IsPostExistsPipe } from './pipes/isPostExists.validation.pipe'
 import { UsersQueryRepository } from '../../general/users/infrastructure/users-query-repository'
 import { JwtService } from '../../general/adapters/jwt.adapter'
@@ -84,10 +83,12 @@ export class PostsController {
         return findedCommentsQueryData
     }
 
-    @UseGuards(BasicAuthGuard)
+    @UseGuards(JwtAuthGuard)
     @Post()
     @HttpCode(HttpStatus.CREATED)
-    async createPost(@Body() post: PostInputModel): Promise<PostsViewModel> {
+    async createPost(
+        @Body() post: PostInputModel,
+    ): Promise<PostsViewModel> {
         return this.commandBus.execute(
             new CreatePostCommand(post)
         )
@@ -116,7 +117,7 @@ export class PostsController {
         return createdComment
     }
 
-    @UseGuards(BasicAuthGuard)
+    @UseGuards(JwtAuthGuard)
     @Put(':postId')
     @HttpCode(HttpStatus.NO_CONTENT)
     async updatePost(@Param('postId', IsPostExistsPipe) postId: string, @Body() postInputModel: PostInputModel): Promise<void> {
@@ -129,7 +130,7 @@ export class PostsController {
         return
     }
 
-    @UseGuards(BasicAuthGuard)
+    @UseGuards(JwtAuthGuard)
     @Delete(':id')
     @HttpCode(HttpStatus.NO_CONTENT)
     async deletePost(@Param('id', IsPostExistsPipe) id: string): Promise<void> {

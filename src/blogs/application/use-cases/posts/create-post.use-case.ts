@@ -7,7 +7,9 @@ import { PostDBModel } from "../../../domain/posts/PostsTypes"
 import { PostsViewModel } from "../../dto/PostViewModel"
 
 export class CreatePostCommand {
-    constructor(public readonly body: PostInputModel) { }
+    constructor(
+        public readonly body: PostInputModel,
+    ) { }
 }
 
 export class CreatePostUseCase implements ICommandHandler<CreatePostCommand> {
@@ -18,7 +20,7 @@ export class CreatePostUseCase implements ICommandHandler<CreatePostCommand> {
     ) { }
 
     async execute(command: CreatePostCommand): Promise<PostsViewModel> {
-        const { body } = command
+        const { body, } = command
 
         const blogById = await this.blogsRepository.findBlogById(body.blogId)
 
@@ -28,6 +30,8 @@ export class CreatePostUseCase implements ICommandHandler<CreatePostCommand> {
             body.content,
             blogById.id,
             blogById?.name ? blogById?.name : 'not found',
+            blogById.blogOwnerInfo.userId,
+            blogById.blogOwnerInfo.userLogin
         )
 
         await this.postsRepository.createPost(createdPost)

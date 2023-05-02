@@ -45,7 +45,9 @@ export class CreatePostForBloggerUseCase implements ICommandHandler<CreatePostFo
             postInputModel.shortDescription,
             postInputModel.content,
             blogId,
-            blogById.name
+            blogById.name,
+            blogById.blogOwnerInfo.userId,
+            blogById.blogOwnerInfo.userLogin
         )
 
         await this.postsRepository.createPost(createdPost)

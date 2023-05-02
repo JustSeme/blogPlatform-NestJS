@@ -20,6 +20,11 @@ export class PostsRepository {
         return result.deletedCount === 1
     }
 
+    async deleteAllPostsForCurrentUser(userId: string): Promise<boolean> {
+        const result = await this.PostModel.deleteMany({ "postOwnerInfo.userId": userId })
+        return result.deletedCount > 0 ? true : false
+    }
+
     async createPost(createdPost: PostDBModel) {
         await this.PostModel.create(createdPost)
     }

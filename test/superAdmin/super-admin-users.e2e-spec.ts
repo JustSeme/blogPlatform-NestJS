@@ -323,13 +323,13 @@ describe('super-admin-users', () => {
         expect(usersData.body.items[0].banInfo.banReason).toEqual(banInputModel.banReason)
     })
 
-    it('should return zero active session for user becouse user is banned', async () => {
-        const sessionsData = await request(httpServer)
+    it('should return 401 error becouse banned user devices is deleted', async () => {
+        const errorsMessagesData = await request(httpServer)
             .get('/security/devices')
             .set('Cookie', recievedRefreshToken)
-            .expect(HttpStatus.OK)
+            .expect(HttpStatus.UNAUTHORIZED)
 
-        expect(sessionsData.body.length).toBe(0)
+        expect(errorsMessagesData.body.errorsMessages).toEqual('refreshToken is incorrect')
     })
 
     const unbanInputModel: BanInputModel = {

@@ -8,16 +8,24 @@ export class PostDBModel {
     public id: string
     public createdAt: string
     public extendedLikesInfo: ExtendedLikesInfoDBType
+    public postOwnerInfo: PostOwnerInfoType
 
     constructor(
         public title: string,
         public shortDescription: string,
         public content: string,
         public blogId: string,
-        public blogName: string
+        public blogName: string,
+        userId: string,
+        userLogin: string,
     ) {
         this.id = uuidv4()
         this.createdAt = new Date().toISOString()
+
+        this.postOwnerInfo = {
+            userId,
+            userLogin
+        }
 
         this.extendedLikesInfo = {
             likes: [],
@@ -45,6 +53,11 @@ export type ExtendedLikeObjectType = {
     userId: string
     createdAt: string
     login: string
+}
+
+export type PostOwnerInfoType = {
+    userId: string,
+    userLogin: string
 }
 
 export type PostModelType = Model<Post>

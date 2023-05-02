@@ -2,7 +2,7 @@ import {
     Prop, Schema, SchemaFactory
 } from "@nestjs/mongoose"
 import {
- ExtendedLikeObjectType, ExtendedLikesInfoDBType 
+    ExtendedLikeObjectType, ExtendedLikesInfoDBType
 } from "./PostsTypes"
 
 @Schema()

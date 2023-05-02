@@ -42,7 +42,7 @@ describe('blogger-posts', () => {
 
     it('should create user and should login, getting accessToken', async () => {
         await request(httpServer)
-            .post(`/users`)
+            .post(`/sa/users`)
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
             .send(createUserInputData)
             .expect(HttpStatus.CREATED)
@@ -67,7 +67,7 @@ describe('blogger-posts', () => {
 
     it('should create another user and should login, getting accessToken', async () => {
         await request(httpServer)
-            .post(`/users`)
+            .post(`/sa/users`)
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
             .send(secondCreateUserInputData)
             .expect(HttpStatus.CREATED)

@@ -44,9 +44,13 @@ export class DeviceRepository {
         return result.issuedAt
     }
 
-
     async isDeviceExists(deviceId: string) {
         const deviceByDeviceId = await this.getDeviceById(deviceId)
         return deviceByDeviceId ? true : false
+    }
+
+    async deleteAllSessions(userId: string) {
+        const result = await this.DeviceAuthSessionModel.deleteMany({ 'userInfo.userId': userId })
+        result.deletedCount > 0 ? true : false
     }
 }

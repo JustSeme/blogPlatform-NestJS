@@ -4,6 +4,8 @@ import {
 import { UsersRepository } from "../../../general/users/infrastructure/users-db-repository"
 import { BanInputModel } from "../../api/models/BanInputModel"
 import { DeviceRepository } from '../../../security/infrastructure/device-db-repository'
+import { PostsRepository } from "../../../blogs/infrastructure/posts/posts-db-repository"
+import { CommentsRepository } from "../../../blogs/infrastructure/comments/comments-db-repository"
 
 export class BanUserCommand {
     constructor(
@@ -17,6 +19,8 @@ export class BanUserUseCase implements ICommandHandler<BanUserCommand> {
     constructor(
         private usersRepository: UsersRepository,
         private deviceRepository: DeviceRepository,
+        private postsRepository: PostsRepository,
+        private commentsRepository: CommentsRepository,
     ) { }
 
     async execute(command: BanUserCommand) {
@@ -32,6 +36,8 @@ export class BanUserUseCase implements ICommandHandler<BanUserCommand> {
             await this.usersRepository.save(userById)
         }
 
-        /* this.deviceRepository. */
+        const isSessionsDeleted = await this.deviceRepository.deleteAllSessions(userId)
+        const isPostsDeleted = await this.postsRepository.deleteAllPostsForCurrentUser(userId)
+        //const isCommentsDeleted = await this.commentsRepository.deleteAllCommentsForCurrentUser(userId)
     }
 }

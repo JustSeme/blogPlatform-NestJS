@@ -3,8 +3,11 @@ import {
     Prop, Schema, SchemaFactory
 } from "@nestjs/mongoose"
 import {
- ExtendedLikesInfo, ExtendedLikesInfoSchema 
+    ExtendedLikesInfo, ExtendedLikesInfoSchema
 } from "./ExtendedLikesInfoSchema"
+import {
+    PostOwnerInfo, PostOwnerInfoSchema
+} from "./PostOwnerInfoSchema"
 
 @Schema()
 export class Post {
@@ -39,14 +42,19 @@ export class Post {
     blogName: string
 
     @Prop({
- required: true, default: new Date() 
-})
+        required: true, default: new Date()
+    })
     createdAt: string
 
     @Prop({
- required: true, type: ExtendedLikesInfoSchema 
-})
+        required: true, type: ExtendedLikesInfoSchema
+    })
     extendedLikesInfo: ExtendedLikesInfo
+
+    @Prop({
+        required: true, type: PostOwnerInfoSchema
+    })
+    postOwnerInfo: PostOwnerInfo
 }
 
 export const PostSchema = SchemaFactory.createForClass<PostDBModel>(Post)
