@@ -23,7 +23,8 @@ export class UpdateLikeStatusForCommentUseCase implements ICommandHandler<Update
         }
         const likeData: LikeObjectType = {
             userId: command.userId,
-            createdAt: new Date().toISOString()
+            createdAt: new Date().toISOString(),
+            isBanned: false,
         }
 
         const isNoneSetted = await this.commentsRepository.setNoneLike(command.userId, command.commentId)

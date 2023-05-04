@@ -37,7 +37,12 @@ export class PostsService {
             userId = jwtResult ? jwtResult.userId : null
         }
 
-        const convertedPosts = postsArray.map((post: PostDBModel) => {
+        const convertedPosts: PostsViewModel[] = []
+        postsArray.forEach((post: PostDBModel) => {
+            if (post.isBanned) {
+                return
+            }
+
             const likesInfoData = post.extendedLikesInfo
 
             let myStatus: LikeType = 'None'
@@ -77,7 +82,7 @@ export class PostsService {
                 newestLikes: newest3Likes
             }
 
-            return convertedPost
+            convertedPosts.push(convertedPost)
         })
 
         return convertedPosts

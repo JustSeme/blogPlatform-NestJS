@@ -1,5 +1,7 @@
 import { PostInputModel } from '../../api/models/PostInputModel'
-import { Injectable } from '@nestjs/common'
+import {
+    Injectable, NotImplementedException
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose/dist'
 import { PostDocument } from './PostsTypes'
 import { Post } from '../../domain/posts/PostsSchema'
@@ -103,22 +105,27 @@ export class PostsRepository {
     }
 
     async hideAllLikeEntitiesForPostsByUserId(userId) {
-        const result = await this.PostModel.find({
-            $where: function () {
-                this.extendedLikesInfo.likes.forEach((like: ExtendedLikeObjectType) => {
-                    if (like.userId === userId) {
-                        return like
-                    }
-                })
-                this.extendedLikesInfo.dislikes.forEach((dislike: ExtendedLikeObjectType) => {
+        try {
+            const postModels = await this.PostModel.find({})
+            postModels.forEach((post) => {
+                post.extendedLikesInfo.dislikes.forEach(async (dislike) => {
                     if (dislike.userId === userId) {
-                        return dislike
+                        dislike.isBanned = true
+                        await post.save()
                     }
                 })
-            }
-        })
-            .updateMany({}, { $set: { isBanned: true } })
 
-        return result.upsertedCount > 0 ? true : false
+                post.extendedLikesInfo.likes.forEach(async (like) => {
+                    if (like.userId === userId) {
+                        like.isBanned = true
+                        await post.save()
+                    }
+                })
+            })
+            return true
+        }
+        catch (err) {
+            throw new NotImplementedException(`hideLikeEntities for post is not implemented by error: ${err}`)
+        }
     }
 }

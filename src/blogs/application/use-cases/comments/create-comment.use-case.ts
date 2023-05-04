@@ -28,7 +28,7 @@ export class CreateCommentUseCase implements ICommandHandler<CreateCommentComman
             return null
         }
 
-        const createdComment = new CommentDBModel(command.content, command.postId, command.commentator.id, command.commentator.login)
+        const createdComment = new CommentDBModel(command.content, command.postId, command.commentator.id, command.commentator.login, false)
 
         await this.commentsRepository.createComment(createdComment)
 

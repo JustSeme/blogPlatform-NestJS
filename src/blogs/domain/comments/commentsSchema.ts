@@ -36,6 +36,12 @@ export class Comment {
         required: true, type: LikesInfoSchema
     })
     likesInfo: LikesInfo
+
+    @Prop({
+        required: true,
+        default: false,
+    })
+    isBanned: boolean
 }
 
 export const CommentsSchema = SchemaFactory.createForClass<CommentDBModel>(Comment)

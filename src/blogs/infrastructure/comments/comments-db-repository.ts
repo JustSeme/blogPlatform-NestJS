@@ -1,4 +1,6 @@
-import { Injectable } from "@nestjs/common"
+import {
+    Injectable, NotImplementedException
+} from "@nestjs/common"
 import { InjectModel } from "@nestjs/mongoose"
 import { Comment } from "../../domain/comments/commentsSchema"
 import {
@@ -83,16 +85,27 @@ export class CommentsRepository {
     }
 
     async hideAllLikeEntitiesForCommentsByUserId(userId: string): Promise<boolean> {
-        const result = await this.CommentModel.find({
-            $where: function () {
-                this.likesInfo.likes.forEach((like: LikeObjectType) => {
-                    if (like.userId === userId) {
-                        return like
+        try {
+            const commentModels = await this.CommentModel.find({})
+            commentModels.forEach((comment) => {
+                comment.likesInfo.dislikes.forEach(async (dislike) => {
+                    if (dislike.userId === userId) {
+                        dislike.isBanned = true
+                        await comment.save()
                     }
                 })
-            }
-        })
-            .updateMany({}, { $set: { isBanned: true } })
-        return result.upsertedCount > 0 ? true : false
+
+                comment.likesInfo.likes.forEach(async (like) => {
+                    if (like.userId === userId) {
+                        like.isBanned = true
+                        await comment.save()
+                    }
+                })
+            })
+            return true
+        } catch (err) {
+            throw new NotImplementedException(`hideLikeEntities for comment is not implimented by error: ${err}`)
+        }
+
     }
 }

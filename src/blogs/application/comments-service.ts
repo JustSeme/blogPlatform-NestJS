@@ -33,7 +33,11 @@ export class CommentsService {
             userId = jwtResult ? jwtResult.userId : null
         }
 
-        const convertedComments = commentsArray.map((comment: CommentDBModel) => {
+        const convertedComments = []
+        commentsArray.forEach((comment: CommentDBModel) => {
+            if (comment.isBanned) {
+                return
+            }
             const likesInfoData = comment.likesInfo
 
             let myStatus: LikeType = 'None'
@@ -49,16 +53,16 @@ export class CommentsService {
             }
 
             // return a comment with defualt likesInfo
-            const convertedComments = this.transformCommentWithDefaultLikeInfo(comment)
+            const convertedComment = this.transformCommentWithDefaultLikeInfo(comment)
 
             // modify likes info
-            convertedComments.likesInfo = {
+            convertedComment.likesInfo = {
                 likesCount: likesInfoData.likes.length,
                 dislikesCount: likesInfoData.dislikes.length,
                 myStatus: myStatus
             }
 
-            return convertedComments
+            convertedComments.push(convertedComment)
         })
 
         return convertedComments

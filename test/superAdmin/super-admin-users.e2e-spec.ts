@@ -8,6 +8,8 @@ import { UserInputModel } from '../../src/SuperAdmin/api/models/UserInputModel';
 import { BanInputModel } from '../../src/SuperAdmin/api/models/BanInputModel'
 import { LoginInputDTO } from '../../src/auth/api/models/LoginInputDTO'
 import { BlogInputModel } from '../../src/blogs/api/models/BlogInputModel';
+import { PostInputModelWithoutBlogId } from '../../src/blogs/api/models/PostInputModelWithoutBlogId';
+import { CommentInputModel } from '../../src/blogs/api/models/CommentInputModel';
 
 const generateEmail = (str: string) => `${str}@mail.ru`
 
@@ -314,10 +316,23 @@ describe('super-admin-users', () => {
         websiteUrl: 'www.url.com',
     };
 
-    it('user should create blog,  post and comment for post, entities should be displayed', async () => {
+    const correctPostInputModel: PostInputModelWithoutBlogId = {
+        title: 'correct title', // min 3 max 30
+        shortDescription: 'short desc', // min 3 max 100
+        content: 'this is a content' // min 3 max 1000
+    }
+
+    const correctCommentBody: CommentInputModel = {
+        content: 'this content should be a correct' // min 20 max 300
+    }
+
+    let createdCommentId = ''
+    let createdPostId = ''
+
+    it('user should create blog, post and comment for post, entities should be displayed', async () => {
         const createdBlogData = await request(httpServer)
             .post('/blogger/blogs')
-            .set('Bearer', recievedAccessToken)
+            .set('Authorization', `Bearer ${recievedAccessToken}`)
             .send(correctBlogInputModel)
             .expect(HttpStatus.CREATED)
 
@@ -329,7 +344,64 @@ describe('super-admin-users', () => {
         const createdBlogId = createdBlogData.body.id
 
         const createdPostData = await request(httpServer)
-            .post('/blogger/blogs')
+            .post(`/blogger/blogs/${createdBlogId}/posts`)
+            .set('Authorization', `Bearer ${recievedAccessToken}`)
+            .send(correctPostInputModel)
+            .expect(HttpStatus.CREATED)
+
+        expect(createdPostData.body.title).toEqual(correctPostInputModel.title)
+        expect(createdPostData.body.shortDescription).toEqual(correctPostInputModel.shortDescription)
+        expect(createdPostData.body.content).toEqual(correctPostInputModel.content)
+
+        createdPostId = createdPostData.body.id
+
+        const postsViewData = await request(httpServer)
+            .get(`/posts`)
+            .expect(HttpStatus.OK)
+
+        expect(postsViewData.body.items[0].title).toEqual(correctPostInputModel.title)
+        expect(postsViewData.body.items[0].shortDescription).toEqual(correctPostInputModel.shortDescription)
+        expect(postsViewData.body.items[0].content).toEqual(correctPostInputModel.content)
+
+        const createdCommentResponseData = await request(httpServer)
+            .post(`/posts/${createdPostId}/comments`)
+            .set('Authorization', `Bearer ${recievedAccessToken}`)
+            .send(correctCommentBody)
+            .expect(HttpStatus.CREATED)
+
+        createdCommentId = createdCommentResponseData.body.id
+    })
+
+    it('should like/dislike early created post and comment, should display correct info', async () => {
+        await request(httpServer)
+            .put(`/comments/${createdCommentId}/like-status`)
+            .set('Authorization', `Bearer ${recievedAccessToken}`)
+            .send({
+                likeStatus: 'Like'
+            })
+            .expect(HttpStatus.NO_CONTENT)
+
+        await request(httpServer)
+            .put(`/posts/${createdPostId}/like-status`)
+            .set('Authorization', `Bearer ${recievedAccessToken}`)
+            .send({
+                likeStatus: 'Dislike'
+            })
+            .expect(HttpStatus.NO_CONTENT)
+
+        const commentsData = await request(httpServer)
+            .get(`/posts/${createdPostId}/comments`)
+            .set('Authorization', `Bearer ${recievedAccessToken}`)
+            .expect(HttpStatus.OK)
+
+        expect(commentsData.body.items[0].likesInfo.likesCount).toEqual(1)
+
+        const postData = await request(httpServer)
+            .get(`/posts/${createdPostId}`)
+            .set('Authorization', `Bearer ${recievedAccessToken}`)
+            .expect(HttpStatus.OK)
+
+        expect(postData.body.extendedLikesInfo.dislikesCount).toEqual(1)
     })
 
     it('should ban the last created user and display banned banInfo', async () => {
@@ -346,6 +418,16 @@ describe('super-admin-users', () => {
 
         expect(usersData.body.items[0].banInfo.isBanned).toEqual(true)
         expect(usersData.body.items[0].banInfo.banReason).toEqual(banInputModel.banReason)
+    })
+
+    it('shouldn\'t display the post and comment of the banned user', async () => {
+        await request(httpServer)
+            .get(`/posts/${createdPostId}`)
+            .expect(HttpStatus.NOT_FOUND)
+
+        await request(httpServer)
+            .get(`/comments/${createdCommentId}`)
+            .expect(HttpStatus.NOT_FOUND)
     })
 
     it('should return 401 error becouse banned user devices is deleted', async () => {

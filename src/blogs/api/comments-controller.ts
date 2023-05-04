@@ -34,7 +34,10 @@ export class CommentsController {
             throw new NotFoundException(generateErrorsMessages('Comment by commentId paramether is not found', 'commentId'))
         }
 
-        const displayedComment = this.commentsService.transformCommentsForDisplay([findedComment], accessToken)
+        const displayedComment = await this.commentsService.transformCommentsForDisplay([findedComment], accessToken)
+        if (!displayedComment.length) {
+            throw new NotFoundException('The creator of this comment is banned')
+        }
 
         return displayedComment[0]
     }

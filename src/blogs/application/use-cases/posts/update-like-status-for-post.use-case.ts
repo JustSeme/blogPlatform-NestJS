@@ -22,21 +22,28 @@ export class UpdateLikeStatusForPostUseCase implements ICommandHandler<UpdateLik
     ) { }
 
     async execute(command: UpdateLikeStatusForPostCommand) {
-        const updatablePost = await this.postsRepository.getPostById(command.postId)
+        const {
+            userId,
+            postId,
+            status,
+        } = command
+
+        const updatablePost = await this.postsRepository.getPostById(postId)
         if (!updatablePost) {
             return false
         }
 
-        const likedUser = await this.usersRepository.findUserById(command.userId)
+        const likedUser = await this.usersRepository.findUserById(userId)
         const likeData: ExtendedLikeObjectType = {
             createdAt: new Date().toISOString(),
-            userId: command.userId,
-            login: likedUser.login
+            userId: userId,
+            login: likedUser.login,
+            isBanned: false,
         }
 
-        const likeIndex = updatablePost.extendedLikesInfo.likes.findIndex((like: ExtendedLikeObjectType) => like.userId === command.userId)
-        const dislikeIndex = updatablePost.extendedLikesInfo.dislikes.findIndex((dislike: ExtendedLikeObjectType) => dislike.userId === command.userId)
-        const noneIndex = updatablePost.extendedLikesInfo.noneEntities.findIndex((none: ExtendedLikeObjectType) => none.userId === command.userId)
+        const likeIndex = updatablePost.extendedLikesInfo.likes.findIndex((like: ExtendedLikeObjectType) => like.userId === userId)
+        const dislikeIndex = updatablePost.extendedLikesInfo.dislikes.findIndex((dislike: ExtendedLikeObjectType) => dislike.userId === userId)
+        const noneIndex = updatablePost.extendedLikesInfo.noneEntities.findIndex((none: ExtendedLikeObjectType) => none.userId === userId)
 
         if (status === 'None') {
             if (noneIndex > -1) {

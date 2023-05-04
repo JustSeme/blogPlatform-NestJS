@@ -65,6 +65,10 @@ export class PostsController {
         const findedPost = await this.postsQueryRepository.getPostById(postId)
 
         const displayedPost = await this.postsService.transformPostsForDisplay([findedPost], accessToken)
+        if (!displayedPost.length) {
+            throw new NotFoundException('The creator of this post is banned')
+        }
+
         return displayedPost[0]
     }
 

@@ -12,7 +12,8 @@ export class CommentDBModel {
         public content: string,
         public postId: string,
         userId: string,
-        userLogin: string
+        userLogin: string,
+        public isBanned: boolean
     ) {
         this.id = uuidv4()
         this.createdAt = new Date().toISOString()
@@ -41,6 +42,7 @@ export type LikesInfoType = {
 export type LikeObjectType = {
     userId: string
     createdAt: string
+    isBanned: boolean
 }
 
 export type CommentModelType = Model<Comment>

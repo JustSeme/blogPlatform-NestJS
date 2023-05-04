@@ -54,6 +54,7 @@ export type ExtendedLikeObjectType = {
     userId: string
     createdAt: string
     login: string
+    isBanned: boolean
 }
 
 export type PostOwnerInfoType = {
