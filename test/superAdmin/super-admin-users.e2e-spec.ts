@@ -114,6 +114,20 @@ describe('super-admin-users', () => {
         email: generateEmail('justCena')
     }
 
+    const fourthUser = {
+        login: 'sas',
+        password: '123456123456',
+        email: generateEmail('sasssa')
+    }
+
+    it('should create fourth user', async () => {
+        await request(httpServer)
+            .post(`/sa/users`)
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .send(fourthUser)
+            .expect(HttpStatus.CREATED)
+    })
+
     let id1: string, id2: string, id3: string
     it('should create three users and return error if email adress and login is already use', async () => {
         const firstUser = {
@@ -176,7 +190,7 @@ describe('super-admin-users', () => {
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
             .expect(HttpStatus.OK)
 
-        expect(response.body.totalCount === 4).toBe(true)
+        expect(response.body.totalCount === 5).toBe(true)
 
         expect(response.body.items[0].id).toEqual(id1)
         expect(response.body.items[1].id).toEqual(id2)
@@ -212,7 +226,7 @@ describe('super-admin-users', () => {
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
             .expect(HttpStatus.OK)
 
-        expect(response.body.totalCount === 2).toBe(true)
+        expect(response.body.totalCount === 3).toBe(true)
     })
 
     it('should return a error if user is already deleted', async () => {
@@ -237,6 +251,23 @@ describe('super-admin-users', () => {
 
         recievedAccessToken = tokensData.body.accessToken
         recievedRefreshToken = tokensData.header['set-cookie']
+    })
+
+    let secondAccessToken
+    let secondRefreshToken
+    it(`should login another user, getting accessToken, refreshToken`, async () => {
+        const loginInputData: LoginInputDTO = {
+            loginOrEmail: fourthUser.login,
+            password: fourthUser.password
+        }
+
+        const tokensData = await request(httpServer)
+            .post('/auth/login')
+            .send(loginInputData)
+            .expect(HttpStatus.OK)
+
+        secondAccessToken = tokensData.body.accessToken
+        secondRefreshToken = tokensData.header['set-cookie']
     })
 
     it('should return one active session for user', async () => {
@@ -326,6 +357,52 @@ describe('super-admin-users', () => {
         content: 'this content should be a correct' // min 20 max 300
     }
 
+    let secondPostId
+    let secondCommentId
+
+    it('another user should create post and comment in order for the user to create likes', async () => {
+        const createdBlogData = await request(httpServer)
+            .post('/blogger/blogs')
+            .set('Authorization', `Bearer ${secondAccessToken}`)
+            .send(correctBlogInputModel)
+            .expect(HttpStatus.CREATED)
+
+        expect(createdBlogData.body.name).toEqual(correctBlogInputModel.name)
+        expect(createdBlogData.body.description).toEqual(correctBlogInputModel.description)
+        expect(createdBlogData.body.websiteUrl).toEqual(correctBlogInputModel.websiteUrl)
+        expect(createdBlogData.body.creatorId).toBe(undefined)
+
+        const createdBlogId = createdBlogData.body.id
+
+        const createdPostData = await request(httpServer)
+            .post(`/blogger/blogs/${createdBlogId}/posts`)
+            .set('Authorization', `Bearer ${secondAccessToken}`)
+            .send(correctPostInputModel)
+            .expect(HttpStatus.CREATED)
+
+        expect(createdPostData.body.title).toEqual(correctPostInputModel.title)
+        expect(createdPostData.body.shortDescription).toEqual(correctPostInputModel.shortDescription)
+        expect(createdPostData.body.content).toEqual(correctPostInputModel.content)
+
+        secondPostId = createdPostData.body.id
+
+        const postsViewData = await request(httpServer)
+            .get(`/posts`)
+            .expect(HttpStatus.OK)
+
+        expect(postsViewData.body.items[0].title).toEqual(correctPostInputModel.title)
+        expect(postsViewData.body.items[0].shortDescription).toEqual(correctPostInputModel.shortDescription)
+        expect(postsViewData.body.items[0].content).toEqual(correctPostInputModel.content)
+
+        const createdCommentResponseData = await request(httpServer)
+            .post(`/posts/${secondPostId}/comments`)
+            .set('Authorization', `Bearer ${secondAccessToken}`)
+            .send(correctCommentBody)
+            .expect(HttpStatus.CREATED)
+
+        secondCommentId = createdCommentResponseData.body.id
+    })
+
     let createdCommentId = ''
     let createdPostId = ''
 
@@ -374,7 +451,7 @@ describe('super-admin-users', () => {
 
     it('should like/dislike early created post and comment, should display correct info', async () => {
         await request(httpServer)
-            .put(`/comments/${createdCommentId}/like-status`)
+            .put(`/comments/${secondCommentId}/like-status`)
             .set('Authorization', `Bearer ${recievedAccessToken}`)
             .send({
                 likeStatus: 'Like'
@@ -382,7 +459,7 @@ describe('super-admin-users', () => {
             .expect(HttpStatus.NO_CONTENT)
 
         await request(httpServer)
-            .put(`/posts/${createdPostId}/like-status`)
+            .put(`/posts/${secondPostId}/like-status`)
             .set('Authorization', `Bearer ${recievedAccessToken}`)
             .send({
                 likeStatus: 'Dislike'
@@ -390,14 +467,14 @@ describe('super-admin-users', () => {
             .expect(HttpStatus.NO_CONTENT)
 
         const commentsData = await request(httpServer)
-            .get(`/posts/${createdPostId}/comments`)
+            .get(`/posts/${secondPostId}/comments`)
             .set('Authorization', `Bearer ${recievedAccessToken}`)
             .expect(HttpStatus.OK)
 
         expect(commentsData.body.items[0].likesInfo.likesCount).toEqual(1)
 
         const postData = await request(httpServer)
-            .get(`/posts/${createdPostId}`)
+            .get(`/posts/${secondPostId}`)
             .set('Authorization', `Bearer ${recievedAccessToken}`)
             .expect(HttpStatus.OK)
 
@@ -428,6 +505,22 @@ describe('super-admin-users', () => {
         await request(httpServer)
             .get(`/comments/${createdCommentId}`)
             .expect(HttpStatus.NOT_FOUND)
+    })
+
+    it('shouldn\'t display likes/dislikes of the banned user', async () => {
+        const commentsData = await request(httpServer)
+            .get(`/posts/${secondPostId}/comments`)
+            .set('Authorization', `Bearer ${recievedAccessToken}`)
+            .expect(HttpStatus.OK)
+
+        expect(commentsData.body.items[0].likesInfo.likesCount).toEqual(0)
+
+        const postData = await request(httpServer)
+            .get(`/posts/${secondPostId}`)
+            .set('Authorization', `Bearer ${recievedAccessToken}`)
+            .expect(HttpStatus.OK)
+
+        expect(postData.body.extendedLikesInfo.dislikesCount).toEqual(0)
     })
 
     it('should return 401 error becouse banned user devices is deleted', async () => {

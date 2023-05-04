@@ -40,15 +40,26 @@ export class CommentsService {
             }
             const likesInfoData = comment.likesInfo
 
+            const likesInfoDataWithoutBannedEntities = {
+                likes: [],
+                dislikes: []
+            }
+
+            likesInfoDataWithoutBannedEntities.likes = likesInfoData.likes.filter((like) => !like.isBanned)
+
+            likesInfoDataWithoutBannedEntities.dislikes = likesInfoData.dislikes.filter((dislike) => !dislike.isBanned)
+
+            console.log('likesDaat', likesInfoDataWithoutBannedEntities)
+
             let myStatus: LikeType = 'None'
 
             // check that comment was liked current user
-            if (likesInfoData.likes.some((el: LikeObjectType) => el.userId === userId)) {
+            if (likesInfoDataWithoutBannedEntities.likes.some((el: LikeObjectType) => el.userId === userId)) {
                 myStatus = 'Like'
             }
 
             //check that comment was disliked current user
-            if (likesInfoData.dislikes.some((el: LikeObjectType) => el.userId === userId)) {
+            if (likesInfoDataWithoutBannedEntities.dislikes.some((el: LikeObjectType) => el.userId === userId)) {
                 myStatus = 'Dislike'
             }
 
@@ -57,8 +68,8 @@ export class CommentsService {
 
             // modify likes info
             convertedComment.likesInfo = {
-                likesCount: likesInfoData.likes.length,
-                dislikesCount: likesInfoData.dislikes.length,
+                likesCount: likesInfoDataWithoutBannedEntities.likes.length,
+                dislikesCount: likesInfoDataWithoutBannedEntities.dislikes.length,
                 myStatus: myStatus
             }
 
