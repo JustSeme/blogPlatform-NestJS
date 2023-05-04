@@ -76,4 +76,23 @@ export class CommentsRepository {
         const commentById = await this.CommentModel.findOne({ id: commentId })
         return commentById ? true : false
     }
+
+    async hideAllCommentsForCurrentUser(userId: string): Promise<boolean> {
+        const result = await this.CommentModel.updateMany({ "commentatorInfo.userId": userId }, { $set: { isBanned: true } })
+        return result.upsertedCount > 0 ? true : false
+    }
+
+    async hideAllLikeEntitiesForCommentsByUserId(userId: string): Promise<boolean> {
+        const result = await this.CommentModel.find({
+            $where: function () {
+                this.likesInfo.likes.forEach((like: LikeObjectType) => {
+                    if (like.userId === userId) {
+                        return like
+                    }
+                })
+            }
+        })
+            .updateMany({}, { $set: { isBanned: true } })
+        return result.upsertedCount > 0 ? true : false
+    }
 }

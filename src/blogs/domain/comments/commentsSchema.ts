@@ -39,3 +39,5 @@ export class Comment {
 }
 
 export const CommentsSchema = SchemaFactory.createForClass<CommentDBModel>(Comment)
+
+CommentsSchema.methods = {}

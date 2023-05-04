@@ -31,7 +31,8 @@ export class CreatePostUseCase implements ICommandHandler<CreatePostCommand> {
             blogById.id,
             blogById?.name ? blogById?.name : 'not found',
             blogById.blogOwnerInfo.userId,
-            blogById.blogOwnerInfo.userLogin
+            blogById.blogOwnerInfo.userLogin,
+            false
         )
 
         await this.postsRepository.createPost(createdPost)

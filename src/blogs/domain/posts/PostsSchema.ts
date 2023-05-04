@@ -55,6 +55,12 @@ export class Post {
         required: true, type: PostOwnerInfoSchema
     })
     postOwnerInfo: PostOwnerInfo
+
+    @Prop({
+        required: true,
+        default: false
+    })
+    isBanned: boolean
 }
 
 export const PostSchema = SchemaFactory.createForClass<PostDBModel>(Post)

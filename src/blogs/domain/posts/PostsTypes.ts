@@ -18,6 +18,7 @@ export class PostDBModel {
         public blogName: string,
         userId: string,
         userLogin: string,
+        public isBanned: boolean,
     ) {
         this.id = uuidv4()
         this.createdAt = new Date().toISOString()

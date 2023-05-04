@@ -49,8 +49,8 @@ export class DeviceRepository {
         return deviceByDeviceId ? true : false
     }
 
-    async deleteAllSessions(userId: string) {
+    async deleteAllSessions(userId: string): Promise<boolean> {
         const result = await this.DeviceAuthSessionModel.deleteMany({ 'userInfo.userId': userId })
-        result.deletedCount > 0 ? true : false
+        return result.deletedCount > 0 ? true : false
     }
 }

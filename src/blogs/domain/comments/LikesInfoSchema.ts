@@ -2,7 +2,7 @@ import {
     Prop, Schema, SchemaFactory
 } from "@nestjs/mongoose"
 import {
- LikeObjectType, LikesInfoType 
+    LikeObjectType, LikesInfoType
 } from "./CommentTypes"
 
 @Schema()
@@ -11,8 +11,8 @@ export class LikesInfo {
     likes: LikeObjectType[]
 
     @Prop({
- required: true, default: new Date().toISOString() 
-})
+        required: true, default: new Date().toISOString()
+    })
     dislikes: LikeObjectType[]
 }
 

@@ -7,6 +7,7 @@ import { NestExpressApplication } from "@nestjs/platform-express"
 import { UserInputModel } from '../../src/SuperAdmin/api/models/UserInputModel';
 import { BanInputModel } from '../../src/SuperAdmin/api/models/BanInputModel'
 import { LoginInputDTO } from '../../src/auth/api/models/LoginInputDTO'
+import { BlogInputModel } from '../../src/blogs/api/models/BlogInputModel';
 
 const generateEmail = (str: string) => `${str}@mail.ru`
 
@@ -305,6 +306,30 @@ describe('super-admin-users', () => {
 
         expect(usersData.body.items[0].banInfo.isBanned).toEqual(false)
         expect(usersData.body.items[0].banInfo.banReason).toEqual(null)
+    })
+
+    const correctBlogInputModel: BlogInputModel = {
+        name: 'Test Blog name',
+        description: 'Test Blog description',
+        websiteUrl: 'www.url.com',
+    };
+
+    it('user should create blog,  post and comment for post, entities should be displayed', async () => {
+        const createdBlogData = await request(httpServer)
+            .post('/blogger/blogs')
+            .set('Bearer', recievedAccessToken)
+            .send(correctBlogInputModel)
+            .expect(HttpStatus.CREATED)
+
+        expect(createdBlogData.body.name).toEqual(correctBlogInputModel.name)
+        expect(createdBlogData.body.description).toEqual(correctBlogInputModel.description)
+        expect(createdBlogData.body.websiteUrl).toEqual(correctBlogInputModel.websiteUrl)
+        expect(createdBlogData.body.creatorId).toBe(undefined)
+
+        const createdBlogId = createdBlogData.body.id
+
+        const createdPostData = await request(httpServer)
+            .post('/blogger/blogs')
     })
 
     it('should ban the last created user and display banned banInfo', async () => {

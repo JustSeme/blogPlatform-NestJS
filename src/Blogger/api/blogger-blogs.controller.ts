@@ -20,16 +20,16 @@ import {
 import { BlogsQueryRepository } from "../../blogs/infrastructure/blogs/blogs-query-repository"
 import { BlogInputModel } from "../../blogs/api/models/BlogInputModel"
 import { CommandBus } from "@nestjs/cqrs"
-import { CreateBlogForBloggerCommand } from "./use-cases/blogs/create-blog-for-blogger.use-case"
-import { UpdateBlogForBloggerCommand } from "./use-cases/blogs/update-blog-for-blogger.use-case"
-import { DeleteBlogForBloggerCommand } from "./use-cases/blogs/delete-blog-for-blogger.use-case"
+import { CreateBlogForBloggerCommand } from "../application/use-cases/blogs/create-blog-for-blogger.use-case"
+import { UpdateBlogForBloggerCommand } from "../application/use-cases/blogs/update-blog-for-blogger.use-case"
+import { DeleteBlogForBloggerCommand } from "../application/use-cases/blogs/delete-blog-for-blogger.use-case"
 import { IsBlogByIdExistPipe } from "../../blogs/api/pipes/isBlogExists.validation.pipe"
 import { PostsViewModel } from "../../blogs/application/dto/PostViewModel"
-import { CreatePostForBloggerCommand } from "./use-cases/posts/create-post-for-blogger.use-case"
+import { CreatePostForBloggerCommand } from "../application/use-cases/posts/create-post-for-blogger.use-case"
 import { PostInputModelWithoutBlogId } from "../../blogs/api/models/PostInputModelWithoutBlogId"
-import { UpdatePostForBloggerCommand } from "./use-cases/posts/update-post-for-blogger.use-case"
+import { UpdatePostForBloggerCommand } from "../application/use-cases/posts/update-post-for-blogger.use-case"
 import { IsPostExistsPipe } from "../../blogs/api/pipes/isPostExists.validation.pipe"
-import { DeletePostForBloggerCommand } from "./use-cases/posts/delete-post-for-blogger.use-case"
+import { DeletePostForBloggerCommand } from "../application/use-cases/posts/delete-post-for-blogger.use-case"
 
 @UseGuards(JwtAuthGuard)
 @Controller('blogger/blogs')

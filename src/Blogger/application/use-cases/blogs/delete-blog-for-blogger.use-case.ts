@@ -20,8 +20,7 @@ export class DeleteBlogForBloggerUseCase implements ICommandHandler<DeleteBlogFo
 
     async execute(command: DeleteBlogForBloggerCommand) {
         const deletingBlog: any = await this.blogsRepository.findBlogById(command.blogId)
-        //TODO почему ругается на creatorId у BlogModelType, хотя он указан в Blog classе
-        if (deletingBlog.creatorId !== command.userId) {
+        if (deletingBlog.blogOwnerInfo.userId !== command.userId) {
             throw new ForbiddenException('this is not your own')
         }
         return this.blogsRepository.deleteBlog(command.blogId)

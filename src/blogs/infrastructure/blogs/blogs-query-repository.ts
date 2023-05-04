@@ -26,7 +26,7 @@ export class BlogsQueryRepository {
             }
         }
         if (creatorId) {
-            filter.creatorId = creatorId
+            filter['blogOwnerInfo.userId'] = creatorId
         }
 
         const totalCount = await this.BlogsModel.count(filter)

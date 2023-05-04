@@ -20,9 +20,9 @@ export class PostsRepository {
         return result.deletedCount === 1
     }
 
-    async deleteAllPostsForCurrentUser(userId: string): Promise<boolean> {
-        const result = await this.PostModel.deleteMany({ "postOwnerInfo.userId": userId })
-        return result.deletedCount > 0 ? true : false
+    async hideAllPostsForCurrentUser(userId: string): Promise<boolean> {
+        const result = await this.PostModel.updateMany({ "postOwnerInfo.userId": userId }, { $set: { isBanned: true } })
+        return result.upsertedCount > 0 ? true : false
     }
 
     async createPost(createdPost: PostDBModel) {
@@ -100,5 +100,25 @@ export class PostsRepository {
     async isPostExists(postId: string) {
         const postById = await this.PostModel.findOne({ id: postId })
         return postById ? true : false
+    }
+
+    async hideAllLikeEntitiesForPostsByUserId(userId) {
+        const result = await this.PostModel.find({
+            $where: function () {
+                this.extendedLikesInfo.likes.forEach((like: ExtendedLikeObjectType) => {
+                    if (like.userId === userId) {
+                        return like
+                    }
+                })
+                this.extendedLikesInfo.dislikes.forEach((dislike: ExtendedLikeObjectType) => {
+                    if (dislike.userId === userId) {
+                        return dislike
+                    }
+                })
+            }
+        })
+            .updateMany({}, { $set: { isBanned: true } })
+
+        return result.upsertedCount > 0 ? true : false
     }
 }

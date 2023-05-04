@@ -1,10 +1,10 @@
 import {
     Prop, Schema, SchemaFactory
 } from "@nestjs/mongoose"
+import { BlogDBModel } from "./BlogsTypes"
 import {
-    BlogDBModel, BlogOwnerInfoType
-} from "./BlogsTypes"
-import { BlogOwnerInfoSchema } from "./BlogOwnerInfoSchema"
+    BlogOwnerInfo, BlogOwnerInfoSchema
+} from "./BlogOwnerInfoSchema"
 
 @Schema()
 export class Blog {
@@ -42,7 +42,7 @@ export class Blog {
         required: true,
         type: BlogOwnerInfoSchema
     })
-    blogOwnerInfo: BlogOwnerInfoType
+    blogOwnerInfo: BlogOwnerInfo
 }
 
 export const BlogSchema = SchemaFactory.createForClass<BlogDBModel>(Blog)

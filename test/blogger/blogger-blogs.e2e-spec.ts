@@ -6,6 +6,7 @@ import { AppModule } from '../../src/app.module';
 import { createApp } from '../../src/createApp';
 import { BlogInputModel } from '../../src/blogs/api/models/BlogInputModel';
 import { UserInputModel } from '../../src/SuperAdmin/api/models/UserInputModel';
+import { PostInputModelWithoutBlogId } from '../../src/blogs/api/models/PostInputModelWithoutBlogId';
 
 describe('blogger-blogs', () => {
     let app: NestExpressApplication;
@@ -41,7 +42,7 @@ describe('blogger-blogs', () => {
 
     it('should create user and should login, getting accessToken', async () => {
         await request(httpServer)
-            .post(`/users`)
+            .post(`/sa/users`)
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
             .send(createUserInputData)
             .expect(HttpStatus.CREATED)
@@ -66,7 +67,7 @@ describe('blogger-blogs', () => {
 
     it('should create another user and should login, getting accessToken', async () => {
         await request(httpServer)
-            .post(`/users`)
+            .post(`/sa/users`)
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
             .send(secondCreateUserInputData)
             .expect(HttpStatus.CREATED)
@@ -241,7 +242,7 @@ describe('blogger-blogs', () => {
     })
 
     it('blogger shouldn\'t delete blog if that is not him own, should display blogs array with one item', async () => {
-        const res = await request(httpServer)
+        await request(httpServer)
             .delete('/blogger/blogs/' + createdBlogId)
             .set('Authorization', `Bearer ${secondRecievedAccessToken}`)
             .expect(HttpStatus.FORBIDDEN)
