@@ -81,9 +81,9 @@ export class PostsController {
         const accessToken = authorizationHeader ? authorizationHeader.split(' ')[1] : null
         const findedCommentsQueryData = await this.commentsQueryRepository.getComments(commentsQueryParams, postId)
 
-        const displayedPosts = await this.commentsService.transformCommentsForDisplay(findedCommentsQueryData.items, accessToken)
+        const displayedComments = await this.commentsService.transformCommentsForDisplay(findedCommentsQueryData.items, accessToken)
 
-        findedCommentsQueryData.items = displayedPosts
+        findedCommentsQueryData.items = displayedComments
         return findedCommentsQueryData
     }
 

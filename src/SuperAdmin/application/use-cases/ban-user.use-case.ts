@@ -36,7 +36,7 @@ export class BanUserUseCase implements ICommandHandler<BanUserCommand> {
             await this.usersRepository.save(userById)
         }
 
-        const isSessionsHided = await this.deviceRepository.deleteAllSessions(userId)
+        const isSessionsDeleted = await this.deviceRepository.deleteAllSessions(userId)
 
         const isPostsHided = await this.postsRepository.hideAllPostsForCurrentUser(userId)
         const isPostsLikesHided = await this.postsRepository.hideAllLikeEntitiesForPostsByUserId(userId)
@@ -44,7 +44,7 @@ export class BanUserUseCase implements ICommandHandler<BanUserCommand> {
         const isCommentsHided = await this.commentsRepository.hideAllCommentsForCurrentUser(userId)
         const isCommentLikesHided = await this.commentsRepository.hideAllLikeEntitiesForCommentsByUserId(userId)
 
-        const isAllEntitiesForUserHided = isSessionsHided && isPostsHided && isPostsLikesHided && isCommentsHided && isCommentLikesHided
+        const isAllEntitiesForUserHided = isSessionsDeleted && isPostsHided && isPostsLikesHided && isCommentsHided && isCommentLikesHided
 
         if (isAllEntitiesForUserHided) {
             return true

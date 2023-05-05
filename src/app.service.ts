@@ -6,7 +6,7 @@ import { Post } from './blogs/domain/posts/PostsSchema'
 import { PostModelType } from './blogs/domain/posts/PostsTypes'
 import { Blog } from './blogs/domain/blogs/BlogsSchema'
 import { BlogModelType } from './blogs/domain/blogs/BlogsTypes'
-import { Comment } from './blogs/domain/comments/commentsSchema'
+import { Comment } from './blogs/domain/comments/CommentsSchema'
 import { CommentModelType } from './blogs/domain/comments/CommentTypes'
 
 @Injectable()

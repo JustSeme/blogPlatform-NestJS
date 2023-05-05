@@ -3,11 +3,11 @@ import {
     Injectable, NotImplementedException
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose/dist'
-import { PostDocument } from './PostsTypes'
 import { Post } from '../../domain/posts/PostsSchema'
 import {
     ExtendedLikeObjectType, PostDBModel, PostModelType
 } from '../../domain/posts/PostsTypes'
+import { HydratedPost } from './PostsTypes'
 
 @Injectable()
 export class PostsRepository {
@@ -31,6 +31,10 @@ export class PostsRepository {
         await this.PostModel.create(createdPost)
     }
 
+    async save(post: HydratedPost) {
+        return post.save()
+    }
+
     async updatePost(id: string, body: PostInputModel) {
         const result = await this.PostModel.updateOne({ id: id }, {
             $set: {
@@ -40,21 +44,21 @@ export class PostsRepository {
         return result.matchedCount === 1
     }
 
-    async createLike(likeData: ExtendedLikeObjectType, likedPost: PostDocument) {
+    async createLike(likeData: ExtendedLikeObjectType, likedPost: HydratedPost) {
         likedPost.extendedLikesInfo.likes.push(likeData)
 
-        await likedPost.save()
+        await this.save(likedPost)
         return true
     }
 
-    async createDislike(likeData: ExtendedLikeObjectType, dislikedPost: PostDocument) {
+    async createDislike(likeData: ExtendedLikeObjectType, dislikedPost: HydratedPost) {
         dislikedPost.extendedLikesInfo.dislikes.push(likeData)
 
-        await dislikedPost.save()
+        await this.save(dislikedPost)
         return true
     }
 
-    async setNone(editablePost: PostDocument, likeIndex: number, dislikeIndex: number) {
+    async setNone(editablePost: HydratedPost, likeIndex: number, dislikeIndex: number) {
         if (likeIndex > -1) {
             const noneData = editablePost.extendedLikesInfo.likes.splice(likeIndex, 1)[0]
             editablePost.extendedLikesInfo.noneEntities.push(noneData)
@@ -65,11 +69,11 @@ export class PostsRepository {
             editablePost.extendedLikesInfo.noneEntities.push(noneData)
         }
 
-        await editablePost.save()
+        await this.save(editablePost)
         return true
     }
 
-    async updateToLike(updatablePost: PostDocument, dislikeIndex: number, noneIndex: number) {
+    async updateToLike(updatablePost: HydratedPost, dislikeIndex: number, noneIndex: number) {
         if (noneIndex > -1) {
             const likeData = updatablePost.extendedLikesInfo.noneEntities.splice(noneIndex, 1)[0]
             updatablePost.extendedLikesInfo.likes.push(likeData)
@@ -80,11 +84,11 @@ export class PostsRepository {
             updatablePost.extendedLikesInfo.likes.push(likeData)
         }
 
-        await updatablePost.save()
+        await this.save(updatablePost)
         return true
     }
 
-    async updateToDislike(updatablePost: PostDocument, likeIndex: number, noneIndex: number) {
+    async updateToDislike(updatablePost: HydratedPost, likeIndex: number, noneIndex: number) {
         if (noneIndex > -1) {
             const dislikeData = updatablePost.extendedLikesInfo.noneEntities.splice(noneIndex, 1)[0]
             updatablePost.extendedLikesInfo.dislikes.push(dislikeData)
@@ -95,7 +99,7 @@ export class PostsRepository {
             updatablePost.extendedLikesInfo.dislikes.push(dislikeData)
         }
 
-        await updatablePost.save()
+        await this.save(updatablePost)
         return true
     }
 
@@ -106,22 +110,15 @@ export class PostsRepository {
 
     async hideAllLikeEntitiesForPostsByUserId(userId) {
         try {
-            const postModels = await this.PostModel.find({})
-            postModels.forEach((post) => {
-                post.extendedLikesInfo.dislikes.forEach(async (dislike) => {
-                    if (dislike.userId === userId) {
-                        dislike.isBanned = true
-                        await post.save()
-                    }
-                })
+            await this.PostModel.updateMany(
+                { "extendedLikesInfo.dislikes.userId": userId },
+                { "$set": { "extendedLikesInfo.dislikes.$.isBanned": true } },
+            )
 
-                post.extendedLikesInfo.likes.forEach(async (like) => {
-                    if (like.userId === userId) {
-                        like.isBanned = true
-                        await post.save()
-                    }
-                })
-            })
+            await this.PostModel.updateMany(
+                { "extendedLikesInfo.likes.userId": userId },
+                { "$set": { "extendedLikesInfo.likes.$.isBanned": true } },
+            )
             return true
         }
         catch (err) {

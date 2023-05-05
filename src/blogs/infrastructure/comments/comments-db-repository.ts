@@ -2,10 +2,11 @@ import {
     Injectable, NotImplementedException
 } from "@nestjs/common"
 import { InjectModel } from "@nestjs/mongoose"
-import { Comment } from "../../domain/comments/commentsSchema"
+import { Comment } from "../../domain/comments/CommentsSchema"
 import {
     CommentDBModel, CommentModelType, LikeObjectType
 } from "../../domain/comments/CommentTypes"
+import { HydratedComment } from "./PostsTypes"
 
 @Injectable()
 export class CommentsRepository {
@@ -74,6 +75,10 @@ export class CommentsRepository {
         }
     }
 
+    async save(comment: HydratedComment) {
+        return comment.save()
+    }
+
     async isCommentExists(commentId: string): Promise<boolean> {
         const commentById = await this.CommentModel.findOne({ id: commentId })
         return commentById ? true : false
@@ -86,24 +91,17 @@ export class CommentsRepository {
 
     async hideAllLikeEntitiesForCommentsByUserId(userId: string): Promise<boolean> {
         try {
-            const commentModels = await this.CommentModel.find({})
-            commentModels.forEach((comment) => {
-                comment.likesInfo.dislikes.forEach(async (dislike) => {
-                    if (dislike.userId === userId) {
-                        dislike.isBanned = true
-                        await comment.save()
-                    }
-                })
-
-                comment.likesInfo.likes.forEach(async (like) => {
-                    if (like.userId === userId) {
-                        like.isBanned = true
-                        await comment.save()
-                    }
-                })
-            })
+            await this.CommentModel.updateMany(
+                { "likesInfo.likes.userId": userId },
+                { "$set": { "likesInfo.likes.$.isBanned": true } },
+            )
+            await this.CommentModel.updateMany(
+                { "likesInfo.dislikes.userId": userId },
+                { "$set": { "likesInfo.dislikes.$.isBanned": true } },
+            )
             return true
         } catch (err) {
+            console.dir('hideLikeEntities for comment is not implimented by error', err)
             throw new NotImplementedException(`hideLikeEntities for comment is not implimented by error: ${err}`)
         }
 

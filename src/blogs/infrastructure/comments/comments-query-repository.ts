@@ -1,6 +1,6 @@
 import { InjectModel } from "@nestjs/mongoose"
 import { CommentViewModel } from "../../application/dto/CommentViewModel"
-import { Comment } from "../../domain/comments/commentsSchema"
+import { Comment } from "../../domain/comments/CommentsSchema"
 import { CommentModelType } from "../../domain/comments/CommentTypes"
 import { ReadCommentsQueryParams } from "../../api/models/ReadCommentsQuery"
 

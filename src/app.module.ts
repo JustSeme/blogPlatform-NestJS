@@ -16,7 +16,7 @@ import {
 } from "./blogs/domain/posts/PostsSchema"
 import {
   Comment, CommentsSchema
-} from "./blogs/domain/comments/commentsSchema"
+} from "./blogs/domain/comments/CommentsSchema"
 import {
   DeviceAuthSession, DeviceAuthSessionsSchema
 } from "./security/domain/DeviceAuthSessionSchema"
