@@ -41,7 +41,9 @@ export class SuperAdminUsersController {
     }
 
     @Get()
-    async getUsers(@Query() usersQueryInputModel: ReadUsersQuery): Promise<UsersWithQueryOutputModel> {
+    async getUsers(
+        @Query() usersQueryInputModel: ReadUsersQuery
+    ): Promise<UsersWithQueryOutputModel> {
         const findedUsers = await this.usersQueryRepository.findUsers(usersQueryInputModel)
 
         return findedUsers

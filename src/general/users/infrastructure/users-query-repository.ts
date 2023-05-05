@@ -1,5 +1,7 @@
 import { Injectable } from "@nestjs/common"
-import { ReadUsersQuery } from "../../../SuperAdmin/api/models/ReadUsersQuery"
+import {
+    BanStatusEnum, ReadUsersQuery
+} from "../../../SuperAdmin/api/models/ReadUsersQuery"
 import {
     UserViewModelType, UsersWithQueryOutputModel
 } from "../../../SuperAdmin/application/dto/UsersViewModel"
@@ -15,7 +17,7 @@ export class UsersQueryRepository {
 
     async findUsers(queryParams: ReadUsersQuery): Promise<UsersWithQueryOutputModel> {
         const {
-            sortDirection = 'desc', sortBy = 'createdAt', pageNumber = 1, pageSize = 10, searchLoginTerm = null, searchEmailTerm = null
+            sortDirection = 'desc', sortBy = 'createdAt', pageNumber = 1, pageSize = 10, searchLoginTerm = null, searchEmailTerm = null, banStatus = 'all'
         } = queryParams
 
         const filterArray: any = []
@@ -32,6 +34,11 @@ export class UsersQueryRepository {
                     $regex: searchLoginTerm, $options: 'i'
                 }
             })
+        }
+        if (banStatus === BanStatusEnum.banned) {
+            filterArray.push({ 'banInfo.isBanned': true })
+        } else if (banStatus === BanStatusEnum.notBanned) {
+            filterArray.push({ 'banInfo.isBanned': false })
         }
 
         const filterObject = filterArray.length ? { $or: filterArray } : {}

@@ -128,7 +128,7 @@ describe('blogger-blogs', () => {
         expect(createdBlogData.body.name).toEqual(correctBlogInputModel.name)
         expect(createdBlogData.body.description).toEqual(correctBlogInputModel.description)
         expect(createdBlogData.body.websiteUrl).toEqual(correctBlogInputModel.websiteUrl)
-        expect(createdBlogData.body.creatorId).toBe(undefined)
+        expect(createdBlogData.body.blogOwnerInfo).toBe(undefined)
 
         createdBlogId = createdBlogData.body.id
     })
@@ -144,7 +144,7 @@ describe('blogger-blogs', () => {
         expect(createdBlogData.body.name).toEqual(correctBlogInputModel.name)
         expect(createdBlogData.body.description).toEqual(correctBlogInputModel.description)
         expect(createdBlogData.body.websiteUrl).toEqual(correctBlogInputModel.websiteUrl)
-        expect(createdBlogData.body.creatorId).toBe(undefined)
+        expect(createdBlogData.body.blogOwnerInfo).toBe(undefined)
 
         createdBlogIdByAnotherUser = createdBlogData.body.id
     })
@@ -166,6 +166,7 @@ describe('blogger-blogs', () => {
         expect(blogsData.body.items[0].name).toEqual(correctBlogInputModel.name)
         expect(blogsData.body.items[0].description).toEqual(correctBlogInputModel.description)
         expect(blogsData.body.items[0].websiteUrl).toEqual(correctBlogInputModel.websiteUrl)
+        expect(blogsData.body.items[0].blogOwnerInfo).toEqual(undefined)
     })
 
     it('blogger shouldn\'t update blog if that is not him own, should display old data', async () => {
@@ -183,6 +184,7 @@ describe('blogger-blogs', () => {
         expect(blogsData.body.items[0].name).toEqual(correctBlogInputModel.name)
         expect(blogsData.body.items[0].description).toEqual(correctBlogInputModel.description)
         expect(blogsData.body.items[0].websiteUrl).toEqual(correctBlogInputModel.websiteUrl)
+        expect(blogsData.body.items[0].blogOwnerInfo).toEqual(undefined)
     })
 
     it('blogger shouldn\'t update blog without bearer auth token, should display old data', async () => {
@@ -199,6 +201,7 @@ describe('blogger-blogs', () => {
         expect(blogsData.body.items[0].name).toEqual(correctBlogInputModel.name)
         expect(blogsData.body.items[0].description).toEqual(correctBlogInputModel.description)
         expect(blogsData.body.items[0].websiteUrl).toEqual(correctBlogInputModel.websiteUrl)
+        expect(blogsData.body.items[0].blogOwnerInfo).toEqual(undefined)
     })
 
     it('blogger shouldn\'t update blog with incorrect input data, should display old data', async () => {

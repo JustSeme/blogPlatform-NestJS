@@ -30,12 +30,14 @@ import { PostInputModelWithoutBlogId } from "../../blogs/api/models/PostInputMod
 import { UpdatePostForBloggerCommand } from "../application/use-cases/posts/update-post-for-blogger.use-case"
 import { IsPostExistsPipe } from "../../blogs/api/pipes/isPostExists.validation.pipe"
 import { DeletePostForBloggerCommand } from "../application/use-cases/posts/delete-post-for-blogger.use-case"
+import { BlogsService } from "../../blogs/application/blogs-service"
 
 @UseGuards(JwtAuthGuard)
 @Controller('blogger/blogs')
 export class BloggerBlogsController {
     constructor(
         private blogsQueryRepository: BlogsQueryRepository,
+        private blogsService: BlogsService,
         private commandBus: CommandBus,
     ) { }
 
@@ -56,7 +58,11 @@ export class BloggerBlogsController {
         @Query() blogsQueryParams: ReadBlogsQueryParams,
         @CurrentUserId() userId: string,
     ): Promise<BlogsWithQueryOutputModel> {
-        return this.blogsQueryRepository.findBlogs(blogsQueryParams, userId)
+        const blogsQueryData = await this.blogsQueryRepository.findBlogs(blogsQueryParams, userId)
+
+        blogsQueryData.items = this.blogsService.prepareBlogForDisplay(blogsQueryData.items)
+
+        return blogsQueryData
     }
 
     @HttpCode(HttpStatus.NO_CONTENT)
