@@ -35,7 +35,7 @@ export class BlogsQueryRepository {
         const skipCount = (+pageNumber - 1) * +pageSize
         const sortDirectionNumber = sortDirection === 'asc' ? 1 : -1
         const resultedBlogs = await this.BlogsModel.find(filter, {
-            _id: 0, __v: 0
+            _id: 0, blogOwnerInfo: 0, __v: 0
         }).skip(skipCount).limit(+pageSize).sort({ [sortBy]: sortDirectionNumber }).lean()
 
 
@@ -51,7 +51,7 @@ export class BlogsQueryRepository {
 
     async findBlogById(id: string): Promise<BlogViewModel | null> {
         return this.BlogsModel.findOne({ id: id }, {
-            _id: 0, creatorId: 0, __v: 0
+            _id: 0, blogOwnerInfo: 0, __v: 0
         }).lean()
     }
 }
