@@ -17,7 +17,7 @@ export class PostsQueryRepository {
             sortDirection = 'desc', sortBy = 'createdAt', pageNumber = 1, pageSize = 10
         } = queryParams
 
-        const filter: any = {}
+        const filter: any = { isBanned: false }
         if (blogId) {
             filter.blogId = blogId
         }
@@ -41,6 +41,8 @@ export class PostsQueryRepository {
     }
 
     async getPostById(postId: string): Promise<PostDBModel> {
-        return await this.PostModel.findOne({ id: postId }).lean()
+        return await this.PostModel.findOne({ $and: [{ id: postId }, { isBanned: false }] }, {
+            _id: 0, __v: 0
+        }).lean()
     }
 }

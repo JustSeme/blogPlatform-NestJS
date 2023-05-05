@@ -37,36 +37,26 @@ export class PostsService {
             userId = jwtResult ? jwtResult.userId : null
         }
 
-        const convertedPosts: PostsViewModel[] = []
-        postsArray.forEach((post: PostDBModel) => {
-            if (post.isBanned) {
-                return
-            }
-
+        const convertedPosts = postsArray.map((post: PostDBModel) => {
             const likesInfoData = post.extendedLikesInfo
 
-            const likesInfoDataWithoutBannedEntities = {
-                likes: [],
-                dislikes: []
-            }
+            likesInfoData.likes = likesInfoData.likes.filter((like) => !like.isBanned)
 
-            likesInfoDataWithoutBannedEntities.likes = likesInfoData.likes.filter((like) => !like.isBanned)
-
-            likesInfoDataWithoutBannedEntities.dislikes = likesInfoData.dislikes.filter((dislike) => !dislike.isBanned)
+            likesInfoData.dislikes = likesInfoData.dislikes.filter((dislike) => !dislike.isBanned)
 
             let myStatus: LikeType = 'None'
 
             // check that post was liked current user
-            if (likesInfoDataWithoutBannedEntities.likes.some((el: ExtendedLikeObjectType) => el.userId === userId)) {
+            if (likesInfoData.likes.some((el: ExtendedLikeObjectType) => el.userId === userId)) {
                 myStatus = 'Like'
             }
 
             //check that post was disliked current user
-            if (likesInfoDataWithoutBannedEntities.dislikes.some((el: ExtendedLikeObjectType) => el.userId === userId)) {
+            if (likesInfoData.dislikes.some((el: ExtendedLikeObjectType) => el.userId === userId)) {
                 myStatus = 'Dislike'
             }
 
-            const last3Likes = likesInfoDataWithoutBannedEntities.likes.sort((like1, like2) => {
+            const last3Likes = likesInfoData.likes.sort((like1, like2) => {
                 if (like1.createdAt > like2.createdAt) {
                     return -1
                 } else {
@@ -85,13 +75,13 @@ export class PostsService {
             const convertedPost: PostsViewModel = this.transformPostWithDefaultLikesInfo(post)
 
             convertedPost.extendedLikesInfo = {
-                likesCount: likesInfoDataWithoutBannedEntities.likes.length,
-                dislikesCount: likesInfoDataWithoutBannedEntities.dislikes.length,
+                likesCount: likesInfoData.likes.length,
+                dislikesCount: likesInfoData.dislikes.length,
                 myStatus: myStatus,
                 newestLikes: newest3Likes
             }
 
-            convertedPosts.push(convertedPost)
+            return convertedPost
         })
 
         return convertedPosts

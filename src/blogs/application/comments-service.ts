@@ -33,11 +33,7 @@ export class CommentsService {
             userId = jwtResult ? jwtResult.userId : null
         }
 
-        const convertedComments = []
-        commentsArray.forEach((comment: CommentDBModel) => {
-            if (comment.isBanned) {
-                return
-            }
+        const convertedComments = commentsArray.map((comment: CommentDBModel) => {
             const likesInfoData = comment.likesInfo
 
             likesInfoData.likes = likesInfoData.likes.filter((like) => !like.isBanned)
@@ -65,7 +61,7 @@ export class CommentsService {
                 myStatus: myStatus
             }
 
-            convertedComments.push(convertedComment)
+            return convertedComment
         })
 
         return convertedComments

@@ -43,7 +43,10 @@ export class PostsController {
     ) { }
 
     @Get()
-    async getPosts(@Query() query: ReadPostsQueryParams, @Headers('Authorization') authorizationHeader: string,): Promise<PostsWithQueryOutputModel> {
+    async getPosts(
+        @Query() query: ReadPostsQueryParams,
+        @Headers('Authorization') authorizationHeader: string,
+    ): Promise<PostsWithQueryOutputModel> {
         const accessToken = authorizationHeader ? authorizationHeader.split(' ')[1] : null
         const postsWithQueryData = await this.postsQueryRepository.findPosts(query, null)
 
@@ -62,12 +65,13 @@ export class PostsController {
     @Get(':postId')
     async getPostById(@Param('postId', IsPostExistsPipe) postId: string, @Headers('Authorization') authorizationHeader: string,): Promise<PostsViewModel> {
         const accessToken = authorizationHeader ? authorizationHeader.split(' ')[1] : null
-        const findedPost = await this.postsQueryRepository.getPostById(postId)
 
-        const displayedPost = await this.postsService.transformPostsForDisplay([findedPost], accessToken)
-        if (!displayedPost.length) {
+        const findedPost = await this.postsQueryRepository.getPostById(postId)
+        if (!findedPost) {
             throw new NotFoundException('The creator of this post is banned')
         }
+
+        const displayedPost = await this.postsService.transformPostsForDisplay([findedPost], accessToken)
 
         return displayedPost[0]
     }

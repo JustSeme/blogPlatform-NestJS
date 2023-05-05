@@ -13,7 +13,10 @@ export class CommentsQueryRepository {
             sortDirection = 'desc', sortBy = 'createdAt', pageNumber = 1, pageSize = 10
         } = queryParams
 
-        const filter: any = { postId: postId }
+        const filter: any = {
+            postId: postId,
+            isBanned: false
+        }
 
         const totalCount = await this.CommentModel.count(filter)
         const pagesCount = Math.ceil(totalCount / +pageSize)
@@ -35,7 +38,7 @@ export class CommentsQueryRepository {
     }
 
     async findCommentById(commentId: string): Promise<CommentViewModel> {
-        return this.CommentModel.findOne({ id: commentId }, {
+        return this.CommentModel.findOne({ $and: [{ id: commentId }, { isBanned: false }] }, {
             _id: 0, postId: 0, __v: 0
         }).lean()
     }

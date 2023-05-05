@@ -31,13 +31,10 @@ export class CommentsController {
 
         const findedComment = await this.commentsQueryRepository.findCommentById(commentId)
         if (!findedComment) {
-            throw new NotFoundException(generateErrorsMessages('Comment by commentId paramether is not found', 'commentId'))
+            throw new NotFoundException(generateErrorsMessages('Creator of this comment is banned', 'commentId'))
         }
 
         const displayedComment = await this.commentsService.transformCommentsForDisplay([findedComment], accessToken)
-        if (!displayedComment.length) {
-            throw new NotFoundException('The creator of this comment is banned')
-        }
 
         return displayedComment[0]
     }
@@ -45,18 +42,14 @@ export class CommentsController {
     @UseGuards(JwtAuthGuard)
     @Delete(':commentId')
     @HttpCode(HttpStatus.NO_CONTENT)
-    async deleteComment(@Param('commentId', IsCommentExistsPipe) commentId: string, @CurrentUserId() userId: string): Promise<void> {
-        const commentByCommentId = await this.commentsQueryRepository.findCommentById(commentId)
-        if (commentByCommentId.commentatorInfo.userId !== userId) {
-            throw new ForbiddenException(generateErrorsMessages('That is not your own', 'commentId'))
-        }
-
-        const isDeleted = await this.commandBus.execute(
-            new DeleteCommentCommand(commentId)
+    async deleteComment(
+        @Param('commentId', IsCommentExistsPipe)
+        commentId: string,
+        @CurrentUserId() userId: string
+    ): Promise<void> {
+        await this.commandBus.execute(
+            new DeleteCommentCommand(commentId, userId)
         )
-        if (!isDeleted) {
-            throw new NotFoundException(generateErrorsMessages('Comment by commentId paramether is not found', 'commentId'))
-        }
     }
 
     @UseGuards(JwtAuthGuard)
