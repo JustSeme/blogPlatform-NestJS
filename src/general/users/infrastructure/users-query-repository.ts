@@ -1,7 +1,5 @@
 import { Injectable } from "@nestjs/common"
-import {
-    BanStatusEnum, ReadUsersQuery
-} from "../../../SuperAdmin/api/models/ReadUsersQuery"
+import { ReadUsersQuery } from "../../../SuperAdmin/api/models/ReadUsersQuery"
 import {
     UserViewModelType, UsersWithQueryOutputModel
 } from "../../../SuperAdmin/application/dto/UsersViewModel"
@@ -35,9 +33,9 @@ export class UsersQueryRepository {
                 }
             })
         }
-        if (banStatus === BanStatusEnum.banned) {
+        if (banStatus === 'banned') {
             filterArray.push({ 'banInfo.isBanned': true })
-        } else if (banStatus === BanStatusEnum.notBanned) {
+        } else if (banStatus === 'notBanned') {
             filterArray.push({ 'banInfo.isBanned': false })
         }
 

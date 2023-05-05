@@ -38,6 +38,8 @@ export class BlogsQueryRepository {
             _id: 0, __v: 0
         }).skip(skipCount).limit(+pageSize).sort({ [sortBy]: sortDirectionNumber }).lean()
 
+
+
         return {
             pagesCount: pagesCount,
             page: +pageNumber,
