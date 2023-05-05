@@ -567,9 +567,43 @@ describe('super-admin-users', () => {
     })
 
     it('user should login if he is unbanned', async () => {
-        await request(httpServer)
+        const accessTokenData = await request(httpServer)
             .post('/auth/login')
             .send(loginInputData)
             .expect(HttpStatus.OK)
+
+        recievedAccessToken = accessTokenData.body.accessToken
+    })
+
+    it('should display the post and comment of the unbanned user', async () => {
+        const postData = await request(httpServer)
+            .get(`/posts/${createdPostId}`)
+            .expect(HttpStatus.OK)
+
+        expect(postData.body.content).toEqual(correctPostInputModel.content)
+        expect(postData.body.title).toEqual(correctPostInputModel.title)
+        expect(postData.body.shortDescription).toEqual(correctPostInputModel.shortDescription)
+
+        const commentData = await request(httpServer)
+            .get(`/comments/${createdCommentId}`)
+            .expect(HttpStatus.OK)
+
+        expect(commentData.body.content).toEqual(correctCommentBody.content)
+    })
+
+    it('should display likes/dislikes of the unbanned user', async () => {
+        const commentsData = await request(httpServer)
+            .get(`/posts/${secondPostId}/comments`)
+            .set('Authorization', `Bearer ${recievedAccessToken}`)
+            .expect(HttpStatus.OK)
+
+        expect(commentsData.body.items[0].likesInfo.likesCount).toEqual(1)
+
+        const postData = await request(httpServer)
+            .get(`/posts/${secondPostId}`)
+            .set('Authorization', `Bearer ${recievedAccessToken}`)
+            .expect(HttpStatus.OK)
+
+        expect(postData.body.extendedLikesInfo.dislikesCount).toEqual(1)
     })
 });

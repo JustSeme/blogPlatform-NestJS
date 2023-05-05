@@ -89,6 +89,11 @@ export class CommentsRepository {
         return result.upsertedCount > 0 ? true : false
     }
 
+    async unHideAllCommentsForCurrentUser(userId: string): Promise<boolean> {
+        const result = await this.CommentModel.updateMany({ "commentatorInfo.userId": userId }, { $set: { isBanned: false } })
+        return result.upsertedCount > 0 ? true : false
+    }
+
     async hideAllLikeEntitiesForCommentsByUserId(userId: string): Promise<boolean> {
         try {
             await this.CommentModel.updateMany(
@@ -104,6 +109,22 @@ export class CommentsRepository {
             console.dir('hideLikeEntities for comment is not implimented by error', err)
             throw new NotImplementedException(`hideLikeEntities for comment is not implimented by error: ${err}`)
         }
+    }
 
+    async unHideAllLikeEntitiesForCommentsByUserId(userId: string): Promise<boolean> {
+        try {
+            await this.CommentModel.updateMany(
+                { "likesInfo.likes.userId": userId },
+                { "$set": { "likesInfo.likes.$.isBanned": false } },
+            )
+            await this.CommentModel.updateMany(
+                { "likesInfo.dislikes.userId": userId },
+                { "$set": { "likesInfo.dislikes.$.isBanned": false } },
+            )
+            return true
+        } catch (err) {
+            console.dir('hideLikeEntities for comment is not implimented by error', err)
+            throw new NotImplementedException(`unHideLikeEntities for comment is not implimented by error: ${err}`)
+        }
     }
 }

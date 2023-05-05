@@ -27,6 +27,11 @@ export class PostsRepository {
         return result.upsertedCount > 0 ? true : false
     }
 
+    async unHideAllPostsForCurrentUser(userId: string): Promise<boolean> {
+        const result = await this.PostModel.updateMany({ "postOwnerInfo.userId": userId }, { $set: { isBanned: false } })
+        return result.upsertedCount > 0 ? true : false
+    }
+
     async createPost(createdPost: PostDBModel) {
         await this.PostModel.create(createdPost)
     }
@@ -123,6 +128,24 @@ export class PostsRepository {
         }
         catch (err) {
             throw new NotImplementedException(`hideLikeEntities for post is not implemented by error: ${err}`)
+        }
+    }
+
+    async unHideAllLikeEntitiesForPostsByUserId(userId) {
+        try {
+            await this.PostModel.updateMany(
+                { "extendedLikesInfo.dislikes.userId": userId },
+                { "$set": { "extendedLikesInfo.dislikes.$.isBanned": false } },
+            )
+
+            await this.PostModel.updateMany(
+                { "extendedLikesInfo.likes.userId": userId },
+                { "$set": { "extendedLikesInfo.likes.$.isBanned": false } },
+            )
+            return true
+        }
+        catch (err) {
+            throw new NotImplementedException(`unHideLikeEntities for post is not implemented by error: ${err}`)
         }
     }
 }
