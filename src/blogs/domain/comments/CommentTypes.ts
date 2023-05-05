@@ -1,6 +1,6 @@
 import { Model } from 'mongoose'
 import { v4 as uuidv4 } from 'uuid'
-import { CommentEntity } from './CommentsSchema'
+import { CommentEntity } from './Comments.schema'
 
 export class CommentDBModel {
     public id: string

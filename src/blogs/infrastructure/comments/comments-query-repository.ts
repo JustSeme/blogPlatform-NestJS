@@ -2,7 +2,7 @@ import { InjectModel } from "@nestjs/mongoose"
 import { CommentViewModel } from "../../application/dto/CommentViewModel"
 import { CommentModelType } from "../../domain/comments/CommentTypes"
 import { ReadCommentsQueryParams } from "../../api/models/ReadCommentsQuery"
-import { CommentEntity } from "../../domain/comments/CommentsSchema"
+import { CommentEntity } from "../../domain/comments/Comments.schema"
 
 export class CommentsQueryRepository {
     constructor(

@@ -6,7 +6,7 @@ import {
     CommentDBModel, CommentModelType, LikeObjectType
 } from "../../domain/comments/CommentTypes"
 import { HydratedComment } from "./PostsTypes"
-import { CommentEntity } from "../../domain/comments/CommentsSchema"
+import { CommentEntity } from "../../domain/comments/Comments.schema"
 
 @Injectable()
 export class CommentsRepository {

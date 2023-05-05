@@ -9,7 +9,7 @@ import { BlogModelType } from './blogs/domain/blogs/BlogsTypes'
 import { CommentModelType } from './blogs/domain/comments/CommentTypes'
 import { Attempt } from './security/domain/AttemptsSchema'
 import { AttemptModelType } from './security/domain/AttemptsType'
-import { CommentEntity } from './blogs/domain/comments/CommentsSchema'
+import { CommentEntity } from './blogs/domain/comments/Comments.schema'
 
 @Injectable()
 export class AppService {

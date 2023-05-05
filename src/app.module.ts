@@ -97,7 +97,7 @@ import { DeleteDeviceUseCase } from "./security/application/use-cases/delete-dev
 import { GetActiveDevicesUseCase } from "./security/application/use-cases/get-active-devices-for-user.use-case"
 import {
   CommentEntity, CommentsSchema
-} from "./blogs/domain/comments/CommentsSchema"
+} from "./blogs/domain/comments/Comments.schema"
 
 const authUseCases = [
   LogoutUseCase,
