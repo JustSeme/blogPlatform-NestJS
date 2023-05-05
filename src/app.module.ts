@@ -98,6 +98,7 @@ import { GetActiveDevicesUseCase } from "./security/application/use-cases/get-ac
 import {
   CommentEntity, CommentsSchema
 } from "./blogs/domain/comments/Comments.schema"
+import { UsersService } from "./general/users/users.service"
 
 const authUseCases = [
   LogoutUseCase,
@@ -151,6 +152,7 @@ const services = [
   PostsService,
   CommentsService,
   SecurityService,
+  UsersService,
 ]
 
 const adapters = [

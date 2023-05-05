@@ -1,13 +1,9 @@
 import { Injectable } from "@nestjs/common"
 import { ReadUsersQuery } from "../../../SuperAdmin/api/models/ReadUsersQuery"
-import {
-    UserViewModelType, UsersWithQueryOutputModel
-} from "../../../SuperAdmin/application/dto/UsersViewModel"
+import { UsersWithQueryOutputModel } from "../../../SuperAdmin/application/dto/UsersViewModel"
 import { InjectModel } from "@nestjs/mongoose/dist"
 import { User } from "../domain/UsersSchema"
-import {
-    UserDTO, UserModelType
-} from "../domain/UsersTypes"
+import { UserModelType } from "../domain/UsersTypes"
 
 @Injectable()
 export class UsersQueryRepository {
@@ -47,31 +43,15 @@ export class UsersQueryRepository {
         const skipCount = (+pageNumber - 1) * +pageSize
         const sortDirectionNumber = sortDirection === 'asc' ? 1 : -1
 
-        const resultedUsers = await this.UserModel.find(filterObject).skip(skipCount).limit(+pageSize).sort({ [sortBy]: sortDirectionNumber }).lean()
-
-        const displayedUsers = this.prepareUsersForDisplay(resultedUsers)
+        const resultedUsers = await this.UserModel.find(filterObject, { 'banInfo._id': 0 }).skip(skipCount).limit(+pageSize).sort({ [sortBy]: sortDirectionNumber }).lean()
 
         return {
             pagesCount: pagesCount,
             page: +pageNumber,
             pageSize: +pageSize,
             totalCount: totalCount,
-            items: displayedUsers
+            items: resultedUsers
         }
-    }
-
-    private prepareUsersForDisplay(resultedUsers: UserDTO[]): UserViewModelType[] {
-        return resultedUsers.map(el => ({
-            id: el.id,
-            login: el.login,
-            email: el.email,
-            createdAt: el.createdAt,
-            banInfo: {
-                isBanned: el.banInfo.isBanned,
-                banDate: el.banInfo.banDate,
-                banReason: el.banInfo.banReason,
-            }
-        }))
     }
 
     async findUserById(userId: string) {

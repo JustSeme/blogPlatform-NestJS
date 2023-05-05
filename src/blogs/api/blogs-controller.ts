@@ -34,28 +34,29 @@ export class BlogsController {
 
     @Get()
     async getBlogs(@Query() blogsQueryParams: ReadBlogsQueryParams): Promise<BlogsWithQueryOutputModel> {
-        const findedBlogs = await this.blogsQueryRepository.findBlogs(blogsQueryParams)
+        const findedBlogsQueryData = await this.blogsQueryRepository.findBlogs(blogsQueryParams)
 
-        if (!findedBlogs.items.length) {
+        findedBlogsQueryData.items = this.blogsService.prepareBlogForDisplay(findedBlogsQueryData.items)
+
+        if (!findedBlogsQueryData.items.length) {
             throw new NotFoundException()
         }
-        return findedBlogs
+        return findedBlogsQueryData
     }
 
     @Get(':blogId')
-    async getBlogById(@Param('blogId') blogId: string): Promise<BlogViewModel> {
+    async getBlogById(
+        @Param('blogId', IsBlogByIdExistPipe) blogId: string
+    ): Promise<BlogViewModel> {
         const findedBlog = await this.blogsQueryRepository.findBlogById(blogId)
 
-        if (!findedBlog) {
-            throw new NotFoundException()
-        }
-        return findedBlog
+        return this.blogsService.prepareBlogForDisplay([findedBlog])[0]
     }
 
     @Get(':blogId/posts')
     async getPostsForBlog(
         @Query() queryParams: ReadPostsQueryParams,
-        @Param('blogId') blogId: string,
+        @Param('blogId', IsBlogByIdExistPipe) blogId: string,
         @Headers('Authorization') authorizationHeader: string,
     ): Promise<PostsWithQueryOutputModel> {
         const accessToken = authorizationHeader ? authorizationHeader.split(' ')[1] : null

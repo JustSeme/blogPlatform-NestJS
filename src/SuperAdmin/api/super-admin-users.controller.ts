@@ -18,12 +18,14 @@ import { IsUserExistPipe } from './pipes/isUserExists.validation.pipe'
 import { BanInputModel } from './models/BanInputModel'
 import { BanUserCommand } from '../application/use-cases/ban-user.use-case'
 import { UnbanUserCommand } from '../application/use-cases/unban-user.use-case'
+import { UsersService } from '../../general/users/users.service'
 
 @UseGuards(BasicAuthGuard)
 @Controller('sa/users')
 export class SuperAdminUsersController {
     constructor(
         protected usersQueryRepository: UsersQueryRepository,
+        protected usersService: UsersService,
         private commandBus: CommandBus,
     ) { }
 
@@ -44,9 +46,11 @@ export class SuperAdminUsersController {
     async getUsers(
         @Query() usersQueryInputModel: ReadUsersQuery
     ): Promise<UsersWithQueryOutputModel> {
-        const findedUsers = await this.usersQueryRepository.findUsers(usersQueryInputModel)
+        const findedUsersQueryData = await this.usersQueryRepository.findUsers(usersQueryInputModel)
 
-        return findedUsers
+        findedUsersQueryData.items = this.usersService.prepareUsersForDisplay(findedUsersQueryData.items)
+
+        return findedUsersQueryData
     }
 
     @Delete(':id')
