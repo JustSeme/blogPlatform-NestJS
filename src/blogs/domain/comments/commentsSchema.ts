@@ -10,7 +10,7 @@ import {
 } from "./LikesInfoSchema"
 
 @Schema()
-export class Comment {
+export class CommentEntity {
     @Prop({ required: true })
     id: string
 
@@ -44,6 +44,6 @@ export class Comment {
     isBanned: boolean
 }
 
-export const CommentsSchema = SchemaFactory.createForClass<CommentDBModel>(Comment)
+export const CommentsSchema = SchemaFactory.createForClass<CommentDBModel>(CommentEntity)
 
 CommentsSchema.methods = {}

@@ -1,12 +1,12 @@
 import { InjectModel } from "@nestjs/mongoose"
 import { CommentViewModel } from "../../application/dto/CommentViewModel"
-import { Comment } from "../../domain/comments/CommentsSchema"
 import { CommentModelType } from "../../domain/comments/CommentTypes"
 import { ReadCommentsQueryParams } from "../../api/models/ReadCommentsQuery"
+import { CommentEntity } from "../../domain/comments/CommentsSchema"
 
 export class CommentsQueryRepository {
     constructor(
-        @InjectModel(Comment.name) protected CommentModel: CommentModelType) { }
+        @InjectModel(CommentEntity.name) protected CommentModel: CommentModelType) { }
 
     async getComments(queryParams: ReadCommentsQueryParams, postId: string): Promise<any> {
         const {

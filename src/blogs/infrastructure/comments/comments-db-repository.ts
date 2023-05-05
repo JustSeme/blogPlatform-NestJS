@@ -2,15 +2,15 @@ import {
     Injectable, NotImplementedException
 } from "@nestjs/common"
 import { InjectModel } from "@nestjs/mongoose"
-import { Comment } from "../../domain/comments/CommentsSchema"
 import {
     CommentDBModel, CommentModelType, LikeObjectType
 } from "../../domain/comments/CommentTypes"
 import { HydratedComment } from "./PostsTypes"
+import { CommentEntity } from "../../domain/comments/CommentsSchema"
 
 @Injectable()
 export class CommentsRepository {
-    constructor(@InjectModel(Comment.name) protected CommentModel: CommentModelType) { }
+    constructor(@InjectModel(CommentEntity.name) protected CommentModel: CommentModelType) { }
 
     async createComment(createdComment: CommentDBModel) {
         await this.CommentModel.create(createdComment)

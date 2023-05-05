@@ -15,9 +15,6 @@ import {
   Post, PostSchema
 } from "./blogs/domain/posts/PostsSchema"
 import {
-  Comment, CommentsSchema
-} from "./blogs/domain/comments/CommentsSchema"
-import {
   DeviceAuthSession, DeviceAuthSessionsSchema
 } from "./security/domain/DeviceAuthSessionSchema"
 import { PassportModule } from "@nestjs/passport"
@@ -98,6 +95,9 @@ import { UnbanUserUseCase } from "./SuperAdmin/application/use-cases/unban-user.
 import { RemoveAllSessionsExcludeCurrentUseCase } from "./security/application/use-cases/remove-all-sessions-exclude-current.use-case"
 import { DeleteDeviceUseCase } from "./security/application/use-cases/delete-device.use-case"
 import { GetActiveDevicesUseCase } from "./security/application/use-cases/get-active-devices-for-user.use-case"
+import {
+  CommentEntity, CommentsSchema
+} from "./blogs/domain/comments/CommentsSchema"
 
 const authUseCases = [
   LogoutUseCase,
@@ -229,7 +229,7 @@ const controllers = [
         schema: PostSchema
       },
       {
-        name: Comment.name,
+        name: CommentEntity.name,
         schema: CommentsSchema
       },
 

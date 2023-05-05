@@ -1,4 +1,4 @@
 import { HydratedDocument } from "mongoose"
-import { Comment } from '../../domain/comments/CommentsSchema'
+import { CommentEntity } from "../../domain/comments/CommentsSchema"
 
-export type HydratedComment = HydratedDocument<Comment>
+export type HydratedComment = HydratedDocument<CommentEntity>
