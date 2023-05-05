@@ -81,7 +81,7 @@ export class BlogsRepository {
         const skipCount = (+pageNumber - 1) * +pageSize
         const sortDirectionNumber = sortDirection === 'asc' ? 1 : -1
         const resultedBlogs = await this.BlogsModel.find(filter, {
-            _id: 0, __v: 0
+            _id: 0, 'blogOwnerInfo._id': 0, __v: 0
         }).skip(skipCount).limit(+pageSize).sort({ [sortBy]: sortDirectionNumber }).lean()
 
         return {
