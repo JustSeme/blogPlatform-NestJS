@@ -101,6 +101,7 @@ import {
 import { UsersService } from "./general/users/users.service"
 import { GetBlogsUseCase } from "./blogs/application/use-cases/blogs/get-blogs.use-case"
 import { GetBlogByIdUseCase } from "./blogs/application/use-cases/blogs/get-blog-by-id.use-case"
+import { GetBlogsForBloggerUseCase } from "./Blogger/application/use-cases/blogs/get-blogs-for-blogger.use.case"
 
 const authUseCases = [
   LogoutUseCase,
@@ -134,7 +135,8 @@ const blogsUseCases = [
   BanUserUseCase,
   UnbanUserUseCase,
   GetBlogsUseCase,
-  GetBlogByIdUseCase
+  GetBlogByIdUseCase,
+  GetBlogsForBloggerUseCase
 ]
 
 const securityUseCases = [
