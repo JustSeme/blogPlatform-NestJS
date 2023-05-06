@@ -41,6 +41,6 @@ export class SuperAdminBlogsController {
     async getBlogs(
         @Query() blogsQueryParams: ReadBlogsQueryParams,
     ): Promise<BlogsWithQuerySuperAdminOutputModel> {
-        return this.blogsRepository.findBlogs(blogsQueryParams)
+        return this.blogsRepository.findBlogsForSuperAdmin(blogsQueryParams)
     }
 }

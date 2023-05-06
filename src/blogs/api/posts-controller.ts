@@ -11,7 +11,6 @@ import { PostsService } from "../application/posts-service"
 import { ReadPostsQueryParams } from "./models/ReadPostsQuery"
 import { LikeInputModel } from "./models/LikeInputModel"
 import { PostsViewModel } from "../application/dto/PostViewModel"
-import { BlogsQueryRepository } from '../infrastructure/blogs/blogs-query-repository'
 import { PostsRepository } from '../infrastructure/posts/posts-db-repository'
 import { CurrentUserId } from '../../general/decorators/current-userId.param.decorator'
 import { JwtAuthGuard } from './guards/jwt-auth.guard'
@@ -35,7 +34,6 @@ export class PostsController {
         protected postsService: PostsService,
         protected commentsService: CommentsService,
         protected usersQueryRepository: UsersQueryRepository,
-        protected blogsQueryRepository: BlogsQueryRepository,
         protected postsQueryRepository: PostsQueryRepository,
         protected commentsQueryRepository: CommentsQueryRepository,
         protected postsRepository: PostsRepository,

@@ -8,6 +8,7 @@ import {
 import { BlogDocument } from "./BlogsTypes"
 import { ReadBlogsQueryParams } from "../../api/models/ReadBlogsQuery"
 import { BlogsWithQuerySuperAdminOutputModel } from "../../../SuperAdmin/application/dto/BlogSuperAdminViewModel"
+import { BlogsWithQueryOutputModel } from "../../application/dto/BlogViewModel"
 
 @Injectable()
 export class BlogsRepository {
@@ -56,7 +57,7 @@ export class BlogsRepository {
         await this.save(blogById)
     }
 
-    async findBlogs(queryParams: ReadBlogsQueryParams, creatorId?: string | undefined): Promise<BlogsWithQuerySuperAdminOutputModel> {
+    async findBlogs(queryParams: ReadBlogsQueryParams, creatorId?: string | undefined): Promise<BlogsWithQueryOutputModel> {
         const {
             searchNameTerm = null,
             sortDirection = 'desc',
@@ -72,7 +73,44 @@ export class BlogsRepository {
             }
         }
         if (creatorId) {
-            filter.creatorId = creatorId
+            filter['blogOwnerInfo.userId'] = creatorId
+        }
+
+        const totalCount = await this.BlogsModel.count(filter)
+        const pagesCount = Math.ceil(totalCount / +pageSize)
+
+        const skipCount = (+pageNumber - 1) * +pageSize
+        const sortDirectionNumber = sortDirection === 'asc' ? 1 : -1
+        const resultedBlogs = await this.BlogsModel.find(filter, {
+            _id: 0, 'blogOwnerInfo': 0, banInfo: 0, __v: 0
+        }).skip(skipCount).limit(+pageSize).sort({ [sortBy]: sortDirectionNumber }).lean()
+
+        return {
+            pagesCount: pagesCount,
+            page: +pageNumber,
+            pageSize: +pageSize,
+            totalCount: totalCount,
+            items: resultedBlogs
+        }
+    }
+
+    async findBlogsForSuperAdmin(queryParams: ReadBlogsQueryParams, creatorId?: string | undefined): Promise<BlogsWithQuerySuperAdminOutputModel> {
+        const {
+            searchNameTerm = null,
+            sortDirection = 'desc',
+            sortBy = 'createdAt',
+            pageNumber = 1,
+            pageSize = 10
+        } = queryParams
+
+        const filter: any = {}
+        if (searchNameTerm) {
+            filter.name = {
+                $regex: searchNameTerm, $options: 'i'
+            }
+        }
+        if (creatorId) {
+            filter['blogOwnerInfo.userId'] = creatorId
         }
 
         const totalCount = await this.BlogsModel.count(filter)

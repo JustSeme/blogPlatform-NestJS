@@ -17,7 +17,6 @@ import { CurrentUserId } from "../../general/decorators/current-userId.param.dec
 import {
     BlogViewModel, BlogsWithQueryOutputModel
 } from "../../blogs/application/dto/BlogViewModel"
-import { BlogsQueryRepository } from "../../blogs/infrastructure/blogs/blogs-query-repository"
 import { BlogInputModel } from "../../blogs/api/models/BlogInputModel"
 import { CommandBus } from "@nestjs/cqrs"
 import { CreateBlogForBloggerCommand } from "../application/use-cases/blogs/create-blog-for-blogger.use-case"
@@ -31,12 +30,12 @@ import { UpdatePostForBloggerCommand } from "../application/use-cases/posts/upda
 import { IsPostExistsPipe } from "../../blogs/api/pipes/isPostExists.validation.pipe"
 import { DeletePostForBloggerCommand } from "../application/use-cases/posts/delete-post-for-blogger.use-case"
 import { BlogsService } from "../../blogs/application/blogs-service"
+import { GetBlogsForBloggerCommand } from "../application/use-cases/blogs/get-blogs-for-blogger.use.case"
 
 @UseGuards(JwtAuthGuard)
 @Controller('blogger/blogs')
 export class BloggerBlogsController {
     constructor(
-        private blogsQueryRepository: BlogsQueryRepository,
         private blogsService: BlogsService,
         private commandBus: CommandBus,
     ) { }
@@ -58,11 +57,9 @@ export class BloggerBlogsController {
         @Query() blogsQueryParams: ReadBlogsQueryParams,
         @CurrentUserId() userId: string,
     ): Promise<BlogsWithQueryOutputModel> {
-        const blogsQueryData = await this.blogsQueryRepository.findBlogs(blogsQueryParams, userId)
-
-        blogsQueryData.items = this.blogsService.prepareBlogForDisplay(blogsQueryData.items)
-
-        return blogsQueryData
+        return this.commandBus.execute(
+            new GetBlogsForBloggerCommand(blogsQueryParams, userId)
+        )
     }
 
     @HttpCode(HttpStatus.NO_CONTENT)

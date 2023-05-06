@@ -1,7 +1,6 @@
 import { BlogInputModel } from "./models/BlogInputModel"
 import { BlogViewModel } from "../application/dto/BlogViewModel"
 import { BlogsService } from "../application/blogs-service"
-import { BlogsQueryRepository } from "../infrastructure/blogs/blogs-query-repository"
 import { BlogsWithQueryOutputModel } from '../application/dto/BlogViewModel'
 import { ReadBlogsQueryParams } from "./models/ReadBlogsQuery"
 import { PostsViewModel } from '../application/dto/PostViewModel'
@@ -21,36 +20,32 @@ import { CreateBlogCommand } from "../application/use-cases/blogs/create-blog.us
 import { UpdateBlogCommand } from "../application/use-cases/blogs/update-blog.use-case"
 import { PostsQueryRepository } from "../infrastructure/posts/posts-query-repository"
 import { CreatePostCommand } from "../application/use-cases/posts/create-post.use-case"
+import { GetBlogsCommand } from "../application/use-cases/blogs/get-blogs.use-case"
+import { GetBlogByIdCommand } from "../application/use-cases/blogs/get-blog-by-id.use-case"
 
 @Controller('blogs')
 export class BlogsController {
     constructor(
         protected blogsService: BlogsService,
         protected postsService: PostsService,
-        protected blogsQueryRepository: BlogsQueryRepository,
         protected postsQueryRepository: PostsQueryRepository,
         protected commandBus: CommandBus,
     ) { }
 
     @Get()
     async getBlogs(@Query() blogsQueryParams: ReadBlogsQueryParams): Promise<BlogsWithQueryOutputModel> {
-        const findedBlogsQueryData = await this.blogsQueryRepository.findBlogs(blogsQueryParams)
-
-        findedBlogsQueryData.items = this.blogsService.prepareBlogForDisplay(findedBlogsQueryData.items)
-
-        if (!findedBlogsQueryData.items.length) {
-            throw new NotFoundException()
-        }
-        return findedBlogsQueryData
+        return this.commandBus.execute(
+            new GetBlogsCommand(blogsQueryParams)
+        )
     }
 
     @Get(':blogId')
     async getBlogById(
         @Param('blogId', IsBlogByIdExistPipe) blogId: string
     ): Promise<BlogViewModel> {
-        const findedBlog = await this.blogsQueryRepository.findBlogById(blogId)
-
-        return this.blogsService.prepareBlogForDisplay([findedBlog])[0]
+        return this.commandBus.execute(
+            new GetBlogByIdCommand(blogId)
+        )
     }
 
     @Get(':blogId/posts')

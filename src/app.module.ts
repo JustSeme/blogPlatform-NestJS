@@ -99,6 +99,8 @@ import {
   CommentEntity, CommentsSchema
 } from "./blogs/domain/comments/Comments.schema"
 import { UsersService } from "./general/users/users.service"
+import { GetBlogsUseCase } from "./blogs/application/use-cases/blogs/get-blogs.use-case"
+import { GetBlogByIdUseCase } from "./blogs/application/use-cases/blogs/get-blog-by-id.use-case"
 
 const authUseCases = [
   LogoutUseCase,
@@ -131,6 +133,8 @@ const blogsUseCases = [
   BindUserUseCase,
   BanUserUseCase,
   UnbanUserUseCase,
+  GetBlogsUseCase,
+  GetBlogByIdUseCase
 ]
 
 const securityUseCases = [
