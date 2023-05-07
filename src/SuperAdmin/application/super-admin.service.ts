@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common"
-import { UserViewModelType } from "../../SuperAdmin/application/dto/UsersViewModel"
-import { UserDTO } from "./domain/UsersTypes"
+import { UserViewModelType } from "./dto/UsersViewModel"
+import { UserDTO } from "../domain/UsersTypes"
 
 @Injectable()
 export class UsersService {

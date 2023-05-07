@@ -1,9 +1,9 @@
 import { Injectable } from "@nestjs/common"
-import { ReadUsersQuery } from "../../../SuperAdmin/api/models/ReadUsersQuery"
-import { UsersWithQueryOutputModel } from "../../../SuperAdmin/application/dto/UsersViewModel"
 import { InjectModel } from "@nestjs/mongoose/dist"
 import { User } from "../domain/UsersSchema"
 import { UserModelType } from "../domain/UsersTypes"
+import { ReadUsersQuery } from "../api/models/ReadUsersQuery"
+import { UsersWithQueryOutputModel } from "../application/dto/UsersViewModel"
 
 @Injectable()
 export class UsersQueryRepository {

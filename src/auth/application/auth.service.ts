@@ -1,6 +1,6 @@
 import { UserViewModelType } from '../../SuperAdmin/application/dto/UsersViewModel'
 import { Injectable } from '@nestjs/common'
-import { UserDTO } from '../../general/users/domain/UsersTypes'
+import { UserDTO } from '../../SuperAdmin/domain/UsersTypes'
 
 
 //transaction script

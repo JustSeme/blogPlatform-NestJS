@@ -1,9 +1,9 @@
 import { EmailManager } from "../../../general/managers/emailManager"
-import { UsersRepository } from "../../../general/users/infrastructure/users-db-repository"
 import { v4 as uuidv4 } from 'uuid'
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs/dist"
+import { UsersRepository } from "../../../SuperAdmin/infrastructure/users-db-repository"
 
 export class SendPasswordRecoveryCodeCommand {
     constructor(public email: string) { }

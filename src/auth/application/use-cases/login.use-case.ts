@@ -6,10 +6,10 @@ import { AuthConfig } from '../../../configuration/auth.config'
 import {
     CommandHandler, ICommandHandler
 } from '@nestjs/cqrs'
-import { UsersRepository } from '../../../general/users/infrastructure/users-db-repository'
 import { UnauthorizedException } from '@nestjs/common'
 import { generateErrorsMessages } from '../../../general/helpers'
 import { DeviceAuthSessionDBModel } from '../../../security/domain/DeviceAuthSessionType'
+import { UsersRepository } from '../../../SuperAdmin/infrastructure/users-db-repository'
 
 export class LoginCommand {
     constructor(

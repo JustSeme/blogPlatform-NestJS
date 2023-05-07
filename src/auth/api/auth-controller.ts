@@ -3,7 +3,6 @@ import {
     Body, Controller, Get, HttpCode, HttpStatus, NotImplementedException, Post, Request, Response, UnauthorizedException, UseGuards
 } from "@nestjs/common"
 import { UserInputModel } from "../../SuperAdmin/api/models/UserInputModel"
-import { UsersQueryRepository } from "../../general/users/infrastructure/users-query-repository"
 import { NewPasswordInputModel } from "./models/NewPasswordInputModel"
 import { MeOutputModel } from "../application/dto/MeViewModel"
 import { LocalAuthGuard } from "./guards/local-auth.guard"
@@ -24,6 +23,7 @@ import { ConfirmEmailCommand } from "../application/use-cases/confirm-email.use-
 import { RegistrationUserCommand } from "../application/use-cases/registration-user.use-case"
 import { CommandBus } from "@nestjs/cqrs/dist/command-bus"
 import { LogoutCommand } from "../application/use-cases/logout.use-case"
+import { UsersQueryRepository } from "../../SuperAdmin/infrastructure/users-query-repository"
 
 @Controller('auth')
 export class AuthController {

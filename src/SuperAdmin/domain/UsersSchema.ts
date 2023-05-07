@@ -9,8 +9,8 @@ import {
     Schema, Prop, SchemaFactory
 } from "@nestjs/mongoose"
 import { BanInfoSchema } from "./BanInfoSchema"
-import { BanInputModel } from "../../../SuperAdmin/api/models/BanInputModel"
-import { BanInfoDBType } from "../../../SuperAdmin/application/dto/UsersViewModel"
+import { BanInfoDBType } from "../application/dto/UsersViewModel"
+import { BanInputModel } from "../api/models/BanInputModel"
 
 @Schema()
 export class User {

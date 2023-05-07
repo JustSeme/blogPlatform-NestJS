@@ -1,12 +1,12 @@
 import { InjectModel } from "@nestjs/mongoose"
-import { User } from "../../../general/users/domain/UsersSchema"
-import { UserModelType } from "../../../general/users/domain/UsersTypes"
 import { BcryptAdapter } from "../../../general/adapters/bcrypt.adapter"
-import { UsersRepository } from "../../../general/users/infrastructure/users-db-repository"
 import { EmailManager } from "../../../general/managers/emailManager"
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
+import { UserModelType } from "../../../SuperAdmin/domain/UsersTypes"
+import { User } from "../../../SuperAdmin/domain/UsersSchema"
+import { UsersRepository } from "../../../SuperAdmin/infrastructure/users-db-repository"
 
 export class RegistrationUserCommand {
     constructor(public login: string, public password: string, public email: string) { }

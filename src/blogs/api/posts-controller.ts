@@ -15,7 +15,6 @@ import { PostsRepository } from '../infrastructure/posts/posts-db-repository'
 import { CurrentUserId } from '../../general/decorators/current-userId.param.decorator'
 import { JwtAuthGuard } from './guards/jwt-auth.guard'
 import { IsPostExistsPipe } from './pipes/isPostExists.validation.pipe'
-import { UsersQueryRepository } from '../../general/users/infrastructure/users-query-repository'
 import { JwtService } from '../../general/adapters/jwt.adapter'
 import { PostsQueryRepository } from '../infrastructure/posts/posts-query-repository'
 import { PostsWithQueryOutputModel } from '../domain/posts/PostsTypes'
@@ -26,6 +25,7 @@ import { UpdatePostCommand } from '../application/use-cases/posts/update-post.us
 import { UpdateLikeStatusForPostCommand } from '../application/use-cases/posts/update-like-status-for-post.use-case'
 import { CreateCommentCommand } from '../application/use-cases/comments/create-comment.use-case'
 import { CommentsQueryRepository } from '../infrastructure/comments/comments-query-repository'
+import { UsersQueryRepository } from '../../SuperAdmin/infrastructure/users-query-repository'
 
 @Controller('posts')
 export class PostsController {

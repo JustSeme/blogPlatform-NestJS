@@ -4,7 +4,6 @@ import {
 } from '@nestjs/common'
 import { BasicAuthGuard } from '../../general/guards/basic-auth.guard'
 import { CommandBus } from '@nestjs/cqrs'
-import { UsersQueryRepository } from '../../general/users/infrastructure/users-query-repository'
 import { DeleteUserCommand } from '../application/use-cases/delete-user.use-case'
 import { UserInputModel } from './models/UserInputModel'
 import {
@@ -18,7 +17,8 @@ import { IsUserExistPipe } from './pipes/isUserExists.validation.pipe'
 import { BanInputModel } from './models/BanInputModel'
 import { BanUserCommand } from '../application/use-cases/ban-user.use-case'
 import { UnbanUserCommand } from '../application/use-cases/unban-user.use-case'
-import { UsersService } from '../../general/users/users.service'
+import { UsersService } from '../application/super-admin.service'
+import { UsersQueryRepository } from '../infrastructure/users-query-repository'
 
 @UseGuards(BasicAuthGuard)
 @Controller('sa/users')

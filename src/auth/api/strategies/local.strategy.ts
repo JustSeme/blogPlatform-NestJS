@@ -3,9 +3,9 @@ import {
 } from "@nestjs/common"
 import { PassportStrategy } from '@nestjs/passport'
 import { Strategy } from 'passport-local'
-import { User } from "../../../general/users/domain/UsersSchema"
-import { UsersRepository } from "../../../general/users/infrastructure/users-db-repository"
 import { BcryptAdapter } from "../../../general/adapters/bcrypt.adapter"
+import { UsersRepository } from "../../../SuperAdmin/infrastructure/users-db-repository"
+import { User } from "../../../SuperAdmin/domain/UsersSchema"
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {

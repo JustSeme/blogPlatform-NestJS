@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-import { User } from './general/users/domain/UsersSchema'
-import { UserModelType } from './general/users/domain/UsersTypes'
 import { Post } from './blogs/domain/posts/PostsSchema'
 import { PostModelType } from './blogs/domain/posts/PostsTypes'
 import { Blog } from './blogs/domain/blogs/BlogsSchema'
@@ -10,6 +8,8 @@ import { CommentModelType } from './blogs/domain/comments/CommentTypes'
 import { Attempt } from './security/domain/AttemptsSchema'
 import { AttemptModelType } from './security/domain/AttemptsType'
 import { CommentEntity } from './blogs/domain/comments/Comments.schema'
+import { UserModelType } from './SuperAdmin/domain/UsersTypes'
+import { User } from './SuperAdmin/domain/UsersSchema'
 
 @Injectable()
 export class AppService {

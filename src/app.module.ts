@@ -6,9 +6,6 @@ import {
 import { Module } from "@nestjs/common"
 import { MongooseModule } from "@nestjs/mongoose"
 import {
-  User, UsersSchema
-} from "./general/users/domain/UsersSchema"
-import {
   Blog, BlogSchema
 } from "./blogs/domain/blogs/BlogsSchema"
 import {
@@ -39,8 +36,6 @@ import { BcryptAdapter } from "./general/adapters/bcrypt.adapter"
 import { EmailAdapter } from "./general/adapters/email.adapter"
 import { BlogsQueryRepository } from "./blogs/infrastructure/blogs/blogs-query-repository"
 import { CommentsQueryRepository } from "./blogs/infrastructure/comments/comments-query-repository"
-import { UsersQueryRepository } from "./general/users/infrastructure/users-query-repository"
-import { UsersRepository } from "./general/users/infrastructure/users-db-repository"
 import { PostsRepository } from "./blogs/infrastructure/posts/posts-db-repository"
 import { CommentsRepository } from "./blogs/infrastructure/comments/comments-db-repository"
 import { DeviceRepository } from "./security/infrastructure/device-db-repository"
@@ -98,10 +93,15 @@ import { GetActiveDevicesUseCase } from "./security/application/use-cases/get-ac
 import {
   CommentEntity, CommentsSchema
 } from "./blogs/domain/comments/Comments.schema"
-import { UsersService } from "./general/users/users.service"
+import { UsersService } from "./SuperAdmin/application/super-admin.service"
 import { GetBlogsUseCase } from "./blogs/application/use-cases/blogs/get-blogs.use-case"
 import { GetBlogByIdUseCase } from "./blogs/application/use-cases/blogs/get-blog-by-id.use-case"
 import { GetBlogsForBloggerUseCase } from "./Blogger/application/use-cases/blogs/get-blogs-for-blogger.use.case"
+import { UsersRepository } from "./SuperAdmin/infrastructure/users-db-repository"
+import { UsersQueryRepository } from "./SuperAdmin/infrastructure/users-query-repository"
+import {
+  User, UsersSchema
+} from "./SuperAdmin/domain/UsersSchema"
 
 const authUseCases = [
   LogoutUseCase,

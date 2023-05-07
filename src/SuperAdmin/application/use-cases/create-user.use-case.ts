@@ -1,13 +1,13 @@
 import { BcryptAdapter } from "../../../general/adapters/bcrypt.adapter"
 import { UserViewModelType } from "../dto/UsersViewModel"
 import { InjectModel } from "@nestjs/mongoose"
-import { User } from "../../../general/users/domain/UsersSchema"
-import { UserModelType } from "../../../general/users/domain/UsersTypes"
-import { UsersRepository } from "../../../general/users/infrastructure/users-db-repository"
 import { AuthService } from "../../../auth/application/auth.service"
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs/dist"
+import { UserModelType } from "../../domain/UsersTypes"
+import { User } from "../../domain/UsersSchema"
+import { UsersRepository } from "../../infrastructure/users-db-repository"
 
 export class CreateUserCommand {
     constructor(public login: string, public password: string, public email: string) { }

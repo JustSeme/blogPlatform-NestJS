@@ -1,11 +1,11 @@
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
-import { UsersRepository } from "../../../general/users/infrastructure/users-db-repository"
 import { BanInputModel } from "../../api/models/BanInputModel"
 import { DeviceRepository } from '../../../security/infrastructure/device-db-repository'
 import { PostsRepository } from "../../../blogs/infrastructure/posts/posts-db-repository"
 import { CommentsRepository } from "../../../blogs/infrastructure/comments/comments-db-repository"
+import { UsersRepository } from "../../infrastructure/users-db-repository"
 
 export class BanUserCommand {
     constructor(

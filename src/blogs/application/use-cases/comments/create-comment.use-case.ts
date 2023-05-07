@@ -1,11 +1,11 @@
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
-import { UserDTO } from "../../../../general/users/domain/UsersTypes"
 import { CommentsRepository } from "../../../infrastructure/comments/comments-db-repository"
 import { CommentDBModel } from "../../../domain/comments/CommentTypes"
 import { CommentViewModel } from "../../dto/CommentViewModel"
 import { CommentsService } from "../../comments-service"
+import { UserDTO } from "../../../../SuperAdmin/domain/UsersTypes"
 
 // Command
 export class CreateCommentCommand {
