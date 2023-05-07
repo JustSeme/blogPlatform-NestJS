@@ -102,6 +102,10 @@ import { UsersQueryRepository } from "./SuperAdmin/infrastructure/users-query-re
 import {
   User, UsersSchema
 } from "./SuperAdmin/domain/UsersSchema"
+import { GetPostsForBlogUseCase } from "./blogs/application/use-cases/blogs/get-posts-for-blog.use-case"
+import { GetPostsUseCase } from "./blogs/application/use-cases/posts/get-posts.use-case"
+import { GetPostByIdUseCase } from "./blogs/application/use-cases/posts/get-post-by-id.use-case"
+import { GetCommentsForPostUseCase } from "./blogs/application/use-cases/posts/get-comments-for-post.use-case"
 
 const authUseCases = [
   LogoutUseCase,
@@ -136,7 +140,11 @@ const blogsUseCases = [
   UnbanUserUseCase,
   GetBlogsUseCase,
   GetBlogByIdUseCase,
-  GetBlogsForBloggerUseCase
+  GetBlogsForBloggerUseCase,
+  GetPostsForBlogUseCase,
+  GetPostsUseCase,
+  GetPostByIdUseCase,
+  GetCommentsForPostUseCase,
 ]
 
 const securityUseCases = [

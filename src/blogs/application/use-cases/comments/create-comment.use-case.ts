@@ -5,13 +5,13 @@ import { CommentsRepository } from "../../../infrastructure/comments/comments-db
 import { CommentDBModel } from "../../../domain/comments/CommentTypes"
 import { CommentViewModel } from "../../dto/CommentViewModel"
 import { CommentsService } from "../../comments-service"
-import { UserDTO } from "../../../../SuperAdmin/domain/UsersTypes"
+import { UsersQueryRepository } from "../../../../SuperAdmin/infrastructure/users-query-repository"
 
 // Command
 export class CreateCommentCommand {
     constructor(
         public content: string,
-        public commentator: UserDTO | null,
+        public commentatorId: string,
         public postId: string,
     ) { }
 }
@@ -21,14 +21,17 @@ export class CreateCommentUseCase implements ICommandHandler<CreateCommentComman
     constructor(
         private readonly commentsRepository: CommentsRepository,
         private readonly commentsService: CommentsService,
+        private readonly usersQueryRepository: UsersQueryRepository,
     ) { }
 
     async execute(command: CreateCommentCommand): Promise<CommentViewModel> {
-        if (!command.commentator) {
+        const commentator = await this.usersQueryRepository.findUserById(command.commentatorId)
+
+        if (!commentator) {
             return null
         }
 
-        const createdComment = new CommentDBModel(command.content, command.postId, command.commentator.id, command.commentator.login, false)
+        const createdComment = new CommentDBModel(command.content, command.postId, command.commentatorId, commentator.login, false)
 
         await this.commentsRepository.createComment(createdComment)
 

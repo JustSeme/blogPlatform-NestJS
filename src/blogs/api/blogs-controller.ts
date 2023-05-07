@@ -18,17 +18,18 @@ import { CommandBus } from "@nestjs/cqrs"
 import { DeleteBlogCommand } from "../application/use-cases/blogs/delete-blog.use-case"
 import { CreateBlogCommand } from "../application/use-cases/blogs/create-blog.use-case"
 import { UpdateBlogCommand } from "../application/use-cases/blogs/update-blog.use-case"
-import { PostsQueryRepository } from "../infrastructure/posts/posts-query-repository"
 import { CreatePostCommand } from "../application/use-cases/posts/create-post.use-case"
 import { GetBlogsCommand } from "../application/use-cases/blogs/get-blogs.use-case"
 import { GetBlogByIdCommand } from "../application/use-cases/blogs/get-blog-by-id.use-case"
+import { PostsRepository } from "../infrastructure/posts/posts-db-repository"
+import { GetPostsForBlogCommand } from "../application/use-cases/blogs/get-posts-for-blog.use-case"
 
 @Controller('blogs')
 export class BlogsController {
     constructor(
         protected blogsService: BlogsService,
         protected postsService: PostsService,
-        protected postsQueryRepository: PostsQueryRepository,
+        protected postsRepository: PostsRepository,
         protected commandBus: CommandBus,
     ) { }
 
@@ -54,18 +55,9 @@ export class BlogsController {
         @Param('blogId', IsBlogByIdExistPipe) blogId: string,
         @Headers('Authorization') authorizationHeader: string,
     ): Promise<PostsWithQueryOutputModel> {
-        const accessToken = authorizationHeader ? authorizationHeader.split(' ')[1] : null
-        const postsWithQueryData = await this.postsQueryRepository.findPosts(queryParams, blogId)
-
-        if (!postsWithQueryData.items.length) {
-            throw new NotFoundException()
-        }
-        const displayedPosts = await this.postsService.transformPostsForDisplay(postsWithQueryData.items, accessToken)
-        const postsViewQueryData = {
-            ...postsWithQueryData, items: displayedPosts
-        }
-
-        return postsViewQueryData
+        return this.commandBus.execute(
+            new GetPostsForBlogCommand(queryParams, blogId, authorizationHeader)
+        )
     }
 
     @UseGuards(BasicAuthGuard)
