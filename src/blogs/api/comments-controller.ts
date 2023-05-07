@@ -1,6 +1,6 @@
 import {
     Body,
-    Controller, Delete, ForbiddenException, Get, Headers, HttpCode, HttpStatus, NotFoundException, NotImplementedException, Param, Put, UseGuards
+    Controller, Delete, Get, Headers, HttpCode, HttpStatus, NotImplementedException, Param, Put, UseGuards
 } from "@nestjs/common"
 import { CommentsService } from "../application/comments-service"
 import { CommentInputModel } from "./models/CommentInputModel"
@@ -9,34 +9,29 @@ import { LikeInputModel } from "./models/LikeInputModel"
 import { CurrentUserId } from "../../general/decorators/current-userId.param.decorator"
 import { JwtAuthGuard } from "./guards/jwt-auth.guard"
 import { IsCommentExistsPipe } from "./pipes/isCommentExists.validation.pipe"
-import { generateErrorsMessages } from "../../general/helpers"
 import { CommandBus } from "@nestjs/cqrs"
 import { DeleteCommentCommand } from "../application/use-cases/comments/delete-comment.use-case"
 import { UpdateCommentCommand } from "../application/use-cases/comments/update-comment.use-case"
 import { UpdateLikeStatusForCommentCommand } from "../application/use-cases/comments/update-like-status-for-comment.use-case"
-import { CommentsQueryRepository } from "../infrastructure/comments/comments-query-repository"
+import { CommentsRepository } from "../infrastructure/comments/comments-db-repository"
+import { GetCommentByIdCommand } from "../application/use-cases/comments/get-comment-by-id.use-case"
 
 @Controller('comments')
 export class CommentsController {
     constructor(
         protected commentsService: CommentsService,
-        protected commentsQueryRepository: CommentsQueryRepository,
+        protected commentsRepository: CommentsRepository,
         protected commandBus: CommandBus,
     ) { }
 
     @Get(':commentId')
-    async getComment(@Param('commentId', IsCommentExistsPipe) commentId: string,
-        @Headers('Authorization') authorizationHeader: string,): Promise<CommentViewModel> {
-        const accessToken = authorizationHeader ? authorizationHeader.split(' ')[1] : null
-
-        const findedComment = await this.commentsQueryRepository.findCommentById(commentId)
-        if (!findedComment) {
-            throw new NotFoundException(generateErrorsMessages('Creator of this comment is banned', 'commentId'))
-        }
-
-        const displayedComment = await this.commentsService.transformCommentsForDisplay([findedComment], accessToken)
-
-        return displayedComment[0]
+    async getComment(
+        @Param('commentId', IsCommentExistsPipe) commentId: string,
+        @Headers('Authorization') authorizationHeader: string,
+    ): Promise<CommentViewModel> {
+        return this.commandBus.execute(
+            new GetCommentByIdCommand(commentId, authorizationHeader)
+        )
     }
 
     @UseGuards(JwtAuthGuard)
@@ -60,13 +55,8 @@ export class CommentsController {
         @Body() body: CommentInputModel,
         @CurrentUserId() userId: string,
     ): Promise<void> {
-        const commentByCommentId = await this.commentsQueryRepository.findCommentById(commentId)
-        if (commentByCommentId.commentatorInfo.userId !== userId) {
-            throw new ForbiddenException(generateErrorsMessages('That is not your own', 'commentId'))
-        }
-
         await this.commandBus.execute(
-            new UpdateCommentCommand(commentId, body.content)
+            new UpdateCommentCommand(commentId, body.content, userId)
         )
     }
 
