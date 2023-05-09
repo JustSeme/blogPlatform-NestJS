@@ -14,7 +14,7 @@ import { CreateUserCommand } from '../application/use-cases/create-user.use-case
 import { ReadUsersQuery } from './models/ReadUsersQuery'
 import { IsUserExistOrThrow400Pipe } from './pipes/isUserExistsOrThrow400.validation.pipe'
 import { IsUserExistPipe } from './pipes/isUserExists.validation.pipe'
-import { BanInputModel } from './models/BanInputModel'
+import { BanUserInputModel } from './models/BanUserInputModel'
 import { BanUserCommand } from '../application/use-cases/ban-user.use-case'
 import { UnbanUserCommand } from '../application/use-cases/unban-user.use-case'
 import { UsersService } from '../application/super-admin.service'
@@ -69,11 +69,11 @@ export class SuperAdminUsersController {
     @HttpCode(HttpStatus.NO_CONTENT)
     async banUser(
         @Param('userId', IsUserExistOrThrow400Pipe) userId: string,
-        @Body() banInputModel: BanInputModel
+        @Body() BanUserInputModel: BanUserInputModel
     ) {
-        if (banInputModel.isBanned) {
+        if (BanUserInputModel.isBanned) {
             await this.commandBus.execute(
-                new BanUserCommand(banInputModel, userId)
+                new BanUserCommand(BanUserInputModel, userId)
             )
         } else {
             await this.commandBus.execute(

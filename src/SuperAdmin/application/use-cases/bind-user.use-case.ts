@@ -28,7 +28,7 @@ export class BindUserUseCase implements ICommandHandler<BindUserCommand> {
 
         const blogById = await this.blogsRepository.findBlogById(blogId)
         if (blogById.blogOwnerInfo.userId !== 'superAdmin') {
-            throw new BadRequestException(generateErrorsMessages('blog is already binded with any user', 'blogId'))
+            throw new BadRequestException(generateErrorsMessages('blog is already bounded with any user', 'blogId'))
         }
 
         const userById = await this.usersRepository.findUserById(userId)

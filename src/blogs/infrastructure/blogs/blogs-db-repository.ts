@@ -3,12 +3,14 @@ import { Injectable } from "@nestjs/common"
 import { InjectModel } from "@nestjs/mongoose"
 import { Blog } from "../../domain/blogs/BlogsSchema"
 import {
+    BlogBanInfoType,
     BlogDBModel, BlogModelType
 } from "../../domain/blogs/BlogsTypes"
 import { BlogDocument } from "./BlogsTypes"
 import { ReadBlogsQueryParams } from "../../api/models/ReadBlogsQuery"
 import { BlogsWithQuerySuperAdminOutputModel } from "../../../SuperAdmin/application/dto/BlogSuperAdminViewModel"
 import { BlogsWithQueryOutputModel } from "../../application/dto/BlogViewModel"
+import { BanBlogInputModel } from "../../../SuperAdmin/api/models/BanBlogInputModel"
 
 @Injectable()
 export class BlogsRepository {
@@ -129,5 +131,15 @@ export class BlogsRepository {
             totalCount: totalCount,
             items: resultedBlogs
         }
+    }
+
+    async updateBanBlog(blogId: string, banInputModel: BanBlogInputModel): Promise<boolean> {
+        const banInfo: BlogBanInfoType = {
+            isBanned: banInputModel.isBanned,
+            banDate: new Date()
+        }
+
+        const isUpdatedData = await this.BlogsModel.updateOne({ id: blogId }, { banInfo: banInfo })
+        return isUpdatedData.matchedCount === 1
     }
 }

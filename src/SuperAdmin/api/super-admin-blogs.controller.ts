@@ -1,4 +1,5 @@
 import {
+    Body,
     Controller,
     Get,
     HttpCode,
@@ -14,8 +15,11 @@ import { IsUserExistOrThrow400Pipe } from './pipes/isUserExistsOrThrow400.valida
 import { CommandBus } from '@nestjs/cqrs'
 import { BindUserCommand } from '../application/use-cases/bind-user.use-case'
 import { BlogsWithQuerySuperAdminOutputModel } from '../application/dto/BlogSuperAdminViewModel'
-import { BlogsRepository } from '../../blogs/infrastructure/blogs/blogs-db-repository'
 import { ReadBlogsQueryParams } from '../../blogs/api/models/ReadBlogsQuery'
+import { BanBlogInputModel } from './models/BanBlogInputModel'
+import { GetBlogsForSuperAdminCommand } from '../application/use-cases/get-blogs-for-super-admin.use-case'
+import { BanBlogCommand } from '../application/use-cases/ban-blog.use-case'
+import { UnbanBlogCommand } from '../application/use-cases/unban-blog.use-case'
 
 
 @UseGuards(BasicAuthGuard)
@@ -23,7 +27,6 @@ import { ReadBlogsQueryParams } from '../../blogs/api/models/ReadBlogsQuery'
 export class SuperAdminBlogsController {
     constructor(
         private commandBus: CommandBus,
-        private blogsRepository: BlogsRepository,
     ) { }
 
     @HttpCode(HttpStatus.NO_CONTENT)
@@ -41,6 +44,25 @@ export class SuperAdminBlogsController {
     async getBlogs(
         @Query() blogsQueryParams: ReadBlogsQueryParams,
     ): Promise<BlogsWithQuerySuperAdminOutputModel> {
-        return this.blogsRepository.findBlogsForSuperAdmin(blogsQueryParams)
+        return this.commandBus.execute(
+            new GetBlogsForSuperAdminCommand(blogsQueryParams)
+        )
+    }
+
+    @HttpCode(HttpStatus.NO_CONTENT)
+    @Put(':blogId/ban')
+    async banBlog(
+        @Body() banInputModel: BanBlogInputModel,
+        @Param('blogId', IsBlogExistOrThrow400Pipe) blogId,
+    ) {
+        if (banInputModel.isBanned) {
+            await this.commandBus.execute(
+                new BanBlogCommand(banInputModel, blogId)
+            )
+        } else {
+            await this.commandBus.execute(
+                new UnbanBlogCommand(banInputModel, blogId)
+            )
+        }
     }
 }

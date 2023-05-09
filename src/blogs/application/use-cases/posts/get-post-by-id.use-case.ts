@@ -4,6 +4,7 @@ import {
 import { PostsRepository } from "../../../infrastructure/posts/posts-db-repository"
 import { PostsService } from "../../posts-service"
 import { PostsViewModel } from "../../dto/PostViewModel"
+import { NotFoundException } from '@nestjs/common'
 
 export class GetPostByIdCommand {
     constructor(
@@ -24,6 +25,10 @@ export class GetPostByIdUseCase implements ICommandHandler<GetPostByIdCommand> {
         const accessToken = query.authorizationHeader ? query.authorizationHeader.split(' ')[1] : null
 
         const findedPost = await this.postsRepository.getPostById(query.postId)
+
+        if (!findedPost) {
+            throw new NotFoundException('blog by this post is banned')
+        }
 
         const displayedPost = await this.postsService.transformPostsForDisplay([findedPost], accessToken)
 

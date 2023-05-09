@@ -3,7 +3,7 @@ import {
 } from "class-validator"
 import { TrimIfString } from "../../../general/decorators/trimIfString.decorator"
 
-export class BanInputModel {
+export class BanUserInputModel {
     @IsBoolean()
     isBanned: boolean
 

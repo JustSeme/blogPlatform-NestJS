@@ -5,7 +5,7 @@ import { Test } from '@nestjs/testing';
 import { HttpStatus } from '@nestjs/common';
 import { NestExpressApplication } from "@nestjs/platform-express"
 import { UserInputModel } from '../../src/SuperAdmin/api/models/UserInputModel';
-import { BanInputModel } from '../../src/SuperAdmin/api/models/BanInputModel'
+import { BanUserInputModel } from '../../src/SuperAdmin/api/models/BanUserInputModel'
 import { LoginInputDTO } from '../../src/auth/api/models/LoginInputDTO'
 import { BlogInputModel } from '../../src/blogs/api/models/BlogInputModel';
 import { PostInputModelWithoutBlogId } from '../../src/blogs/api/models/PostInputModelWithoutBlogId';
@@ -279,7 +279,7 @@ describe('super-admin-users', () => {
         expect(sessionsData.body.length).toBe(1)
     })
 
-    const incorrectBanInputModel = {
+    const incorrectBanUserInputModel = {
         isBanned: 'not a boolean',
         banReason: 'lowerThen20'
     }
@@ -288,7 +288,7 @@ describe('super-admin-users', () => {
         const errorsMessagesData = await request(httpServer)
             .put(`/sa/users/${id3}/ban`)
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
-            .send(incorrectBanInputModel)
+            .send(incorrectBanUserInputModel)
             .expect(HttpStatus.BAD_REQUEST)
 
         expect(errorsMessagesData.body.errorsMessages[0].field).toEqual('isBanned')
@@ -305,7 +305,7 @@ describe('super-admin-users', () => {
         expect(usersData.body.items[0].banInfo.banReason).toEqual(null)
     })
 
-    const banInputModel: BanInputModel = {
+    const BanUserInputModel: BanUserInputModel = {
         isBanned: true,
         banReason: 'bad guy this reason should be greather then 20 symbols'
     }
@@ -313,7 +313,7 @@ describe('super-admin-users', () => {
     it('shouldn\'t ban the last created user if auth header is not provided, should display unbanned banInfo', async () => {
         await request(httpServer)
             .put(`/sa/users/${id3}/ban`)
-            .send(banInputModel)
+            .send(BanUserInputModel)
             .expect(HttpStatus.UNAUTHORIZED)
 
         const usersData = await request(httpServer)
@@ -329,7 +329,7 @@ describe('super-admin-users', () => {
         await request(httpServer)
             .put(`/sa/users/incorrect/ban`)
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
-            .send(banInputModel)
+            .send(BanUserInputModel)
             .expect(HttpStatus.BAD_REQUEST)
 
         const usersData = await request(httpServer)
@@ -485,7 +485,7 @@ describe('super-admin-users', () => {
         await request(httpServer)
             .put(`/sa/users/${id3}/ban`)
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
-            .send(banInputModel)
+            .send(BanUserInputModel)
             .expect(HttpStatus.NO_CONTENT)
 
         const usersData = await request(httpServer)
@@ -494,7 +494,7 @@ describe('super-admin-users', () => {
             .expect(HttpStatus.OK)
 
         expect(usersData.body.items[0].banInfo.isBanned).toEqual(true)
-        expect(usersData.body.items[0].banInfo.banReason).toEqual(banInputModel.banReason)
+        expect(usersData.body.items[0].banInfo.banReason).toEqual(BanUserInputModel.banReason)
     })
 
     it('shouldn\'t display the post and comment of the banned user', async () => {
@@ -532,7 +532,7 @@ describe('super-admin-users', () => {
         expect(errorsMessagesData.body.errorsMessages).toEqual('refreshToken is incorrect')
     })
 
-    const unbanInputModel: BanInputModel = {
+    const unBanUserInputModel: BanUserInputModel = {
         isBanned: false,
         banReason: 'You re forgiven this reason should be greather then 20 symbols'
     }
@@ -546,14 +546,14 @@ describe('super-admin-users', () => {
             .expect(HttpStatus.UNAUTHORIZED)
 
         expect(errorsMessages.body.errorsMessages[0].field).toEqual('userId')
-        expect(errorsMessages.body.errorsMessages[0].message).toEqual(`You are banned by banReason: ${banInputModel.banReason}`)
+        expect(errorsMessages.body.errorsMessages[0].message).toEqual(`You are banned by banReason: ${BanUserInputModel.banReason}`)
     })
 
     it('should unban the last created user and display unbanned banInfo', async () => {
         await request(httpServer)
             .put(`/sa/users/${id3}/ban`)
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
-            .send(unbanInputModel)
+            .send(unBanUserInputModel)
             .expect(HttpStatus.NO_CONTENT)
 
         const usersData = await request(httpServer)

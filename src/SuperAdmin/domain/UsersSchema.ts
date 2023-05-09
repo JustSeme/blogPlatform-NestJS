@@ -10,7 +10,7 @@ import {
 } from "@nestjs/mongoose"
 import { BanInfoSchema } from "./BanInfoSchema"
 import { BanInfoDBType } from "../application/dto/UsersViewModel"
-import { BanInputModel } from "../api/models/BanInputModel"
+import { BanUserInputModel } from "../api/models/BanUserInputModel"
 
 @Schema()
 export class User {
@@ -63,11 +63,11 @@ export class User {
         return this.banInfo.isBanned
     }
 
-    banCurrentUser(banInputModel: BanInputModel): boolean {
+    banCurrentUser(BanUserInputModel: BanUserInputModel): boolean {
         this.banInfo = {
             _id: this.banInfo._id,
-            isBanned: banInputModel.isBanned,
-            banReason: banInputModel.banReason,
+            isBanned: BanUserInputModel.isBanned,
+            banReason: BanUserInputModel.banReason,
             banDate: new Date(),
         }
         return true

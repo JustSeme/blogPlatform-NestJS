@@ -43,7 +43,7 @@ export class PostsRepository {
     }
 
     async getPostById(postId: string) {
-        return await this.PostModel.findOne({ id: postId })
+        return await this.PostModel.findOne({ $and: [{ id: postId }, { isBanned: false }] })
     }
 
     async deletePost(id: string) {
@@ -176,5 +176,15 @@ export class PostsRepository {
         catch (err) {
             throw new NotImplementedException(`unHideLikeEntities for post is not implemented by error: ${err}`)
         }
+    }
+
+    async hidePostsByBlogId(blogId: string) {
+        const isUpdatedData = await this.PostModel.updateMany({ blogId: blogId }, { isBanned: true })
+        return isUpdatedData.matchedCount > 0
+    }
+
+    async unHidePostsByBlogId(blogId: string) {
+        const isUpdatedData = await this.PostModel.updateMany({ blogId: blogId }, { isBanned: false })
+        return isUpdatedData.matchedCount > 0
     }
 }

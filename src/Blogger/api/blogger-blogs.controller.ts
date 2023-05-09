@@ -29,14 +29,12 @@ import { PostInputModelWithoutBlogId } from "../../blogs/api/models/PostInputMod
 import { UpdatePostForBloggerCommand } from "../application/use-cases/posts/update-post-for-blogger.use-case"
 import { IsPostExistsPipe } from "../../blogs/api/pipes/isPostExists.validation.pipe"
 import { DeletePostForBloggerCommand } from "../application/use-cases/posts/delete-post-for-blogger.use-case"
-import { BlogsService } from "../../blogs/application/blogs-service"
 import { GetBlogsForBloggerCommand } from "../application/use-cases/blogs/get-blogs-for-blogger.use.case"
 
 @UseGuards(JwtAuthGuard)
 @Controller('blogger/blogs')
 export class BloggerBlogsController {
     constructor(
-        private blogsService: BlogsService,
         private commandBus: CommandBus,
     ) { }
 

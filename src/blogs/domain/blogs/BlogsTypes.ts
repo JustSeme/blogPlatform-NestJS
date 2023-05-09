@@ -7,11 +7,17 @@ export type BlogOwnerInfoType = {
     userLogin: string
 }
 
+export type BlogBanInfoType = {
+    isBanned: boolean
+    banDate: Date
+}
+
 // data transfer object
 export class BlogDBModel {
     public id: string
     public createdAt: string
     public blogOwnerInfo: BlogOwnerInfoType
+    public banInfo: BlogBanInfoType
 
     constructor(
         public name: string,
@@ -21,6 +27,10 @@ export class BlogDBModel {
         userLogin: string,
         userId: string,
     ) {
+        this.banInfo = {
+            isBanned: false,
+            banDate: new Date()
+        }
         this.blogOwnerInfo = {
             userId,
             userLogin
