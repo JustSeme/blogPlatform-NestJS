@@ -3,7 +3,7 @@ import {
 } from "@nestjs/cqrs"
 import { ReadBlogsQueryParams } from "../../../blogs/api/models/ReadBlogsQuery"
 import { BlogsWithQuerySuperAdminOutputModel } from "../dto/BlogSuperAdminViewModel"
-import { BlogsRepository } from "../../../blogs/infrastructure/blogs/blogs-db-repository"
+import { BlogsRepository } from "../../../Blogger/infrastructure/blogs/blogs-db-repository"
 
 export class GetBlogsForSuperAdminCommand {
     constructor(

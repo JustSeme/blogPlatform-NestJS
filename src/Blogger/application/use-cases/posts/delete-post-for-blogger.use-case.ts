@@ -1,9 +1,9 @@
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
-import { BlogsRepository } from "../../../../blogs/infrastructure/blogs/blogs-db-repository"
+import { BlogsRepository } from "../../../infrastructure/blogs/blogs-db-repository"
 import { ForbiddenException } from "@nestjs/common"
-import { PostsRepository } from "../../../../blogs/infrastructure/posts/posts-db-repository"
+import { PostsRepository } from "../../../infrastructure/posts/posts-db-repository"
 
 export class DeletePostForBloggerCommand {
     constructor(

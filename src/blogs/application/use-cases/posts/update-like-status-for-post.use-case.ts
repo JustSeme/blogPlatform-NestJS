@@ -2,8 +2,8 @@ import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
 import { LikeType } from "../../../api/models/LikeInputModel"
-import { PostsRepository } from "../../../infrastructure/posts/posts-db-repository"
-import { ExtendedLikeObjectType } from "../../../domain/posts/PostsTypes"
+import { PostsRepository } from "../../../../Blogger/infrastructure/posts/posts-db-repository"
+import { ExtendedLikeObjectType } from "../../../../Blogger/domain/posts/PostsTypes"
 import { UsersRepository } from "../../../../SuperAdmin/infrastructure/users-db-repository"
 
 export class UpdateLikeStatusForPostCommand {

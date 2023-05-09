@@ -2,7 +2,7 @@ import {
     CommandHandler,
     ICommand, ICommandHandler
 } from "@nestjs/cqrs"
-import { PostsRepository } from "../../../infrastructure/posts/posts-db-repository"
+import { PostsRepository } from "../../../../Blogger/infrastructure/posts/posts-db-repository"
 
 // Command
 export class DeletePostsCommand implements ICommand {

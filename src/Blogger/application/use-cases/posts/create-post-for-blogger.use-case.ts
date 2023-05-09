@@ -1,13 +1,13 @@
 import {
     CommandHandler, ICommand, ICommandHandler
 } from "@nestjs/cqrs"
-import { PostDBModel } from "../../../../blogs/domain/posts/PostsTypes"
-import { PostsRepository } from "../../../../blogs/infrastructure/posts/posts-db-repository"
+import { PostDBModel } from "../../../domain/posts/PostsTypes"
+import { PostsRepository } from "../../../infrastructure/posts/posts-db-repository"
 import { PostsService } from "../../../../blogs/application/posts-service"
 import { PostsViewModel } from "../../../../blogs/application/dto/PostViewModel"
-import { BlogsRepository } from "../../../../blogs/infrastructure/blogs/blogs-db-repository"
+import { BlogsRepository } from "../../../infrastructure/blogs/blogs-db-repository"
 import { ForbiddenException } from '@nestjs/common'
-import { PostInputModelWithoutBlogId } from "../../../../blogs/api/models/PostInputModelWithoutBlogId"
+import { PostInputModelWithoutBlogId } from "../../../api/models/PostInputModelWithoutBlogId"
 
 // Command
 export class CreatePostForBloggerCommand implements ICommand {

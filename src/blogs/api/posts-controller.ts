@@ -1,22 +1,18 @@
 import {
-    Controller, Get, Post, Put, Delete, Param, Query, Body, Headers, HttpStatus, HttpCode, UseGuards
+    Controller, Get, Post, Put, Param, Query, Body, Headers, HttpStatus, HttpCode, UseGuards
 } from '@nestjs/common'
 import { ReadCommentsQueryParams } from "./models/ReadCommentsQuery"
 import { CommentsWithQueryOutputModel } from "../application/dto/CommentViewModel"
 import { CommentInputModel } from "./models/CommentInputModel"
 import { CommentViewModel } from "../application/dto/CommentViewModel"
-import { PostInputModel } from "./models/PostInputModel"
 import { ReadPostsQueryParams } from "./models/ReadPostsQuery"
 import { LikeInputModel } from "./models/LikeInputModel"
 import { PostsViewModel } from "../application/dto/PostViewModel"
 import { CurrentUserId } from '../../general/decorators/current-userId.param.decorator'
-import { JwtAuthGuard } from './guards/jwt-auth.guard'
+import { JwtAuthGuard } from '../../general/guards/jwt-auth.guard'
 import { IsPostExistsPipe } from './pipes/isPostExists.validation.pipe'
-import { PostsWithQueryOutputModel } from '../domain/posts/PostsTypes'
+import { PostsWithQueryOutputModel } from '../../Blogger/domain/posts/PostsTypes'
 import { CommandBus } from '@nestjs/cqrs'
-import { DeletePostsCommand } from '../application/use-cases/posts/delete-post.use-case'
-import { CreatePostCommand } from '../application/use-cases/posts/create-post.use-case'
-import { UpdatePostCommand } from '../application/use-cases/posts/update-post.use-case'
 import { UpdateLikeStatusForPostCommand } from '../application/use-cases/posts/update-like-status-for-post.use-case'
 import { CreateCommentCommand } from '../application/use-cases/comments/create-comment.use-case'
 import { GetPostsCommand } from '../application/use-cases/posts/get-posts.use-case'
@@ -61,17 +57,6 @@ export class PostsController {
     }
 
     @UseGuards(JwtAuthGuard)
-    @Post()
-    @HttpCode(HttpStatus.CREATED)
-    async createPost(
-        @Body() post: PostInputModel,
-    ): Promise<PostsViewModel> {
-        return this.commandBus.execute(
-            new CreatePostCommand(post)
-        )
-    }
-
-    @UseGuards(JwtAuthGuard)
     @Post(':postId/comments')
     async createCommentForPost(
         @Param('postId', IsPostExistsPipe) postId: string,
@@ -80,27 +65,6 @@ export class PostsController {
     ): Promise<CommentViewModel> {
         return this.commandBus.execute(
             new CreateCommentCommand(comment.content, userId, postId)
-        )
-    }
-
-    @UseGuards(JwtAuthGuard)
-    @Put(':postId')
-    @HttpCode(HttpStatus.NO_CONTENT)
-    async updatePost(
-        @Param('postId', IsPostExistsPipe) postId: string,
-        @Body() postInputModel: PostInputModel
-    ): Promise<void> {
-        await this.commandBus.execute(
-            new UpdatePostCommand(postId, postInputModel)
-        )
-    }
-
-    @UseGuards(JwtAuthGuard)
-    @Delete(':id')
-    @HttpCode(HttpStatus.NO_CONTENT)
-    async deletePost(@Param('id', IsPostExistsPipe) id: string): Promise<void> {
-        await this.commandBus.execute(
-            new DeletePostsCommand(id)
         )
     }
 

@@ -3,13 +3,13 @@ import { BlogsService } from "../application/blogs-service"
 import { BlogsWithQueryOutputModel } from '../application/dto/BlogViewModel'
 import { ReadBlogsQueryParams } from "./models/ReadBlogsQuery"
 import { IsBlogByIdExistPipe } from "./pipes/isBlogExists.validation.pipe"
-import { PostsWithQueryOutputModel } from "../domain/posts/PostsTypes"
+import { PostsWithQueryOutputModel } from "../../Blogger/domain/posts/PostsTypes"
 import { PostsService } from "../application/posts-service"
 import { ReadPostsQueryParams } from "./models/ReadPostsQuery"
 import { CommandBus } from "@nestjs/cqrs"
 import { GetBlogsCommand } from "../application/use-cases/blogs/get-blogs.use-case"
 import { GetBlogByIdCommand } from "../application/use-cases/blogs/get-blog-by-id.use-case"
-import { PostsRepository } from "../infrastructure/posts/posts-db-repository"
+import { PostsRepository } from "../../Blogger/infrastructure/posts/posts-db-repository"
 import { GetPostsForBlogCommand } from "../application/use-cases/blogs/get-posts-for-blog.use-case"
 import {
     Controller, Get, Headers, Param, Query

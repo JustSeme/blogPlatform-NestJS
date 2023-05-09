@@ -12,12 +12,12 @@ import {
     Delete
 } from "@nestjs/common"
 import { ReadBlogsQueryParams } from "../../blogs/api/models/ReadBlogsQuery"
-import { JwtAuthGuard } from "../../blogs/api/guards/jwt-auth.guard"
+import { JwtAuthGuard } from "../../general/guards/jwt-auth.guard"
 import { CurrentUserId } from "../../general/decorators/current-userId.param.decorator"
 import {
     BlogViewModel, BlogsWithQueryOutputModel
 } from "../../blogs/application/dto/BlogViewModel"
-import { BlogInputModel } from "../../blogs/api/models/BlogInputModel"
+import { BlogInputModel } from "./models/BlogInputModel"
 import { CommandBus } from "@nestjs/cqrs"
 import { CreateBlogForBloggerCommand } from "../application/use-cases/blogs/create-blog-for-blogger.use-case"
 import { UpdateBlogForBloggerCommand } from "../application/use-cases/blogs/update-blog-for-blogger.use-case"
@@ -25,7 +25,7 @@ import { DeleteBlogForBloggerCommand } from "../application/use-cases/blogs/dele
 import { IsBlogByIdExistPipe } from "../../blogs/api/pipes/isBlogExists.validation.pipe"
 import { PostsViewModel } from "../../blogs/application/dto/PostViewModel"
 import { CreatePostForBloggerCommand } from "../application/use-cases/posts/create-post-for-blogger.use-case"
-import { PostInputModelWithoutBlogId } from "../../blogs/api/models/PostInputModelWithoutBlogId"
+import { PostInputModelWithoutBlogId } from "./models/PostInputModelWithoutBlogId"
 import { UpdatePostForBloggerCommand } from "../application/use-cases/posts/update-post-for-blogger.use-case"
 import { IsPostExistsPipe } from "../../blogs/api/pipes/isPostExists.validation.pipe"
 import { DeletePostForBloggerCommand } from "../application/use-cases/posts/delete-post-for-blogger.use-case"

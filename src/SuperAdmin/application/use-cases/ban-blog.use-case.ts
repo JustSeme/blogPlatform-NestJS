@@ -2,8 +2,8 @@ import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
 import { BanBlogInputModel } from "../../api/models/BanBlogInputModel"
-import { BlogsRepository } from "../../../blogs/infrastructure/blogs/blogs-db-repository"
-import { PostsRepository } from "../../../blogs/infrastructure/posts/posts-db-repository"
+import { BlogsRepository } from "../../../Blogger/infrastructure/blogs/blogs-db-repository"
+import { PostsRepository } from "../../../Blogger/infrastructure/posts/posts-db-repository"
 
 export class BanBlogCommand {
     constructor(

@@ -1,9 +1,9 @@
 import { ICommandHandler } from "@nestjs/cqrs"
-import { PostInputModel } from "../../../api/models/PostInputModel"
-import { BlogsRepository } from "../../../infrastructure/blogs/blogs-db-repository"
-import { PostsRepository } from "../../../infrastructure/posts/posts-db-repository"
+import { PostInputModel } from "../../../../Blogger/api/models/PostInputModel"
+import { BlogsRepository } from "../../../../Blogger/infrastructure/blogs/blogs-db-repository"
+import { PostsRepository } from "../../../../Blogger/infrastructure/posts/posts-db-repository"
 import { PostsService } from "../../posts-service"
-import { PostDBModel } from "../../../domain/posts/PostsTypes"
+import { PostDBModel } from "../../../../Blogger/domain/posts/PostsTypes"
 import { PostsViewModel } from "../../dto/PostViewModel"
 
 export class CreatePostCommand {

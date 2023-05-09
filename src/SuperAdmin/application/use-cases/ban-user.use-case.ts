@@ -3,7 +3,7 @@ import {
 } from "@nestjs/cqrs"
 import { BanUserInputModel } from "../../api/models/BanUserInputModel"
 import { DeviceRepository } from '../../../security/infrastructure/device-db-repository'
-import { PostsRepository } from "../../../blogs/infrastructure/posts/posts-db-repository"
+import { PostsRepository } from "../../../Blogger/infrastructure/posts/posts-db-repository"
 import { CommentsRepository } from "../../../blogs/infrastructure/comments/comments-db-repository"
 import { UsersRepository } from "../../infrastructure/users-db-repository"
 

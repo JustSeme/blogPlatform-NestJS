@@ -3,8 +3,8 @@ import {
 } from "@nestjs/common"
 import { PassportStrategy } from "@nestjs/passport"
 import { BasicStrategy as Strategy } from 'passport-http'
-import { generateErrorsMessages } from "../../../general/helpers"
-import { BlogsConfig } from "../../../configuration/blogs.config"
+import { generateErrorsMessages } from "../helpers"
+import { BlogsConfig } from "../../configuration/blogs.config"
 
 @Injectable()
 export class BasicStrategy extends PassportStrategy(Strategy) {

@@ -1,7 +1,7 @@
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
-import { PostsRepository } from "../../../blogs/infrastructure/posts/posts-db-repository"
+import { PostsRepository } from "../../../Blogger/infrastructure/posts/posts-db-repository"
 import { CommentsRepository } from "../../../blogs/infrastructure/comments/comments-db-repository"
 import { UsersRepository } from "../../infrastructure/users-db-repository"
 

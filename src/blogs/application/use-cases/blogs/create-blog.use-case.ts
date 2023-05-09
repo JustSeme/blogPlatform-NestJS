@@ -1,10 +1,10 @@
 import {
     CommandHandler, ICommand, ICommandHandler
 } from "@nestjs/cqrs"
-import { BlogInputModel } from "../../../api/models/BlogInputModel"
-import { BlogsRepository } from "../../../infrastructure/blogs/blogs-db-repository"
+import { BlogInputModel } from "../../../../Blogger/api/models/BlogInputModel"
+import { BlogsRepository } from "../../../../Blogger/infrastructure/blogs/blogs-db-repository"
 import { BlogViewModel } from "../../dto/BlogViewModel"
-import { BlogDBModel } from "../../../domain/blogs/BlogsTypes"
+import { BlogDBModel } from "../../../../Blogger/domain/blogs/BlogsTypes"
 
 // Command
 export class CreateBlogCommand implements ICommand {

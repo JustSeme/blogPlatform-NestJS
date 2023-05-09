@@ -3,7 +3,7 @@ import {
     Injectable, PipeTransform
 } from "@nestjs/common"
 import { generateErrorsMessages } from "../../../general/helpers"
-import { BlogsRepository } from "../../../blogs/infrastructure/blogs/blogs-db-repository"
+import { BlogsRepository } from "../../../Blogger/infrastructure/blogs/blogs-db-repository"
 
 @Injectable()
 export class IsBlogExistOrThrow400Pipe implements PipeTransform {

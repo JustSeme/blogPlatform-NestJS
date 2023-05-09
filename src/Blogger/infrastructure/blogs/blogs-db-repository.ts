@@ -7,9 +7,9 @@ import {
     BlogDBModel, BlogModelType
 } from "../../domain/blogs/BlogsTypes"
 import { BlogDocument } from "./BlogsTypes"
-import { ReadBlogsQueryParams } from "../../api/models/ReadBlogsQuery"
+import { ReadBlogsQueryParams } from "../../../blogs/api/models/ReadBlogsQuery"
 import { BlogsWithQuerySuperAdminOutputModel } from "../../../SuperAdmin/application/dto/BlogSuperAdminViewModel"
-import { BlogsWithQueryOutputModel } from "../../application/dto/BlogViewModel"
+import { BlogsWithQueryOutputModel } from "../../../blogs/application/dto/BlogViewModel"
 import { BanBlogInputModel } from "../../../SuperAdmin/api/models/BanBlogInputModel"
 
 @Injectable()

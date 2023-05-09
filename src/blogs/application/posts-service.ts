@@ -3,7 +3,7 @@ import { PostsViewModel } from './dto/PostViewModel'
 import { Injectable } from '@nestjs/common'
 import {
     ExtendedLikeObjectType, PostDBModel
-} from '../domain/posts/PostsTypes'
+} from '../../Blogger/domain/posts/PostsTypes'
 import { JwtService } from '../../general/adapters/jwt.adapter'
 
 @Injectable()

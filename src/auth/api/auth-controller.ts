@@ -9,7 +9,7 @@ import { LocalAuthGuard } from "./guards/local-auth.guard"
 import {
     ErrorMessagesOutputModel, FieldError
 } from "../../general/types/ErrorMessagesOutputModel"
-import { JwtAuthGuard } from "../../blogs/api/guards/jwt-auth.guard"
+import { JwtAuthGuard } from "../../general/guards/jwt-auth.guard"
 import { CurrentUserId } from "../../general/decorators/current-userId.param.decorator"
 import { JwtService } from "../../general/adapters/jwt.adapter"
 import { IpRestrictionGuard } from "./guards/ip-restriction.guard"

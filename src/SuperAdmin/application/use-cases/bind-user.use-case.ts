@@ -1,7 +1,7 @@
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
-import { BlogsRepository } from "../../../blogs/infrastructure/blogs/blogs-db-repository"
+import { BlogsRepository } from "../../../Blogger/infrastructure/blogs/blogs-db-repository"
 import { generateErrorsMessages } from "../../../general/helpers"
 import { BadRequestException } from '@nestjs/common'
 import { UsersRepository } from "../../infrastructure/users-db-repository"

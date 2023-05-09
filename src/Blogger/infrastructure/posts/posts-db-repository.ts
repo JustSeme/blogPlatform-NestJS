@@ -8,7 +8,7 @@ import {
     ExtendedLikeObjectType, PostDBModel, PostModelType
 } from '../../domain/posts/PostsTypes'
 import { HydratedPost } from './PostsTypes'
-import { ReadPostsQueryParams } from '../../api/models/ReadPostsQuery'
+import { ReadPostsQueryParams } from '../../../blogs/api/models/ReadPostsQuery'
 
 @Injectable()
 export class PostsRepository {

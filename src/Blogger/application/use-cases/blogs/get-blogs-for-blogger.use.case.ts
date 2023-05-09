@@ -3,7 +3,7 @@ import {
 } from '@nestjs/cqrs'
 import { NotFoundException } from '@nestjs/common'
 import { ReadBlogsQueryParams } from '../../../../blogs/api/models/ReadBlogsQuery'
-import { BlogsRepository } from '../../../../blogs/infrastructure/blogs/blogs-db-repository'
+import { BlogsRepository } from '../../../infrastructure/blogs/blogs-db-repository'
 import { BlogsService } from '../../../../blogs/application/blogs-service'
 import { BlogsWithQueryOutputModel } from '../../../../blogs/application/dto/BlogViewModel'
 

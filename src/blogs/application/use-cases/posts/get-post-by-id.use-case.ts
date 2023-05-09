@@ -1,7 +1,7 @@
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
-import { PostsRepository } from "../../../infrastructure/posts/posts-db-repository"
+import { PostsRepository } from "../../../../Blogger/infrastructure/posts/posts-db-repository"
 import { PostsService } from "../../posts-service"
 import { PostsViewModel } from "../../dto/PostViewModel"
 import { NotFoundException } from '@nestjs/common'

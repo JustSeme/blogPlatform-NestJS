@@ -2,7 +2,7 @@ import {
     CommandHandler, ICommand, ICommandHandler
 } from '@nestjs/cqrs'
 import { ReadBlogsQueryParams } from '../../../api/models/ReadBlogsQuery'
-import { BlogsRepository } from '../../../infrastructure/blogs/blogs-db-repository'
+import { BlogsRepository } from '../../../../Blogger/infrastructure/blogs/blogs-db-repository'
 import { BlogsService } from '../../blogs-service'
 import { BlogsWithQueryOutputModel } from '../../dto/BlogViewModel'
 import { NotFoundException } from '@nestjs/common'

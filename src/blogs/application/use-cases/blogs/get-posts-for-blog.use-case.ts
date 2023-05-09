@@ -2,9 +2,9 @@ import {
     CommandHandler, ICommand, ICommandHandler
 } from '@nestjs/cqrs'
 import { ReadPostsQueryParams } from '../../../api/models/ReadPostsQuery'
-import { PostsRepository } from '../../../infrastructure/posts/posts-db-repository'
+import { PostsRepository } from '../../../../Blogger/infrastructure/posts/posts-db-repository'
 import { PostsService } from '../../posts-service'
-import { PostsWithQueryOutputModel } from '../../../domain/posts/PostsTypes'
+import { PostsWithQueryOutputModel } from '../../../../Blogger/domain/posts/PostsTypes'
 
 export class GetPostsForBlogCommand implements ICommand {
     constructor(

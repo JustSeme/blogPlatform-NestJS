@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common"
-import { BlogDBModel } from "../domain/blogs/BlogsTypes"
+import { BlogDBModel } from "../../Blogger/domain/blogs/BlogsTypes"
 import { BlogViewModel } from "./dto/BlogViewModel"
 
 @Injectable()

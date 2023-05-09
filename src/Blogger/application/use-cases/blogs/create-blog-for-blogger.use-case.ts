@@ -1,10 +1,10 @@
 import {
     CommandHandler, ICommand, ICommandHandler
 } from "@nestjs/cqrs"
-import { BlogInputModel } from "../../../../blogs/api/models/BlogInputModel"
-import { BlogsRepository } from "../../../../blogs/infrastructure/blogs/blogs-db-repository"
+import { BlogInputModel } from "../../../api/models/BlogInputModel"
+import { BlogsRepository } from "../../../infrastructure/blogs/blogs-db-repository"
 import { BlogViewModel } from "../../../../blogs/application/dto/BlogViewModel"
-import { BlogDBModel } from "../../../../blogs/domain/blogs/BlogsTypes"
+import { BlogDBModel } from "../../../domain/blogs/BlogsTypes"
 import { BlogsService } from "../../../../blogs/application/blogs-service"
 import { UsersQueryRepository } from "../../../../SuperAdmin/infrastructure/users-query-repository"
 

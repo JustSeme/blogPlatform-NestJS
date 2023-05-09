@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid"
-import { PostsViewModel } from "../../application/dto/PostViewModel"
+import { PostsViewModel } from "../../../blogs/application/dto/PostViewModel"
 import { Model } from "mongoose"
 import { Post } from "./PostsSchema"
 
