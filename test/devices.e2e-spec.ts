@@ -6,7 +6,7 @@ import { NestExpressApplication } from "@nestjs/platform-express"
 import { createApp } from '../src/createApp'
 import { UserInputModel } from '../src/SuperAdmin/api/models/UserInputModel';
 
-describe('devices', () => {
+describe('e2e-devices', () => {
     let app: NestExpressApplication;
     let httpServer;
 

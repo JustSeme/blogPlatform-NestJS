@@ -7,9 +7,9 @@ import { NestExpressApplication } from "@nestjs/platform-express"
 import { UserInputModel } from '../../src/SuperAdmin/api/models/UserInputModel';
 import { BanUserInputModel } from '../../src/SuperAdmin/api/models/BanUserInputModel'
 import { LoginInputDTO } from '../../src/auth/api/models/LoginInputDTO'
-import { BlogInputModel } from '../../src/blogs/api/models/BlogInputModel';
-import { PostInputModelWithoutBlogId } from '../../src/blogs/api/models/PostInputModelWithoutBlogId';
 import { CommentInputModel } from '../../src/blogs/api/models/CommentInputModel';
+import { BlogInputModel } from '../../src/Blogger/api/models/BlogInputModel';
+import { PostInputModelWithoutBlogId } from '../../src/Blogger/api/models/PostInputModelWithoutBlogId';
 
 const generateEmail = (str: string) => `${str}@mail.ru`
 

@@ -4,9 +4,8 @@ import { HttpStatus } from '@nestjs/common';
 import { NestExpressApplication } from "@nestjs/platform-express"
 import { AppModule } from '../../src/app.module';
 import { createApp } from '../../src/createApp';
-import { BlogInputModel } from '../../src/blogs/api/models/BlogInputModel';
 import { UserInputModel } from '../../src/SuperAdmin/api/models/UserInputModel';
-import { PostInputModelWithoutBlogId } from '../../src/blogs/api/models/PostInputModelWithoutBlogId';
+import { BlogInputModel } from '../../src/Blogger/api/models/BlogInputModel';
 
 describe('blogger-blogs', () => {
     let app: NestExpressApplication;

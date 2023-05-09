@@ -5,9 +5,9 @@ import { NestExpressApplication } from "@nestjs/platform-express"
 import { AppModule } from '../../src/app.module';
 import { createApp } from '../../src/createApp';
 import { UserInputModel } from '../../src/SuperAdmin/api/models/UserInputModel';
-import { BlogInputModel } from '../../src/blogs/api/models/BlogInputModel';
 import { BlogViewModel } from '../../src/blogs/application/dto/BlogViewModel';
-import { PostInputModelWithoutBlogId } from '../../src/blogs/api/models/PostInputModelWithoutBlogId';
+import { BlogInputModel } from '../../src/Blogger/api/models/BlogInputModel';
+import { PostInputModelWithoutBlogId } from '../../src/Blogger/api/models/PostInputModelWithoutBlogId';
 
 describe('super-admin-blogs', () => {
     let app: NestExpressApplication;

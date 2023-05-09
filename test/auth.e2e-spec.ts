@@ -51,7 +51,7 @@ describe('e2e-auth', () => {
     let createdUserId
     it('should return array with one created user', async () => {
         const response = await request(httpServer)
-            .get(`/users`)
+            .get(`/sa/users`)
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
             .expect(HttpStatus.OK)
 

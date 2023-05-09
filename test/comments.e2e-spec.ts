@@ -3,10 +3,11 @@ import { Test } from '@nestjs/testing';
 import { AppModule } from '../src/app.module';
 import { HttpStatus } from '@nestjs/common';
 import { NestExpressApplication } from "@nestjs/platform-express"
-import { BlogInputModel } from '../src/blogs/api/models/BlogInputModel';
 import { createApp } from '../src/createApp'
-import { PostInputModel } from '../src/blogs/api/models/PostInputModel';
 import { CommentInputModel } from '../src/blogs/api/models/CommentInputModel';
+import { BlogInputModel } from '../src/Blogger/api/models/BlogInputModel';
+import { PostInputModel } from '../src/Blogger/api/models/PostInputModel';
+import { PostInputModelWithoutBlogId } from '../src/Blogger/api/models/PostInputModelWithoutBlogId';
 
 describe('comments', () => {
     let app: NestExpressApplication;
@@ -43,7 +44,7 @@ describe('comments', () => {
 
     it('should create user and should login, getting accessToken', async () => {
         await request(httpServer)
-            .post(`/users`)
+            .post(`/sa/users`)
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
             .send(createUserInputData)
             .expect(HttpStatus.CREATED)
@@ -69,26 +70,24 @@ describe('comments', () => {
         }
 
         const createdBlogResponse = await request(httpServer)
-            .post(`/blogs`)
-            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .post(`/blogger/blogs`)
+            .set('Authorization', `Bearer ${recievedAccessToken}`)
             .send(correctBlogBody)
             .expect(HttpStatus.CREATED)
 
-        const correctPostBody: PostInputModel = {
+        const correctPostBody: PostInputModelWithoutBlogId = {
             title: 'postTitle', // min 3 max 30
             shortDescription: 'shortDescription', // min 3 max 100
             content: 'anyContent', // min 3 max 1000
-            blogId: ''
         }
-        correctPostBody.blogId = createdBlogResponse.body.id
 
         const createdPostResponseData = await request(httpServer)
-            .post(`/posts`)
-            .set('Authorization', `Basic YWRtaW46cXdlcnR5`)
+            .post(`/blogger/blogs/${createdBlogResponse.body.id}/posts`)
+            .set('Authorization', `Bearer ${recievedAccessToken}`)
             .send(correctPostBody)
             .expect(HttpStatus.CREATED)
 
-        expect(createdPostResponseData.body)
+        expect(createdPostResponseData.body).toBeDefined()
 
         postId = createdPostResponseData.body.id
     })

@@ -16,7 +16,7 @@ export class UpdateCommentCommand {
 
 // handler
 @CommandHandler(UpdateCommentCommand)
-export class UpdateCommentHandler implements ICommandHandler<UpdateCommentCommand> {
+export class UpdateCommentUseCase implements ICommandHandler<UpdateCommentCommand> {
     constructor(private readonly commentsRepository: CommentsRepository) { }
 
 
