@@ -8,6 +8,7 @@ import {
 import { HydratedComment } from "./CommentsTypes"
 import { CommentEntity } from "../../domain/comments/Comments.schema"
 import { ReadCommentsQueryParams } from "../../api/models/ReadCommentsQuery"
+import { CommentsForBloggerWithQueryOutputModel } from "../../application/dto/CommentViewModelForBlogger"
 
 @Injectable()
 export class CommentsRepository {
@@ -155,6 +156,45 @@ export class CommentsRepository {
         } catch (err) {
             console.dir('hideLikeEntities for comment is not implimented by error', err)
             throw new NotImplementedException(`unHideLikeEntities for comment is not implimented by error: ${err}`)
+        }
+    }
+
+    async getCommentsByBlogId(blogId: string): Promise<CommentDBModel[]> {
+        return this.CommentModel.find({ 'postInfo.blogId': blogId })
+    }
+
+    async getAllCommentsByAllBlogIds(readCommentsQuery: ReadCommentsQueryParams, blogIds: string[]): Promise<CommentsForBloggerWithQueryOutputModel> {
+
+        const {
+            sortDirection = 'desc', sortBy = 'createdAt', pageNumber = 1, pageSize = 10
+        } = readCommentsQuery
+
+        const filter: any = { isBanned: false }
+
+        const skipCount = (+pageNumber - 1) * +pageSize
+
+        const sortDirectionNumber = sortDirection === 'asc' ? 1 : -1
+        const resultedComments = await this.CommentModel.find(filter, {
+            _id: 0, __v: 0
+        }).skip(skipCount).limit(+pageSize).sort({ [sortBy]: sortDirectionNumber }).lean()
+
+        let allFindedComments = []
+        blogIds.forEach(async (blogId) => {
+            filter['postInfo.blogId'] = blogId
+            const findedCommentsByBlogId = await this.getCommentsByBlogId(blogId)
+            allFindedComments = [...allFindedComments, findedCommentsByBlogId]
+            console.log('fc', allFindedComments)
+        })
+
+        const totalCount = allFindedComments.length
+        const pagesCount = Math.ceil(totalCount / +pageSize)
+
+        return {
+            pagesCount: pagesCount,
+            page: +pageNumber,
+            pageSize: +pageSize,
+            totalCount: totalCount,
+            items: resultedComments
         }
     }
 }

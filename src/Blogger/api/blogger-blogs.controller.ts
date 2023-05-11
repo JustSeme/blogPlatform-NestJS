@@ -30,6 +30,9 @@ import { UpdatePostForBloggerCommand } from "../application/use-cases/posts/upda
 import { IsPostExistsPipe } from "../../blogs/api/pipes/isPostExists.validation.pipe"
 import { DeletePostForBloggerCommand } from "../application/use-cases/posts/delete-post-for-blogger.use-case"
 import { GetBlogsForBloggerCommand } from "../application/use-cases/blogs/get-blogs-for-blogger.use.case"
+import { ReadCommentsQueryParams } from "../../blogs/api/models/ReadCommentsQuery"
+import { CommentsForBloggerWithQueryOutputModel } from "../../blogs/application/dto/CommentViewModelForBlogger"
+import { GetAllCommentsForBloggerBlogsCommand } from "../application/use-cases/comments/get-all-comments-for-blogger-blogs.use-case"
 
 @UseGuards(JwtAuthGuard)
 @Controller('blogger/blogs')
@@ -117,6 +120,16 @@ export class BloggerBlogsController {
     ) {
         await this.commandBus.execute(
             new DeletePostForBloggerCommand(blogId, postId, userId)
+        )
+    }
+
+    @Get('comments')
+    public async getAllCommentsForAllBloggerBlogs(
+        @Query() commentsQueryParams: ReadCommentsQueryParams,
+        @CurrentUserId() userId,
+    ): Promise<CommentsForBloggerWithQueryOutputModel> {
+        return this.commandBus.execute(
+            new GetAllCommentsForBloggerBlogsCommand(commentsQueryParams, userId)
         )
     }
 }

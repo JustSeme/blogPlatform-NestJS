@@ -5,12 +5,23 @@ import {
     CommentDBModel, LikeObjectType
 } from "../domain/comments/CommentTypes"
 import { JwtService } from "../../general/adapters/jwt.adapter"
+import { CommentViewModelForBlogger } from './dto/CommentViewModelForBlogger'
 
 @Injectable()
 export class CommentsService {
     constructor(
         protected jwtService: JwtService,
     ) { }
+
+    transformCommentsForBloggerDisplay(rawComments: Array<CommentDBModel | CommentViewModelForBlogger>): Array<CommentViewModelForBlogger> {
+        return rawComments.map((rawComment: CommentDBModel) => ({
+            id: rawComment.id,
+            content: rawComment.content,
+            commentatorInfo: { ...rawComment.commentatorInfo },
+            createdAt: rawComment.createdAt,
+            postInfo: { ...rawComment.postInfo }
+        }))
+    }
 
     transformCommentWithDefaultLikeInfo(rawComment: CommentDBModel | CommentViewModel): CommentViewModel {
         return {

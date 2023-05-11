@@ -8,6 +8,8 @@ import {
 import {
     LikesInfo, LikesInfoSchema
 } from "./LikesInfoSchema"
+import { PostInfoType } from "../../application/dto/PostInfoType"
+import { PostInfoSchema } from "./PostInfoSchema"
 
 @Schema()
 export class CommentEntity {
@@ -24,9 +26,6 @@ export class CommentEntity {
     })
     createdAt: string
 
-    @Prop({ required: true })
-    postId: string
-
     @Prop({
         required: true, type: CommentatorInfoSchema
     })
@@ -42,6 +41,12 @@ export class CommentEntity {
         default: false,
     })
     isBanned: boolean
+
+    @Prop({
+        required: true,
+        type: PostInfoSchema
+    })
+    postInfo: PostInfoType
 }
 
 export const CommentsSchema = SchemaFactory.createForClass<CommentDBModel>(CommentEntity)

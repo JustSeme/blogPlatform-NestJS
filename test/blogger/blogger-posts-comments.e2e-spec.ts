@@ -279,7 +279,7 @@ describe('blogger-posts-comments', () => {
             .expect(HttpStatus.NO_CONTENT)
     })
 
-    it(`shouldn't create comments for posts, if this user is banned for post`, async () => {
+    it(`shouldn't create comments for posts, if this user is banned for blog`, async () => {
         await request(httpServer)
             .post(`/posts/${createdPostId}/comments`)
             .set('Authorization', `Bearer ${secondRecievedAccessToken}`)
@@ -318,7 +318,7 @@ describe('blogger-posts-comments', () => {
             .expect(HttpStatus.NO_CONTENT)
     })
 
-    it(`should create comments for posts, if this user is banned for post`, async () => {
+    it(`should create comments for posts, if this user is unbanned for blog`, async () => {
         await request(httpServer)
             .post(`/posts/${createdPostId}/comments`)
             .set('Authorization', `Bearer ${secondRecievedAccessToken}`)

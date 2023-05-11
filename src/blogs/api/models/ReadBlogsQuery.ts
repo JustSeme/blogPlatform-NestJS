@@ -1,5 +1,5 @@
-import { ReadQuery } from "../../../general/types/ReadQuery"
+import { ReadInputQuery } from "../../../general/types/ReadQuery"
 
-export type ReadBlogsQueryParams = ReadQuery & {
+export type ReadBlogsQueryParams = ReadInputQuery & {
     searchNameTerm: string
 }
