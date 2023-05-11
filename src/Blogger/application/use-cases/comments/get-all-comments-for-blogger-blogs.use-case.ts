@@ -31,7 +31,7 @@ export class GetAllCommentsForBloggerBlogsUseCase implements ICommandHandler<Get
 
         const commentsWithQueryData = await this.commentsRepository.getAllCommentsByAllBlogIds(command.readCommentsQuery, blogIds)
 
-        const commentsWithQueryData.items = this.commentsService.transformCommentsForBloggerDisplay(commentsWithQueryData.items)
+        commentsWithQueryData.items = this.commentsService.transformCommentsForBloggerDisplay(commentsWithQueryData.items)
 
         return commentsWithQueryData
     }

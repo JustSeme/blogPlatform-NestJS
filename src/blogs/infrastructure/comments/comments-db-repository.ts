@@ -34,7 +34,7 @@ export class CommentsRepository {
         } = queryParams
 
         const filter: any = {
-            postId: postId,
+            'postInfo.id': postId,
             isBanned: false
         }
 
@@ -174,17 +174,17 @@ export class CommentsRepository {
         const skipCount = (+pageNumber - 1) * +pageSize
 
         const sortDirectionNumber = sortDirection === 'asc' ? 1 : -1
-        const resultedComments = await this.CommentModel.find(filter, {
-            _id: 0, __v: 0
-        }).skip(skipCount).limit(+pageSize).sort({ [sortBy]: sortDirectionNumber }).lean()
 
         let allFindedComments = []
-        blogIds.forEach(async (blogId) => {
+        await Promise.all(blogIds.map(async (blogId) => {
             filter['postInfo.blogId'] = blogId
-            const findedCommentsByBlogId = await this.getCommentsByBlogId(blogId)
-            allFindedComments = [...allFindedComments, findedCommentsByBlogId]
-            console.log('fc', allFindedComments)
-        })
+
+            const resultedComments = await this.CommentModel.find(filter, {
+                _id: 0, __v: 0
+            }).lean()
+
+            allFindedComments = [...allFindedComments, ...resultedComments]
+        }))
 
         const totalCount = allFindedComments.length
         const pagesCount = Math.ceil(totalCount / +pageSize)
@@ -194,7 +194,7 @@ export class CommentsRepository {
             page: +pageNumber,
             pageSize: +pageSize,
             totalCount: totalCount,
-            items: resultedComments
+            items: allFindedComments
         }
     }
 }

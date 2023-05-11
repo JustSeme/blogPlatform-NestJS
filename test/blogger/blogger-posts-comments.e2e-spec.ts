@@ -206,6 +206,9 @@ describe('blogger-posts-comments', () => {
             .get(`/posts/${secondCreatedPostId}/comments`)
             .expect(HttpStatus.OK)
 
+        console.log('commentsData', commentsData.body);
+
+
         expect(commentsData.body.items[0].content).toEqual(commentInputModel.content)
         expect(commentsData.body.items[1].content).toEqual(commentInputModel.content)
     })
