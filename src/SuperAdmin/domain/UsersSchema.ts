@@ -65,7 +65,6 @@ export class User {
 
     banCurrentUser(BanUserInputModel: BanUserInputModel): boolean {
         this.banInfo = {
-            _id: this.banInfo._id,
             isBanned: BanUserInputModel.isBanned,
             banReason: BanUserInputModel.banReason,
             banDate: new Date(),

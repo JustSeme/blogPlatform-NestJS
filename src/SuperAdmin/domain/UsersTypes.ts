@@ -1,5 +1,5 @@
 import { add } from 'date-fns'
-import mongoose, { Model } from 'mongoose'
+import { Model } from 'mongoose'
 import { v4 as uuidv4 } from 'uuid'
 import { User } from './UsersSchema'
 import { HydratedUser } from '../infrastructure/UsersTypes'
@@ -36,7 +36,6 @@ export class UserDTO {
         }
 
         this.banInfo = {
-            _id: new mongoose.Types.ObjectId(),
             isBanned: false,
             banDate: null,
             banReason: null,

@@ -1,4 +1,3 @@
-import mongoose from "mongoose"
 
 export type UserViewModelType = {
     id: string
@@ -15,7 +14,6 @@ type BanInfoViewType = {
 }
 
 export type BanInfoDBType = {
-    _id: mongoose.Types.ObjectId,
     isBanned: boolean,
     banDate: Date,
     banReason: string

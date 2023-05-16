@@ -26,7 +26,9 @@ export class RegistrationUserUseCase implements ICommandHandler<RegistrationUser
 
         const newUser = this.UserModel.makeInstance(command.login, command.email, passwordHash, false, this.UserModel)
 
-        this.usersRepository.save(newUser)
+        console.log('new user', newUser)
+
+        await this.usersRepository.save(newUser)
 
         await this.emailManager.sendConfirmationCode(command.email, command.login, newUser.emailConfirmation.confirmationCode)
 

@@ -9,24 +9,19 @@ import {
 import { UsersRepository } from '../../SuperAdmin/infrastructure/users-db-repository'
 import { EmailManager } from '../../general/managers/emailManager'
 import { BcryptAdapter } from '../../general/adapters/bcrypt.adapter'
-import { User } from '../../SuperAdmin/domain/UsersSchema'
-import { getModelToken } from '@nestjs/mongoose'
 import { UserDTO } from '../../SuperAdmin/domain/UsersTypes'
+import {
+    ConfirmEmailCommand, ConfirmEmailUseCase
+} from './use-cases/confirm-email.use-case'
+import { AppModule } from '../../app.module'
 
 describe('integration tests for auth use cases', () => {
-    let useCase: RegistrationUserUseCase
+    let registrationUserUseCase: RegistrationUserUseCase
+    let confirmEmailUseCase: ConfirmEmailUseCase
     let bcryptAdapter: BcryptAdapter
     let emailManager: EmailManager
+    let usersRepository: UsersRepository
 
-    const mockModel = {
-        findOneAndUpdate: jest.fn(),
-        findOne: jest.fn(),
-        create: jest.fn(),
-        makeInstance: jest.fn(
-            (login: string, email: string, passwordHash: string, isConfirmed: boolean) => {
-                return new UserDTO(login, email, passwordHash, isConfirmed)
-            }),
-    }
 
     let mongoServer: MongoMemoryServer
     beforeAll(async () => {
@@ -37,53 +32,57 @@ describe('integration tests for auth use cases', () => {
     })
 
     beforeEach(async () => {
-        const moduleRef: TestingModule = await Test.createTestingModule({
-            providers: [
-                RegistrationUserUseCase,
-                UsersRepository,
-                EmailManager,
-                BcryptAdapter,
-                {
-                    provide: getModelToken(User.name),
-                    useValue: mockModel,
-                },
-                {
-                    provide: BcryptAdapter,
-                    useValue: { generatePasswordHash: jest.fn().mockResolvedValue('hashed_password'), },
-                },
-                {
-                    provide: UsersRepository,
-                    useValue: { save: jest.fn(), },
-                },
-                {
-                    provide: EmailManager,
-                    useValue: { sendConfirmationCode: jest.fn(), },
-                },
-            ],
-        }).compile()
+        const moduleRef: TestingModule = await Test.createTestingModule({ imports: [AppModule] })
+            .overrideProvider(EmailManager)
+            .useValue({ sendConfirmationCode: jest.fn() })
+            .overrideProvider(BcryptAdapter)
+            .useValue({ generatePasswordHash: jest.fn((password: string, rounds: number) => 'hashedPassword') })
+            .compile()
 
-        useCase = moduleRef.get<RegistrationUserUseCase>(RegistrationUserUseCase)
+        registrationUserUseCase = moduleRef.get<RegistrationUserUseCase>(RegistrationUserUseCase)
+        confirmEmailUseCase = moduleRef.get<ConfirmEmailUseCase>(ConfirmEmailUseCase)
         bcryptAdapter = moduleRef.get<BcryptAdapter>(BcryptAdapter)
         emailManager = moduleRef.get<EmailManager>(EmailManager)
+        usersRepository = moduleRef.get<UsersRepository>(UsersRepository)
     })
 
-    afterEach(() => {
+    afterEach(async () => {
         jest.clearAllMocks()
+        await mongoose.disconnect()
+        mongoServer.stop()
     })
 
     describe('registration user', () => {
         it('should create a new user with hashed password and send email confirmation code', async () => {
             const command = new RegistrationUserCommand('test_login', 'test_password', 'test_email')
 
-            const result = await useCase.execute(command)
+            const result = await registrationUserUseCase.execute(command)
 
             expect(result).toBe(true)
 
-            expect(mockModel.makeInstance).toHaveBeenCalledTimes(1)
+            const user = await usersRepository.findUserByEmail(command.email)
+
+            expect(user.login).toEqual(command.login)
+            expect(user.email).toEqual(command.email)
+
+            const userConfirmationCode = user.emailConfirmation.confirmationCode
+            console.log('finded user', user)
+
 
             expect(bcryptAdapter.generatePasswordHash).toHaveBeenCalledWith(command.password, 10)
 
-            expect(emailManager.sendConfirmationCode).toHaveBeenCalledTimes(1)
+            expect(emailManager.sendConfirmationCode).toHaveBeenCalledWith(command.email, command.login, userConfirmationCode)
+
+            expect(usersRepository.save).toHaveBeenCalledTimes(1)
+        })
+    })
+
+    describe('confirm email', () => {
+        it('should return false for expired confirmation code', async () => {
+
+            const command = new ConfirmEmailCommand('confirmationCode')
+
+            const result = await confirmEmailUseCase.execute(command)
         })
     })
 })
