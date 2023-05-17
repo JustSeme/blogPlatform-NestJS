@@ -3,7 +3,9 @@ import { HydratedUser } from "./UsersTypes"
 import { Injectable } from "@nestjs/common"
 import { InjectModel } from "@nestjs/mongoose/dist"
 import { User } from "../domain/UsersSchema"
-import { UserModelType } from "../domain/UsersTypes"
+import {
+    UserDTO, UserModelType
+} from "../domain/UsersTypes"
 
 //transaction script
 @Injectable()
@@ -76,5 +78,9 @@ export class UsersRepository {
     async isUserExists(userId: string) {
         const user = await this.findUserById(userId)
         return user ? true : false
+    }
+
+    async _createUserWithExpiredConfirmationCode(user: UserDTO) {
+        return this.UserModel.create(user)
     }
 }

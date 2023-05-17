@@ -15,6 +15,7 @@ export class ConfirmEmailUseCase implements ICommandHandler<ConfirmEmailCommand>
 
     async execute(command: ConfirmEmailCommand) {
         const user = await this.usersRepository.findUserByConfirmationCode(command.code)
+
         if (!user) return false
 
         if (!user.canBeConfirmed(command.code)) {
@@ -22,7 +23,7 @@ export class ConfirmEmailUseCase implements ICommandHandler<ConfirmEmailCommand>
         }
         const isConfirmed = user.updateIsConfirmed()
         if (isConfirmed) {
-            this.usersRepository.save(user)
+            await this.usersRepository.save(user)
         }
         return isConfirmed
     }

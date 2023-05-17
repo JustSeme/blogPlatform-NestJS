@@ -24,11 +24,9 @@ export class RegistrationUserUseCase implements ICommandHandler<RegistrationUser
     async execute(command: RegistrationUserCommand): Promise<boolean> {
         const passwordHash = await this.bcryptAdapter.generatePasswordHash(command.password, 10)
 
-        const newUser = this.UserModel.makeInstance(command.login, command.email, passwordHash, false, this.UserModel)
+        let newUser = this.UserModel.makeInstance(command.login, command.email, passwordHash, false, this.UserModel)
 
-        console.log('new user', newUser)
-
-        await this.usersRepository.save(newUser)
+        newUser = await this.usersRepository.save(newUser)
 
         await this.emailManager.sendConfirmationCode(command.email, command.login, newUser.emailConfirmation.confirmationCode)
 

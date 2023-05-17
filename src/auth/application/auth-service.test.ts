@@ -9,11 +9,14 @@ import {
 import { UsersRepository } from '../../SuperAdmin/infrastructure/users-db-repository'
 import { EmailManager } from '../../general/managers/emailManager'
 import { BcryptAdapter } from '../../general/adapters/bcrypt.adapter'
-import { UserDTO } from '../../SuperAdmin/domain/UsersTypes'
 import {
     ConfirmEmailCommand, ConfirmEmailUseCase
 } from './use-cases/confirm-email.use-case'
 import { AppModule } from '../../app.module'
+import { AppService } from '../../app.service'
+import { UserDTO } from '../../SuperAdmin/domain/UsersTypes'
+import { addMinutes } from 'date-fns'
+import { v4 as uuidv4 } from 'uuid'
 
 describe('integration tests for auth use cases', () => {
     let registrationUserUseCase: RegistrationUserUseCase
@@ -21,9 +24,11 @@ describe('integration tests for auth use cases', () => {
     let bcryptAdapter: BcryptAdapter
     let emailManager: EmailManager
     let usersRepository: UsersRepository
+    let appService: AppService
 
 
     let mongoServer: MongoMemoryServer
+
     beforeAll(async () => {
         mongoServer = await MongoMemoryServer.create()
 
@@ -36,7 +41,7 @@ describe('integration tests for auth use cases', () => {
             .overrideProvider(EmailManager)
             .useValue({ sendConfirmationCode: jest.fn() })
             .overrideProvider(BcryptAdapter)
-            .useValue({ generatePasswordHash: jest.fn((password: string, rounds: number) => 'hashedPassword') })
+            .useValue({ generatePasswordHash: jest.fn(() => 'hashedPassword') })
             .compile()
 
         registrationUserUseCase = moduleRef.get<RegistrationUserUseCase>(RegistrationUserUseCase)
@@ -44,9 +49,12 @@ describe('integration tests for auth use cases', () => {
         bcryptAdapter = moduleRef.get<BcryptAdapter>(BcryptAdapter)
         emailManager = moduleRef.get<EmailManager>(EmailManager)
         usersRepository = moduleRef.get<UsersRepository>(UsersRepository)
+        appService = moduleRef.get<AppService>(AppService)
+
+        await appService.deleteTestingData()
     })
 
-    afterEach(async () => {
+    afterAll(async () => {
         jest.clearAllMocks()
         await mongoose.disconnect()
         mongoServer.stop()
@@ -66,23 +74,61 @@ describe('integration tests for auth use cases', () => {
             expect(user.email).toEqual(command.email)
 
             const userConfirmationCode = user.emailConfirmation.confirmationCode
-            console.log('finded user', user)
-
 
             expect(bcryptAdapter.generatePasswordHash).toHaveBeenCalledWith(command.password, 10)
 
             expect(emailManager.sendConfirmationCode).toHaveBeenCalledWith(command.email, command.login, userConfirmationCode)
 
-            expect(usersRepository.save).toHaveBeenCalledTimes(1)
+            expect(user.emailConfirmation.isConfirmed).toBe(false)
         })
     })
 
     describe('confirm email', () => {
-        it('should return false for expired confirmation code', async () => {
+        const confirmationCode = uuidv4()
+        beforeAll(async () => {
+            const userWithExpiredConfirmationCode: UserDTO = {
+                id: '123',
+                email: 'any@email.com',
+                login: 'anyLogin',
+                createdAt: new Date().toISOString(),
+                emailConfirmation: {
+                    confirmationCode: confirmationCode,
+                    expirationDate: addMinutes(new Date(), -1),
+                    isConfirmed: false,
+                },
+                banInfo: {
+                    banDate: null,
+                    banReason: null,
+                    isBanned: false
+                },
+                passwordHash: 'hashedPassword',
+                passwordRecovery: {
+                    confirmationCode: '',
+                    expirationDate: null
+                }
+            }
 
-            const command = new ConfirmEmailCommand('confirmationCode')
+            await usersRepository._createUserWithExpiredConfirmationCode(userWithExpiredConfirmationCode)
+        })
+
+        it('should return false for incorrect confirmation code', async () => {
+            const command = new ConfirmEmailCommand('incorrectConfirmationCode')
 
             const result = await confirmEmailUseCase.execute(command)
+
+            expect(result).toBe(false)
+        })
+
+        it('should return false for incorrect confirmation code', async () => {
+            const command = new ConfirmEmailCommand(confirmationCode)
+
+            const result = await confirmEmailUseCase.execute(command)
+
+            expect(result).toBe(false)
+
+            const userByCode = await usersRepository.findUserByConfirmationCode(confirmationCode)
+
+            expect(await userByCode.emailConfirmation.isConfirmed).toBe(false)
         })
     })
 })
