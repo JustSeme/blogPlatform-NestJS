@@ -6,6 +6,7 @@ import { User } from "../domain/UsersSchema"
 import {
     UserDTO, UserModelType
 } from "../domain/UsersTypes"
+import { BanUserForBlogInputModel } from "../../Blogger/api/models/BanUserForBlogInputModel"
 
 //transaction script
 @Injectable()
@@ -78,6 +79,10 @@ export class UsersRepository {
     async isUserExists(userId: string) {
         const user = await this.findUserById(userId)
         return user ? true : false
+    }
+
+    async banUserForCurrentBlog(userId: string, banInfo: BanUserForBlogInputModel) {
+        await this.UserModel.updateOne({ userId }, { $push: { bansForBlog: banInfo } })
     }
 
     async _createUserWithExpiredConfirmationCode(user: UserDTO) {

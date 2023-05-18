@@ -7,6 +7,9 @@ import { CommentViewModel } from "../../dto/CommentViewModel"
 import { CommentsService } from "../../comments-service"
 import { UsersQueryRepository } from "../../../../SuperAdmin/infrastructure/users-query-repository"
 import { PostsRepository } from "../../../../Blogger/infrastructure/posts/posts-db-repository"
+import { BanForBlogDBType } from "../../../../SuperAdmin/application/dto/UsersViewModel"
+import { ForbiddenException } from "@nestjs/common"
+import { generateErrorsMessages } from "../../../../general/helpers"
 
 // Command
 export class CreateCommentCommand {
@@ -34,7 +37,22 @@ export class CreateCommentUseCase implements ICommandHandler<CreateCommentComman
             return null
         }
 
-        const createdComment = new CommentDBModel(command.content, command.postId, command.commentatorId, commentator.login, false, post.title, post.blogId, post.blogName)
+        commentator.bansForBlog.some((ban: BanForBlogDBType) => {
+            if (ban.blogId === post.blogId) {
+                throw new ForbiddenException(generateErrorsMessages(`You are banned for this blog by reason: ${ban.banReason}`, 'commentator'))
+            }
+        })
+
+        const createdComment = new CommentDBModel(
+            command.content,
+            command.postId,
+            command.commentatorId,
+            commentator.login,
+            false,
+            post.title,
+            post.blogId,
+            post.blogName
+        )
 
         await this.commentsRepository.createComment(createdComment)
 

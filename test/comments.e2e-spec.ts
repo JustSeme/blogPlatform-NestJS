@@ -6,10 +6,9 @@ import { NestExpressApplication } from "@nestjs/platform-express"
 import { createApp } from '../src/createApp'
 import { CommentInputModel } from '../src/blogs/api/models/CommentInputModel';
 import { BlogInputModel } from '../src/Blogger/api/models/BlogInputModel';
-import { PostInputModel } from '../src/Blogger/api/models/PostInputModel';
 import { PostInputModelWithoutBlogId } from '../src/Blogger/api/models/PostInputModelWithoutBlogId';
 
-describe('comments', () => {
+describe('comments-e2e', () => {
     let app: NestExpressApplication;
     let httpServer;
 

@@ -62,25 +62,13 @@ export class CommentsRepository {
     }
 
     async setLike(likeData: LikeObjectType, commentId: string) {
-        const likedComment = await this.CommentModel.findOne({ id: commentId })
-        if (!likedComment) return false
-
-        likedComment.likesInfo.likes.push(likeData)
-
-        await likedComment.save()
-        return true
+        const updateResult = await this.CommentModel.updateOne({ id: commentId }, { $push: { 'likesInfo.likes': likeData } })
+        return updateResult.matchedCount === 1
     }
 
     async setDislike(likeData: LikeObjectType, commentId: string) {
-        const dislikedComment = await this.CommentModel.findOne({ id: commentId })
-        if (!dislikedComment) return false
-
-        // TODO Почитать про $push mongoose
-
-        dislikedComment.likesInfo.dislikes.push(likeData)
-
-        await dislikedComment.save()
-        return true
+        const updateResult = await this.CommentModel.updateOne({ id: commentId }, { $push: { 'likesInfo.dislikes': likeData } })
+        return updateResult.matchedCount === 1
     }
 
     async setNoneLike(userId: string, commentId: string) {

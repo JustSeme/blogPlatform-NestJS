@@ -206,8 +206,6 @@ describe('blogger-posts-comments', () => {
             .get(`/posts/${secondCreatedPostId}/comments`)
             .expect(HttpStatus.OK)
 
-        console.log('commentsData', commentsData.body);
-
 
         expect(commentsData.body.items[0].content).toEqual(commentInputModel.content)
         expect(commentsData.body.items[1].content).toEqual(commentInputModel.content)
@@ -239,7 +237,7 @@ describe('blogger-posts-comments', () => {
         blogId: 'incorrect'
     }
 
-    it('shouldn\' ban another user if input model is incorrect', async () => {
+    it('shouldn\'t ban another user if input model is incorrect', async () => {
         const errorsMessagesData = await request(httpServer)
             .put(`/blogger/users/${anotherUserId}/ban`)
             .set('Authorization', `Bearer ${recievedAccessToken}`)
@@ -280,6 +278,25 @@ describe('blogger-posts-comments', () => {
             .set('Authorization', `Bearer ${recievedAccessToken}`)
             .send(banUserForBlogInputModel)
             .expect(HttpStatus.NO_CONTENT)
+    })
+
+    it('should return all banned users for blog', async () => {
+        const allBannedUsersData = await request(httpServer)
+            .get(`/blogger/users/blog${createdBlogId}`)
+            .set('Authorization', `Bearer ${recievedAccessToken}`)
+            .expect(HttpStatus.OK)
+
+        expect(allBannedUsersData.body.items[0].id).toEqual(anotherUserId)
+        expect(allBannedUsersData.body.items[0].login).toEqual(secondCreateUserInputData.login)
+        expect(allBannedUsersData.body.items[0].banInfo.isBanned).toEqual(true)
+        expect(allBannedUsersData.body.items[0].banInfo.banReason).toEqual(banUserForBlogInputModel.banReason)
+    })
+
+    it('shouldn\'t return all banned users for blog if access token is incorrect', async () => {
+        await request(httpServer)
+            .get(`/blogger/users/blog${createdBlogId}`)
+            .set('Authorization', `Bearer incorrect`)
+            .expect(HttpStatus.UNAUTHORIZED)
     })
 
     it(`shouldn't create comments for posts, if this user is banned for blog`, async () => {

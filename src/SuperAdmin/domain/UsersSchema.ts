@@ -9,7 +9,9 @@ import {
     Schema, Prop, SchemaFactory
 } from "@nestjs/mongoose"
 import { BanInfoSchema } from "./BanInfoSchema"
-import { BanInfoDBType } from "../application/dto/UsersViewModel"
+import {
+    BanForBlogDBType, BanInfoDBType
+} from "../application/dto/UsersViewModel"
 import { BanUserInputModel } from "../api/models/BanUserInputModel"
 
 @Schema()
@@ -45,6 +47,11 @@ export class User {
         required: true, type: BanInfoSchema
     })
     banInfo: BanInfoDBType
+
+    @Prop({
+        required: true, default: []
+    })
+    bansForBlog: BanForBlogDBType[]
 
     canBeConfirmed(code: string) {
         if (this.emailConfirmation.isConfirmed) return false

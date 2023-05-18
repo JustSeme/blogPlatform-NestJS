@@ -18,7 +18,7 @@ export class BanInfo {
     })
     isBanned: boolean
 
-    @Prop({ default: new Date() })
+    @Prop({ default: () => new Date() })
     banDate: Date
 
     @Prop({ default: false })
