@@ -245,18 +245,20 @@ describe('blogger-posts-comments', () => {
             .expect(HttpStatus.BAD_REQUEST)
 
         expect(errorsMessagesData.body.errorsMessages.length).toEqual(3)
-        expect(errorsMessagesData.body.errorsMessages[0].message).toEqual('')
-        expect(errorsMessagesData.body.errorsMessages[1].message).toEqual('')
-        expect(errorsMessagesData.body.errorsMessages[2].message).toEqual('')
+        expect(errorsMessagesData.body.errorsMessages[0].message).toEqual("isBanned must be a boolean value")
+        expect(errorsMessagesData.body.errorsMessages[1].message).toEqual('banReason must be longer than or equal to 20 characters')
+        expect(errorsMessagesData.body.errorsMessages[2].message).toEqual('Blog by blogId is not exists')
     })
 
     const banUserForBlogInputModel: BanUserForBlogInputModel = {
         isBanned: true,
         banReason: 'you are banned for this test', // min 10 max 1000
-        blogId: createdBlogId
+        blogId: ''
     }
 
     it('shouldn\' ban another user if accessToken is incorrect', async () => {
+        banUserForBlogInputModel.blogId = createdBlogId
+
         await request(httpServer)
             .put(`/blogger/users/${anotherUserId}/ban`)
             .set('Authorization', `Bearer incorrecct`)
@@ -264,9 +266,9 @@ describe('blogger-posts-comments', () => {
             .expect(HttpStatus.UNAUTHORIZED)
     })
 
-    it('shouldn\' ban another user if userId is incorrect', async () => {
+    it('shouldn\'t ban another user if userId is incorrect', async () => {
         await request(httpServer)
-            .put(`/blogger/users/incorrectUseId/ban`)
+            .put(`/blogger/users/incorrectUserId/ban`)
             .set('Authorization', `Bearer ${recievedAccessToken}`)
             .send(banUserForBlogInputModel)
             .expect(HttpStatus.BAD_REQUEST)

@@ -112,6 +112,8 @@ import { BanBlogUseCase } from "./SuperAdmin/application/use-cases/ban-blog.use-
 import { UnbanBlogUseCase } from "./SuperAdmin/application/use-cases/unban-blog.use-case"
 import { UpdateCommentUseCase } from "./blogs/application/use-cases/comments/update-comment.use-case"
 import { GetAllCommentsForBloggerBlogsUseCase } from "./Blogger/application/use-cases/comments/get-all-comments-for-blogger-blogs.use-case"
+import { BloggerUsersController } from "./Blogger/api/blogger-users.controller"
+import { BanUserForBlogUseCase } from "./Blogger/application/use-cases/users/ban-user-for-blog.use-case"
 
 const authUseCases = [
   LogoutUseCase,
@@ -157,6 +159,7 @@ const blogsUseCases = [
   UnbanBlogUseCase,
   UpdateCommentUseCase,
   GetAllCommentsForBloggerBlogsUseCase,
+  BanUserForBlogUseCase,
 ]
 
 const securityUseCases = [
@@ -231,6 +234,7 @@ const controllers = [
   SecurityController,
   BloggerBlogsController,
   SuperAdminBlogsController,
+  BloggerUsersController,
 ]
 
 @Module({
