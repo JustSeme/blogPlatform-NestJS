@@ -340,7 +340,6 @@ describe('blogger-posts-comments', () => {
             .set('Authorization', `Bearer ${recievedAccessToken}`)
             .send(unbanUserForBlogInputModel)
             .expect(HttpStatus.NO_CONTENT)
-
     })
 
     it(`should create comments for posts, if this user is unbanned for blog`, async () => {
@@ -350,13 +349,11 @@ describe('blogger-posts-comments', () => {
             .send(commentInputModel)
             .expect(HttpStatus.CREATED)
 
-        const err = await request(httpServer)
+        await request(httpServer)
             .post(`/posts/${secondCreatedPostId}/comments`)
             .set('Authorization', `Bearer ${secondRecievedAccessToken}`)
             .send(commentInputModel)
-        //.expect(HttpStatus.CREATED)
-        console.log('err', err);
-
+            .expect(HttpStatus.CREATED)
 
         const allCommentsData = await request(httpServer)
             .get('/blogger/blogs/comments')

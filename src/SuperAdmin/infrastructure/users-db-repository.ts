@@ -89,10 +89,12 @@ export class UsersRepository {
     }
 
     async unbanUserForCurrentBlog(userId: string, blogId: string) {
-        await this.UserModel.updateMany(
-            { userId },
-            { $pull: { 'bansForBlog.blogId': blogId } },
-        )
+        const user = await this.findUserById(userId)
+
+        const banIndex = user.bansForBlog.findIndex(ban => ban.blogId === blogId)
+        user.bansForBlog.splice(banIndex, 1)
+
+        await user.save()
     }
 
     async _createUserWithExpiredConfirmationCode(user: UserDTO) {
