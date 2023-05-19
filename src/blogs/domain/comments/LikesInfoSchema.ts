@@ -10,9 +10,7 @@ export class LikesInfo {
     @Prop({ required: true })
     likes: LikeObjectType[]
 
-    @Prop({
-        required: true, default: new Date().toISOString()
-    })
+    @Prop({ required: true })
     dislikes: LikeObjectType[]
 }
 

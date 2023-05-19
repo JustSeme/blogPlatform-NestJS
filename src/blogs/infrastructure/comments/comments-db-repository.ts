@@ -152,7 +152,6 @@ export class CommentsRepository {
     }
 
     async getAllCommentsByAllBlogIds(readCommentsQuery: ReadCommentsQueryParams, blogIds: string[]): Promise<CommentsForBloggerWithQueryOutputModel> {
-
         const {
             sortDirection = 'desc', sortBy = 'createdAt', pageNumber = 1, pageSize = 10
         } = readCommentsQuery

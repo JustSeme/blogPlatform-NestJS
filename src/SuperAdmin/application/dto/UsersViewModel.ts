@@ -20,10 +20,4 @@ export type BanInfoDBType = {
     banReason: string
 }
 
-export type BanForBlogDBType = {
-    isBanned: boolean
-    banReason: string
-    blogId: string
-}
-
 export type UsersWithQueryOutputModel = OutputData<UserViewModelType>

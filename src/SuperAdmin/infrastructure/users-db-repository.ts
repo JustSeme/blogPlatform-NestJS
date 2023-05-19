@@ -82,7 +82,10 @@ export class UsersRepository {
     }
 
     async banUserForCurrentBlog(userId: string, banInfo: BanUserForBlogInfoType) {
-        await this.UserModel.updateOne({ userId }, { $push: { bansForBlog: banInfo } })
+        const user = await this.findUserById(userId)
+
+        user.bansForBlog.push(banInfo)
+        await this.save(user)
     }
 
     async _createUserWithExpiredConfirmationCode(user: UserDTO) {

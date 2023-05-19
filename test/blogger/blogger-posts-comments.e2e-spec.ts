@@ -284,9 +284,12 @@ describe('blogger-posts-comments', () => {
 
     it('should return all banned users for blog', async () => {
         const allBannedUsersData = await request(httpServer)
-            .get(`/blogger/users/blog${createdBlogId}`)
+            .get(`/blogger/users/blog/${createdBlogId}`)
             .set('Authorization', `Bearer ${recievedAccessToken}`)
             .expect(HttpStatus.OK)
+
+        console.log(allBannedUsersData.body);
+
 
         expect(allBannedUsersData.body.items[0].id).toEqual(anotherUserId)
         expect(allBannedUsersData.body.items[0].login).toEqual(secondCreateUserInputData.login)
@@ -296,7 +299,7 @@ describe('blogger-posts-comments', () => {
 
     it('shouldn\'t return all banned users for blog if access token is incorrect', async () => {
         await request(httpServer)
-            .get(`/blogger/users/blog${createdBlogId}`)
+            .get(`/blogger/users/blog/${createdBlogId}`)
             .set('Authorization', `Bearer incorrect`)
             .expect(HttpStatus.UNAUTHORIZED)
     })
