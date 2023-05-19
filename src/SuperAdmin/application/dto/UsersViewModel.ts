@@ -1,3 +1,4 @@
+import { OutputData } from "../../../general/types/OutputData"
 
 export type UserViewModelType = {
     id: string
@@ -25,10 +26,4 @@ export type BanForBlogDBType = {
     blogId: string
 }
 
-export type UsersWithQueryOutputModel = {
-    pagesCount: number
-    page: number
-    pageSize: number
-    totalCount: number
-    items: UserViewModelType[]
-}
+export type UsersWithQueryOutputModel = OutputData<UserViewModelType>

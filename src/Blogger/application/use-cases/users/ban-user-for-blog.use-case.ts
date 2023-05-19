@@ -20,6 +20,10 @@ export class BanUserForBlogUseCase implements ICommandHandler<BanUserForBlogComm
 
 
     async execute(command: BanUserForBlogCommand) {
-        await this.usersRepository.banUserForCurrentBlog(command.userId, command.banUserForBlogInputModel)
+        const banInfo = {
+            ...command.banUserForBlogInputModel,
+            banDate: new Date()
+        }
+        await this.usersRepository.banUserForCurrentBlog(command.userId, banInfo)
     }
 }

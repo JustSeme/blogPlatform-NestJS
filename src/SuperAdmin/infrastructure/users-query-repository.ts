@@ -4,6 +4,8 @@ import { User } from "../domain/UsersSchema"
 import { UserModelType } from "../domain/UsersTypes"
 import { ReadUsersQuery } from "../api/models/ReadUsersQuery"
 import { UsersWithQueryOutputModel } from "../application/dto/UsersViewModel"
+import { ReadBannedUsersQueryParams } from "../../Blogger/api/models/ReadBannedUsersQueryParams"
+import { BannedUsersOutputModel } from "../../Blogger/application/dto/BannedUserViewModel"
 
 @Injectable()
 export class UsersQueryRepository {
@@ -33,6 +35,41 @@ export class UsersQueryRepository {
             filterArray.push({ 'banInfo.isBanned': true })
         } else if (banStatus === 'notBanned') {
             filterArray.push({ 'banInfo.isBanned': false })
+        }
+
+        const filterObject = filterArray.length ? { $or: filterArray } : {}
+
+        const totalCount = await this.UserModel.countDocuments(filterObject)
+        const pagesCount = Math.ceil(totalCount / +pageSize)
+
+        const skipCount = (+pageNumber - 1) * +pageSize
+        const sortDirectionNumber = sortDirection === 'asc' ? 1 : -1
+
+        const resultedUsers = await this.UserModel.find(filterObject, { 'banInfo._id': 0 }).skip(skipCount).limit(+pageSize).sort({ [sortBy]: sortDirectionNumber }).lean()
+
+        return {
+            pagesCount: pagesCount,
+            page: +pageNumber,
+            pageSize: +pageSize,
+            totalCount: totalCount,
+            items: resultedUsers
+        }
+    }
+
+    async findBannedUsersByBlogId(queryParams: ReadBannedUsersQueryParams, blogId: string): Promise<BannedUsersOutputModel> {
+        const {
+            sortDirection = 'desc', sortBy = 'createdAt', pageNumber = 1, pageSize = 10, searchLoginTerm = null
+        } = queryParams
+
+        const filterArray: any = [
+            { 'bansForBlog.blogId': blogId }
+        ]
+        if (searchLoginTerm) {
+            filterArray.push({
+                login: {
+                    $regex: searchLoginTerm, $options: 'i'
+                }
+            })
         }
 
         const filterObject = filterArray.length ? { $or: filterArray } : {}

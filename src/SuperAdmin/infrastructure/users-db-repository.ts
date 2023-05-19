@@ -6,7 +6,7 @@ import { User } from "../domain/UsersSchema"
 import {
     UserDTO, UserModelType
 } from "../domain/UsersTypes"
-import { BanUserForBlogInputModel } from "../../Blogger/api/models/BanUserForBlogInputModel"
+import { BanUserForBlogInfoType } from "../../Blogger/infrastructure/blogs/BanUserForBlogInfoType"
 
 //transaction script
 @Injectable()
@@ -81,7 +81,7 @@ export class UsersRepository {
         return user ? true : false
     }
 
-    async banUserForCurrentBlog(userId: string, banInfo: BanUserForBlogInputModel) {
+    async banUserForCurrentBlog(userId: string, banInfo: BanUserForBlogInfoType) {
         await this.UserModel.updateOne({ userId }, { $push: { bansForBlog: banInfo } })
     }
 
