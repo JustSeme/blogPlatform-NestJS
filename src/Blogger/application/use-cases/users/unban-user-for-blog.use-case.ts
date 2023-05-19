@@ -4,7 +4,7 @@ import {
 import { BanUserForBlogInputModel } from "../../../api/models/BanUserForBlogInputModel"
 import { UsersRepository } from "../../../../SuperAdmin/infrastructure/users-db-repository"
 
-export class BanUserForBlogCommand {
+export class UnbanUserForBlogCommand {
     constructor(
         public userId: string,
         public banUserForBlogInputModel: BanUserForBlogInputModel
@@ -12,19 +12,14 @@ export class BanUserForBlogCommand {
 }
 
 
-@CommandHandler(BanUserForBlogCommand)
-export class BanUserForBlogUseCase implements ICommandHandler<BanUserForBlogCommand> {
+@CommandHandler(UnbanUserForBlogCommand)
+export class UnbanUserForBlogUseCase implements ICommandHandler<UnbanUserForBlogCommand> {
     constructor(
         private usersRepository: UsersRepository
     ) { }
 
 
-    async execute(command: BanUserForBlogCommand) {
-        const banInfo = {
-            ...command.banUserForBlogInputModel,
-            banDate: new Date()
-        }
-
-        await this.usersRepository.banUserForCurrentBlog(command.userId, banInfo)
+    async execute(command: UnbanUserForBlogCommand) {
+        await this.usersRepository.unbanUserForCurrentBlog(command.userId, command.banUserForBlogInputModel.blogId)
     }
 }

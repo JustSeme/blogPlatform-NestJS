@@ -24,8 +24,11 @@ export class GetAllBannedUsersForBlogUseCase implements ICommandHandler<GetAllBa
 
     async execute(command: GetAllBannedUsersForBlogCommand): Promise<BannedUsersOutputModel> {
         const findedUsersQueryData = await this.usersQueryRepository.findBannedUsersByBlogId(command.readBannedUsersQuery, command.blogId)
-        findedUsersQueryData.items = this.bloggerService.prepareUsersForBloggerDisplay(findedUsersQueryData.items)
-        return findedUsersQueryData
+        const preparedUsers = this.bloggerService.prepareUsersForBloggerDisplay(findedUsersQueryData.items, command.blogId)
+        return {
+            ...findedUsersQueryData,
+            items: preparedUsers
+        }
     }
 
 }

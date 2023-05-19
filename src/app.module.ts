@@ -116,6 +116,7 @@ import { BloggerUsersController } from "./Blogger/api/blogger-users.controller"
 import { BanUserForBlogUseCase } from "./Blogger/application/use-cases/users/ban-user-for-blog.use-case"
 import { GetAllBannedUsersForBlogUseCase } from "./Blogger/application/use-cases/users/get-all-banned-users-for-blog.use-case"
 import { BloggerService } from "./Blogger/application/blogger.service"
+import { UnbanUserForBlogUseCase } from "./Blogger/application/use-cases/users/unban-user-for-blog.use-case"
 
 const authUseCases = [
   LogoutUseCase,
@@ -163,6 +164,7 @@ const blogsUseCases = [
   GetAllCommentsForBloggerBlogsUseCase,
   BanUserForBlogUseCase,
   GetAllBannedUsersForBlogUseCase,
+  UnbanUserForBlogUseCase,
 ]
 
 const securityUseCases = [

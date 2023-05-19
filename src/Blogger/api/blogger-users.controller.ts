@@ -11,6 +11,7 @@ import { IsBlogByIdExistPipe } from "../../blogs/api/pipes/isBlogExists.validati
 import { ReadBannedUsersQueryParams } from "./models/ReadBannedUsersQueryParams"
 import { BannedUsersOutputModel } from "../application/dto/BannedUserViewModel"
 import { GetAllBannedUsersForBlogCommand } from "../application/use-cases/users/get-all-banned-users-for-blog.use-case"
+import { UnbanUserForBlogCommand } from "../application/use-cases/users/unban-user-for-blog.use-case"
 
 @UseGuards(JwtAuthGuard)
 @Controller('blogger/users')
@@ -25,9 +26,15 @@ export class BloggerUsersController {
         @Param('userId', IsUserExistOrThrow400Pipe) userId: string,
         @Body() banInputModel: BanUserForBlogInputModel,
     ) {
-        await this.commandBus.execute(
-            new BanUserForBlogCommand(userId, banInputModel)
-        )
+        if (banInputModel.isBanned) {
+            await this.commandBus.execute(
+                new BanUserForBlogCommand(userId, banInputModel)
+            )
+        } else {
+            await this.commandBus.execute(
+                new UnbanUserForBlogCommand(userId, banInputModel)
+            )
+        }
     }
 
     @Get('blog/:blogId')

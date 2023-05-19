@@ -5,7 +5,6 @@ import { UserModelType } from "../domain/UsersTypes"
 import { ReadUsersQuery } from "../api/models/ReadUsersQuery"
 import { UsersWithQueryOutputModel } from "../application/dto/UsersViewModel"
 import { ReadBannedUsersQueryParams } from "../../Blogger/api/models/ReadBannedUsersQueryParams"
-import { BannedUsersOutputModel } from "../../Blogger/application/dto/BannedUserViewModel"
 
 @Injectable()
 export class UsersQueryRepository {
@@ -56,7 +55,7 @@ export class UsersQueryRepository {
         }
     }
 
-    async findBannedUsersByBlogId(queryParams: ReadBannedUsersQueryParams, blogId: string): Promise<BannedUsersOutputModel> {
+    async findBannedUsersByBlogId(queryParams: ReadBannedUsersQueryParams, blogId: string) {
         const {
             sortDirection = 'desc', sortBy = 'createdAt', pageNumber = 1, pageSize = 10, searchLoginTerm = null
         } = queryParams

@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { User } from './UsersSchema'
 import { HydratedUser } from '../infrastructure/UsersTypes'
 import { BanInfoDBType } from '../application/dto/UsersViewModel'
+import { BanUserForBlogInfoType } from '../../Blogger/infrastructure/blogs/BanUserForBlogInfoType'
 
 export class UserDTO {
     public id: string
@@ -12,6 +13,7 @@ export class UserDTO {
     public emailConfirmation: EmailConfirmationType
     public passwordRecovery: PasswordConfirmationType
     public banInfo: BanInfoDBType
+    public bansForBlog: Array<BanUserForBlogInfoType>
 
     constructor(
         public login: string,
@@ -40,6 +42,8 @@ export class UserDTO {
             banDate: null,
             banReason: null,
         }
+
+        this.bansForBlog = []
     }
 }
 

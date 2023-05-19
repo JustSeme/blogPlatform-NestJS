@@ -88,6 +88,13 @@ export class UsersRepository {
         await this.save(user)
     }
 
+    async unbanUserForCurrentBlog(userId: string, blogId: string) {
+        await this.UserModel.updateMany(
+            { userId },
+            { $pull: { 'bansForBlog.blogId': blogId } },
+        )
+    }
+
     async _createUserWithExpiredConfirmationCode(user: UserDTO) {
         return this.UserModel.create(user)
     }
