@@ -105,7 +105,7 @@ export class BlogsRepository {
             pageSize = 10
         } = queryParams
 
-        const filter: any = { 'banInfo.isBanned': false }
+        const filter: any = {}
         if (searchNameTerm) {
             filter.name = {
                 $regex: searchNameTerm, $options: 'i'
