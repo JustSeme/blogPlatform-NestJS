@@ -7,7 +7,7 @@ import { CommentViewModel } from "../../dto/CommentViewModel"
 import { CommentsService } from "../../comments-service"
 import { UsersQueryRepository } from "../../../../SuperAdmin/infrastructure/users-query-repository"
 import { PostsRepository } from "../../../../Blogger/infrastructure/posts/posts-db-repository"
-import { UnauthorizedException } from "@nestjs/common"
+import { ForbiddenException } from "@nestjs/common"
 import { generateErrorsMessages } from "../../../../general/helpers"
 import { BanUserForBlogInfoType } from "../../../../Blogger/infrastructure/blogs/BanUserForBlogInfoType"
 
@@ -39,7 +39,7 @@ export class CreateCommentUseCase implements ICommandHandler<CreateCommentComman
 
         commentator.bansForBlog.some((ban: BanUserForBlogInfoType) => {
             if (ban.blogId === post.blogId) {
-                throw new UnauthorizedException(generateErrorsMessages(`You are banned for this blog by reason: ${ban.banReason}`, 'commentator'))
+                throw new ForbiddenException(generateErrorsMessages(`You are banned for this blog by reason: ${ban.banReason}`, 'commentator'))
             }
         })
 

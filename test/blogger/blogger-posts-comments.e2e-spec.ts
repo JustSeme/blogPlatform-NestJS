@@ -271,7 +271,7 @@ describe('blogger-posts-comments', () => {
             .put(`/blogger/users/incorrectUserId/ban`)
             .set('Authorization', `Bearer ${recievedAccessToken}`)
             .send(banUserForBlogInputModel)
-            .expect(HttpStatus.BAD_REQUEST)
+            .expect(HttpStatus.NOT_FOUND)
     })
 
     it('should ban another user', async () => {
