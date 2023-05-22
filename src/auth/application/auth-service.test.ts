@@ -105,7 +105,8 @@ describe('integration tests for auth use cases', () => {
                 passwordRecovery: {
                     confirmationCode: '',
                     expirationDate: null
-                }
+                },
+                bansForBlog: []
             }
 
             await usersRepository._createUserWithExpiredConfirmationCode(userWithExpiredConfirmationCode)
