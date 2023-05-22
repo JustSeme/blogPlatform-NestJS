@@ -274,12 +274,24 @@ describe('super-admin-blogs', () => {
     })
 
     it('banned blog shouldn\'t display', async () => {
-        const blogsData = await request(httpServer)
+        const superAdminBlogsData = await request(httpServer)
             .get('/sa/blogs')
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
             .expect(HttpStatus.OK)
 
-        expect(blogsData.body.items.length).toEqual(0)
+        expect(superAdminBlogsData.body.items.length).toEqual(0)
+
+        await request(httpServer)
+            .get('/blogs')
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .expect(HttpStatus.NOT_FOUND)
+
+        const errorMessage = await request(httpServer)
+            .get(`/blogs/${createdBlogId}`)
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .expect(HttpStatus.NOT_FOUND)
+
+        expect(errorMessage.body.errorsMessages[0].message).toEqual('This blog is banned')
     })
 
     it('admin should unban blog and created post for this blog should display', async () => {
@@ -294,5 +306,30 @@ describe('super-admin-blogs', () => {
         await request(httpServer)
             .get(`/posts/${createdPostId}`)
             .expect(HttpStatus.OK)
+    })
+
+    it('unbanned blog should display', async () => {
+        const superAdminBlogsData = await request(httpServer)
+            .get('/sa/blogs')
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .expect(HttpStatus.OK)
+
+        expect(superAdminBlogsData.body.items.length).toEqual(1)
+        expect(superAdminBlogsData.body.items[0].id).toEqual(createdBlogId)
+
+        const blogsData = await request(httpServer)
+            .get('/blogs')
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .expect(HttpStatus.OK)
+
+        expect(blogsData.body.items.length).toEqual(1)
+        expect(blogsData.body.items[0].id).toEqual(createdBlogId)
+
+        const blogByIdData = await request(httpServer)
+            .get(`/blogs/${createdBlogId}`)
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .expect(HttpStatus.OK)
+
+        expect(blogByIdData.body.id).toEqual(createdBlogId)
     })
 });

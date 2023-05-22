@@ -21,9 +21,9 @@ export class GetBlogByIdUseCase implements ICommandHandler<GetBlogByIdCommand> {
     async execute({ blogId }: GetBlogByIdCommand): Promise<BlogViewModel> {
         const findedBlog = await this.blogsRepository.findBlogById(blogId)
 
-        if (findedBlog.banInfo.isBanned) {
-            throw new NotFoundException(generateErrorsMessages('This blog is banned', 'blogId'))
-        }
+        /*  if (findedBlog.banInfo.isBanned) {
+             throw new NotFoundException(generateErrorsMessages('This blog is banned', 'blogId'))
+         } */
         return this.blogsService.prepareBlogForDisplay([findedBlog])[0]
     }
 }
