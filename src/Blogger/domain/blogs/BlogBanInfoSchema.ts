@@ -1,8 +1,9 @@
 import {
-    Prop, SchemaFactory
+    Prop, Schema, SchemaFactory
 } from "@nestjs/mongoose"
 import { BlogBanInfoType } from "./BlogsTypes"
 
+@Schema()
 export class BlogBanInfo {
     @Prop({
         required: true,

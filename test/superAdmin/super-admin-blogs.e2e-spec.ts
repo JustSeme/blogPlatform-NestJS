@@ -273,6 +273,15 @@ describe('super-admin-blogs', () => {
             .expect(HttpStatus.NOT_FOUND)
     })
 
+    it('banned blog shouldn\'t display', async () => {
+        const blogsData = await request(httpServer)
+            .get('/sa/blogs')
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .expect(HttpStatus.OK)
+
+        expect(blogsData.body.items.length).toEqual(0)
+    })
+
     it('admin should unban blog and created post for this blog should display', async () => {
         await request(httpServer)
             .put(`/sa/blogs/${createdBlogId}/ban`)
