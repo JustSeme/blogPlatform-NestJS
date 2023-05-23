@@ -43,9 +43,10 @@ export class BloggerUsersController {
     public async getAllBannedUsersForBlog(
         @Param('blogId', IsBlogByIdExistPipe) blogId: string,
         @Query() readBannedUsersQuery: ReadBannedUsersQueryParams,
+        @CurrentUserId() userId: string
     ): Promise<BannedUsersOutputModel> {
         return this.commandBus.execute(
-            new GetAllBannedUsersForBlogCommand(blogId, readBannedUsersQuery)
+            new GetAllBannedUsersForBlogCommand(blogId, readBannedUsersQuery, userId)
         )
     }
 }

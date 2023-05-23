@@ -9,7 +9,7 @@ import { generateErrorsMessages } from "../../../../general/helpers"
 
 export class BanUserForBlogCommand {
     constructor(
-        public userId: string,
+        public bannedUserId: string,
         public banUserForBlogInputModel: BanUserForBlogInputModel,
         public currentUserId: string
     ) { }
@@ -27,7 +27,7 @@ export class BanUserForBlogUseCase implements ICommandHandler<BanUserForBlogComm
     async execute(command: BanUserForBlogCommand) {
         const blogByBlogId = await this.blogsRepository.findBlogById(command.banUserForBlogInputModel.blogId)
 
-        if (blogByBlogId.blogOwnerInfo.userId !== command.currentUserId) {
+        if (!blogByBlogId.isCurrentUserOwner(command.currentUserId)) {
             throw new ForbiddenException(generateErrorsMessages('That is not your own', 'userId'))
         }
 
@@ -36,6 +36,6 @@ export class BanUserForBlogUseCase implements ICommandHandler<BanUserForBlogComm
             banDate: new Date()
         }
 
-        await this.usersRepository.banUserForCurrentBlog(command.userId, banInfo)
+        await this.usersRepository.banUserForCurrentBlog(command.bannedUserId, banInfo)
     }
 }

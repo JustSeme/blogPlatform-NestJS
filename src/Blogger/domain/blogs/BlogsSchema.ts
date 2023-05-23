@@ -52,6 +52,10 @@ export class Blog {
         type: BlogBanInfoSchema
     })
     banInfo: BlogBanInfoType
+
+    isCurrentUserOwner(currentUserId: string) {
+        return this.blogOwnerInfo.userId === currentUserId
+    }
 }
 
 export const BlogSchema = SchemaFactory.createForClass<BlogDBModel>(Blog)
