@@ -31,7 +31,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
         const request = ctx.getRequest<Request>()
         const status = exception.getStatus()
 
-        if (status === HttpStatus.BAD_REQUEST || status === HttpStatus.NOT_FOUND || status === HttpStatus.UNAUTHORIZED) {
+        if (status === HttpStatus.BAD_REQUEST || status === HttpStatus.NOT_FOUND || status === HttpStatus.UNAUTHORIZED || status === HttpStatus.FORBIDDEN) {
             const exceptionBody: any = exception.getResponse()
 
             response

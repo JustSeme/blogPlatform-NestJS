@@ -12,6 +12,7 @@ import { BannedUsersOutputModel } from "../application/dto/BannedUserViewModel"
 import { GetAllBannedUsersForBlogCommand } from "../application/use-cases/users/get-all-banned-users-for-blog.use-case"
 import { UnbanUserForBlogCommand } from "../application/use-cases/users/unban-user-for-blog.use-case"
 import { IsUserExistPipe } from "../../SuperAdmin/api/pipes/isUserExists.validation.pipe"
+import { CurrentUserId } from "../../general/decorators/current-userId.param.decorator"
 
 @UseGuards(JwtAuthGuard)
 @Controller('blogger/users')
@@ -23,16 +24,17 @@ export class BloggerUsersController {
     @HttpCode(HttpStatus.NO_CONTENT)
     @Put(':userId/ban')
     public async banUserForBlog(
-        @Param('userId', IsUserExistPipe) userId: string,
+        @Param('userId', IsUserExistPipe) bannedUserId: string,
         @Body() banInputModel: BanUserForBlogInputModel,
+        @CurrentUserId() userId: string,
     ) {
         if (banInputModel.isBanned) {
             await this.commandBus.execute(
-                new BanUserForBlogCommand(userId, banInputModel)
+                new BanUserForBlogCommand(bannedUserId, banInputModel, userId)
             )
         } else {
             await this.commandBus.execute(
-                new UnbanUserForBlogCommand(userId, banInputModel)
+                new UnbanUserForBlogCommand(bannedUserId, banInputModel, userId)
             )
         }
     }

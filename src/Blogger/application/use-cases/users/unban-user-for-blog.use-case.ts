@@ -10,7 +10,8 @@ import { ForbiddenException } from "@nestjs/common"
 export class UnbanUserForBlogCommand {
     constructor(
         public userId: string,
-        public banUserForBlogInputModel: BanUserForBlogInputModel
+        public banUserForBlogInputModel: BanUserForBlogInputModel,
+        public currentUserId: string
     ) { }
 }
 
@@ -26,7 +27,7 @@ export class UnbanUserForBlogUseCase implements ICommandHandler<UnbanUserForBlog
     async execute(command: UnbanUserForBlogCommand) {
         const blogByBlogId = await this.blogsRepository.findBlogById(command.banUserForBlogInputModel.blogId)
 
-        if (blogByBlogId.blogOwnerInfo.userId !== command.userId) {
+        if (blogByBlogId.blogOwnerInfo.userId !== command.currentUserId) {
             throw new ForbiddenException(generateErrorsMessages('That is not your own', 'userId'))
         }
 
