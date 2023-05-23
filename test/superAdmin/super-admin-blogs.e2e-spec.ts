@@ -273,14 +273,17 @@ describe('super-admin-blogs', () => {
             .expect(HttpStatus.NOT_FOUND)
     })
 
-    it('banned blog shouldn\'t display', async () => {
+    it('banned blog should display on super-admin api', async () => {
         const superAdminBlogsData = await request(httpServer)
             .get('/sa/blogs')
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
             .expect(HttpStatus.OK)
 
-        expect(superAdminBlogsData.body.items.length).toEqual(0)
+        expect(superAdminBlogsData.body.items.length).toEqual(1)
+        expect(superAdminBlogsData.body.items[0].banInfo.isBanned).toEqual(true)
+    })
 
+    it('banned blog shouldn\'t display on public api', async () => {
         await request(httpServer)
             .get('/blogs')
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')

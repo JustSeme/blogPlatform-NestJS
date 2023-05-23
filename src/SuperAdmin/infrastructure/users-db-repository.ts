@@ -3,9 +3,7 @@ import { HydratedUser } from "./UsersTypes"
 import { Injectable } from "@nestjs/common"
 import { InjectModel } from "@nestjs/mongoose/dist"
 import { User } from "../domain/UsersSchema"
-import {
-    UserDTO, UserModelType
-} from "../domain/UsersTypes"
+import { UserModelType } from "../domain/UsersTypes"
 import { BanUserForBlogInfoType } from "../../Blogger/infrastructure/blogs/BanUserForBlogInfoType"
 
 //transaction script
@@ -95,9 +93,5 @@ export class UsersRepository {
         user.bansForBlog.splice(banIndex, 1)
 
         await user.save()
-    }
-
-    async _createUserWithExpiredConfirmationCode(user: UserDTO) {
-        return this.UserModel.create(user)
     }
 }

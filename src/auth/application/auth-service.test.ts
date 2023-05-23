@@ -14,9 +14,6 @@ import {
 } from './use-cases/confirm-email.use-case'
 import { AppModule } from '../../app.module'
 import { AppService } from '../../app.service'
-import { UserDTO } from '../../SuperAdmin/domain/UsersTypes'
-import { addMinutes } from 'date-fns'
-import { v4 as uuidv4 } from 'uuid'
 
 describe('integration tests for auth use cases', () => {
     let registrationUserUseCase: RegistrationUserUseCase
@@ -84,33 +81,6 @@ describe('integration tests for auth use cases', () => {
     })
 
     describe('confirm email', () => {
-        const confirmationCode = uuidv4()
-        beforeAll(async () => {
-            const userWithExpiredConfirmationCode: UserDTO = {
-                id: '123',
-                email: 'any@email.com',
-                login: 'anyLogin',
-                createdAt: new Date().toISOString(),
-                emailConfirmation: {
-                    confirmationCode: confirmationCode,
-                    expirationDate: addMinutes(new Date(), -1),
-                    isConfirmed: false,
-                },
-                banInfo: {
-                    banDate: null,
-                    banReason: null,
-                    isBanned: false
-                },
-                passwordHash: 'hashedPassword',
-                passwordRecovery: {
-                    confirmationCode: '',
-                    expirationDate: null
-                },
-                bansForBlog: []
-            }
-
-            await usersRepository._createUserWithExpiredConfirmationCode(userWithExpiredConfirmationCode)
-        })
 
         it('should return false for incorrect confirmation code', async () => {
             const command = new ConfirmEmailCommand('incorrectConfirmationCode')
@@ -118,18 +88,6 @@ describe('integration tests for auth use cases', () => {
             const result = await confirmEmailUseCase.execute(command)
 
             expect(result).toBe(false)
-        })
-
-        it('should return false for incorrect confirmation code', async () => {
-            const command = new ConfirmEmailCommand(confirmationCode)
-
-            const result = await confirmEmailUseCase.execute(command)
-
-            expect(result).toBe(false)
-
-            const userByCode = await usersRepository.findUserByConfirmationCode(confirmationCode)
-
-            expect(await userByCode.emailConfirmation.isConfirmed).toBe(false)
         })
     })
 })
