@@ -29,7 +29,7 @@ export class BlogDBModel {
     ) {
         this.banInfo = {
             isBanned: false,
-            banDate: new Date()
+            banDate: null
         }
         this.blogOwnerInfo = {
             userId,

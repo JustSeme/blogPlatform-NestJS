@@ -8,7 +8,7 @@ import {
 import { HydratedComment } from "./CommentsTypes"
 import { CommentEntity } from "../../domain/comments/Comments.schema"
 import { ReadCommentsQueryParams } from "../../api/models/ReadCommentsQuery"
-import { CommentsForBloggerWithQueryOutputModel } from "../../application/dto/CommentViewModelForBlogger"
+import { ReadOutputQuery } from "../../../general/types/ReadQuery"
 
 @Injectable()
 export class CommentsRepository {
@@ -151,7 +151,7 @@ export class CommentsRepository {
         return this.CommentModel.find({ 'postInfo.blogId': blogId })
     }
 
-    async getAllCommentsByAllBlogIds(readCommentsQuery: ReadCommentsQueryParams, blogIds: string[]): Promise<CommentsForBloggerWithQueryOutputModel> {
+    async getAllCommentsByAllBlogIds(readCommentsQuery: ReadCommentsQueryParams, blogIds: string[]): Promise<ReadOutputQuery & { items: CommentDBModel[] }> {
         const {
             sortDirection = 'desc', sortBy = 'createdAt', pageNumber = 1, pageSize = 10
         } = readCommentsQuery
@@ -172,35 +172,6 @@ export class CommentsRepository {
         const resultedComments = await this.CommentModel.find(filter, {
             _id: 0, postId: 0, __v: 0
         }).sort({ [sortBy]: sortDirectionNumber }).skip(skipCount).limit(+pageSize).lean()
-
-        /* let allFindedComments = []
-        await Promise.all(blogIds.map(async (blogId) => {
-            filter['postInfo.blogId'] = blogId
-
-            const resultedComments = await this.CommentModel.find(filter, {
-                _id: 0, __v: 0
-            }).lean()
-
-            allFindedComments = [...allFindedComments, ...resultedComments]
-        }))
-
-        // sort by
-        allFindedComments.sort((comment1, comment2) => {
-            if (comment1[sortBy] < comment2[sortBy]) {
-                return sortDirection === 'asc' ? 1 : -1
-            }
-            if (comment1[sortBy] > comment2[sortBy]) {
-                return sortDirection === 'asc' ? -1 : 1
-            }
-
-            return 0
-        })
-
-        // skip skipCount items for display pageNumber page
-        allFindedComments.splice(0, skipCount)
-
-        const totalCount = allFindedComments.length
-        const pagesCount = Math.ceil(totalCount / +pageSize) */
 
         return {
             pagesCount: pagesCount,

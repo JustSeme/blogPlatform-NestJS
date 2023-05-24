@@ -1,5 +1,11 @@
 import { LikeType } from "../../api/models/LikeInputModel"
 
+export type LikesInfoViewType = {
+    likesCount: number,
+    dislikesCount: number,
+    myStatus: LikeType
+}
+
 export type CommentViewModel = {
     id: string
     content: string,
@@ -8,11 +14,7 @@ export type CommentViewModel = {
         userLogin: string
     },
     createdAt: string,
-    likesInfo: {
-        likesCount: number,
-        dislikesCount: number,
-        myStatus: LikeType
-    }
+    likesInfo: LikesInfoViewType
 }
 
 export type CommentsWithQueryOutputModel = {

@@ -9,7 +9,7 @@ import {
     Param,
     HttpCode,
     HttpStatus,
-    Delete
+    Delete,
 } from "@nestjs/common"
 import { ReadBlogsQueryParams } from "../../blogs/api/models/ReadBlogsQuery"
 import { JwtAuthGuard } from "../../general/guards/jwt-auth.guard"
@@ -126,7 +126,7 @@ export class BloggerBlogsController {
     @Get('comments')
     public async getAllCommentsForAllBloggerBlogs(
         @Query() commentsQueryParams: ReadCommentsQueryParams,
-        @CurrentUserId() userId,
+        @CurrentUserId() userId: string,
     ): Promise<CommentsForBloggerWithQueryOutputModel> {
         return this.commandBus.execute(
             new GetAllCommentsForBloggerBlogsCommand(commentsQueryParams, userId)

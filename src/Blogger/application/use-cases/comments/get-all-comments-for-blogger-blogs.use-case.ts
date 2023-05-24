@@ -11,7 +11,7 @@ import { CommentsForBloggerWithQueryOutputModel } from "../../../../blogs/applic
 export class GetAllCommentsForBloggerBlogsCommand {
     constructor(
         public readCommentsQuery: ReadCommentsQueryParams,
-        public bloggerId: string
+        public bloggerId: string,
     ) { }
 }
 
@@ -31,8 +31,11 @@ export class GetAllCommentsForBloggerBlogsUseCase implements ICommandHandler<Get
 
         const commentsWithQueryData = await this.commentsRepository.getAllCommentsByAllBlogIds(command.readCommentsQuery, blogIds)
 
-        commentsWithQueryData.items = this.commentsService.transformCommentsForBloggerDisplay(commentsWithQueryData.items)
+        const transformedComments = await this.commentsService.transformCommentsForBloggerDisplay(commentsWithQueryData.items, command.bloggerId)
 
-        return commentsWithQueryData
+        return {
+            ...commentsWithQueryData,
+            items: transformedComments
+        }
     }
 }
