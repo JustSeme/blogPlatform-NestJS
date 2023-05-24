@@ -13,9 +13,9 @@ export class BlogBanInfo {
 
     @Prop({
         required: true,
-        default: () => new Date()
+        default: null
     })
-    banDate: Date
+    banDate: Date | null
 }
 
 export const BlogBanInfoSchema = SchemaFactory.createForClass<BlogBanInfoType>(BlogBanInfo)
