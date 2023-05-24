@@ -160,8 +160,6 @@ export class CommentsRepository {
 
         const skipCount = (+pageNumber - 1) * +pageSize
 
-        const sortDirectionNumber = sortDirection === 'asc' ? 1 : -1
-
         let allFindedComments = []
         await Promise.all(blogIds.map(async (blogId) => {
             filter['postInfo.blogId'] = blogId
@@ -172,6 +170,21 @@ export class CommentsRepository {
 
             allFindedComments = [...allFindedComments, ...resultedComments]
         }))
+
+        // sort by
+        allFindedComments.sort((comment1, comment2) => {
+            if (comment1[sortBy] < comment2[sortBy]) {
+                return sortDirection === 'asc' ? -1 : 1
+            }
+            if (comment1[sortBy] > comment2[sortBy]) {
+                return sortDirection === 'asc' ? 1 : -1
+            }
+
+            return 0
+        })
+
+        // skip skipCount items for display pageNumber page
+        allFindedComments.splice(0, skipCount)
 
         const totalCount = allFindedComments.length
         const pagesCount = Math.ceil(totalCount / +pageSize)
