@@ -306,13 +306,13 @@ describe('blogger-posts-comments', () => {
             .post(`/posts/${createdPostId}/comments`)
             .set('Authorization', `Bearer ${secondRecievedAccessToken}`)
             .send(commentInputModel)
-            .expect(HttpStatus.UNAUTHORIZED)
+            .expect(HttpStatus.FORBIDDEN)
 
         await request(httpServer)
             .post(`/posts/${secondCreatedPostId}/comments`)
             .set('Authorization', `Bearer ${secondRecievedAccessToken}`)
             .send(commentInputModel)
-            .expect(HttpStatus.UNAUTHORIZED)
+            .expect(HttpStatus.FORBIDDEN)
 
         const allCommentsData = await request(httpServer)
             .get('/blogger/blogs/comments')

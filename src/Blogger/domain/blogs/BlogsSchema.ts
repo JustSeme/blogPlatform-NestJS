@@ -59,3 +59,5 @@ export class Blog {
 }
 
 export const BlogSchema = SchemaFactory.createForClass<BlogDBModel>(Blog)
+
+BlogSchema.methods = { isCurrentUserOwner: Blog.prototype.isCurrentUserOwner }

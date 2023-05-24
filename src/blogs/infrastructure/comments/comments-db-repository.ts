@@ -156,7 +156,7 @@ export class CommentsRepository {
             sortDirection = 'desc', sortBy = 'createdAt', pageNumber = 1, pageSize = 10
         } = readCommentsQuery
 
-        const filter: any = { isBanned: false }
+        const filter: any = { isBanned: false, }
 
         const skipCount = (+pageNumber - 1) * +pageSize
 
