@@ -220,7 +220,7 @@ describe('blogger-posts-comments', () => {
 
     it('should return all comments for all blogger posts', async () => {
         const allCommentsData = await request(httpServer)
-            .get('/blogger/blogs/comments')
+            .get('/blogger/blogs/comments?sortDirection=asc')
             .set('Authorization', `Bearer ${recievedAccessToken}`)
             .expect(HttpStatus.OK)
 
@@ -315,7 +315,7 @@ describe('blogger-posts-comments', () => {
             .expect(HttpStatus.FORBIDDEN)
 
         const allCommentsData = await request(httpServer)
-            .get('/blogger/blogs/comments')
+            .get('/blogger/blogs/comments?sortDirection=asc')
             .set('Authorization', `Bearer ${recievedAccessToken}`)
             .expect(HttpStatus.OK)
 
@@ -356,7 +356,7 @@ describe('blogger-posts-comments', () => {
             .expect(HttpStatus.CREATED)
 
         const allCommentsData = await request(httpServer)
-            .get('/blogger/blogs/comments')
+            .get('/blogger/blogs/comments?sortDirection=asc')
             .set('Authorization', `Bearer ${recievedAccessToken}`)
             .expect(HttpStatus.OK)
 
@@ -367,5 +367,16 @@ describe('blogger-posts-comments', () => {
         expect(allCommentsData.body.items[3].postInfo.id).toEqual(secondCreatedPostId)
         expect(allCommentsData.body.items[4].postInfo.id).toEqual(createdPostId)
         expect(allCommentsData.body.items[5].postInfo.id).toEqual(secondCreatedPostId)
+    })
+
+    it(`should display all comments for blogger with sorting`, async () => {
+        const allCommentsData = await request(httpServer)
+            .get('/blogger/blogs/comments?pageNumber=2&pageSize=2&sortDirection=asc')
+            .set('Authorization', `Bearer ${recievedAccessToken}`)
+            .expect(HttpStatus.OK)
+
+        expect(allCommentsData.body.items.length).toEqual(2)
+        expect(allCommentsData.body.items[0].postInfo.id).toEqual(secondCreatedPostId)
+        expect(allCommentsData.body.items[1].postInfo.id).toEqual(secondCreatedPostId)
     })
 })

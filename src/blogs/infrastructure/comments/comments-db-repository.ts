@@ -46,7 +46,7 @@ export class CommentsRepository {
         const sortDirectionNumber = sortDirection === 'asc' ? 1 : -1
         const resultedComments = await this.CommentModel.find(filter, {
             _id: 0, postId: 0, __v: 0
-        }).skip(skipCount).limit(+pageSize).sort({ [sortBy]: sortDirectionNumber }).lean()
+        }).sort({ [sortBy]: sortDirectionNumber }).skip(skipCount).limit(+pageSize).lean()
 
         return {
             pagesCount: pagesCount,
@@ -156,11 +156,24 @@ export class CommentsRepository {
             sortDirection = 'desc', sortBy = 'createdAt', pageNumber = 1, pageSize = 10
         } = readCommentsQuery
 
-        const filter: any = { isBanned: false, }
+        const blogIdFilterObjects = blogIds.map((blogId: string) => ({ 'postInfo.blogId': blogId }))
+
+        const filter: any = {
+            isBanned: false,
+            $or: blogIdFilterObjects
+        }
+
+        const totalCount = await this.CommentModel.count(filter)
+        const pagesCount = Math.ceil(totalCount / +pageSize)
 
         const skipCount = (+pageNumber - 1) * +pageSize
 
-        let allFindedComments = []
+        const sortDirectionNumber = sortDirection === 'asc' ? 1 : -1
+        const resultedComments = await this.CommentModel.find(filter, {
+            _id: 0, postId: 0, __v: 0
+        }).sort({ [sortBy]: sortDirectionNumber }).skip(skipCount).limit(+pageSize).lean()
+
+        /* let allFindedComments = []
         await Promise.all(blogIds.map(async (blogId) => {
             filter['postInfo.blogId'] = blogId
 
@@ -174,10 +187,10 @@ export class CommentsRepository {
         // sort by
         allFindedComments.sort((comment1, comment2) => {
             if (comment1[sortBy] < comment2[sortBy]) {
-                return sortDirection === 'asc' ? -1 : 1
+                return sortDirection === 'asc' ? 1 : -1
             }
             if (comment1[sortBy] > comment2[sortBy]) {
-                return sortDirection === 'asc' ? 1 : -1
+                return sortDirection === 'asc' ? -1 : 1
             }
 
             return 0
@@ -187,14 +200,14 @@ export class CommentsRepository {
         allFindedComments.splice(0, skipCount)
 
         const totalCount = allFindedComments.length
-        const pagesCount = Math.ceil(totalCount / +pageSize)
+        const pagesCount = Math.ceil(totalCount / +pageSize) */
 
         return {
             pagesCount: pagesCount,
             page: +pageNumber,
             pageSize: +pageSize,
             totalCount: totalCount,
-            items: allFindedComments
+            items: resultedComments
         }
     }
 }
