@@ -163,15 +163,15 @@ export class CommentsRepository {
             $or: blogIdFilterObjects
         }
 
+        const totalCount = await this.CommentModel.count(filter)
+        const pagesCount = Math.ceil(totalCount / +pageSize)
+
         const skipCount = (+pageNumber - 1) * +pageSize
 
         const sortDirectionNumber = sortDirection === 'asc' ? 1 : -1
         const resultedComments = await this.CommentModel.find(filter, {
             _id: 0, postId: 0, 'postInfo._id': 0, 'commentatorInfo._id': 0, __v: 0
         }).sort({ [sortBy]: sortDirectionNumber }).skip(skipCount).limit(+pageSize).lean()
-
-        const totalCount = resultedComments.length
-        const pagesCount = Math.ceil(totalCount / +pageSize)
 
         return {
             pagesCount: pagesCount,

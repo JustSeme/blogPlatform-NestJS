@@ -395,5 +395,9 @@ describe('blogger-posts-comments', () => {
         expect(allCommentsData.body.items.length).toEqual(2)
         expect(allCommentsData.body.items[0].postInfo.id).toEqual(secondCreatedPostId)
         expect(allCommentsData.body.items[1].postInfo.id).toEqual(secondCreatedPostId)
+
+        expect(allCommentsData.body.totalCount).toEqual(6)
+        expect(allCommentsData.body.pagesCount).toEqual(3)
+        expect(allCommentsData.body.page).toEqual(2)
     })
 })
