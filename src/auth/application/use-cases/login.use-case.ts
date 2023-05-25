@@ -44,9 +44,8 @@ export class LoginUseCase implements ICommandHandler<LoginCommand> {
         } = command
 
         const user = await this.usersRepository.findUserById(userId)
-        const isBanned = user.isBanned()
 
-        if (isBanned) {
+        if (user.isBanned()) {
             throw new UnauthorizedException(generateErrorsMessages(`You are banned by banReason: ${user.banInfo.banReason}`, 'userId'))
         }
 

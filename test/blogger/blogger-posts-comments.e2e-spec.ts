@@ -324,6 +324,11 @@ describe('blogger-posts-comments', () => {
         expect(allCommentsData.body.items[1].postInfo.id).toEqual(createdPostId)
         expect(allCommentsData.body.items[2].postInfo.id).toEqual(secondCreatedPostId)
         expect(allCommentsData.body.items[3].postInfo.id).toEqual(secondCreatedPostId)
+
+        expect(allCommentsData.body.items[0].likesInfo).toBeDefined()
+        expect(allCommentsData.body.items[1].likesInfo).toBeDefined()
+        expect(allCommentsData.body.items[2].likesInfo).toBeDefined()
+        expect(allCommentsData.body.items[3].likesInfo).toBeDefined()
     })
 
     const unbanUserForBlogInputModel: BanUserForBlogInputModel = {
@@ -367,6 +372,18 @@ describe('blogger-posts-comments', () => {
         expect(allCommentsData.body.items[3].postInfo.id).toEqual(secondCreatedPostId)
         expect(allCommentsData.body.items[4].postInfo.id).toEqual(createdPostId)
         expect(allCommentsData.body.items[5].postInfo.id).toEqual(secondCreatedPostId)
+
+        expect(allCommentsData.body.items[0].likesInfo.likesCount).toEqual(0)
+        expect(allCommentsData.body.items[0].likesInfo.dislikesCount).toEqual(0)
+
+        expect(allCommentsData.body.items[1].likesInfo.likesCount).toEqual(0)
+        expect(allCommentsData.body.items[1].likesInfo.dislikesCount).toEqual(0)
+
+        expect(allCommentsData.body.items[2].likesInfo.likesCount).toEqual(0)
+        expect(allCommentsData.body.items[2].likesInfo.dislikesCount).toEqual(0)
+
+        expect(allCommentsData.body.items[3].likesInfo.likesCount).toEqual(0)
+        expect(allCommentsData.body.items[3].likesInfo.dislikesCount).toEqual(0)
     })
 
     it(`should display all comments for blogger with sorting`, async () => {

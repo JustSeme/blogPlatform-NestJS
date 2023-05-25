@@ -8,7 +8,7 @@ import { UserInputModel } from "../../src/SuperAdmin/api/models/UserInputModel";
 import { BlogInputModel } from "../../src/Blogger/api/models/BlogInputModel";
 import { PostInputModelWithoutBlogId } from "../../src/Blogger/api/models/PostInputModelWithoutBlogId";
 
-describe('blogger-posts', () => {
+describe('blogger-posts-only', () => {
     let app: NestExpressApplication;
     let httpServer;
 
@@ -145,9 +145,12 @@ describe('blogger-posts', () => {
                 }]
         })
 
-        await request(httpServer)
+        const postsData = await request(httpServer)
             .get(`/posts`)
-            .expect(HttpStatus.NOT_FOUND)
+            .expect(HttpStatus.OK)
+
+        expect(postsData.body.items.length).toEqual(0);
+
     })
 
     it('blogger shouldn\'t create post if blog by blogId doesn\'t exists, should display empty posts array', async () => {
@@ -164,9 +167,11 @@ describe('blogger-posts', () => {
             }]
         })
 
-        await request(httpServer)
+        const postsData = await request(httpServer)
             .get(`/posts`)
-            .expect(HttpStatus.NOT_FOUND)
+            .expect(HttpStatus.OK)
+
+        expect(postsData.body.items.length).toEqual(0)
     })
 
     const correctPostInputModel: PostInputModelWithoutBlogId = {
@@ -182,9 +187,11 @@ describe('blogger-posts', () => {
             .send(correctBlogInputModel)
             .expect(HttpStatus.UNAUTHORIZED)
 
-        await request(httpServer)
+        const postsData = await request(httpServer)
             .get(`/posts`)
-            .expect(HttpStatus.NOT_FOUND)
+            .expect(HttpStatus.OK)
+
+        expect(postsData.body.items.length).toEqual(0)
     })
 
     it('blogger shouldn\'t create post if that is not him own, should display empty posts array', async () => {
@@ -194,9 +201,12 @@ describe('blogger-posts', () => {
             .send(correctPostInputModel)
             .expect(HttpStatus.FORBIDDEN)
 
-        await request(httpServer)
+        const postsData = await request(httpServer)
             .get(`/posts`)
-            .expect(HttpStatus.NOT_FOUND)
+            .expect(HttpStatus.OK)
+
+        expect(postsData.body.items.length).toEqual(0)
+
     })
 
     let createdPostId
