@@ -159,7 +159,7 @@ export class CommentsRepository {
         const blogIdFilterObjects = blogIds.map((blogId: string) => ({ 'postInfo.blogId': blogId }))
 
         const filter: any = {
-            /* isBanned: false, */
+            isBanned: false,
             $or: blogIdFilterObjects
         }
 

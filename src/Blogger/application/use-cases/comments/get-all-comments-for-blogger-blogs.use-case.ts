@@ -5,7 +5,6 @@ import { ReadCommentsQueryParams } from "../../../../blogs/api/models/ReadCommen
 import { BlogsRepository } from "../../../infrastructure/blogs/blogs-db-repository"
 import { CommentsRepository } from "../../../../blogs/infrastructure/comments/comments-db-repository"
 import { CommentsService } from "../../../../blogs/application/comments-service"
-import { ReadBlogsQueryParams } from "../../../../blogs/api/models/ReadBlogsQuery"
 import { CommentsForBloggerWithQueryOutputModel } from "../../../../blogs/application/dto/CommentViewModelForBlogger"
 
 export class GetAllCommentsForBloggerBlogsCommand {
@@ -25,9 +24,7 @@ export class GetAllCommentsForBloggerBlogsUseCase implements ICommandHandler<Get
 
     async execute(command: GetAllCommentsForBloggerBlogsCommand): Promise<CommentsForBloggerWithQueryOutputModel> {
         // если передать пустой объект в findBlogs как queryParams, то подставятся дефолтные значения
-        const allBlogsForBlogger = await this.blogsRepository.findBlogs({} as ReadBlogsQueryParams, command.bloggerId)
-
-        const blogIds = allBlogsForBlogger.items.map((blog) => blog.id)
+        const blogIds = await this.blogsRepository.findAllBlogIdsByCreatorId(command.bloggerId)
 
         const commentsWithQueryData = await this.commentsRepository.getAllCommentsByAllBlogIds(command.readCommentsQuery, blogIds)
 

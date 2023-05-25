@@ -60,6 +60,11 @@ export class BlogsRepository {
         await this.save(blogById)
     }
 
+    async findAllBlogIdsByCreatorId(creatorId: string) {
+        const allBlogsByCreatorId = await this.BlogsModel.find({ $and: [{ 'banInfo.isBanned': false }, { 'blogOwnerInfo.userId': creatorId }] })
+        return allBlogsByCreatorId.map((blog) => blog.id)
+    }
+
     async findBlogs(queryParams: ReadBlogsQueryParams, creatorId?: string | undefined): Promise<BlogsWithQueryOutputModel> {
         const {
             searchNameTerm = null,
