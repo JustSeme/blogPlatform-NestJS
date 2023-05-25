@@ -124,6 +124,7 @@ describe('blogger-blogs', () => {
             .send(correctBlogInputModel)
             .expect(HttpStatus.CREATED)
 
+
         expect(createdBlogData.body.name).toEqual(correctBlogInputModel.name)
         expect(createdBlogData.body.description).toEqual(correctBlogInputModel.description)
         expect(createdBlogData.body.websiteUrl).toEqual(correctBlogInputModel.websiteUrl)
@@ -277,12 +278,10 @@ describe('blogger-blogs', () => {
             .set('Authorization', `Bearer ${recievedAccessToken}`)
             .expect(HttpStatus.NO_CONTENT)
 
-        const blogsData = await request(httpServer)
+        await request(httpServer)
             .get('/blogger/blogs')
             .set('Authorization', `Bearer ${recievedAccessToken}`)
-            .expect(HttpStatus.OK)
-
-        expect(blogsData.body.items.length).toBe(0)
+            .expect(HttpStatus.NOT_FOUND)
     })
 
     it('sholdn\'t detele blog if it is already deleted', async () => {

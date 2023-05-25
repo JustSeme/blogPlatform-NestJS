@@ -1,15 +1,12 @@
 import { Model } from "mongoose"
 import { v4 as uuidv4 } from "uuid"
-import { Blog } from "./BlogsSchema"
+import {
+    Blog, BlogBanInfoType
+} from "./BlogsSchema"
 
 export type BlogOwnerInfoType = {
     userId: string,
     userLogin: string
-}
-
-export type BlogBanInfoType = {
-    isBanned: boolean
-    banDate: Date
 }
 
 // data transfer object

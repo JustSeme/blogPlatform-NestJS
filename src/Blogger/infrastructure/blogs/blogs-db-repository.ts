@@ -1,9 +1,10 @@
 import { BlogInputModel } from "../../api/models/BlogInputModel"
 import { Injectable } from "@nestjs/common"
 import { InjectModel } from "@nestjs/mongoose"
-import { Blog } from "../../domain/blogs/BlogsSchema"
 import {
-    BlogBanInfoType,
+    Blog, BlogBanInfoType
+} from "../../domain/blogs/BlogsSchema"
+import {
     BlogDBModel, BlogModelType
 } from "../../domain/blogs/BlogsTypes"
 import { BlogDocument } from "./BlogsTypes"

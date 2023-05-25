@@ -1,13 +1,16 @@
 import {
     Prop, Schema, SchemaFactory
 } from "@nestjs/mongoose"
-import {
-    BlogBanInfoType, BlogDBModel
-} from "./BlogsTypes"
+import { BlogDBModel } from "./BlogsTypes"
 import {
     BlogOwnerInfo, BlogOwnerInfoSchema
 } from "./BlogOwnerInfoSchema"
 import { BlogBanInfoSchema } from "./BlogBanInfoSchema"
+
+export type BlogBanInfoType = {
+    isBanned: boolean
+    banDate: Date | null
+}
 
 @Schema()
 export class Blog {
