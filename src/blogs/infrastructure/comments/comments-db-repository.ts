@@ -170,7 +170,7 @@ export class CommentsRepository {
 
         const sortDirectionNumber = sortDirection === 'asc' ? 1 : -1
         const resultedComments = await this.CommentModel.find(filter, {
-            _id: 0, postId: 0, 'postInfo._id': 0, __v: 0
+            _id: 0, postId: 0, 'postInfo._id': 0, 'commentatorInfo._id': 0, __v: 0
         }).sort({ [sortBy]: sortDirectionNumber }).skip(skipCount).limit(+pageSize).lean()
 
         return {
