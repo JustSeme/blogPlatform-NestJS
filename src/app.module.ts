@@ -117,6 +117,9 @@ import { BanUserForBlogUseCase } from "./Blogger/application/use-cases/users/ban
 import { GetAllBannedUsersForBlogUseCase } from "./Blogger/application/use-cases/users/get-all-banned-users-for-blog.use-case"
 import { BloggerService } from "./Blogger/application/blogger.service"
 import { UnbanUserForBlogUseCase } from "./Blogger/application/use-cases/users/unban-user-for-blog.use-case"
+import { AuthRepository } from "./auth/infrastructure/auth-db-repository"
+import { TypeOrmModule } from "@nestjs/typeorm"
+import { UsersSQLRepository } from "./SuperAdmin/infrastructure/users-sql-repository"
 
 const authUseCases = [
   LogoutUseCase,
@@ -207,6 +210,8 @@ const repositories = [
   CommentsRepository,
   DeviceRepository,
   AttemptsRepository,
+  AuthRepository,
+  UsersSQLRepository,
 ]
 
 const decorators = [
@@ -280,6 +285,16 @@ const controllers = [
         schema: AttemptsSchema
       },
     ]),
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: '127.0.0.1',
+      port: 5432,
+      username: 'nodejs',
+      password: 'admin:qwerty',
+      database: 'BlogsPlatform',
+      autoLoadEntities: false,
+      synchronize: false,
+    }),
     PassportModule,
   ],
   controllers: [...controllers],

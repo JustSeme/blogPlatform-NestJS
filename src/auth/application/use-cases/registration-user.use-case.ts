@@ -6,7 +6,7 @@ import {
 } from "@nestjs/cqrs"
 import { UserModelType } from "../../../SuperAdmin/domain/UsersTypes"
 import { User } from "../../../SuperAdmin/domain/UsersSchema"
-import { UsersRepository } from "../../../SuperAdmin/infrastructure/users-db-repository"
+import { UsersSQLRepository } from "../../../SuperAdmin/infrastructure/users-sql-repository"
 
 export class RegistrationUserCommand {
     constructor(public login: string, public password: string, public email: string) { }
@@ -17,16 +17,16 @@ export class RegistrationUserUseCase implements ICommandHandler<RegistrationUser
     constructor(
         @InjectModel(User.name) private UserModel: UserModelType,
         private bcryptAdapter: BcryptAdapter,
-        private usersRepository: UsersRepository,
+        private usersRepository: UsersSQLRepository,
         private emailManager: EmailManager
     ) { }
 
     async execute(command: RegistrationUserCommand): Promise<boolean> {
         const passwordHash = await this.bcryptAdapter.generatePasswordHash(command.password, 10)
 
-        let newUser = this.UserModel.makeInstance(command.login, command.email, passwordHash, false, this.UserModel)
+        const newUser = this.UserModel.makeInstance(command.login, command.email, passwordHash, false, this.UserModel)
 
-        newUser = await this.usersRepository.save(newUser)
+        await this.usersRepository.createNewUser(newUser)
 
         await this.emailManager.sendConfirmationCode(command.email, command.login, newUser.emailConfirmation.confirmationCode)
 

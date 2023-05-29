@@ -33,8 +33,8 @@ export class UserDTO {
         }
 
         this.passwordRecovery = {
-            confirmationCode: '',
-            expirationDate: new Date()
+            confirmationCode: null,
+            expirationDate: null
         }
 
         this.banInfo = {
