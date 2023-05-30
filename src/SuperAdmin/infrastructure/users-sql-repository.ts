@@ -124,4 +124,20 @@ export class UsersSQLRepository {
 
         await this.dataSource.query(queryString, [userId, newConfirmationCode])
     }
+
+    async updatePasswordConfirmationInfo(userId: string, passwordRecoveryCode: string) {
+        const queryString = `
+            UPDATE public."Users"
+                SET "passwordRecoveryConfirmationCode"=$2, "passwordRecoveryExpirationDate"=CURRENT_TIMESTAMP
+                WHERE id = $1;
+        `
+
+        try {
+            await this.dataSource.query(queryString, [userId, passwordRecoveryCode])
+            return true
+        } catch (err) {
+            console.error(err)
+            return false
+        }
+    }
 }

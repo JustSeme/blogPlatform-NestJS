@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid'
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs/dist"
-import { UsersRepository } from "../../../SuperAdmin/infrastructure/users-db-repository"
+import { UsersSQLRepository } from "../../../SuperAdmin/infrastructure/users-sql-repository"
 
 export class SendPasswordRecoveryCodeCommand {
     constructor(public email: string) { }
@@ -12,7 +12,7 @@ export class SendPasswordRecoveryCodeCommand {
 @CommandHandler(SendPasswordRecoveryCodeCommand)
 export class SendPasswordRecoveryCodeUseCase implements ICommandHandler<SendPasswordRecoveryCodeCommand> {
     constructor(
-        private usersRepository: UsersRepository,
+        private usersRepository: UsersSQLRepository,
         private emailManager: EmailManager
     ) { }
 
