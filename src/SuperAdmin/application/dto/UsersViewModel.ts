@@ -1,20 +1,25 @@
 import { OutputData } from "../../../general/types/OutputData"
+import { UserSQLModel } from "../../infrastructure/UsersTypes"
 
 export class UserViewModelType {
-    banInfo: BanInfoViewType
+    public banInfo: BanInfoViewType
+    public id: string
+    public login: string
+    public email: string
+    public createdAt: string
 
     constructor(
-        public id: string,
-        public login: string,
-        public email: string,
-        public createdAt: string,
-        isBanned: boolean,
-        banDate: Date,
-        banReason: string
+        user: UserSQLModel,
     ) {
-        this.banInfo.isBanned = isBanned
-        this.banInfo.banDate = banDate
-        this.banInfo.banReason = banReason
+        this.id = user.id
+        this.login = user.email
+        this.createdAt = user.createdAt
+
+        this.banInfo = {
+            isBanned: user.isBanned,
+            banDate: user.banDate,
+            banReason: user.banReason
+        }
     }
 
     isBanned() {

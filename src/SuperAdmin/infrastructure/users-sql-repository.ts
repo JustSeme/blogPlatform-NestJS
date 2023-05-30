@@ -42,15 +42,7 @@ export class UsersSQLRepository {
 
         const findedUserData: UserSQLModel = await this.dataSource.query(queryString, [userId])[0]
 
-        return new UserViewModelType(
-            findedUserData.id,
-            findedUserData.login,
-            findedUserData.email,
-            findedUserData.createdAt,
-            findedUserData.isBanned,
-            findedUserData.banDate,
-            findedUserData.banReason,
-        )
+        return new UserViewModelType(findedUserData)
     }
 
     async findUserByRecoveryPasswordCode(recoveryCode: string): Promise<UserDBModel> {

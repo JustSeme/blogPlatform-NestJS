@@ -21,13 +21,13 @@ import { ConfirmEmailCommand } from "../application/use-cases/confirm-email.use-
 import { RegistrationUserCommand } from "../application/use-cases/registration-user.use-case"
 import { CommandBus } from "@nestjs/cqrs/dist/command-bus"
 import { LogoutCommand } from "../application/use-cases/logout.use-case"
-import { UsersQueryRepository } from "../../SuperAdmin/infrastructure/users-query-repository"
+import { UsersQuerySQLRepository } from "../../SuperAdmin/infrastructure/users-query-sql-repository"
 
 @Controller('auth')
 export class AuthController {
     constructor(
         protected jwtService: JwtService,
-        protected usersQueryRepository: UsersQueryRepository,
+        protected usersQueryRepository: UsersQuerySQLRepository,
         protected commandBus: CommandBus,
     ) { }
 
