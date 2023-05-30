@@ -1,7 +1,10 @@
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
-import { UsersRepository } from "../../../SuperAdmin/infrastructure/users-db-repository"
+import { BadRequestException } from "@nestjs/common"
+import { generateErrorsMessages } from "../../../general/helpers"
+import { UsersSQLRepository } from "../../../SuperAdmin/infrastructure/users-sql-repository"
+import { EmailConfirmationType } from "../../../SuperAdmin/domain/UsersTypes"
 
 export class ConfirmEmailCommand {
     constructor(public readonly code: string) { }
@@ -10,21 +13,24 @@ export class ConfirmEmailCommand {
 @CommandHandler(ConfirmEmailCommand)
 export class ConfirmEmailUseCase implements ICommandHandler<ConfirmEmailCommand> {
     constructor(
-        private usersRepository: UsersRepository,
+        private usersRepository: UsersSQLRepository,
     ) { }
 
     async execute(command: ConfirmEmailCommand) {
-        const user = await this.usersRepository.findUserByConfirmationCode(command.code)
+        const userEmailConfirmationData = await this.usersRepository.findUserEmailConfirmationDataByCode(command.code)
 
-        if (!user) return false
+        if (!this.isUserCanBeConfirmed(userEmailConfirmationData, command.code) || !userEmailConfirmationData) {
+            throw new BadRequestException(generateErrorsMessages('The confirmation code is incorrect, expired or already been applied', 'code'))
+        }
 
-        if (!user.canBeConfirmed(command.code)) {
-            return false
-        }
-        const isConfirmed = user.updateIsConfirmed()
-        if (isConfirmed) {
-            await this.usersRepository.save(user)
-        }
-        return isConfirmed
+        await this.usersRepository.updateIsConfirmedByConfirmationCode(command.code)
+    }
+
+    isUserCanBeConfirmed(emailConfirmation: EmailConfirmationType, recievedConfirmationCode: string) {
+        if (emailConfirmation.isConfirmed) return false
+        if (emailConfirmation.confirmationCode !== recievedConfirmationCode) return false
+        if (emailConfirmation.expirationDate < new Date()) return false
+
+        return true
     }
 }

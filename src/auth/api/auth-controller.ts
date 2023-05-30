@@ -6,9 +6,7 @@ import { UserInputModel } from "../../SuperAdmin/api/models/UserInputModel"
 import { NewPasswordInputModel } from "./models/NewPasswordInputModel"
 import { MeOutputModel } from "../application/dto/MeViewModel"
 import { LocalAuthGuard } from "./guards/local-auth.guard"
-import {
-    ErrorMessagesOutputModel, FieldError
-} from "../../general/types/ErrorMessagesOutputModel"
+import { ErrorMessagesOutputModel } from "../../general/types/ErrorMessagesOutputModel"
 import { JwtAuthGuard } from "../../general/guards/jwt-auth.guard"
 import { CurrentUserId } from "../../general/decorators/current-userId.param.decorator"
 import { JwtService } from "../../general/adapters/jwt.adapter"
@@ -91,25 +89,6 @@ export class AuthController {
     @Post('registration')
     @HttpCode(HttpStatus.NO_CONTENT)
     async registration(@Body() userInput: UserInputModel) {
-        const userByLogin = await this.usersQueryRepository.findUserByLogin(userInput.login)
-        const userByEmail = await this.usersQueryRepository.findUserByEmail(userInput.email)
-        if (userByLogin || userByEmail) {
-            const errorsMessages: FieldError[] = []
-            if (userByLogin) {
-                errorsMessages.push({
-                    message: 'Login is already exist',
-                    field: 'login'
-                })
-            }
-            if (userByEmail) {
-                errorsMessages.push({
-                    message: 'Email is already exist',
-                    field: 'email'
-                })
-            }
-            throw new BadRequestException(errorsMessages)
-        }
-
         await this.commandBus.execute(
             new RegistrationUserCommand(userInput.login, userInput.password, userInput.email,)
         )
@@ -119,13 +98,9 @@ export class AuthController {
     @Post('registration-confirmation')
     @HttpCode(HttpStatus.NO_CONTENT)
     async registrationConfirm(@Body('code') code: string) {
-        const isConfirmed = await this.commandBus.execute(
+        await this.commandBus.execute(
             new ConfirmEmailCommand(code)
         )
-
-        if (!isConfirmed) {
-            throw new BadRequestException(generateErrorsMessages('The confirmation code is incorrect, expired or already been applied', 'code'))
-        }
     }
 
     @UseGuards(IpRestrictionGuard)

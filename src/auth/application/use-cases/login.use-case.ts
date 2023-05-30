@@ -9,7 +9,7 @@ import {
 import { UnauthorizedException } from '@nestjs/common'
 import { generateErrorsMessages } from '../../../general/helpers'
 import { DeviceAuthSessionDBModel } from '../../../security/domain/DeviceAuthSessionType'
-import { UsersRepository } from '../../../SuperAdmin/infrastructure/users-db-repository'
+import { UsersSQLRepository } from '../../../SuperAdmin/infrastructure/users-sql-repository'
 
 export class LoginCommand {
     constructor(
@@ -29,7 +29,7 @@ export class LoginUseCase implements ICommandHandler<LoginCommand> {
     constructor(
         private jwtService: JwtService,
         private deviceRepository: DeviceRepository,
-        private usersRepository: UsersRepository,
+        private usersRepository: UsersSQLRepository,
         private readonly authConfig: AuthConfig,
     ) {
         this.tokensSettings = this.authConfig.getTokensSettings()

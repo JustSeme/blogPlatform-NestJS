@@ -7,16 +7,14 @@ import { UserDTO } from '../../SuperAdmin/domain/UsersTypes'
 @Injectable()
 export class AuthService {
     public prepareUserForDisplay(newUser: UserDTO): UserViewModelType {
-        return {
-            id: newUser.id,
-            login: newUser.login,
-            email: newUser.email,
-            createdAt: newUser.createdAt,
-            banInfo: {
-                isBanned: newUser.banInfo.isBanned,
-                banDate: newUser.banInfo.banDate,
-                banReason: newUser.banInfo.banReason,
-            }
-        }
+        return new UserViewModelType(
+            newUser.id,
+            newUser.login,
+            newUser.email,
+            newUser.createdAt,
+            newUser.banInfo.isBanned,
+            newUser.banInfo.banDate,
+            newUser.banInfo.banReason
+        )
     }
 }
