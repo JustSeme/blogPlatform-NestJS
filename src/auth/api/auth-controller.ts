@@ -132,14 +132,9 @@ export class AuthController {
     @Post('new-password')
     @HttpCode(HttpStatus.NO_CONTENT)
     async generateNewPassword(@Body() newPasswordInputModel: NewPasswordInputModel): Promise<void> {
-        const user = await this.usersQueryRepository.findUserByRecoveryPasswordCode(newPasswordInputModel.recoveryCode)
-
-        if (!user || user.passwordRecovery.expirationDate < new Date()) {
-            throw new BadRequestException(generateErrorsMessages('recoveryCode is incorrect', 'recoveryCode'))
-        }
 
         const isConfirmed = await this.commandBus.execute(
-            new ConfirmRecoveryPasswordCommand(user.id, newPasswordInputModel.newPassword)
+            new ConfirmRecoveryPasswordCommand(newPasswordInputModel.recoveryCode, newPasswordInputModel.newPassword)
         )
         if (!isConfirmed) {
             throw new NotImplementedException()

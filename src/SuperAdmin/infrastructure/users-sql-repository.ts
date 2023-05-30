@@ -53,13 +53,24 @@ export class UsersSQLRepository {
         )
     }
 
+    async findUserByRecoveryPasswordCode(recoveryCode: string): Promise<UserDBModel> {
+        const queryString = `
+            SELECT *
+                FROM public."Users"
+                WHERE "passwordRecoveryConfirmationCode" = $1;
+        `
+
+        const findedUserData: UserSQLModel = await this.dataSource.query(queryString, [recoveryCode])
+
+        return new UserDBModel(findedUserData)
+    }
+
     async isUserByLoginExists(userLogin: string): Promise<boolean> {
         const queryString = `
             SELECT id
                 FROM public."Users"
                 WHERE login = $1;
         `
-
 
         const userIdsByLogin = await this.dataSource.query(queryString, [userLogin])
 
@@ -134,6 +145,22 @@ export class UsersSQLRepository {
 
         try {
             await this.dataSource.query(queryString, [userId, passwordRecoveryCode])
+            return true
+        } catch (err) {
+            console.error(err)
+            return false
+        }
+    }
+
+    async updateUserPassword(userId: string, newPasswordHash: string): Promise<boolean> {
+        const queryString = `
+            UPDATE public."Users"
+                SET "passwordRecoveryConfirmationCode"=null, "passwordRecoveryExpirationDate"=null, "passwordHash"=$2
+                WHERE id = $1;
+        `
+
+        try {
+            await this.dataSource.query(queryString, [userId, newPasswordHash])
             return true
         } catch (err) {
             console.error(err)
