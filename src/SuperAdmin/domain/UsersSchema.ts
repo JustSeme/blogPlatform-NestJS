@@ -4,7 +4,9 @@ import {
 import {
     EmailConfirmation, EmailConfirmationSchema
 } from "./EmailConfirmationSchema"
-import { PasswordRecovery } from "./PasswordRecoverySchema"
+import {
+    PasswordRecovery, PasswordRecoverySchema
+} from "./PasswordRecoverySchema"
 import {
     Schema, Prop, SchemaFactory
 } from "@nestjs/mongoose"
@@ -39,7 +41,7 @@ export class User {
     emailConfirmation: EmailConfirmation
 
     @Prop({
-        required: true, type: EmailConfirmationSchema
+        required: true, type: PasswordRecoverySchema
     })
     passwordRecovery: PasswordRecovery
 

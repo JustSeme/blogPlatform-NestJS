@@ -3,7 +3,7 @@ import { EmailManager } from "../../../general/managers/emailManager"
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs/dist"
-import { UsersRepository } from '../../../SuperAdmin/infrastructure/users-db-repository'
+import { UsersSQLRepository } from '../../../SuperAdmin/infrastructure/users-sql-repository'
 
 export class ResendConfirmationCodeCommand {
     constructor(public email: string) { }
@@ -12,7 +12,7 @@ export class ResendConfirmationCodeCommand {
 @CommandHandler(ResendConfirmationCodeCommand)
 export class ResendConfirmationCodeUseCase implements ICommandHandler<ResendConfirmationCodeCommand> {
     constructor(
-        private usersRepository: UsersRepository,
+        private usersRepository: UsersSQLRepository,
         private emailManager: EmailManager
     ) { }
 
@@ -27,7 +27,6 @@ export class ResendConfirmationCodeUseCase implements ICommandHandler<ResendConf
             return await this.emailManager.sendConfirmationCode(command.email, user.login, newConfirmationCode)
         } catch (error) {
             console.error(error)
-            this.usersRepository.deleteUser(user.id)
             return false
         }
     }

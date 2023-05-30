@@ -5,6 +5,9 @@ import {
     EmailConfirmationType, UserDTO
 } from '../domain/UsersTypes'
 import { UserViewModelType } from '../application/dto/UsersViewModel'
+import {
+    UserDBModel, UserSQLModel
+} from './UsersTypes'
 
 
 @Injectable()
@@ -37,7 +40,7 @@ export class UsersSQLRepository {
                 WHERE id = $1;
         `
 
-        const findedUserData = await this.dataSource.query(queryString, [userId])[0]
+        const findedUserData: UserSQLModel = await this.dataSource.query(queryString, [userId])[0]
 
         return new UserViewModelType(
             findedUserData.id,
@@ -99,5 +102,26 @@ export class UsersSQLRepository {
         `
 
         await this.dataSource.query(queryString, [code])
+    }
+
+    async findUserByEmail(email: string): Promise<UserDBModel> {
+        const queryString = ` 
+            SELECT *
+                FROM public."Users"
+                WHERE email = $1;
+        `
+
+        const user: UserSQLModel = await this.dataSource.query(queryString, [email])
+        return new UserDBModel(user)
+    }
+
+    async updateEmailConfirmationInfo(userId: string, newConfirmationCode: string) {
+        const queryString = `
+            UPDATE public."Users"
+                SET "emailConfirmationCode"=$2, "emailExpirationDate"=CURRENT_TIMESTAMP
+                WHERE id = $1;
+        `
+
+        await this.dataSource.query(queryString, [userId, newConfirmationCode])
     }
 }
