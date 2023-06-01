@@ -19,10 +19,10 @@ export class DeviceRepository {
         return result.deletedCount === 1
     }
 
-    /* async deleteAllSessionsExcludeCurrent(userId: string, deviceId: string) {
+    async deleteAllSessionsExcludeCurrent(userId: string, deviceId: string) {
         const result = await this.DeviceAuthSessionModel.deleteMany({ $and: [{ 'userInfo.userId': userId }, { 'deviceInfo.deviceId': { $ne: deviceId } }] })
         return result.deletedCount > 0
-    } */
+    }
 
     async updateSession(deviceId: string, issuedAt: number, expireDate: number) {
         const result = await this.DeviceAuthSessionModel.updateOne({ "deviceInfo.deviceId": deviceId }, {

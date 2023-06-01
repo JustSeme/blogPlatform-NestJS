@@ -1,7 +1,6 @@
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
-import { DeviceRepository } from "../../infrastructure/device-db-repository"
 import { DevicesSQLRepository } from "../../infrastructure/devices-sql-repository"
 
 export class RemoveAllSessionsExcludeCurrentCommand {
