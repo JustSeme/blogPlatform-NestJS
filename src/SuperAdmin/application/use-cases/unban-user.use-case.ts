@@ -3,7 +3,7 @@ import {
 } from "@nestjs/cqrs"
 import { PostsRepository } from "../../../Blogger/infrastructure/posts/posts-db-repository"
 import { CommentsRepository } from "../../../blogs/infrastructure/comments/comments-db-repository"
-import { UsersRepository } from "../../infrastructure/users-db-repository"
+import { UsersSQLRepository } from "../../infrastructure/users-sql-repository"
 
 export class UnbanUserCommand {
     constructor(
@@ -14,7 +14,7 @@ export class UnbanUserCommand {
 @CommandHandler(UnbanUserCommand)
 export class UnbanUserUseCase implements ICommandHandler<UnbanUserCommand> {
     constructor(
-        private usersRepository: UsersRepository,
+        private usersRepository: UsersSQLRepository,
         private postsRepository: PostsRepository,
         private commentsRepository: CommentsRepository,
     ) { }
@@ -22,12 +22,7 @@ export class UnbanUserUseCase implements ICommandHandler<UnbanUserCommand> {
     async execute(command: UnbanUserCommand) {
         const { userId } = command
 
-        const userById = await this.usersRepository.findUserById(userId)
-
-        const isUnbanned = userById.unbanCurrentUser()
-        if (isUnbanned) {
-            this.usersRepository.save(userById)
-        }
+        await this.usersRepository.unbanUserById(userId)
 
         return this.unHideUserEnitties(userId)
     }

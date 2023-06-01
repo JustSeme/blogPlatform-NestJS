@@ -1,15 +1,14 @@
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
-import { BanUserInputModel } from "../../api/models/BanUserInputModel"
 import { PostsRepository } from "../../../Blogger/infrastructure/posts/posts-db-repository"
 import { CommentsRepository } from "../../../blogs/infrastructure/comments/comments-db-repository"
-import { UsersRepository } from "../../infrastructure/users-db-repository"
 import { DevicesSQLRepository } from "../../../security/infrastructure/devices-sql-repository"
+import { UsersSQLRepository } from "../../infrastructure/users-sql-repository"
 
 export class BanUserCommand {
     constructor(
-        public readonly BanUserInputModel: BanUserInputModel,
+        public readonly banReason: string,
         public readonly userId: string,
     ) { }
 }
@@ -17,7 +16,7 @@ export class BanUserCommand {
 @CommandHandler(BanUserCommand)
 export class BanUserUseCase implements ICommandHandler<BanUserCommand> {
     constructor(
-        private usersRepository: UsersRepository,
+        private usersRepository: UsersSQLRepository,
         private deviceRepository: DevicesSQLRepository,
         private postsRepository: PostsRepository,
         private commentsRepository: CommentsRepository,
@@ -25,16 +24,11 @@ export class BanUserUseCase implements ICommandHandler<BanUserCommand> {
 
     async execute(command: BanUserCommand) {
         const {
-            BanUserInputModel,
+            banReason,
             userId,
         } = command
 
-        const userById = await this.usersRepository.findUserById(userId)
-
-        const isBanned = userById.banCurrentUser(BanUserInputModel)
-        if (isBanned) {
-            await this.usersRepository.save(userById)
-        }
+        await this.usersRepository.banUserById(userId, banReason)
 
         return this.hideUserEntities(userId)
     }

@@ -69,11 +69,11 @@ export class SuperAdminUsersController {
     @HttpCode(HttpStatus.NO_CONTENT)
     async banUser(
         @Param('userId', IsUserExistOrThrow400Pipe) userId: string,
-        @Body() BanUserInputModel: BanUserInputModel
+        @Body() banUserInputModel: BanUserInputModel
     ) {
-        if (BanUserInputModel.isBanned) {
+        if (banUserInputModel.isBanned) {
             await this.commandBus.execute(
-                new BanUserCommand(BanUserInputModel, userId)
+                new BanUserCommand(banUserInputModel.banReason, userId)
             )
         } else {
             await this.commandBus.execute(
