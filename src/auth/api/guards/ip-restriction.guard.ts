@@ -1,10 +1,10 @@
 import {
     Injectable, CanActivate, ExecutionContext, HttpException, HttpStatus
 } from '@nestjs/common'
-import { AttemptsRepository } from '../../../security/infrastructure/attempts-db-repository'
+import { AttemptsSQLRepository } from '../../../security/infrastructure/attempts-sql-repository'
 
 
-const rateLimitValidation = async (clientIp: string, requestedUrl: string, attemptsRepository: AttemptsRepository) => {
+const rateLimitValidation = async (clientIp: string, requestedUrl: string, attemptsRepository: AttemptsSQLRepository) => {
     const interval = 10 * 1000
     const currentDate = new Date()
     const lastAttemptDate = new Date(currentDate.getTime() - interval)
@@ -25,7 +25,7 @@ const rateLimitValidation = async (clientIp: string, requestedUrl: string, attem
 
 @Injectable()
 export class IpRestrictionGuard implements CanActivate {
-    constructor(private attemptsRepository: AttemptsRepository) { }
+    constructor(private attemptsRepository: AttemptsSQLRepository) { }
 
     async canActivate(
         context: ExecutionContext,
