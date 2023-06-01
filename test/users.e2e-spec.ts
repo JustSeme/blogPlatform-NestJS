@@ -82,10 +82,7 @@ describe('e2e-users', () => {
             .post(`/sa/users`)
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
             .send(correctUserInputData)
-        //.expect(HttpStatus.CREATED)
-
-        console.log(response.body, 'response err');
-
+            .expect(HttpStatus.CREATED)
 
         const { id, login, email, createdAt } = response.body
         createdUser = response.body

@@ -42,12 +42,10 @@ describe('e2e-auth', () => {
     }
 
     it('should registrate and create user', async () => {
-        const error = await request(httpServer)
+        await request(httpServer)
             .post('/auth/registration')
             .send(correctUserInputData)
-        //.expect(HttpStatus.NO_CONTENT)
-        console.log(error.body, 'error');
-
+            .expect(HttpStatus.NO_CONTENT)
     })
 
     let createdUserId

@@ -42,10 +42,10 @@ export class AppService {
 
   async clearSQLTables() {
     await this.dataSource.query(`
-      DELETE FROM public."Users"
+      DELETE FROM public."AuthSessions"
         WHERE 1 = 1;
 
-      DELETE FROM public."AuthSessions"
+      DELETE FROM public."Users"
         WHERE 1 = 1;
 
       DELETE FROM public."Attempts"
