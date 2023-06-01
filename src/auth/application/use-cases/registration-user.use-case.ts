@@ -7,7 +7,9 @@ import {
 import { UserModelType } from "../../../SuperAdmin/domain/UsersTypes"
 import { User } from "../../../SuperAdmin/domain/UsersSchema"
 import { FieldError } from "../../../general/types/ErrorMessagesOutputModel"
-import { BadRequestException } from '@nestjs/common'
+import {
+    BadRequestException, NotImplementedException
+} from '@nestjs/common'
 import { AuthRepository } from "../../infrastructure/auth-sql-repository"
 import { UsersSQLRepository } from "../../../SuperAdmin/infrastructure/users-sql-repository"
 
@@ -33,7 +35,10 @@ export class RegistrationUserUseCase implements ICommandHandler<RegistrationUser
 
         const newUser = this.UserModel.makeInstance(command.login, command.email, passwordHash, false, this.UserModel)
 
-        await this.usersRepository.createNewUser(newUser)
+        const isCreated = await this.usersRepository.createNewUser(newUser)
+        if (!isCreated) {
+            throw new NotImplementedException('User is not saved in DB')
+        }
 
         await this.emailManager.sendConfirmationCode(command.email, command.login, newUser.emailConfirmation.confirmationCode)
 

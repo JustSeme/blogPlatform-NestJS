@@ -90,7 +90,7 @@ export class AuthController {
     @HttpCode(HttpStatus.NO_CONTENT)
     async registration(@Body() userInput: UserInputModel) {
         await this.commandBus.execute(
-            new RegistrationUserCommand(userInput.login, userInput.password, userInput.email,)
+            new RegistrationUserCommand(userInput.login, userInput.password, userInput.email)
         )
     }
 

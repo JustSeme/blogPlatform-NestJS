@@ -18,14 +18,22 @@ export class UsersSQLRepository {
                 VALUES ($1, $2, $3, $4, $5, $6);
         `
 
-        await this.dataSource.query(query, [
-            newUser.login,
-            newUser.email,
-            newUser.passwordHash,
-            newUser.emailConfirmation.confirmationCode,
-            newUser.emailConfirmation.expirationDate,
-            newUser.emailConfirmation.isConfirmed
-        ])
+        try {
+            await this.dataSource.query(query, [
+                newUser.login,
+                newUser.email,
+                newUser.passwordHash,
+                newUser.emailConfirmation.confirmationCode,
+                newUser.emailConfirmation.expirationDate,
+                newUser.emailConfirmation.isConfirmed
+            ])
+            console.log('чзх')
+
+            return true
+        } catch (err) {
+            console.error(err)
+            return false
+        }
     }
 
     async findUserById(userId: string): Promise<UserViewModelType> {
@@ -85,5 +93,11 @@ export class UsersSQLRepository {
             console.error(err)
             return false
         }
+    }
+
+    async isUserExists(userId: string): Promise<boolean> {
+        const user = await this.findUserById(userId)
+
+        return user ? true : false
     }
 }

@@ -55,6 +55,9 @@ describe('e2e-auth', () => {
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
             .expect(HttpStatus.OK)
 
+        console.log(response.body);
+
+
         expect(response.body.totalCount === 1).toBe(true)
         expect(response.body.items[0].login).toEqual(correctUserInputData.login)
         expect(response.body.items[0].email).toEqual(correctUserInputData.email)

@@ -16,9 +16,9 @@ import { IsUserExistOrThrow400Pipe } from './pipes/isUserExistsOrThrow400.valida
 import { IsUserExistPipe } from './pipes/isUserExists.validation.pipe'
 import { BanUserCommand } from '../application/use-cases/ban-user.use-case'
 import { UnbanUserCommand } from '../application/use-cases/unban-user.use-case'
-import { UsersQueryRepository } from '../infrastructure/users-query-repository'
 import { UsersService } from '../application/users.service'
 import { BanUserInputModel } from './models/BanUserInputModel'
+import { UsersQueryRepository } from '../infrastructure/users-query-repository'
 
 @UseGuards(BasicAuthGuard)
 @Controller('sa/users')
