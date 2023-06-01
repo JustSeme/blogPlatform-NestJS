@@ -45,12 +45,18 @@ export class DevicesSQLRepository {
         }
     }
 
-    async deleteAllSessionsExcludeCurrent(userId: string, deviceId: string) {
-        /* const queryString = `
-
+    async deleteAllSessionsExcludeCurrent(userId: string, deviceId: string): Promise<boolean> {
+        const queryString = `
+            DELETE FROM public."AuthSessions"
+                WHERE "userId" = $1 AND "deviceId" <> $2;
         `
 
-        const result = await this.dataSource.query({ $and: [{ 'userInfo.userId': userId }, { 'deviceInfo.deviceId': { $ne: deviceId } }] })
-        return result.deletedCount > 0 */
+        try {
+            await this.dataSource.query(queryString, [userId, deviceId])
+            return true
+        } catch (err) {
+            console.error(err)
+            return false
+        }
     }
 }
