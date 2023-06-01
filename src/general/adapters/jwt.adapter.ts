@@ -1,7 +1,7 @@
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import { Injectable } from '@nestjs/common/decorators'
-import { DeviceRepository } from '../../security/infrastructure/device-db-repository'
 import { AuthConfig } from '../../configuration/auth.config'
+import { DevicesSQLRepository } from '../../security/infrastructure/devices-sql-repository'
 
 
 @Injectable()
@@ -13,7 +13,7 @@ export class JwtService {
     }
 
     constructor(
-        protected deviceRepository: DeviceRepository,
+        protected deviceRepository: DevicesSQLRepository,
         private readonly authConfig: AuthConfig
     ) {
         this.jwtSecret = this.authConfig.getJwtSecret()

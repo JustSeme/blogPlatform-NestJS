@@ -1,12 +1,12 @@
 import {
     Injectable, NotFoundException, PipeTransform
 } from "@nestjs/common"
-import { DeviceRepository } from "../../infrastructure/device-db-repository"
 import { generateErrorsMessages } from "../../../general/helpers"
+import { DevicesSQLRepository } from "../../infrastructure/devices-sql-repository"
 
 @Injectable()
 export class IsDeviceExistsPipe implements PipeTransform {
-    constructor(private devicesRepository: DeviceRepository) { }
+    constructor(private devicesRepository: DevicesSQLRepository) { }
 
     async transform(deviceId: string): Promise<string> {
         if (!(await this.devicesRepository.isDeviceExists(deviceId))) {

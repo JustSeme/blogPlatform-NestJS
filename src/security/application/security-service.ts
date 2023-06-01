@@ -1,7 +1,7 @@
 import { DeviceSessionsViewModel } from "./dto/DeviceSessionsViewModel"
 import { DeviceRepository } from "../infrastructure/device-db-repository"
 import { Injectable } from "@nestjs/common/decorators"
-import { DeviceAuthSessionDBModel } from "../domain/DeviceAuthSessionType"
+import { DeviceAuthSessionDBModel } from "../domain/DeviceAuthSessionTypes"
 
 @Injectable()
 export class SecurityService {

@@ -1,7 +1,9 @@
 import { Injectable } from "@nestjs/common"
 import { InjectDataSource } from "@nestjs/typeorm"
 import { DataSource } from "typeorm"
-import { DeviceAuthSessionDBModel } from "../domain/DeviceAuthSessionType"
+import {
+    DeviceAuthSessionDBModel, DeviceAuthSessionSQLModel
+} from "../domain/DeviceAuthSessionTypes"
 
 @Injectable()
 export class DevicesSQLRepository {
@@ -58,5 +60,64 @@ export class DevicesSQLRepository {
             console.error(err)
             return false
         }
+    }
+
+    async updateSession(deviceId: string, issuedAt: number, expireDate: number): Promise<boolean> {
+        const queryString = `
+            UPDATE public."AuthSessions"
+                SET "issuedAt"=$2, "expireDate"=$3
+                WHERE "deviceId" = $1;
+        `
+
+        try {
+            await this.dataSource.query(queryString, [deviceId, issuedAt, expireDate])
+            return true
+        } catch (err) {
+            console.error(err)
+            return false
+        }
+    }
+
+    async getDeviceById(deviceId: string): Promise<DeviceAuthSessionDBModel> {
+        const queryString = `
+            SELECT *
+                FROM public."AuthSessions"
+                WHERE "deviceId" = $1
+        `
+
+        const findedDeviceData: DeviceAuthSessionSQLModel = await this.dataSource.query(queryString, [deviceId])
+
+        return new DeviceAuthSessionDBModel(
+            findedDeviceData.issuedAt,
+            findedDeviceData.expireDate,
+            findedDeviceData.userId,
+            findedDeviceData.userIp,
+            findedDeviceData.deviceId,
+            findedDeviceData.deviceName)
+    }
+
+    async getCurrentIssuedAt(deviceId: string): Promise<number> {
+        const result = await this.getDeviceById(deviceId)
+        return result.issuedAt
+    }
+
+    async deleteDeviceById(deviceId: string): Promise<boolean> {
+        const queryString = `
+            DELETE FROM public."AuthSessions"
+                WHERE "deviceId" = $1;
+        `
+
+        try {
+            await this.dataSource.query(queryString, [deviceId])
+            return true
+        } catch (err) {
+            console.error(err)
+            return false
+        }
+    }
+
+    async isDeviceExists(deviceId: string): Promise<boolean> {
+        const device = this.getDeviceById(deviceId)
+        return device ? true : false
     }
 }

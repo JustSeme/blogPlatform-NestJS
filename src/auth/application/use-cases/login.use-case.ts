@@ -7,7 +7,7 @@ import {
 } from '@nestjs/cqrs'
 import { UnauthorizedException } from '@nestjs/common'
 import { generateErrorsMessages } from '../../../general/helpers'
-import { DeviceAuthSessionDBModel } from '../../../security/domain/DeviceAuthSessionType'
+import { DeviceAuthSessionDBModel } from '../../../security/domain/DeviceAuthSessionTypes'
 import { UsersSQLRepository } from '../../../SuperAdmin/infrastructure/users-sql-repository'
 import { DevicesSQLRepository } from '../../../security/infrastructure/devices-sql-repository'
 

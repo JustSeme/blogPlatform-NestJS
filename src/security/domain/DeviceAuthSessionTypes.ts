@@ -25,6 +25,15 @@ export class DeviceAuthSessionDBModel {
     }
 }
 
+export class DeviceAuthSessionSQLModel {
+    public deviceId: string
+    public deviceName: string
+    public userId: string
+    public userIp: string
+    public issuedAt: number
+    public expireDate: number
+}
+
 export type UserInfoType = {
     userId: string
     userIp: string

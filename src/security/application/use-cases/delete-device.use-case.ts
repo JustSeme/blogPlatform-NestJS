@@ -1,9 +1,9 @@
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
-import { DeviceRepository } from "../../infrastructure/device-db-repository"
 import { ForbiddenException } from "@nestjs/common"
 import { generateErrorsMessages } from "../../../general/helpers"
+import { DevicesSQLRepository } from "../../infrastructure/devices-sql-repository"
 
 export class DeleteDeviceCommand {
     constructor(
@@ -15,7 +15,7 @@ export class DeleteDeviceCommand {
 @CommandHandler(DeleteDeviceCommand)
 export class DeleteDeviceUseCase implements ICommandHandler<DeleteDeviceCommand> {
     constructor(
-        private readonly deviceRepository: DeviceRepository
+        private readonly deviceRepository: DevicesSQLRepository
     ) { }
 
     async execute(command: DeleteDeviceCommand): Promise<void> {
@@ -30,6 +30,6 @@ export class DeleteDeviceUseCase implements ICommandHandler<DeleteDeviceCommand>
             throw new ForbiddenException(generateErrorsMessages('That is not your own', 'userId'))
         }
 
-        await deletingDevice.deleteOne()
+        await this.deviceRepository.deleteDeviceById(deviceId)
     }
 }

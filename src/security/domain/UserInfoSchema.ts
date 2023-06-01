@@ -1,7 +1,7 @@
 import {
     Prop, Schema, SchemaFactory
 } from '@nestjs/mongoose'
-import { UserInfoType } from './DeviceAuthSessionType'
+import { UserInfoType } from './DeviceAuthSessionTypes'
 
 @Schema()
 export class UserInfo {
