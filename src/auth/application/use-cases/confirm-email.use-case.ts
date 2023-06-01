@@ -27,6 +27,7 @@ export class ConfirmEmailUseCase implements ICommandHandler<ConfirmEmailCommand>
     }
 
     isUserCanBeConfirmed(emailConfirmation: EmailConfirmationType, recievedConfirmationCode: string) {
+        if (!emailConfirmation) return false
         if (emailConfirmation.isConfirmed) return false
         if (emailConfirmation.confirmationCode !== recievedConfirmationCode) return false
         if (emailConfirmation.expirationDate < new Date()) return false

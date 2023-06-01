@@ -10,12 +10,12 @@ export class AttemptsSQLRepository {
         const queryString = `
             SELECT count(*)
                 FROM public."Attempts"
-                WHERE "clientIp" = $1 AND "requestedUrl" = $2 AND "requestDate" < $3;
+                WHERE "clientIp" = $1 AND "requestedUrl" = $2 AND "requestDate" > $3;
         `
 
-        const data = this.dataSource.query(queryString, [clientIp, requestedUrl, lastAttemptDate])
+        const data = await this.dataSource.query(queryString, [clientIp, requestedUrl, lastAttemptDate])
 
-        return data[0].count
+        return Number(data[0].count)
     }
 
     async insertAttempt(clientIp: string, requestedUrl: string, requestDate: Date): Promise<boolean> {
