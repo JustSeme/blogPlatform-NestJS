@@ -85,15 +85,15 @@ export class DevicesSQLRepository {
                 WHERE "deviceId" = $1
         `
 
-        const findedDeviceData: DeviceAuthSessionSQLModel = await this.dataSource.query(queryString, [deviceId])
+        const findedDeviceData: DeviceAuthSessionSQLModel[] = await this.dataSource.query(queryString, [deviceId])
 
         return new DeviceAuthSessionDBModel(
-            findedDeviceData.issuedAt,
-            findedDeviceData.expireDate,
-            findedDeviceData.userId,
-            findedDeviceData.userIp,
-            findedDeviceData.deviceId,
-            findedDeviceData.deviceName)
+            findedDeviceData[0].issuedAt,
+            findedDeviceData[0].expireDate,
+            findedDeviceData[0].userId,
+            findedDeviceData[0].userIp,
+            findedDeviceData[0].deviceId,
+            findedDeviceData[0].deviceName)
     }
 
     async getCurrentIssuedAt(deviceId: string): Promise<number> {
@@ -119,5 +119,38 @@ export class DevicesSQLRepository {
     async isDeviceExists(deviceId: string): Promise<boolean> {
         const device = this.getDeviceById(deviceId)
         return device ? true : false
+    }
+
+    async getDevicesForUser(userId: string): Promise<DeviceAuthSessionDBModel[]> {
+        const queryString = `
+            SELECT *
+                FROM public."AuthSessions"
+                WHERE "userId" = $1
+        `
+
+        const findedDevicesData: DeviceAuthSessionSQLModel[] = await this.dataSource.query(queryString, [userId])
+
+        return findedDevicesData.map((device) => new DeviceAuthSessionDBModel(
+            device.issuedAt,
+            device.expireDate,
+            device.userId,
+            device.userIp,
+            device.deviceId,
+            device.deviceName))
+    }
+
+    async deleteAllSessions(userId: string): Promise<boolean> {
+        const queryString = `
+            DELETE FROM public."AuthSessions"
+                WHERE "userId" = $1;
+        `
+
+        try {
+            await this.dataSource.query(queryString, [userId])
+            return true
+        } catch (err) {
+            console.error(err)
+            return false
+        }
     }
 }

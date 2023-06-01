@@ -35,7 +35,7 @@ export class DeviceRepository {
         return this.DeviceAuthSessionModel.find({ "userInfo.userId": userId })
     }
 
-    /* async getDeviceById(deviceId: string) {
+    async getDeviceById(deviceId: string) {
         return this.DeviceAuthSessionModel.findOne({ 'deviceInfo.deviceId': deviceId })
     }
 
@@ -47,7 +47,7 @@ export class DeviceRepository {
     async isDeviceExists(deviceId: string) {
         const deviceByDeviceId = await this.getDeviceById(deviceId)
         return deviceByDeviceId ? true : false
-    } */
+    }
 
     async deleteAllSessions(userId: string): Promise<boolean> {
         const result = await this.DeviceAuthSessionModel.deleteMany({ 'userInfo.userId': userId })

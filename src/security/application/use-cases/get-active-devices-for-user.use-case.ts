@@ -2,10 +2,10 @@ import {
     CommandHandler, ICommandHandler
 } from '@nestjs/cqrs'
 import { DeviceSessionsViewModel } from '../dto/DeviceSessionsViewModel'
-import { DeviceRepository } from '../../infrastructure/device-db-repository'
 import { generateErrorsMessages } from '../../../general/helpers'
 import { NotFoundException } from '@nestjs/common'
 import { SecurityService } from '../security-service'
+import { DevicesSQLRepository } from '../../infrastructure/devices-sql-repository'
 
 export class GetActiveDevicesCommand {
     constructor(public readonly userId: string) { }
@@ -14,7 +14,7 @@ export class GetActiveDevicesCommand {
 @CommandHandler(GetActiveDevicesCommand)
 export class GetActiveDevicesUseCase implements ICommandHandler<GetActiveDevicesCommand> {
     constructor(
-        private readonly deviceRepository: DeviceRepository,
+        private readonly deviceRepository: DevicesSQLRepository,
         private readonly securityService: SecurityService,
     ) { }
 
