@@ -40,4 +40,19 @@ export class UsersSQLRepository {
 
         return new UserViewModelType(findedUserData[0])
     }
+
+    async deleteUser(userId: string): Promise<boolean> {
+        const queryString = `
+            DELETE FROM public."Users"
+                WHERE id = $1
+        `
+
+        try {
+            await this.dataSource.query(queryString, [userId])
+            return true
+        } catch (err) {
+            console.error(err)
+            return false
+        }
+    }
 }
