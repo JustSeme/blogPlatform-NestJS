@@ -26,7 +26,6 @@ import { SecurityController } from "./security/api/security-controller"
 import { LocalStrategy } from "./auth/api/strategies/local.strategy"
 import { BasicStrategy } from "./general/strategies/basic.strategy"
 import { AppService } from "./app.service"
-import { AuthService } from "./auth/application/auth.service"
 import { JwtService } from "./general/adapters/jwt.adapter"
 import { PostsService } from "./blogs/application/posts-service"
 import { CommentsService } from "./blogs/application/comments-service"
@@ -93,7 +92,7 @@ import { GetActiveDevicesUseCase } from "./security/application/use-cases/get-ac
 import {
   CommentEntity, CommentsSchema
 } from "./blogs/domain/comments/Comments.schema"
-import { UsersService } from "./SuperAdmin/application/super-admin.service"
+import { UsersService } from "./SuperAdmin/application/users.service"
 import { GetBlogsUseCase } from "./blogs/application/use-cases/blogs/get-blogs.use-case"
 import { GetBlogByIdUseCase } from "./blogs/application/use-cases/blogs/get-blog-by-id.use-case"
 import { GetBlogsForBloggerUseCase } from "./Blogger/application/use-cases/blogs/get-blogs-for-blogger.use.case"
@@ -117,9 +116,10 @@ import { BanUserForBlogUseCase } from "./Blogger/application/use-cases/users/ban
 import { GetAllBannedUsersForBlogUseCase } from "./Blogger/application/use-cases/users/get-all-banned-users-for-blog.use-case"
 import { BloggerService } from "./Blogger/application/blogger.service"
 import { UnbanUserForBlogUseCase } from "./Blogger/application/use-cases/users/unban-user-for-blog.use-case"
-import { AuthRepository } from "./auth/infrastructure/auth-db-repository"
+import { AuthRepository } from "./auth/infrastructure/auth-sql-repository"
 import { TypeOrmModule } from "@nestjs/typeorm"
 import { UsersSQLRepository } from "./SuperAdmin/infrastructure/users-sql-repository"
+import { UsersQuerySQLRepository } from "./SuperAdmin/infrastructure/users-query-sql-repository"
 
 const authUseCases = [
   LogoutUseCase,
@@ -183,7 +183,6 @@ const strategies = [
 
 const services = [
   AppService,
-  AuthService,
   JwtService,
   BlogsService,
   PostsService,
@@ -212,6 +211,7 @@ const repositories = [
   AttemptsRepository,
   AuthRepository,
   UsersSQLRepository,
+  UsersQuerySQLRepository
 ]
 
 const decorators = [

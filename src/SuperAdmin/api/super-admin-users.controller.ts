@@ -14,11 +14,11 @@ import { CreateUserCommand } from '../application/use-cases/create-user.use-case
 import { ReadUsersQuery } from './models/ReadUsersQuery'
 import { IsUserExistOrThrow400Pipe } from './pipes/isUserExistsOrThrow400.validation.pipe'
 import { IsUserExistPipe } from './pipes/isUserExists.validation.pipe'
-import { BanUserInputModel } from './models/BanUserInputModel'
 import { BanUserCommand } from '../application/use-cases/ban-user.use-case'
 import { UnbanUserCommand } from '../application/use-cases/unban-user.use-case'
-import { UsersService } from '../application/super-admin.service'
 import { UsersQueryRepository } from '../infrastructure/users-query-repository'
+import { UsersService } from '../application/users.service'
+import { BanUserInputModel } from './models/BanUserInputModel'
 
 @UseGuards(BasicAuthGuard)
 @Controller('sa/users')

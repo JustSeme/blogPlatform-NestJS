@@ -6,9 +6,10 @@ import {
 } from "@nestjs/cqrs"
 import { UserModelType } from "../../../SuperAdmin/domain/UsersTypes"
 import { User } from "../../../SuperAdmin/domain/UsersSchema"
-import { UsersSQLRepository } from "../../../SuperAdmin/infrastructure/users-sql-repository"
 import { FieldError } from "../../../general/types/ErrorMessagesOutputModel"
 import { BadRequestException } from '@nestjs/common'
+import { AuthRepository } from "../../infrastructure/auth-sql-repository"
+import { UsersSQLRepository } from "../../../SuperAdmin/infrastructure/users-sql-repository"
 
 export class RegistrationUserCommand {
     constructor(public login: string, public password: string, public email: string) { }
@@ -19,6 +20,7 @@ export class RegistrationUserUseCase implements ICommandHandler<RegistrationUser
     constructor(
         @InjectModel(User.name) private UserModel: UserModelType,
         private bcryptAdapter: BcryptAdapter,
+        private authRepository: AuthRepository,
         private usersRepository: UsersSQLRepository,
         private emailManager: EmailManager
     ) { }
@@ -39,8 +41,8 @@ export class RegistrationUserUseCase implements ICommandHandler<RegistrationUser
     }
 
     async isEmailOrLoginAlreadyUsed(login: string, email: string) {
-        const isUserByLoginExists = await this.usersRepository.isUserByLoginExists(login)
-        const isUserByEmailExists = await this.usersRepository.isUserByEmailExists(email)
+        const isUserByLoginExists = await this.authRepository.isUserByLoginExists(login)
+        const isUserByEmailExists = await this.authRepository.isUserByEmailExists(email)
 
         console.log(isUserByLoginExists, isUserByEmailExists)
 

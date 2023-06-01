@@ -21,10 +21,6 @@ export class UserViewModelType {
             banReason: user.banReason
         }
     }
-
-    isBanned() {
-        return this.banInfo.isBanned
-    }
 }
 
 type BanInfoViewType = {

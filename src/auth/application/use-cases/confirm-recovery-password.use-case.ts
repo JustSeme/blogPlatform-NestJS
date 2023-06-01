@@ -5,7 +5,7 @@ import {
 } from "@nestjs/cqrs"
 import { generateErrorsMessages } from "../../../general/helpers"
 import { BadRequestException } from '@nestjs/common'
-import { UsersSQLRepository } from "../../../SuperAdmin/infrastructure/users-sql-repository"
+import { AuthRepository } from "../../infrastructure/auth-sql-repository"
 
 export class ConfirmRecoveryPasswordCommand implements ICommand {
     constructor(public readonly recoveryCode: string, public readonly newPassword: string) { }
@@ -15,7 +15,7 @@ export class ConfirmRecoveryPasswordCommand implements ICommand {
 export class ConfirmRecoveryPasswordUseCase implements ICommandHandler<ConfirmRecoveryPasswordCommand> {
     constructor(
         private bcryptAdapter: BcryptAdapter,
-        private usersRepository: UsersSQLRepository,
+        private authRepository: AuthRepository,
     ) {
     }
 
@@ -25,7 +25,7 @@ export class ConfirmRecoveryPasswordUseCase implements ICommandHandler<ConfirmRe
             recoveryCode
         } = command
 
-        const user = await this.usersRepository.findUserByRecoveryPasswordCode(recoveryCode)
+        const user = await this.authRepository.findUserByRecoveryPasswordCode(recoveryCode)
 
         if (!user || user.passwordRecovery.expirationDate < new Date()) {
             throw new BadRequestException(generateErrorsMessages('recoveryCode is incorrect', 'recoveryCode'))
@@ -33,6 +33,6 @@ export class ConfirmRecoveryPasswordUseCase implements ICommandHandler<ConfirmRe
 
         const newPasswordHash = await this.bcryptAdapter.generatePasswordHash(newPassword, 10)
 
-        return this.usersRepository.updateUserPassword(user.id, newPasswordHash)
+        return this.authRepository.updateUserPassword(user.id, newPasswordHash)
     }
 }

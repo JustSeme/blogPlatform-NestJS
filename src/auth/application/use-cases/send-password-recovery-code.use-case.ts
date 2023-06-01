@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid'
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs/dist"
-import { UsersSQLRepository } from "../../../SuperAdmin/infrastructure/users-sql-repository"
+import { AuthRepository } from "../../infrastructure/auth-sql-repository"
 
 export class SendPasswordRecoveryCodeCommand {
     constructor(public email: string) { }
@@ -12,12 +12,12 @@ export class SendPasswordRecoveryCodeCommand {
 @CommandHandler(SendPasswordRecoveryCodeCommand)
 export class SendPasswordRecoveryCodeUseCase implements ICommandHandler<SendPasswordRecoveryCodeCommand> {
     constructor(
-        private usersRepository: UsersSQLRepository,
+        private authRepository: AuthRepository,
         private emailManager: EmailManager
     ) { }
 
     async execute(command: SendPasswordRecoveryCodeCommand) {
-        const user = await this.usersRepository.findUserByEmail(command.email)
+        const user = await this.authRepository.findUserByEmail(command.email)
         if (!user) {
             return true
         }
@@ -25,7 +25,7 @@ export class SendPasswordRecoveryCodeUseCase implements ICommandHandler<SendPass
 
         await this.emailManager.sendPasswordRecoveryCode(user.email, user.login, passwordRecoveryCode)
 
-        const isUpdated = await this.usersRepository.updatePasswordConfirmationInfo(user.id, passwordRecoveryCode)
+        const isUpdated = await this.authRepository.updatePasswordConfirmationInfo(user.id, passwordRecoveryCode)
         if (!isUpdated) {
             return false
         }

@@ -3,8 +3,8 @@ import {
 } from "@nestjs/cqrs"
 import { BadRequestException } from "@nestjs/common"
 import { generateErrorsMessages } from "../../../general/helpers"
-import { UsersSQLRepository } from "../../../SuperAdmin/infrastructure/users-sql-repository"
 import { EmailConfirmationType } from "../../../SuperAdmin/domain/UsersTypes"
+import { AuthRepository } from "../../infrastructure/auth-sql-repository"
 
 export class ConfirmEmailCommand {
     constructor(public readonly code: string) { }
@@ -13,17 +13,17 @@ export class ConfirmEmailCommand {
 @CommandHandler(ConfirmEmailCommand)
 export class ConfirmEmailUseCase implements ICommandHandler<ConfirmEmailCommand> {
     constructor(
-        private usersRepository: UsersSQLRepository,
+        private authRepository: AuthRepository,
     ) { }
 
     async execute(command: ConfirmEmailCommand) {
-        const userEmailConfirmationData = await this.usersRepository.findUserEmailConfirmationDataByCode(command.code)
+        const userEmailConfirmationData = await this.authRepository.findUserEmailConfirmationDataByCode(command.code)
 
         if (!this.isUserCanBeConfirmed(userEmailConfirmationData, command.code) || !userEmailConfirmationData) {
             throw new BadRequestException(generateErrorsMessages('The confirmation code is incorrect, expired or already been applied', 'code'))
         }
 
-        await this.usersRepository.updateIsConfirmedByConfirmationCode(command.code)
+        await this.authRepository.updateIsConfirmedByConfirmationCode(command.code)
     }
 
     isUserCanBeConfirmed(emailConfirmation: EmailConfirmationType, recievedConfirmationCode: string) {
