@@ -120,6 +120,7 @@ import { AuthRepository } from "./auth/infrastructure/auth-sql-repository"
 import { TypeOrmModule } from "@nestjs/typeorm"
 import { UsersSQLRepository } from "./SuperAdmin/infrastructure/users-sql-repository"
 import { UsersQuerySQLRepository } from "./SuperAdmin/infrastructure/users-query-sql-repository"
+import { DevicesSQLRepository } from "./security/infrastructure/devices-sql-repository"
 
 const authUseCases = [
   LogoutUseCase,
@@ -210,8 +211,12 @@ const repositories = [
   DeviceRepository,
   AttemptsRepository,
   AuthRepository,
+]
+
+const SQLrepositories = [
   UsersSQLRepository,
-  UsersQuerySQLRepository
+  UsersQuerySQLRepository,
+  DevicesSQLRepository,
 ]
 
 const decorators = [
@@ -306,6 +311,7 @@ const controllers = [
     ...services,
     ...adapters,
     ...repositories,
+    ...SQLrepositories,
     ...decorators,
     ...guards,
     ...configs,

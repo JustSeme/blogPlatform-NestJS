@@ -4,13 +4,13 @@ import {
 import { PassportStrategy } from '@nestjs/passport'
 import { Strategy } from 'passport-local'
 import { BcryptAdapter } from "../../../general/adapters/bcrypt.adapter"
-import { UsersRepository } from "../../../SuperAdmin/infrastructure/users-db-repository"
 import { User } from "../../../SuperAdmin/domain/UsersSchema"
+import { AuthRepository } from "../../infrastructure/auth-sql-repository"
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
     constructor(
-        private usersRepository: UsersRepository,
+        private authRepository: AuthRepository,
         private bcryptAdapter: BcryptAdapter,
     ) {
         super({ usernameField: 'loginOrEmail' })
@@ -25,7 +25,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     }
 
     private async checkCredentials(loginOrEmail: string, password: string) {
-        const user = await this.usersRepository.findUserByLoginOrEmail(loginOrEmail)
+        const user = await this.authRepository.findUserByLoginOrEmail(loginOrEmail)
         if (!user) return false
         if (!user.emailConfirmation.isConfirmed) return false
 

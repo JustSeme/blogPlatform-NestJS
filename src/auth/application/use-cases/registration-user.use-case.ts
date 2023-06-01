@@ -44,9 +44,6 @@ export class RegistrationUserUseCase implements ICommandHandler<RegistrationUser
         const isUserByLoginExists = await this.authRepository.isUserByLoginExists(login)
         const isUserByEmailExists = await this.authRepository.isUserByEmailExists(email)
 
-        console.log(isUserByLoginExists, isUserByEmailExists)
-
-
         if (isUserByLoginExists || isUserByEmailExists) {
             const errorsMessages: FieldError[] = []
 

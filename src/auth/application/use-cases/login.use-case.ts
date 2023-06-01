@@ -1,7 +1,6 @@
 import { v4 as uuidv4 } from 'uuid'
 import jwt, { JwtPayload } from "jsonwebtoken"
 import { JwtService } from '../../../general/adapters/jwt.adapter'
-import { DeviceRepository } from '../../../security/infrastructure/device-db-repository'
 import { AuthConfig } from '../../../configuration/auth.config'
 import {
     CommandHandler, ICommandHandler
@@ -10,6 +9,7 @@ import { UnauthorizedException } from '@nestjs/common'
 import { generateErrorsMessages } from '../../../general/helpers'
 import { DeviceAuthSessionDBModel } from '../../../security/domain/DeviceAuthSessionType'
 import { UsersSQLRepository } from '../../../SuperAdmin/infrastructure/users-sql-repository'
+import { DevicesSQLRepository } from '../../../security/infrastructure/devices-sql-repository'
 
 export class LoginCommand {
     constructor(
@@ -28,7 +28,7 @@ export class LoginUseCase implements ICommandHandler<LoginCommand> {
 
     constructor(
         private jwtService: JwtService,
-        private deviceRepository: DeviceRepository,
+        private deviceRepository: DevicesSQLRepository,
         private usersRepository: UsersSQLRepository,
         private readonly authConfig: AuthConfig,
     ) {

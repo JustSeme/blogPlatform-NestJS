@@ -51,7 +51,7 @@ export class AuthRepository {
         const queryString = `
             SELECT "emailConfirmationCode", "emailExpirationDate", "isEmailConfirmed"
                 FROM public."Users"
-                WHERE "emailConfirmationCode" = '$1;
+                WHERE "emailConfirmationCode" = $1;
         `
 
         const emailConfirmationData = await this.dataSource.query(queryString, [code])
