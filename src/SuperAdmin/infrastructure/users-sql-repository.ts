@@ -36,8 +36,8 @@ export class UsersSQLRepository {
                 WHERE id = $1;
         `
 
-        const findedUserData: UserSQLModel = await this.dataSource.query(queryString, [userId])[0]
+        const findedUserData: UserSQLModel = await this.dataSource.query(queryString, [userId])
 
-        return new UserViewModelType(findedUserData)
+        return new UserViewModelType(findedUserData[0])
     }
 }
