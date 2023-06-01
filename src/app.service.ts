@@ -10,6 +10,8 @@ import { AttemptModelType } from './security/domain/AttemptsType'
 import { CommentEntity } from './blogs/domain/comments/Comments.schema'
 import { UserModelType } from './SuperAdmin/domain/UsersTypes'
 import { User } from './SuperAdmin/domain/UsersSchema'
+import { InjectDataSource } from '@nestjs/typeorm'
+import { DataSource } from 'typeorm'
 
 @Injectable()
 export class AppService {
@@ -18,7 +20,8 @@ export class AppService {
     @InjectModel(Post.name) protected PostModel: PostModelType,
     @InjectModel(Blog.name) protected BlogModel: BlogModelType,
     @InjectModel(CommentEntity.name) protected CommentModel: CommentModelType,
-    @InjectModel(Attempt.name) protected AttemptsModel: AttemptModelType
+    @InjectModel(Attempt.name) protected AttemptsModel: AttemptModelType,
+    @InjectDataSource() protected dataSource: DataSource
   ) { }
 
   getHello(): string {
@@ -35,5 +38,18 @@ export class AppService {
     await this.UsersModel.deleteMany({})
     await this.CommentModel.deleteMany({})
     await this.AttemptsModel.deleteMany({})
+  }
+
+  async clearSQLTables() {
+    await this.dataSource.query(`
+      DELETE FROM public."Users"
+        WHERE 1 = 1;
+
+      DELETE FROM public."AuthSessions"
+        WHERE 1 = 1;
+
+      DELETE FROM public."Attempts"
+        WHERE 1 = 1;
+      `)
   }
 }

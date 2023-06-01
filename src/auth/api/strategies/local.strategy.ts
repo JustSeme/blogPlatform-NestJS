@@ -26,7 +26,6 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
 
     private async checkCredentials(loginOrEmail: string, password: string) {
         const user = await this.authRepository.findUserByLoginOrEmail(loginOrEmail)
-        console.log(user)
         if (!user) return false
         if (!user.emailConfirmation.isConfirmed) return false
 
