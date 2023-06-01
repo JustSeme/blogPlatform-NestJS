@@ -12,50 +12,43 @@ export class UsersQuerySQLRepository {
         private dataSource: DataSource
     ) { }
 
-    /* async findUsers(queryParams: ReadUsersQuery): Promise<UsersWithQueryOutputModel> {
+    async findUsers(queryParams: ReadUsersQuery): Promise<UsersWithQueryOutputModel> {
         const {
             sortDirection = 'desc', sortBy = 'createdAt', pageNumber = 1, pageSize = 10, searchLoginTerm = null, searchEmailTerm = null, banStatus = 'all'
         } = queryParams
 
-        const filterArray: any = []
-        if (searchEmailTerm) {
-            filterArray.push({
-                email: {
-                    $regex: searchEmailTerm, $options: 'i'
-                }
-            })
-        }
-        if (searchLoginTerm) {
-            filterArray.push({
-                login: {
-                    $regex: searchLoginTerm, $options: 'i'
-                }
-            })
-        }
-        if (banStatus === 'banned') {
-            filterArray.push({ 'banInfo.isBanned': true })
-        } else if (banStatus === 'notBanned') {
-            filterArray.push({ 'banInfo.isBanned': false })
-        }
+        const queryCount = `
+            SELECT count(*)
+                FROM public."Users"
+                WHERE "login" LIKE $1 AND "email" LIKE $2 ${banStatus !== 'all' ? 'AND "isBanned" = ' + banStatus === 'banned' ? true : false : ''}
+        `
 
-        const filterObject = filterArray.length ? { $or: filterArray } : {}
-
-        const totalCount = await this.UserModel.countDocuments(filterObject)
+        const totalCountData = await this.dataSource.query(queryCount, [`%${searchLoginTerm}%`, `%${searchEmailTerm}%`, sortBy, sortDirection])
+        const totalCount = totalCountData[0].count
         const pagesCount = Math.ceil(totalCount / +pageSize)
 
         const skipCount = (+pageNumber - 1) * +pageSize
-        const sortDirectionNumber = sortDirection === 'asc' ? 1 : -1
 
-        const resultedUsers = await this.UserModel.find(filterObject, { 'banInfo._id': 0 }).skip(skipCount).limit(+pageSize).sort({ [sortBy]: sortDirectionNumber }).lean()
+        const query = `
+            SELECT *
+                FROM public."Users"
+                WHERE "login" LIKE $1 AND "email" LIKE $2 ${banStatus !== 'all' ? 'AND "isBanned" = ' + banStatus === 'banned' ? true : false : ''}
+                ORDER BY $3 $4
+                LIMIT $5 OFFSET $6;
+        `
+
+        const resultedUsers: UserSQLModel[] = await this.dataSource.query(query, [`%${searchLoginTerm}%`, `%${searchEmailTerm}%`, sortBy, sortDirection, pageSize, skipCount])
+
+        const diapayedUsers = resultedUsers.map((user) => new UserViewModelType(user))
 
         return {
             pagesCount: pagesCount,
             page: +pageNumber,
             pageSize: +pageSize,
             totalCount: totalCount,
-            items: resultedUsers
+            items: diapayedUsers
         }
-    } */
+    }
 
     async findUserById(userId: string): Promise<UserViewModelType> {
         const queryString = `

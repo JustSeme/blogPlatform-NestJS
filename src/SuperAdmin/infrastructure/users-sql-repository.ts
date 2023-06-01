@@ -27,8 +27,6 @@ export class UsersSQLRepository {
                 newUser.emailConfirmation.expirationDate,
                 newUser.emailConfirmation.isConfirmed
             ])
-            console.log('чзх')
-
             return true
         } catch (err) {
             console.error(err)
