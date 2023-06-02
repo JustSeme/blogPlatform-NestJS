@@ -3,7 +3,9 @@ import { Injectable } from "@nestjs/common"
 import { DataSource } from 'typeorm'
 import { UserDTO } from '../domain/UsersTypes'
 import { UserViewModelType } from '../application/dto/UsersViewModel'
-import { UserSQLModel } from './UsersTypes'
+import {
+    UserDBModel, UserSQLModel
+} from './UsersTypes'
 
 @Injectable()
 export class UsersSQLRepository {
@@ -44,6 +46,18 @@ export class UsersSQLRepository {
         const findedUserData: UserSQLModel = await this.dataSource.query(queryString, [userId])
 
         return new UserViewModelType(findedUserData[0])
+    }
+
+    async findUserDBModelById(userId: string): Promise<UserDBModel> {
+        const queryString = `
+            SELECT *
+                FROM public."Users"
+                WHERE id = $1;
+        `
+
+        const findedUserData: UserSQLModel = await this.dataSource.query(queryString, [userId])
+
+        return new UserDBModel(findedUserData[0])
     }
 
     async deleteUser(userId: string): Promise<boolean> {

@@ -20,14 +20,18 @@ export class AuthRepository {
 
         const findedUserData: UserSQLModel = await this.dataSource.query(queryString, [recoveryCode])
 
-        return new UserDBModel(findedUserData)
+        if (!findedUserData[0]) {
+            return null
+        }
+
+        return new UserDBModel(findedUserData[0])
     }
 
     async isUserByLoginExists(userLogin: string): Promise<boolean> {
         const queryString = `
             SELECT id
                 FROM public."Users"
-                WHERE login = $1;
+                WHERE "login" = $1;
         `
 
         const userIdsByLogin = await this.dataSource.query(queryString, [userLogin])
@@ -39,7 +43,7 @@ export class AuthRepository {
         const queryString = `
             SELECT id
                 FROM public."Users"
-                WHERE email = $1;
+                WHERE "email" = $1;
         `
 
         const userIdsByEmail = await this.dataSource.query(queryString, [userEmail])
@@ -71,6 +75,11 @@ export class AuthRepository {
         `
 
         const findedUserData: UserSQLModel = await this.dataSource.query(queryString, [loginOrEmail])
+
+        if (!findedUserData[0]) {
+            return null
+        }
+
         return new UserDBModel(findedUserData[0])
     }
 
@@ -88,18 +97,22 @@ export class AuthRepository {
         const queryString = ` 
             SELECT *
                 FROM public."Users"
-                WHERE email = $1;
+                WHERE "email" = $1;
         `
 
         const user: UserSQLModel = await this.dataSource.query(queryString, [email])
-        return new UserDBModel(user)
+        if (!user[0]) {
+            return null
+        }
+
+        return new UserDBModel(user[0])
     }
 
     async updateEmailConfirmationInfo(userId: string, newConfirmationCode: string) {
         const queryString = `
             UPDATE public."Users"
                 SET "emailConfirmationCode"=$2, "emailExpirationDate"=CURRENT_TIMESTAMP
-                WHERE id = $1;
+                WHERE "id" = $1;
         `
 
         await this.dataSource.query(queryString, [userId, newConfirmationCode])

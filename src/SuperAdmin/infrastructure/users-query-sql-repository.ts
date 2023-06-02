@@ -14,7 +14,7 @@ export class UsersQuerySQLRepository {
 
     async findUsers(queryParams: ReadUsersQuery): Promise<UsersWithQueryOutputModel> {
         const {
-            sortDirection = 'desc', sortBy = 'createdAt', pageNumber = 1, pageSize = 10, searchLoginTerm = null, searchEmailTerm = null, banStatus = 'all'
+            sortDirection = 'desc', sortBy = 'createdAt', pageNumber = 1, pageSize = 10, searchLoginTerm = '', searchEmailTerm = '', banStatus = 'all'
         } = queryParams
 
         const queryCount = `
@@ -23,7 +23,7 @@ export class UsersQuerySQLRepository {
                 WHERE "login" LIKE $1 AND "email" LIKE $2 ${banStatus !== 'all' ? 'AND "isBanned" = ' + banStatus === 'banned' ? true : false : ''}
         `
 
-        const totalCountData = await this.dataSource.query(queryCount, [`%${searchLoginTerm}%`, `%${searchEmailTerm}%`, sortBy, sortDirection])
+        const totalCountData = await this.dataSource.query(queryCount, [`%${searchLoginTerm}%`, `%${searchEmailTerm}%`])
         const totalCount = totalCountData[0].count
         const pagesCount = Math.ceil(totalCount / +pageSize)
 
@@ -33,11 +33,11 @@ export class UsersQuerySQLRepository {
             SELECT *
                 FROM public."Users"
                 WHERE "login" LIKE $1 AND "email" LIKE $2 ${banStatus !== 'all' ? 'AND "isBanned" = ' + banStatus === 'banned' ? true : false : ''}
-                ORDER BY $3 $4
-                LIMIT $5 OFFSET $6;
+                ORDER BY $3 ${sortDirection}
+                LIMIT $4 OFFSET $5;
         `
 
-        const resultedUsers: UserSQLModel[] = await this.dataSource.query(query, [`%${searchLoginTerm}%`, `%${searchEmailTerm}%`, sortBy, sortDirection, pageSize, skipCount])
+        const resultedUsers: UserSQLModel[] = await this.dataSource.query(query, [`%${searchLoginTerm}%`, `%${searchEmailTerm}%`, sortBy, pageSize, skipCount])
 
         const diapayedUsers = resultedUsers.map((user) => new UserViewModelType(user))
 
@@ -45,7 +45,7 @@ export class UsersQuerySQLRepository {
             pagesCount: pagesCount,
             page: +pageNumber,
             pageSize: +pageSize,
-            totalCount: totalCount,
+            totalCount: +totalCount,
             items: diapayedUsers
         }
     }

@@ -12,7 +12,8 @@ export class UserViewModelType {
         user: UserSQLModel,
     ) {
         this.id = user.id
-        this.login = user.email
+        this.login = user.login
+        this.email = user.email
         this.createdAt = user.createdAt
 
         this.banInfo = {

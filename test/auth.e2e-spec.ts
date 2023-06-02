@@ -7,12 +7,12 @@ import { createApp } from '../src/createApp'
 import { LoginInputDTO } from '../src/auth/api/models/LoginInputDTO'
 import { NewPasswordInputModel } from '../src/auth/api/models/NewPasswordInputModel';
 import { UserInputModel } from '../src/SuperAdmin/api/models/UserInputModel';
-import { UsersRepository } from '../src/SuperAdmin/infrastructure/users-db-repository';
+import { UsersSQLRepository } from '../src/SuperAdmin/infrastructure/users-sql-repository';
 
 describe('e2e-auth', () => {
     let app: NestExpressApplication;
     let httpServer;
-    let usersRepository: UsersRepository
+    let usersRepository: UsersSQLRepository
 
     beforeAll(async () => {
         const moduleFixture = await Test.createTestingModule({
@@ -22,7 +22,7 @@ describe('e2e-auth', () => {
         app = moduleFixture.createNestApplication()
         app = createApp(app)
 
-        usersRepository = await app.resolve(UsersRepository)
+        usersRepository = await app.resolve(UsersSQLRepository)
 
         await app.init()
 
@@ -55,9 +55,6 @@ describe('e2e-auth', () => {
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
             .expect(HttpStatus.OK)
 
-        console.log(response.body);
-
-
         expect(response.body.totalCount === 1).toBe(true)
         expect(response.body.items[0].login).toEqual(correctUserInputData.login)
         expect(response.body.items[0].email).toEqual(correctUserInputData.email)
@@ -66,7 +63,7 @@ describe('e2e-auth', () => {
     })
 
     it('resend confirmation code, shouldn\'t change confirmation code from usersRepository if email is incorrect', async () => {
-        let user = await usersRepository.findUserById(createdUserId)
+        let user = await usersRepository.findUserDBModelById(createdUserId)
         const confirmationCode = user?.emailConfirmation.confirmationCode
 
         await request(httpServer)
@@ -74,13 +71,13 @@ describe('e2e-auth', () => {
             .send({ email: 'incorrect email' })
             .expect(HttpStatus.BAD_REQUEST)
 
-        user = await usersRepository.findUserById(createdUserId)
+        user = await usersRepository.findUserDBModelById(createdUserId)
         const newConfirmationCode = user?.emailConfirmation.confirmationCode
         expect(confirmationCode === newConfirmationCode).toBe(true)
     })
 
     it('resend confirmation code, should change confirmation code from usersRepository', async () => {
-        let user = await usersRepository.findUserById(createdUserId)
+        let user = await usersRepository.findUserDBModelById(createdUserId)
         const confirmationCode = user?.emailConfirmation.confirmationCode
 
         await request(httpServer)
@@ -88,8 +85,10 @@ describe('e2e-auth', () => {
             .send({ email: user?.email })
             .expect(HttpStatus.NO_CONTENT)
 
-        user = await usersRepository.findUserById(createdUserId)
-        const newConfirmationCode = user?.emailConfirmation.confirmationCode
+        const updatedUser = await usersRepository.findUserDBModelById(createdUserId)
+        const newConfirmationCode = updatedUser?.emailConfirmation.confirmationCode
+        console.log(newConfirmationCode, confirmationCode, '1, 2');
+
         expect(confirmationCode === newConfirmationCode).toBe(false)
     })
 
@@ -103,7 +102,7 @@ describe('e2e-auth', () => {
 
     let confirmationCode
     it('should confirm email, using confirmationCode from usersRepository', async () => {
-        const user = await usersRepository.findUserById(createdUserId)
+        const user = await usersRepository.findUserDBModelById(createdUserId)
         confirmationCode = user?.emailConfirmation.confirmationCode
 
         await request(httpServer)
@@ -113,7 +112,7 @@ describe('e2e-auth', () => {
     })
 
     it('resend confirmation code, shouldn\'t change confirmation code from usersRepository if user is already confirmed', async () => {
-        let user = await usersRepository.findUserById(createdUserId)
+        let user = await usersRepository.findUserDBModelById(createdUserId)
         const confirmationCode = user?.emailConfirmation.confirmationCode
 
         await request(httpServer)
@@ -121,7 +120,7 @@ describe('e2e-auth', () => {
             .send({ email: user?.email })
             .expect(HttpStatus.BAD_REQUEST)
 
-        user = await usersRepository.findUserById(createdUserId)
+        user = await usersRepository.findUserDBModelById(createdUserId)
         const newConfirmationCode = user?.emailConfirmation.confirmationCode
         expect(confirmationCode === newConfirmationCode).toBe(true)
     })
@@ -213,7 +212,7 @@ describe('e2e-auth', () => {
             .send({ email: correctUserInputData.email })
             .expect(HttpStatus.NO_CONTENT)
 
-        const user = await usersRepository.findUserById(createdUserId)
+        const user = await usersRepository.findUserDBModelById(createdUserId)
         userPasswordRecoveryCode = user?.passwordRecovery.confirmationCode
     })
 
@@ -230,7 +229,7 @@ describe('e2e-auth', () => {
             recoveryCode: 'incorrect revcoveryCode'
         }
 
-        let user = await usersRepository.findUserById(createdUserId)
+        let user = await usersRepository.findUserDBModelById(createdUserId)
         const oldUserPasswordHash = user?.passwordHash
 
         await request(httpServer)
@@ -238,7 +237,7 @@ describe('e2e-auth', () => {
             .send(newPasswordInputModel)
             .expect(HttpStatus.BAD_REQUEST)
 
-        user = await usersRepository.findUserById(createdUserId)
+        user = await usersRepository.findUserDBModelById(createdUserId)
         const newUserPasswordHash = user?.passwordHash
 
         expect(oldUserPasswordHash === newUserPasswordHash).toBe(true)
@@ -250,7 +249,7 @@ describe('e2e-auth', () => {
             recoveryCode: userPasswordRecoveryCode
         }
 
-        let user = await usersRepository.findUserById(createdUserId)
+        let user = await usersRepository.findUserDBModelById(createdUserId)
         const oldUserPasswordHash = user?.passwordHash
 
         await request(httpServer)
@@ -258,7 +257,7 @@ describe('e2e-auth', () => {
             .send(newPasswordInputModel)
             .expect(HttpStatus.BAD_REQUEST)
 
-        user = await usersRepository.findUserById(createdUserId)
+        user = await usersRepository.findUserDBModelById(createdUserId)
         const newUserPasswordHash = user?.passwordHash
 
         expect(oldUserPasswordHash === newUserPasswordHash).toBe(true)
@@ -270,7 +269,7 @@ describe('e2e-auth', () => {
             recoveryCode: userPasswordRecoveryCode
         }
 
-        let user = await usersRepository.findUserById(createdUserId)
+        let user = await usersRepository.findUserDBModelById(createdUserId)
         const oldUserPasswordHash = user?.passwordHash
 
         await request(httpServer)
@@ -278,7 +277,7 @@ describe('e2e-auth', () => {
             .send(newPasswordInputModel)
             .expect(HttpStatus.NO_CONTENT)
 
-        user = await usersRepository.findUserById(createdUserId)
+        user = await usersRepository.findUserDBModelById(createdUserId)
         const newUserPasswordHash = user?.passwordHash
 
         expect(oldUserPasswordHash === newUserPasswordHash).toBe(false)
