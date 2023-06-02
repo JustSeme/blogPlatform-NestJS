@@ -1,11 +1,9 @@
-import { InjectModel } from "@nestjs/mongoose"
 import { BcryptAdapter } from "../../../general/adapters/bcrypt.adapter"
 import { EmailManager } from "../../../general/managers/emailManager"
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
-import { UserModelType } from "../../../SuperAdmin/domain/UsersTypes"
-import { User } from "../../../SuperAdmin/domain/UsersSchema"
+import { UserDTO } from "../../../SuperAdmin/domain/UsersTypes"
 import { FieldError } from "../../../general/types/ErrorMessagesOutputModel"
 import {
     BadRequestException, NotImplementedException
@@ -20,7 +18,6 @@ export class RegistrationUserCommand {
 @CommandHandler(RegistrationUserCommand)
 export class RegistrationUserUseCase implements ICommandHandler<RegistrationUserCommand> {
     constructor(
-        @InjectModel(User.name) private UserModel: UserModelType,
         private bcryptAdapter: BcryptAdapter,
         private authRepository: AuthRepository,
         private usersRepository: UsersSQLRepository,
@@ -33,7 +30,7 @@ export class RegistrationUserUseCase implements ICommandHandler<RegistrationUser
 
         const passwordHash = await this.bcryptAdapter.generatePasswordHash(command.password, 10)
 
-        const newUser = this.UserModel.makeInstance(command.login, command.email, passwordHash, false, this.UserModel)
+        const newUser = new UserDTO(command.login, command.email, passwordHash, false)
 
         const isCreated = await this.usersRepository.createNewUser(newUser)
         if (!isCreated) {

@@ -31,12 +31,6 @@ describe('e2e-auth', () => {
             .delete('/testing/all-data')
     });
 
-    let counter = 0
-    afterEach(() => {
-        counter++
-        console.log(counter, 'counter');
-    })
-
     afterAll(async () => {
         //await app.close();
     });
