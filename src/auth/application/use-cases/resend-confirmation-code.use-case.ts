@@ -20,11 +20,7 @@ export class ResendConfirmationCodeUseCase implements ICommandHandler<ResendConf
         const user = await this.authRepository.findUserByEmail(command.email)
         if (!user || user.emailConfirmation.isConfirmed) return false
 
-        console.log(user, 'user confirmation code')
-
         const newConfirmationCode = uuidv4()
-
-        console.log(newConfirmationCode, 'new confirmation code')
 
         await this.authRepository.updateEmailConfirmationInfo(user.id, newConfirmationCode)
 

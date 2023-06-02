@@ -5,6 +5,7 @@ import {
     UserDBModel, UserSQLModel
 } from '../../SuperAdmin/infrastructure/UsersTypes'
 import { EmailConfirmationType } from '../../SuperAdmin/domain/UsersTypes'
+import { add } from 'date-fns'
 
 
 @Injectable()
@@ -60,11 +61,15 @@ export class AuthRepository {
 
         const emailConfirmationData = await this.dataSource.query(queryString, [code])
 
-        return emailConfirmationData.map((el) => ({
-            confirmationCode: el.emailConfirmationCode,
-            expirationDate: el.emailExpirationDate,
-            isConfirmed: el.isEmailConfirmed
-        }))[0]
+        if (!emailConfirmationData[0]) {
+            return null
+        }
+
+        return {
+            confirmationCode: emailConfirmationData[0].emailConfirmationCode,
+            expirationDate: emailConfirmationData[0].emailExpirationDate,
+            isConfirmed: emailConfirmationData[0].isEmailConfirmed
+        }
     }
 
     async findUserByLoginOrEmail(loginOrEmail: string): Promise<UserDBModel> {
@@ -111,22 +116,32 @@ export class AuthRepository {
     async updateEmailConfirmationInfo(userId: string, newConfirmationCode: string) {
         const queryString = `
             UPDATE public."Users"
-                SET "emailConfirmationCode"=$2, "emailExpirationDate"=CURRENT_TIMESTAMP
+                SET "emailConfirmationCode"=$2, "emailExpirationDate"=$3
                 WHERE "id" = $1;
         `
 
-        await this.dataSource.query(queryString, [userId, newConfirmationCode])
+        const expirationDate = add(new Date(), {
+            hours: 1,
+            minutes: 3
+        })
+
+        await this.dataSource.query(queryString, [userId, newConfirmationCode, expirationDate])
     }
 
     async updatePasswordConfirmationInfo(userId: string, passwordRecoveryCode: string) {
         const queryString = `
             UPDATE public."Users"
-                SET "passwordRecoveryConfirmationCode"=$2, "passwordRecoveryExpirationDate"=CURRENT_TIMESTAMP
+                SET "passwordRecoveryConfirmationCode"=$2, "passwordRecoveryExpirationDate"=$3
                 WHERE id = $1;
         `
 
+        const expirationDate = add(new Date(), {
+            hours: 1,
+            minutes: 3
+        })
+
         try {
-            await this.dataSource.query(queryString, [userId, passwordRecoveryCode])
+            await this.dataSource.query(queryString, [userId, passwordRecoveryCode, expirationDate])
             return true
         } catch (err) {
             console.error(err)

@@ -31,6 +31,12 @@ describe('e2e-auth', () => {
             .delete('/testing/all-data')
     });
 
+    let counter = 0
+    afterEach(() => {
+        counter++
+        console.log(counter, 'counter');
+    })
+
     afterAll(async () => {
         //await app.close();
     });
@@ -85,9 +91,8 @@ describe('e2e-auth', () => {
             .send({ email: user?.email })
             .expect(HttpStatus.NO_CONTENT)
 
-        const updatedUser = await usersRepository.findUserDBModelById(createdUserId)
-        const newConfirmationCode = updatedUser?.emailConfirmation.confirmationCode
-        console.log(newConfirmationCode, confirmationCode, '1, 2');
+        user = await usersRepository.findUserDBModelById(createdUserId)
+        const newConfirmationCode = user?.emailConfirmation.confirmationCode
 
         expect(confirmationCode === newConfirmationCode).toBe(false)
     })
