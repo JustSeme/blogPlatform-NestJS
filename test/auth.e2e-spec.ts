@@ -8,6 +8,7 @@ import { LoginInputDTO } from '../src/auth/api/models/LoginInputDTO'
 import { NewPasswordInputModel } from '../src/auth/api/models/NewPasswordInputModel';
 import { UserInputModel } from '../src/SuperAdmin/api/models/UserInputModel';
 import { UsersSQLRepository } from '../src/SuperAdmin/infrastructure/users-sql-repository';
+import { funcSleep } from '../src/general/helpers';
 
 describe('e2e-auth', () => {
     let app: NestExpressApplication;
@@ -198,6 +199,7 @@ describe('e2e-auth', () => {
     })
 
     it('shouldn\'t refresh tokens, if refreshToken is already updated(expired)', async () => {
+        await funcSleep(5000)
         await request(httpServer)
             .post('/auth/refresh-token')
             .set('Cookie', refreshToken)

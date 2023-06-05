@@ -43,6 +43,7 @@ export class JwtService {
         try {
             const result = await jwt.verify(verifiedToken, this.jwtSecret) as JwtPayload
             const issuedAtForDeviceId = await this.deviceRepository.getCurrentIssuedAt(result.deviceId)
+
             if (issuedAtForDeviceId > result.iat || !issuedAtForDeviceId) {
                 return null
             }
