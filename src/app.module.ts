@@ -123,6 +123,8 @@ import { UsersQuerySQLRepository } from "./SuperAdmin/infrastructure/users-query
 import { DevicesSQLRepository } from "./security/infrastructure/devices-sql-repository"
 import { AttemptsSQLRepository } from "./security/infrastructure/attempts-sql-repository"
 import { UserEntity } from "./SuperAdmin/domain/user.entity"
+import { AuthSession } from "./security/domain/auth-session.entity"
+import { AttemptEntity } from "./security/domain/attempt.entity"
 
 const authUseCases = [
   LogoutUseCase,
@@ -303,7 +305,7 @@ const {
       autoLoadEntities: true,
       synchronize: true,
       ssl: true,
-      entities: [UserEntity]
+      entities: [UserEntity, AuthSession, AttemptEntity]
     }),
     PassportModule,
   ],
