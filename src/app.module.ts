@@ -122,6 +122,7 @@ import { UsersSQLRepository } from "./SuperAdmin/infrastructure/users-sql-reposi
 import { UsersQuerySQLRepository } from "./SuperAdmin/infrastructure/users-query-sql-repository"
 import { DevicesSQLRepository } from "./security/infrastructure/devices-sql-repository"
 import { AttemptsSQLRepository } from "./security/infrastructure/attempts-sql-repository"
+import { UserEntity } from "./SuperAdmin/domain/user.entity"
 
 const authUseCases = [
   LogoutUseCase,
@@ -255,6 +256,10 @@ const controllers = [
   BloggerUsersController,
 ]
 
+const {
+  PGHOST, PGDATABASE, PGUSER, PGPASSWORD
+} = process.env
+
 @Module({
   imports: [
     CqrsModule,
@@ -294,10 +299,11 @@ const controllers = [
     ]),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      url: 'postgres://JustSeme:XFBiNok0VgQ2@ep-floral-cell-242700.eu-central-1.aws.neon.tech/neondb',
+      url: `postgres://${PGUSER}:${PGPASSWORD}@${PGHOST}/${PGDATABASE}`,
       autoLoadEntities: true,
       synchronize: true,
       ssl: true,
+      entities: [UserEntity]
     }),
     PassportModule,
   ],

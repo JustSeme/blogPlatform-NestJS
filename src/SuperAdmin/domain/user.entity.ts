@@ -1,12 +1,10 @@
-import { add } from "date-fns"
 import {
     Column,
     Entity, PrimaryGeneratedColumn
 } from "typeorm"
-import { v4 as uuidv4 } from 'uuid'
 
 @Entity()
-export class User {
+export class UserEntity {
     @PrimaryGeneratedColumn()
     id: string
 
@@ -16,10 +14,7 @@ export class User {
     @Column({ nullable: false })
     email: string
 
-    @Column({
-        default: () => new Date(),
-        nullable: false
-    })
+    @Column({ nullable: false })
     createdAt: Date
 
     @Column({
@@ -28,7 +23,7 @@ export class User {
     })
     isBanned: boolean
 
-    @Column({ default: null })
+    @Column({ default: null, })
     banReason: string
 
     @Column({ default: null })
@@ -37,28 +32,18 @@ export class User {
     @Column({ nullable: false })
     passwordHash: string
 
-    @Column({ default: uuidv4 })
+    @Column()
     emailConfirmationCode: string
 
-    @Column({
-        default: () => add(new Date(), {
-            hours: 1,
-            minutes: 3
-        }),
-    })
+    @Column()
     emailExpirationDate: Date
 
     @Column({ default: false })
     isEmailConfirmed: boolean
 
-    @Column({ default: uuidv4 })
+    @Column({ default: null })
     passwordRecoveryConfirmationCode: string
 
-    @Column({
-        default: () => add(new Date(), {
-            hours: 1,
-            minutes: 3
-        }),
-    })
+    @Column({ default: null })
     passwordRecoveryExpirationDate: Date
 }
