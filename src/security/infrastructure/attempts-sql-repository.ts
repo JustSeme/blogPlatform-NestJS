@@ -9,7 +9,7 @@ export class AttemptsSQLRepository {
     async getAttemptsCount(clientIp: string, requestedUrl: string, lastAttemptDate: Date): Promise<number> {
         const queryString = `
             SELECT count(*)
-                FROM public."Attempts"
+                FROM public."attempt_entity"
                 WHERE "clientIp" = $1 AND "requestedUrl" = $2 AND "requestDate" > $3;
         `
 
@@ -20,7 +20,7 @@ export class AttemptsSQLRepository {
 
     async insertAttempt(clientIp: string, requestedUrl: string, requestDate: Date): Promise<boolean> {
         const queryString = `
-            INSERT INTO public."Attempts"(
+            INSERT INTO public."attempt_entity"(
                 "clientIp", "requestedUrl", "requestDate")
                 VALUES ($1, $2, $3);
         `
@@ -36,7 +36,7 @@ export class AttemptsSQLRepository {
 
     async removeAttempts(clientIp: string, requestedUrl: string): Promise<boolean> {
         const queryString = `
-            DELETE FROM public."Attempts"
+            DELETE FROM public."attempt_entity"
                 WHERE "clientIp" = $1 OR "requestedUrl" = $2;
         `
 

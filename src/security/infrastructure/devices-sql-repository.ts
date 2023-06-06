@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common"
 import { InjectDataSource } from "@nestjs/typeorm"
 import { DataSource } from "typeorm"
 import {
-    DeviceAuthSessionDBModel, DeviceAuthSessionSQLModel
+    DeviceAuthSessionDBModel, Deviceauth_sessionQLModel
 } from "../domain/DeviceAuthSessionTypes"
 
 @Injectable()
@@ -11,7 +11,7 @@ export class DevicesSQLRepository {
 
     async addSession(newSession: DeviceAuthSessionDBModel): Promise<boolean> {
         const queryString = `
-            INSERT INTO public."AuthSessions"
+            INSERT INTO public."auth_session"
                 ("deviceId", "deviceName", "userId", "userIp", "issuedAt", "expireDate")
                 VALUES ($1, $2, $3, $4, $5, $6);
         `
@@ -34,7 +34,7 @@ export class DevicesSQLRepository {
 
     async removeSession(deviceId: string): Promise<boolean> {
         const queryString = `
-            DELETE FROM public."AuthSessions"
+            DELETE FROM public."auth_session"
                 WHERE "deviceId" = $1;
         `
 
@@ -49,7 +49,7 @@ export class DevicesSQLRepository {
 
     async deleteAllSessionsExcludeCurrent(userId: string, deviceId: string): Promise<boolean> {
         const queryString = `
-            DELETE FROM public."AuthSessions"
+            DELETE FROM public."auth_session"
                 WHERE "userId" = $1 AND "deviceId" <> $2;
         `
 
@@ -64,7 +64,7 @@ export class DevicesSQLRepository {
 
     async updateSession(deviceId: string, issuedAt: number, expireDate: number): Promise<boolean> {
         const queryString = `
-            UPDATE public."AuthSessions"
+            UPDATE public."auth_session"
                 SET "issuedAt"=$2, "expireDate"=$3
                 WHERE "deviceId" = $1;
         `
@@ -81,11 +81,11 @@ export class DevicesSQLRepository {
     async getDeviceById(deviceId: string): Promise<DeviceAuthSessionDBModel> {
         const queryString = `
             SELECT *
-                FROM public."AuthSessions"
+                FROM public."auth_session"
                 WHERE "deviceId" = $1
         `
 
-        const findedDeviceData: DeviceAuthSessionSQLModel[] = await this.dataSource.query(queryString, [deviceId])
+        const findedDeviceData: Deviceauth_sessionQLModel[] = await this.dataSource.query(queryString, [deviceId])
 
         return new DeviceAuthSessionDBModel(
             findedDeviceData[0].issuedAt,
@@ -103,7 +103,7 @@ export class DevicesSQLRepository {
 
     async deleteDeviceById(deviceId: string): Promise<boolean> {
         const queryString = `
-            DELETE FROM public."AuthSessions"
+            DELETE FROM public."auth_session"
                 WHERE "deviceId" = $1;
         `
 
@@ -124,11 +124,11 @@ export class DevicesSQLRepository {
     async getDevicesForUser(userId: string): Promise<DeviceAuthSessionDBModel[]> {
         const queryString = `
             SELECT *
-                FROM public."AuthSessions"
+                FROM public."auth_session"
                 WHERE "userId" = $1
         `
 
-        const findedDevicesData: DeviceAuthSessionSQLModel[] = await this.dataSource.query(queryString, [userId])
+        const findedDevicesData: Deviceauth_sessionQLModel[] = await this.dataSource.query(queryString, [userId])
 
         return findedDevicesData.map((device) => new DeviceAuthSessionDBModel(
             device.issuedAt,
@@ -141,7 +141,7 @@ export class DevicesSQLRepository {
 
     async deleteAllSessions(userId: string): Promise<boolean> {
         const queryString = `
-            DELETE FROM public."AuthSessions"
+            DELETE FROM public."auth_session"
                 WHERE "userId" = $1;
         `
 

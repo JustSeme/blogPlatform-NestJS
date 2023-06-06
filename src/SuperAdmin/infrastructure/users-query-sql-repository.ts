@@ -19,7 +19,7 @@ export class UsersQuerySQLRepository {
 
         const queryCount = `
             SELECT count(*)
-                FROM public."Users"
+                FROM public."user_entity"
                 WHERE "login" LIKE $1 AND "email" LIKE $2 ${banStatus !== 'all' ? 'AND "isBanned" = ' + banStatus === 'banned' ? true : false : ''}
         `
 
@@ -31,7 +31,7 @@ export class UsersQuerySQLRepository {
 
         const query = `
             SELECT *
-                FROM public."Users"
+                FROM public."user_entity"
                 WHERE "login" LIKE $1 AND "email" LIKE $2 ${banStatus !== 'all' ? 'AND "isBanned" = ' + banStatus === 'banned' ? true : false : ''}
                 ORDER BY $3 ${sortDirection}
                 LIMIT $4 OFFSET $5;
@@ -53,7 +53,7 @@ export class UsersQuerySQLRepository {
     async findUserById(userId: string): Promise<UserViewModelType> {
         const queryString = `
             SELECT *
-                FROM public."Users"
+                FROM public."user_entity"
                 WHERE id = $1;
         `
 

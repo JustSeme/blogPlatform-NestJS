@@ -11,9 +11,6 @@ import {
 import {
   Post, PostSchema
 } from "./Blogger/domain/posts/PostsSchema"
-import {
-  DeviceAuthSession, DeviceAuthSessionsSchema
-} from "./security/domain/DeviceAuthSessionSchema"
 import { PassportModule } from "@nestjs/passport"
 import { AppController } from "./app.controller"
 import { BlogsController } from "./blogs/api/blogs-controller"
@@ -125,6 +122,9 @@ import { AttemptsSQLRepository } from "./security/infrastructure/attempts-sql-re
 import { UserEntity } from "./SuperAdmin/domain/user.entity"
 import { AuthSession } from "./security/domain/auth-session.entity"
 import { AttemptEntity } from "./security/domain/attempt.entity"
+import {
+  DeviceAuthSession, DeviceAuthSessionsSchema
+} from "./security/domain/DeviceAuthSessionSchema"
 
 const authUseCases = [
   LogoutUseCase,

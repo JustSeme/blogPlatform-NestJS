@@ -15,7 +15,7 @@ export class AuthRepository {
     async findUserByRecoveryPasswordCode(recoveryCode: string): Promise<UserDBModel> {
         const queryString = `
             SELECT *
-                FROM public."Users"
+                FROM public."user_entity"
                 WHERE "passwordRecoveryConfirmationCode" = $1;
         `
 
@@ -31,7 +31,7 @@ export class AuthRepository {
     async isUserByLoginExists(userLogin: string): Promise<boolean> {
         const queryString = `
             SELECT id
-                FROM public."Users"
+                FROM public."user_entity"
                 WHERE "login" = $1;
         `
 
@@ -43,7 +43,7 @@ export class AuthRepository {
     async isUserByEmailExists(userEmail: string): Promise<boolean> {
         const queryString = `
             SELECT id
-                FROM public."Users"
+                FROM public."user_entity"
                 WHERE "email" = $1;
         `
 
@@ -55,7 +55,7 @@ export class AuthRepository {
     async findUserEmailConfirmationDataByCode(code: string): Promise<EmailConfirmationType> {
         const queryString = `
             SELECT "emailConfirmationCode", "emailExpirationDate", "isEmailConfirmed"
-                FROM public."Users"
+                FROM public."user_entity"
                 WHERE "emailConfirmationCode" = $1;
         `
 
@@ -75,7 +75,7 @@ export class AuthRepository {
     async findUserByLoginOrEmail(loginOrEmail: string): Promise<UserDBModel> {
         const queryString = `
             SELECT *
-                FROM public."Users"
+                FROM public."user_entity"
                 WHERE "login" = $1 OR "email" = $1;
         `
 
@@ -90,7 +90,7 @@ export class AuthRepository {
 
     async updateIsConfirmedByConfirmationCode(code: string) {
         const queryString = `
-            UPDATE public."Users"
+            UPDATE public."user_entity"
                 SET "emailConfirmationCode"=null, "emailExpirationDate"=null, "isEmailConfirmed"=true
                 WHERE "emailConfirmationCode" = $1;
         `
@@ -101,7 +101,7 @@ export class AuthRepository {
     async findUserByEmail(email: string): Promise<UserDBModel> {
         const queryString = ` 
             SELECT *
-                FROM public."Users"
+                FROM public."user_entity"
                 WHERE "email" = $1;
         `
 
@@ -115,7 +115,7 @@ export class AuthRepository {
 
     async updateEmailConfirmationInfo(userId: string, newConfirmationCode: string) {
         const queryString = `
-            UPDATE public."Users"
+            UPDATE public."user_entity"
                 SET "emailConfirmationCode"=$2, "emailExpirationDate"=$3
                 WHERE "id" = $1;
         `
@@ -130,7 +130,7 @@ export class AuthRepository {
 
     async updatePasswordConfirmationInfo(userId: string, passwordRecoveryCode: string) {
         const queryString = `
-            UPDATE public."Users"
+            UPDATE public."user_entity"
                 SET "passwordRecoveryConfirmationCode"=$2, "passwordRecoveryExpirationDate"=$3
                 WHERE id = $1;
         `
@@ -151,7 +151,7 @@ export class AuthRepository {
 
     async updateUserPassword(userId: string, newPasswordHash: string): Promise<boolean> {
         const queryString = `
-            UPDATE public."Users"
+            UPDATE public."user_entity"
                 SET "passwordRecoveryConfirmationCode"=null, "passwordRecoveryExpirationDate"=null, "passwordHash"=$2
                 WHERE id = $1;
         `

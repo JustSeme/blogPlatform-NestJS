@@ -25,7 +25,7 @@ export class DeviceAuthSessionDBModel {
     }
 }
 
-export class DeviceAuthSessionSQLModel {
+export class Deviceauth_sessionQLModel {
     public deviceId: string
     public deviceName: string
     public userId: string

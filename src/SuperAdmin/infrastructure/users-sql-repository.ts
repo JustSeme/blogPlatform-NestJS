@@ -13,7 +13,7 @@ export class UsersSQLRepository {
 
     async createNewUser(newUser: UserDTO) {
         const query = `
-            INSERT INTO public."Users"
+            INSERT INTO public."user_entity"
                 (
                 "login", "email", "passwordHash", "emailConfirmationCode", "emailExpirationDate", "isEmailConfirmed"
                 )
@@ -39,7 +39,7 @@ export class UsersSQLRepository {
     async findUserById(userId: string): Promise<UserViewModelType> {
         const queryString = `
             SELECT *
-                FROM public."Users"
+                FROM public."user_entity"
                 WHERE id = $1;
         `
 
@@ -51,7 +51,7 @@ export class UsersSQLRepository {
     async findUserDBModelById(userId: string): Promise<UserDBModel> {
         const queryString = `
             SELECT *
-                FROM public."Users"
+                FROM public."user_entity"
                 WHERE id = $1;
         `
 
@@ -62,7 +62,7 @@ export class UsersSQLRepository {
 
     async deleteUser(userId: string): Promise<boolean> {
         const queryString = `
-            DELETE FROM public."Users"
+            DELETE FROM public."user_entity"
                 WHERE id = $1
         `
 
@@ -77,7 +77,7 @@ export class UsersSQLRepository {
 
     async banUserById(userId: string, banReason: string): Promise<boolean> {
         const queryString = `
-            UPDATE public."Users"
+            UPDATE public."user_entity"
                 SET "isBanned"=true, "banReason"=$2, "banDate"=CURRENT_TIMESTAMP
                 WHERE id = $1;
         `
@@ -93,7 +93,7 @@ export class UsersSQLRepository {
 
     async unbanUserById(userId: string): Promise<boolean> {
         const queryString = `
-            UPDATE public."Users"
+            UPDATE public."user_entity"
                 SET "isBanned"=false, "banReason"=null, "banDate"=null
                 WHERE id = $1;
         `
