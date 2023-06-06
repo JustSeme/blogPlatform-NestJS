@@ -20,7 +20,7 @@ export class UsersQuerySQLRepository {
         const queryCount = `
             SELECT count(*)
                 FROM public."user_entity"
-                WHERE "login" LIKE $1 AND "email" LIKE $2 ${banStatus !== 'all' ? 'AND "isBanned" = ' + banStatus === 'banned' ? true : false : ''}
+                WHERE lower("login") LIKE lower($1) AND lower("email") LIKE lower($2) ${banStatus !== 'all' ? 'AND "isBanned" = ' + banStatus === 'banned' ? true : false : ''}
         `
 
         const totalCountData = await this.dataSource.query(queryCount, [`%${searchLoginTerm}%`, `%${searchEmailTerm}%`])
@@ -32,7 +32,7 @@ export class UsersQuerySQLRepository {
         const query = `
             SELECT *
                 FROM public."user_entity"
-                WHERE "login" LIKE $1 AND "email" LIKE $2 ${banStatus !== 'all' ? 'AND "isBanned" = ' + banStatus === 'banned' ? true : false : ''}
+                WHERE lower("login") LIKE lower($1) AND lower("email") LIKE lower($2) ${banStatus !== 'all' ? 'AND "isBanned" = ' + banStatus === 'banned' ? true : false : ''}
                 ORDER BY "${sortBy}" ${sortDirection}
                 LIMIT $3 OFFSET $4;
         `

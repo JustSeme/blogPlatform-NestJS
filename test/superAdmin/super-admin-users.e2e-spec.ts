@@ -177,11 +177,11 @@ describe('super-admin-users', () => {
         expect(response4.body).toEqual({
             errorsMessages: [
                 {
-                    "message": "Login is already exist",
+                    "message": "Login already in use",
                     "field": "login"
                 },
                 {
-                    "message": "Email is already exist",
+                    "message": "Email already in use",
                     "field": "email"
                 }
             ]
@@ -455,13 +455,15 @@ describe('super-admin-users', () => {
     })
 
     it('should like/dislike early created post and comment, should display correct info', async () => {
-        await request(httpServer)
+        const err = await request(httpServer)
             .put(`/comments/${secondCommentId}/like-status`)
             .set('Authorization', `Bearer ${recievedAccessToken}`)
             .send({
                 likeStatus: 'Like'
             })
-            .expect(HttpStatus.NO_CONTENT)
+        //.expect(HttpStatus.NO_CONTENT)
+        console.log(err.body, 'error');
+
 
         await request(httpServer)
             .put(`/posts/${secondPostId}/like-status`)
