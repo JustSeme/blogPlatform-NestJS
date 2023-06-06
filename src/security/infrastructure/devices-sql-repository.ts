@@ -88,6 +88,10 @@ export class DevicesSQLRepository {
         try {
             const findedDeviceData: DeviceAuthSessionSQLModel[] = await this.dataSource.query(queryString, [deviceId])
 
+            if (!findedDeviceData[0]) {
+                return null
+            }
+
             return new DeviceAuthSessionDBModel(
                 findedDeviceData[0].issuedAt,
                 findedDeviceData[0].expireDate,
