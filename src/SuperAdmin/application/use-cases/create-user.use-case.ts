@@ -4,7 +4,6 @@ import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs/dist"
 import { UserDTO } from "../../domain/UsersTypes"
-import { UsersService } from "../users.service"
 import { UsersSQLRepository } from "../../infrastructure/users-sql-repository"
 import { AuthRepository } from "../../../auth/infrastructure/auth-sql-repository"
 import { FieldError } from "../../../general/types/ErrorMessagesOutputModel"
@@ -19,7 +18,6 @@ export class CreateUserUseCase implements ICommandHandler<CreateUserCommand> {
     constructor(
         private bcryptAdapter: BcryptAdapter,
         private usersRepository: UsersSQLRepository,
-        private usersService: UsersService,
         private authRepository: AuthRepository
     ) { }
 

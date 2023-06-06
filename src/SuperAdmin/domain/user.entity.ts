@@ -1,13 +1,13 @@
 import {
     Column,
     CreateDateColumn,
-    Entity, OneToMany, PrimaryColumn
+    Entity, OneToMany, PrimaryGeneratedColumn
 } from "typeorm"
 import { AuthSession } from "../../security/domain/auth-session.entity"
 
 @Entity()
 export class UserEntity {
-    @PrimaryColumn('uuid')
+    @PrimaryGeneratedColumn('uuid')
     id: string
 
     @Column({ nullable: false })

@@ -146,6 +146,7 @@ describe('super-admin-users', () => {
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
             .send(firstUser)
             .expect(HttpStatus.CREATED)
+
         expect(typeof response1.body.id).toBe('string')
         id1 = response1.body.id
 
@@ -154,6 +155,7 @@ describe('super-admin-users', () => {
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
             .send(secondUser)
             .expect(HttpStatus.CREATED)
+
         expect(typeof response2.body.id).toBe('string')
         id2 = response2.body.id
 
@@ -162,6 +164,7 @@ describe('super-admin-users', () => {
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
             .send(thirdUser)
             .expect(HttpStatus.CREATED)
+
         expect(typeof response3.body.id).toBe('string')
         id3 = response3.body.id
 
@@ -170,21 +173,22 @@ describe('super-admin-users', () => {
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
             .send(secondUser)
             .expect(HttpStatus.BAD_REQUEST)
+
         expect(response4.body).toEqual({
             errorsMessages: [
                 {
-                    "message": "Login already in use",
+                    "message": "Login is already exist",
                     "field": "login"
                 },
                 {
-                    "message": "Email already in use",
+                    "message": "Email is already exist",
                     "field": "email"
                 }
             ]
         })
     })
 
-    it('should return array of users with asc sorting for login', async () => {
+    it('should return array of users with asc sorting by login', async () => {
         const response = await request(httpServer)
             .get(`/sa/users?sortDirection=asc&sortBy=login`)
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')

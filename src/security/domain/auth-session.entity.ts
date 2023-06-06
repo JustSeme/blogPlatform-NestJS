@@ -1,12 +1,12 @@
 import {
     Column,
-    Entity, ManyToOne, PrimaryColumn
+    Entity, ManyToOne, PrimaryGeneratedColumn
 } from "typeorm"
 import { UserEntity } from "../../SuperAdmin/domain/user.entity"
 
 @Entity()
 export class AuthSession {
-    @PrimaryColumn('uuid')
+    @PrimaryGeneratedColumn('uuid')
     deviceId: string
 
     @Column({ nullable: false })

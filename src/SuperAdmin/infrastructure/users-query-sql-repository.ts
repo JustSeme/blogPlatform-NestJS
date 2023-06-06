@@ -33,11 +33,14 @@ export class UsersQuerySQLRepository {
             SELECT *
                 FROM public."user_entity"
                 WHERE "login" LIKE $1 AND "email" LIKE $2 ${banStatus !== 'all' ? 'AND "isBanned" = ' + banStatus === 'banned' ? true : false : ''}
-                ORDER BY $3 ${sortDirection}
-                LIMIT $4 OFFSET $5;
+                ORDER BY "${sortBy}" ${sortDirection}
+                LIMIT $3 OFFSET $4;
         `
 
-        const resultedUsers: UserSQLModel[] = await this.dataSource.query(query, [`%${searchLoginTerm}%`, `%${searchEmailTerm}%`, sortBy, pageSize, skipCount])
+        console.log(query)
+
+
+        const resultedUsers: UserSQLModel[] = await this.dataSource.query(query, [`%${searchLoginTerm}%`, `%${searchEmailTerm}%`, pageSize, skipCount])
 
         const diapayedUsers = resultedUsers.map((user) => new UserViewModelType(user))
 
