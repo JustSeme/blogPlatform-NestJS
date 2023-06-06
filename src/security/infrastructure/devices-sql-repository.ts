@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common"
 import { InjectDataSource } from "@nestjs/typeorm"
 import { DataSource } from "typeorm"
 import {
-    DeviceAuthSessionDBModel, Deviceauth_sessionQLModel
+    DeviceAuthSessionDBModel, DeviceAuthSessionSQLModel
 } from "../domain/DeviceAuthSessionTypes"
 
 @Injectable()
@@ -85,15 +85,20 @@ export class DevicesSQLRepository {
                 WHERE "deviceId" = $1
         `
 
-        const findedDeviceData: Deviceauth_sessionQLModel[] = await this.dataSource.query(queryString, [deviceId])
+        try {
+            const findedDeviceData: DeviceAuthSessionSQLModel[] = await this.dataSource.query(queryString, [deviceId])
 
-        return new DeviceAuthSessionDBModel(
-            findedDeviceData[0].issuedAt,
-            findedDeviceData[0].expireDate,
-            findedDeviceData[0].userId,
-            findedDeviceData[0].userIp,
-            findedDeviceData[0].deviceId,
-            findedDeviceData[0].deviceName)
+            return new DeviceAuthSessionDBModel(
+                findedDeviceData[0].issuedAt,
+                findedDeviceData[0].expireDate,
+                findedDeviceData[0].userId,
+                findedDeviceData[0].userIp,
+                findedDeviceData[0].deviceId,
+                findedDeviceData[0].deviceName)
+        } catch (err) {
+            console.error(err)
+            return null
+        }
     }
 
     async getCurrentIssuedAt(deviceId: string): Promise<number> {
@@ -128,7 +133,7 @@ export class DevicesSQLRepository {
                 WHERE "userId" = $1
         `
 
-        const findedDevicesData: Deviceauth_sessionQLModel[] = await this.dataSource.query(queryString, [userId])
+        const findedDevicesData: DeviceAuthSessionSQLModel[] = await this.dataSource.query(queryString, [userId])
 
         return findedDevicesData.map((device) => new DeviceAuthSessionDBModel(
             device.issuedAt,
