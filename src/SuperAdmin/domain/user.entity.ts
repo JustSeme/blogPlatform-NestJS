@@ -10,19 +10,16 @@ export class UserEntity {
     @PrimaryGeneratedColumn('uuid')
     id: string
 
-    @Column({ nullable: false })
+    @Column()
     login: string
 
-    @Column({ nullable: false })
+    @Column()
     email: string
 
-    @CreateDateColumn({ nullable: false })
+    @CreateDateColumn()
     createdAt: Date
 
-    @Column({
-        default: false,
-        nullable: false
-    })
+    @Column({ default: false })
     isBanned: boolean
 
     @Column({ default: null, })
@@ -35,13 +32,13 @@ export class UserEntity {
     })
     banDate: Date
 
-    @Column({ nullable: false })
+    @Column()
     passwordHash: string
 
-    @Column()
+    @Column({ nullable: true })
     emailConfirmationCode: string
 
-    @Column()
+    @Column({ nullable: true })
     emailExpirationDate: Date
 
     @Column({ default: false })

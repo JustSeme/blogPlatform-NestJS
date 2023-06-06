@@ -31,8 +31,6 @@ export class ConfirmEmailUseCase implements ICommandHandler<ConfirmEmailCommand>
         if (emailConfirmation.isConfirmed) return false
         if (emailConfirmation.confirmationCode !== recievedConfirmationCode) return false
         if (emailConfirmation.expirationDate < new Date()) {
-            console.log(emailConfirmation.expirationDate, new Date())
-
             return false
         }
 
