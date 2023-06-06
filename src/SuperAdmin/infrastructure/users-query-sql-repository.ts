@@ -17,10 +17,12 @@ export class UsersQuerySQLRepository {
             sortDirection = 'desc', sortBy = 'createdAt', pageNumber = 1, pageSize = 10, searchLoginTerm = '', searchEmailTerm = '', banStatus = 'all'
         } = queryParams
 
+        const isBanned = banStatus === 'banned' ? true : false
+
         const queryCount = `
             SELECT count(*)
                 FROM public."user_entity"
-                WHERE lower("login") LIKE lower($1) OR lower("email") LIKE lower($2) ${banStatus !== 'all' ? 'AND "isBanned" = ' + banStatus === 'banned' ? true : false : ''}
+                WHERE (lower("login") LIKE lower($1) OR lower("email") LIKE lower($2)) ${banStatus !== 'all' ? `AND "isBanned" = ${isBanned}` : ''}
         `
 
         const totalCountData = await this.dataSource.query(queryCount, [`%${searchLoginTerm}%`, `%${searchEmailTerm}%`])
@@ -32,10 +34,13 @@ export class UsersQuerySQLRepository {
         const query = `
             SELECT *
                 FROM public."user_entity"
-                WHERE lower("login") LIKE lower($1) OR lower("email") LIKE lower($2) ${banStatus !== 'all' ? 'AND "isBanned" = ' + banStatus === 'banned' ? true : false : ''}
+                WHERE (lower("login") LIKE lower($1) OR lower("email") LIKE lower($2)) ${banStatus !== 'all' ? `AND "isBanned" = ${isBanned}` : ''}
                 ORDER BY "${sortBy}" ${sortDirection}
                 LIMIT $3 OFFSET $4;
         `
+
+        console.log(query)
+
 
         const resultedUsers: UserSQLModel[] = await this.dataSource.query(query, [`%${searchLoginTerm}%`, `%${searchEmailTerm}%`, pageSize, skipCount])
 
