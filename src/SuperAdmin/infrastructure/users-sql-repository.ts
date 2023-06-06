@@ -11,13 +11,19 @@ import {
 export class UsersSQLRepository {
     constructor(@InjectDataSource() private dataSource: DataSource) { }
 
-    async createNewUser(newUser: UserDTO) {
+    async createNewUser(newUser: UserDTO): Promise<UserSQLModel | null> {
         const query = `
             INSERT INTO public."user_entity"
                 (
                 "login", "email", "passwordHash", "emailConfirmationCode", "emailExpirationDate", "isEmailConfirmed"
                 )
                 VALUES ($1, $2, $3, $4, $5, $6);
+        `
+
+        const querySelect = `
+            SELECT *
+                FROM public."user_entity"
+                WHERE "login" = $1
         `
 
         try {
@@ -29,10 +35,13 @@ export class UsersSQLRepository {
                 newUser.emailConfirmation.expirationDate,
                 newUser.emailConfirmation.isConfirmed
             ])
-            return true
+
+            const createdUser = await this.dataSource.query(querySelect, [newUser.login])
+
+            return createdUser[0]
         } catch (err) {
             console.error(err)
-            return false
+            return null
         }
     }
 

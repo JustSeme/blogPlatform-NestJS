@@ -1,11 +1,13 @@
 import {
     Column,
-    Entity, PrimaryGeneratedColumn
+    CreateDateColumn,
+    Entity, OneToMany, PrimaryColumn
 } from "typeorm"
+import { AuthSession } from "../../security/domain/auth-session.entity"
 
 @Entity()
 export class UserEntity {
-    @PrimaryGeneratedColumn()
+    @PrimaryColumn('uuid')
     id: string
 
     @Column({ nullable: false })
@@ -14,7 +16,7 @@ export class UserEntity {
     @Column({ nullable: false })
     email: string
 
-    @Column({ nullable: false })
+    @CreateDateColumn({ nullable: false })
     createdAt: Date
 
     @Column({
@@ -26,7 +28,11 @@ export class UserEntity {
     @Column({ default: null, })
     banReason: string
 
-    @Column({ default: null })
+    @Column({
+        type: 'timestamptz',
+        default: null,
+        nullable: true
+    })
     banDate: Date
 
     @Column({ nullable: false })
@@ -46,4 +52,7 @@ export class UserEntity {
 
     @Column({ default: null })
     passwordRecoveryExpirationDate: Date
+
+    @OneToMany(() => AuthSession, (authSession) => authSession.user)
+    authSessions: AuthSession[]
 }

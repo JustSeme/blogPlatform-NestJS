@@ -31,10 +31,9 @@ export class CreateUserUseCase implements ICommandHandler<CreateUserCommand> {
 
         const newUser = new UserDTO(command.login, command.email, passwordHash, true)
 
-        await this.usersRepository.createNewUser(newUser)
-        const displayedUser: UserViewModelType = this.usersService.prepareUserForDisplay(newUser)
+        const createdUser = await this.usersRepository.createNewUser(newUser)
 
-        return displayedUser
+        return new UserViewModelType(createdUser)
     }
 
     async isEmailOrLoginAlreadyUsed(login: string, email: string) {

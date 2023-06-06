@@ -1,18 +1,22 @@
 import {
     Column,
-    Entity, PrimaryGeneratedColumn
+    Entity, ManyToOne, PrimaryColumn
 } from "typeorm"
+import { UserEntity } from "../../SuperAdmin/domain/user.entity"
 
 @Entity()
 export class AuthSession {
-    @PrimaryGeneratedColumn()
+    @PrimaryColumn('uuid')
     deviceId: string
 
     @Column({ nullable: false })
     deviceName: string
 
-    @Column({ nullable: false })
-    userId: string
+    @ManyToOne(
+        () => UserEntity,
+        (user) => user.authSessions
+    )
+    user: UserEntity
 
     @Column({ nullable: false })
     userIp: string
