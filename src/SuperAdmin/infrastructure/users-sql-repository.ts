@@ -52,9 +52,18 @@ export class UsersSQLRepository {
                 WHERE id = $1;
         `
 
-        const findedUserData: UserSQLModel = await this.dataSource.query(queryString, [userId])
+        try {
+            const findedUserData: UserSQLModel = await this.dataSource.query(queryString, [userId])
 
-        return new UserViewModelType(findedUserData[0])
+            if (!findedUserData[0]) {
+                return null
+            }
+
+            return new UserViewModelType(findedUserData[0])
+        } catch (err) {
+            console.error(err)
+            return null
+        }
     }
 
     async findUserDBModelById(userId: string): Promise<UserDBModel> {

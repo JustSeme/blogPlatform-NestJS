@@ -37,9 +37,6 @@ export class UsersQuerySQLRepository {
                 LIMIT $3 OFFSET $4;
         `
 
-        console.log(query)
-
-
         const resultedUsers: UserSQLModel[] = await this.dataSource.query(query, [`%${searchLoginTerm}%`, `%${searchEmailTerm}%`, pageSize, skipCount])
 
         const diapayedUsers = resultedUsers.map((user) => new UserViewModelType(user))
