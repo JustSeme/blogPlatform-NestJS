@@ -126,7 +126,7 @@ export class DevicesSQLRepository {
     }
 
     async isDeviceExists(deviceId: string): Promise<boolean> {
-        const device = this.getDeviceById(deviceId)
+        const device = await this.getDeviceById(deviceId)
         return device ? true : false
     }
 
