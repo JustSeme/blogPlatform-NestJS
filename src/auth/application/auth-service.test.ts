@@ -6,7 +6,6 @@ import mongoose from 'mongoose'
 import {
     RegistrationUserCommand, RegistrationUserUseCase
 } from './use-cases/registration-user.use-case'
-import { UsersRepository } from '../../SuperAdmin/infrastructure/users-db-repository'
 import { EmailManager } from '../../general/managers/emailManager'
 import { BcryptAdapter } from '../../general/adapters/bcrypt.adapter'
 import {
@@ -14,13 +13,14 @@ import {
 } from './use-cases/confirm-email.use-case'
 import { AppModule } from '../../app.module'
 import { AppService } from '../../app.service'
+import { AuthRepository } from '../infrastructure/auth-sql-repository'
 
 describe('integration tests for auth use cases', () => {
     let registrationUserUseCase: RegistrationUserUseCase
     let confirmEmailUseCase: ConfirmEmailUseCase
     let bcryptAdapter: BcryptAdapter
     let emailManager: EmailManager
-    let usersRepository: UsersRepository
+    let authRepository: AuthRepository
     let appService: AppService
 
 
@@ -45,7 +45,7 @@ describe('integration tests for auth use cases', () => {
         confirmEmailUseCase = moduleRef.get<ConfirmEmailUseCase>(ConfirmEmailUseCase)
         bcryptAdapter = moduleRef.get<BcryptAdapter>(BcryptAdapter)
         emailManager = moduleRef.get<EmailManager>(EmailManager)
-        usersRepository = moduleRef.get<UsersRepository>(UsersRepository)
+        authRepository = moduleRef.get<AuthRepository>(AuthRepository)
         appService = moduleRef.get<AppService>(AppService)
 
         await appService.deleteTestingData()
@@ -65,7 +65,7 @@ describe('integration tests for auth use cases', () => {
 
             expect(result).toBe(true)
 
-            const user = await usersRepository.findUserByEmail(command.email)
+            const user = await authRepository.findUserByEmail(command.email)
 
             expect(user.login).toEqual(command.login)
             expect(user.email).toEqual(command.email)

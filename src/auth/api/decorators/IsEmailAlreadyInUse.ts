@@ -2,17 +2,17 @@ import { Injectable } from '@nestjs/common'
 import {
     ValidatorConstraint, ValidatorConstraintInterface
 } from 'class-validator'
-import { UsersQueryRepository } from '../../../SuperAdmin/infrastructure/users-query-repository'
+import { AuthRepository } from '../../infrastructure/auth-sql-repository'
 
 @ValidatorConstraint({
     name: 'IsEmailAlreadyExists', async: true
 })
 @Injectable()
 export class IsEmailAlreadyInUse implements ValidatorConstraintInterface {
-    constructor(private usersQueryRepository: UsersQueryRepository) { }
+    constructor(private authRepository: AuthRepository) { }
 
     async validate(email: string) {
-        const findedUser = await this.usersQueryRepository.findUserByEmail(email)
+        const findedUser = await this.authRepository.findUserByEmail(email)
         if (findedUser) {
             return false
         }

@@ -88,6 +88,22 @@ export class AuthRepository {
         return new UserDBModel(findedUserData[0])
     }
 
+    async findUserByLogin(login: string): Promise<UserDBModel> {
+        const queryString = `
+            SELECT *
+                FROM public."user_entity"
+                WHERE "login" = $1;
+        `
+
+        const findedUserData: UserSQLModel[] = await this.dataSource.query(queryString, [login])
+
+        if (!findedUserData[0]) {
+            return null
+        }
+
+        return new UserDBModel(findedUserData[0])
+    }
+
     async updateIsConfirmedByConfirmationCode(code: string) {
         const queryString = `
             UPDATE public."user_entity"

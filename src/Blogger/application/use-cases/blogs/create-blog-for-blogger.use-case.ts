@@ -6,7 +6,7 @@ import { BlogsRepository } from "../../../infrastructure/blogs/blogs-db-reposito
 import { BlogViewModel } from "../../../../blogs/application/dto/BlogViewModel"
 import { BlogDBModel } from "../../../domain/blogs/BlogsTypes"
 import { BlogsService } from "../../../../blogs/application/blogs-service"
-import { UsersQueryRepository } from "../../../../SuperAdmin/infrastructure/users-query-repository"
+import { UsersQuerySQLRepository } from "../../../../SuperAdmin/infrastructure/users-query-sql-repository"
 
 // Command
 export class CreateBlogForBloggerCommand implements ICommand {
@@ -22,7 +22,7 @@ export class CreateBlogForBloggerUseCase implements ICommandHandler<CreateBlogFo
     constructor(
         private readonly blogsRepository: BlogsRepository,
         private readonly blogsService: BlogsService,
-        private readonly usersQueryRepository: UsersQueryRepository
+        private readonly usersQueryRepository: UsersQuerySQLRepository
     ) { }
 
     async execute(command: CreateBlogForBloggerCommand): Promise<BlogViewModel> {

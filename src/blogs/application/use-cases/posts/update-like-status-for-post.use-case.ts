@@ -4,7 +4,7 @@ import {
 import { LikeType } from "../../../api/models/LikeInputModel"
 import { PostsRepository } from "../../../../Blogger/infrastructure/posts/posts-db-repository"
 import { ExtendedLikeObjectType } from "../../../../Blogger/domain/posts/PostsTypes"
-import { UsersRepository } from "../../../../SuperAdmin/infrastructure/users-db-repository"
+import { UsersQuerySQLRepository } from "../../../../SuperAdmin/infrastructure/users-query-sql-repository"
 
 export class UpdateLikeStatusForPostCommand {
     constructor(
@@ -18,7 +18,7 @@ export class UpdateLikeStatusForPostCommand {
 export class UpdateLikeStatusForPostUseCase implements ICommandHandler<UpdateLikeStatusForPostCommand> {
     constructor(
         private postsRepository: PostsRepository,
-        private usersRepository: UsersRepository,
+        private usersQueryRepository: UsersQuerySQLRepository,
     ) { }
 
     async execute(command: UpdateLikeStatusForPostCommand) {
@@ -33,7 +33,7 @@ export class UpdateLikeStatusForPostUseCase implements ICommandHandler<UpdateLik
             return false
         }
 
-        const likedUser = await this.usersRepository.findUserById(userId)
+        const likedUser = await this.usersQueryRepository.findUserById(userId)
         const likeData: ExtendedLikeObjectType = {
             createdAt: new Date().toISOString(),
             userId: userId,

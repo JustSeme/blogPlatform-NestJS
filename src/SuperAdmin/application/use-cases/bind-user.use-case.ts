@@ -4,7 +4,7 @@ import {
 import { BlogsRepository } from "../../../Blogger/infrastructure/blogs/blogs-db-repository"
 import { generateErrorsMessages } from "../../../general/helpers"
 import { BadRequestException } from '@nestjs/common'
-import { UsersRepository } from "../../infrastructure/users-db-repository"
+import { UsersQueryRepository } from "../../infrastructure/users-query-repository"
 
 export class BindUserCommand {
     constructor(
@@ -17,7 +17,7 @@ export class BindUserCommand {
 export class BindUserUseCase implements ICommandHandler<BindUserCommand> {
     constructor(
         private blogsRepository: BlogsRepository,
-        private usersRepository: UsersRepository,
+        private usersQueryRepository: UsersQueryRepository,
     ) { }
 
     async execute(command: BindUserCommand) {
@@ -31,7 +31,7 @@ export class BindUserUseCase implements ICommandHandler<BindUserCommand> {
             throw new BadRequestException(generateErrorsMessages('blog is already bounded with any user', 'blogId'))
         }
 
-        const userById = await this.usersRepository.findUserById(userId)
+        const userById = await this.usersQueryRepository.findUserById(userId)
 
         await this.blogsRepository.bindBlogWithUser(blogId, userId, userById.login)
     }
