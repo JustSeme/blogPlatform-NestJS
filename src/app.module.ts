@@ -127,6 +127,7 @@ import {
 } from "./security/domain/DeviceAuthSessionSchema"
 import { BlogEntity } from "./Blogger/domain/blogs/blog.entity"
 import { BlogsSQLRepository } from "./Blogger/infrastructure/blogs/blogs-sql-repository"
+import { BlogsQuerySQLRepository } from "./Blogger/infrastructure/blogs/blogs-query-sql-repository"
 
 const authUseCases = [
   LogoutUseCase,
@@ -224,7 +225,8 @@ const SQLrepositories = [
   UsersQuerySQLRepository,
   DevicesSQLRepository,
   AttemptsSQLRepository,
-  BlogsSQLRepository
+  BlogsSQLRepository,
+  BlogsQuerySQLRepository,
 ]
 
 const decorators = [

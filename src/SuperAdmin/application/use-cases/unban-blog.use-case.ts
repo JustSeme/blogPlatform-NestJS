@@ -21,7 +21,7 @@ export class UnbanBlogUseCase implements ICommandHandler<UnbanBlogCommand> {
 
 
     async execute(command: UnbanBlogCommand): Promise<boolean> {
-        const isBanned = await this.blogsRepository.unbanBlog(command.blogId, command.banInputModel)
+        const isBanned = await this.blogsRepository.unbanBlog(command.blogId)
 
         const isUnhided = await this.postsRepository.unHidePostsByBlogId(command.blogId)
         return isBanned && isUnhided

@@ -4,21 +4,27 @@ import {
     BlogDBModel, BlogDTO, BlogSQLModel
 } from '../../domain/blogs/BlogsTypes'
 import { BlogInputModel } from '../../api/models/BlogInputModel'
-import { BanBlogInputModel } from '../../../SuperAdmin/api/models/BanBlogInputModel'
+import { BlogViewModel } from '../../../blogs/application/dto/BlogViewModel'
 
 @Injectable()
 export class BlogsSQLRepository {
     constructor(private dataSource: DataSource) { }
 
-    async createBlog(newBlog: BlogDTO): Promise<BlogDBModel> {
+    async createBlog(newBlog: BlogDTO): Promise<BlogViewModel> {
         const queryString = `
             INSERT INTO public.blog_entity
                 ("name", description, "websiteUrl", "isMembership", "ownerId", "ownerLogin", "isBanned", "banDate")
                 VALUES($1, $2, $3, $4, $5, $6, $7, $8);
         `
 
+        const querySelect = `
+            SELECT *
+                FROM public."blog_entity"
+                WHERE "name"=$1 AND "ownerId"=$2
+        `
+
         try {
-            const createdBlog: BlogSQLModel = await this.dataSource.query(queryString, [
+            await this.dataSource.query(queryString, [
                 newBlog.name,
                 newBlog.description,
                 newBlog.websiteUrl,
@@ -29,11 +35,13 @@ export class BlogsSQLRepository {
                 newBlog.banInfo.banDate
             ])
 
+            const createdBlog: BlogSQLModel = await this.dataSource.query(querySelect, [newBlog.name, newBlog.blogOwnerInfo.userId])
+
             if (!createdBlog[0]) {
                 return null
             }
 
-            return new BlogDBModel(createdBlog)
+            return new BlogViewModel(createdBlog[0])
         } catch (err) {
             console.error(err)
             return null
@@ -61,7 +69,7 @@ export class BlogsSQLRepository {
         const queryString = `
             SELECT *
                 FROM public."blog_entity"
-                WHERE id=$1 AND "isBanned"=false
+                WHERE id=$1
         `
 
         try {
@@ -79,8 +87,20 @@ export class BlogsSQLRepository {
     }
 
     async isBlogExists(blogId: string): Promise<boolean> {
-        const blogById = await this.findBlogById(blogId)
-        return blogById ? true : false
+        const queryString = `
+            SELECT *
+                FROM public."blog_entity"
+                WHERE id=$1
+        `
+
+        try {
+            const findedBlogData = await this.dataSource.query(queryString, [blogId])
+
+            return findedBlogData[0] ? true : false
+        } catch (err) {
+            console.error(err)
+            return false
+        }
     }
 
     async bindBlogWithUser(blogId: string, newOwnerId: string, newOwnerLogin: string): Promise<boolean> {
@@ -115,15 +135,15 @@ export class BlogsSQLRepository {
         }
     }
 
-    async banBlog(blogId: string, banInputModel: BanBlogInputModel): Promise<boolean> {
+    async banBlog(blogId: string): Promise<boolean> {
         const queryString = `
             UPDATE public."blog_entity"
-                SET "idBanned"=$2, "banDate"=now()
+                SET "isBanned"=true, "banDate"=now()
                 WHERE id=$1
         `
 
         try {
-            await this.dataSource.query(queryString, [blogId, banInputModel.isBanned])
+            await this.dataSource.query(queryString, [blogId])
 
             return true
         } catch (err) {
@@ -132,15 +152,15 @@ export class BlogsSQLRepository {
         }
     }
 
-    async unbanBlog(blogId: string, banInputModel: BanBlogInputModel): Promise<boolean> {
+    async unbanBlog(blogId: string): Promise<boolean> {
         const queryString = `
             UPDATE public."blog_entity"
-                SET "idBanned"=$2, "banDate"=null
+                SET "isBanned"=false, "banDate"=null
                 WHERE id=$1
         `
 
         try {
-            await this.dataSource.query(queryString, [blogId, banInputModel.isBanned])
+            await this.dataSource.query(queryString, [blogId])
 
             return true
         } catch (err) {

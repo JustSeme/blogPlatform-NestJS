@@ -15,7 +15,7 @@ export class AppController {
   @Delete('testing/all-data')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteTestingData(): Promise<number> {
-    //await this.appService.deleteTestingData()
+    await this.appService.deleteTestingData()
     await this.appService.clearSQLTables()
     return
   }

@@ -50,6 +50,9 @@ export class AppService {
 
       DELETE FROM public."attempt_entity"
         WHERE 1 = 1;
+
+      DELETE FROM public."blog_entity"
+        WHERE 1 = 1;
       `)
   }
 }

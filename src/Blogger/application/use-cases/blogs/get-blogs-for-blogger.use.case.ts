@@ -3,10 +3,10 @@ import {
 } from '@nestjs/cqrs'
 import { NotFoundException } from '@nestjs/common'
 import { ReadBlogsQueryParams } from '../../../../blogs/api/models/ReadBlogsQuery'
-import { BlogsRepository } from '../../../infrastructure/blogs/blogs-db-repository'
 import {
     BlogViewModel, BlogsWithQueryOutputModel
 } from '../../../../blogs/application/dto/BlogViewModel'
+import { BlogsQuerySQLRepository } from '../../../infrastructure/blogs/blogs-query-sql-repository'
 
 export class GetBlogsForBloggerCommand implements ICommand {
     constructor(
@@ -18,14 +18,14 @@ export class GetBlogsForBloggerCommand implements ICommand {
 @CommandHandler(GetBlogsForBloggerCommand)
 export class GetBlogsForBloggerUseCase implements ICommandHandler<GetBlogsForBloggerCommand> {
     constructor(
-        private readonly blogsRepository: BlogsRepository,
+        private readonly blogsQueryRepository: BlogsQuerySQLRepository,
     ) { }
 
     async execute({
         blogsQueryParams,
         bloggerId
     }: GetBlogsForBloggerCommand): Promise<BlogsWithQueryOutputModel> {
-        const findedBlogsQueryData = await this.blogsRepository.findBlogs(blogsQueryParams, bloggerId)
+        const findedBlogsQueryData = await this.blogsQueryRepository.findBlogs(blogsQueryParams, bloggerId)
         findedBlogsQueryData.items = findedBlogsQueryData.items.map(blog => new BlogViewModel(blog))
 
         if (!findedBlogsQueryData.items.length) {

@@ -25,7 +25,7 @@ export class BlogsQuerySQLRepository {
         const queryCount = `
             SELECT count(*)
                 FROM public."blog_entity"
-                WHERE lower("name") LIKE lower($1) ${creatorId ? `AND "ownerId" = ${creatorId}` : ''}
+                WHERE lower("name") LIKE lower($1) AND "isBanned"=false ${creatorId ? `AND "ownerId" = ${creatorId}` : ''}
         `
 
         const totalCountData = await this.dataSource.query(queryCount, [`%${searchNameTerm}%`])
@@ -37,7 +37,7 @@ export class BlogsQuerySQLRepository {
         const query = `
             SELECT *
                 FROM public."blog_entity"
-                WHERE lower("name") LIKE lower($1) ${creatorId ? `AND "ownerId" = ${creatorId}` : ''}
+                WHERE lower("name") LIKE lower($1) AND "isBanned"=false ${creatorId ? `AND "ownerId" = ${creatorId}` : ''}
                 ORDER BY "${sortBy}" ${sortDirection}
                 LIMIT $2 OFFSET $3;
         `

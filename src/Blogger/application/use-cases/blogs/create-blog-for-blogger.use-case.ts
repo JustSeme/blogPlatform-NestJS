@@ -40,8 +40,6 @@ export class CreateBlogForBloggerUseCase implements ICommandHandler<CreateBlogFo
             creator.id
         )
 
-        const createdBlog = await this.blogsRepository.createBlog(creatingBlog)
-
-        return new BlogViewModel(createdBlog)
+        return this.blogsRepository.createBlog(creatingBlog)
     }
 }
