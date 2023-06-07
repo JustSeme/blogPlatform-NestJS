@@ -1,10 +1,10 @@
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
-import { BlogsRepository } from "../../../Blogger/infrastructure/blogs/blogs-db-repository"
 import { generateErrorsMessages } from "../../../general/helpers"
 import { BadRequestException } from '@nestjs/common'
-import { UsersQueryRepository } from "../../infrastructure/users-query-repository"
+import { UsersQuerySQLRepository } from "../../infrastructure/users-query-sql-repository"
+import { BlogsSQLRepository } from "../../../Blogger/infrastructure/blogs/blogs-sql-repository"
 
 export class BindUserCommand {
     constructor(
@@ -16,8 +16,8 @@ export class BindUserCommand {
 @CommandHandler(BindUserCommand)
 export class BindUserUseCase implements ICommandHandler<BindUserCommand> {
     constructor(
-        private blogsRepository: BlogsRepository,
-        private usersQueryRepository: UsersQueryRepository,
+        private blogsRepository: BlogsSQLRepository,
+        private usersQueryRepository: UsersQuerySQLRepository,
     ) { }
 
     async execute(command: BindUserCommand) {

@@ -5,9 +5,9 @@ import { PostDBModel } from "../../../domain/posts/PostsTypes"
 import { PostsRepository } from "../../../infrastructure/posts/posts-db-repository"
 import { PostsService } from "../../../../blogs/application/posts-service"
 import { PostsViewModel } from "../../../../blogs/application/dto/PostViewModel"
-import { BlogsRepository } from "../../../infrastructure/blogs/blogs-db-repository"
 import { ForbiddenException } from '@nestjs/common'
 import { PostInputModelWithoutBlogId } from "../../../api/models/PostInputModelWithoutBlogId"
+import { BlogsSQLRepository } from "../../../infrastructure/blogs/blogs-sql-repository"
 
 // Command
 export class CreatePostForBloggerCommand implements ICommand {
@@ -22,7 +22,7 @@ export class CreatePostForBloggerCommand implements ICommand {
 @CommandHandler(CreatePostForBloggerCommand)
 export class CreatePostForBloggerUseCase implements ICommandHandler<CreatePostForBloggerCommand> {
     constructor(
-        private readonly blogsRepository: BlogsRepository,
+        private readonly blogsRepository: BlogsSQLRepository,
         private readonly postsRepository: PostsRepository,
         private readonly postsService: PostsService,
     ) { }

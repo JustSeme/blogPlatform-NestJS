@@ -2,10 +2,10 @@ import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
 import { ReadCommentsQueryParams } from "../../../../blogs/api/models/ReadCommentsQuery"
-import { BlogsRepository } from "../../../infrastructure/blogs/blogs-db-repository"
 import { CommentsRepository } from "../../../../blogs/infrastructure/comments/comments-db-repository"
 import { CommentsService } from "../../../../blogs/application/comments-service"
 import { CommentsForBloggerWithQueryOutputModel } from "../../../../blogs/application/dto/CommentViewModelForBlogger"
+import { BlogsSQLRepository } from "../../../infrastructure/blogs/blogs-sql-repository"
 
 export class GetAllCommentsForBloggerBlogsCommand {
     constructor(
@@ -17,13 +17,12 @@ export class GetAllCommentsForBloggerBlogsCommand {
 @CommandHandler(GetAllCommentsForBloggerBlogsCommand)
 export class GetAllCommentsForBloggerBlogsUseCase implements ICommandHandler<GetAllCommentsForBloggerBlogsCommand> {
     constructor(
-        private blogsRepository: BlogsRepository,
+        private blogsRepository: BlogsSQLRepository,
         private commentsRepository: CommentsRepository,
         private commentsService: CommentsService,
     ) { }
 
     async execute(command: GetAllCommentsForBloggerBlogsCommand): Promise<CommentsForBloggerWithQueryOutputModel> {
-        // если передать пустой объект в findBlogs как queryParams, то подставятся дефолтные значения
         const blogIds = await this.blogsRepository.findAllBlogIdsByCreatorId(command.bloggerId)
 
         const commentsWithQueryData = await this.commentsRepository.getAllCommentsByAllBlogIds(command.readCommentsQuery, blogIds)

@@ -17,7 +17,7 @@ import { BanBlogInputModel } from "../../../SuperAdmin/api/models/BanBlogInputMo
 export class BlogsRepository {
     constructor(@InjectModel(Blog.name) private BlogsModel: BlogModelType) { }
 
-    async deleteBlog(id: string | null) {
+    /* async deleteBlog(id: string | null) {
         let result
         if (id === null) {
             result = await this.BlogsModel.deleteMany({})
@@ -63,7 +63,7 @@ export class BlogsRepository {
     async findAllBlogIdsByCreatorId(creatorId: string) {
         const allBlogsByCreatorId = await this.BlogsModel.find({ $and: [{ 'banInfo.isBanned': false }, { 'blogOwnerInfo.userId': creatorId }] })
         return allBlogsByCreatorId.map((blog) => blog.id)
-    }
+    } */
 
     async findBlogs(queryParams: ReadBlogsQueryParams, creatorId?: string | undefined): Promise<BlogsWithQueryOutputModel> {
         const {
@@ -98,6 +98,7 @@ export class BlogsRepository {
             page: +pageNumber,
             pageSize: +pageSize,
             totalCount: totalCount,
+            //@ts-ignore
             items: resultedBlogs
         }
     }
@@ -139,7 +140,7 @@ export class BlogsRepository {
         }
     }
 
-    async updateBanBlog(blogId: string, banInputModel: BanBlogInputModel): Promise<boolean> {
+    /* async updateBanBlog(blogId: string, banInputModel: BanBlogInputModel): Promise<boolean> {
         const banInfo: BlogBanInfoType = {
             isBanned: banInputModel.isBanned,
             banDate: new Date()
@@ -147,5 +148,5 @@ export class BlogsRepository {
 
         const isUpdatedData = await this.BlogsModel.updateOne({ id: blogId }, { banInfo: banInfo })
         return isUpdatedData.matchedCount === 1
-    }
+    } */
 }

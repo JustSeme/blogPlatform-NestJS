@@ -1,17 +1,22 @@
-import { v4 as uuidv4 } from "uuid"
+import { BlogDBModel } from "../../../Blogger/domain/blogs/BlogsTypes"
 
 export class BlogViewModel {
     public id: string
-    public createdAt: string
+    public createdAt: Date
+    public name: string
+    public description: string
+    public websiteUrl: string
+    public isMembership: boolean
 
     constructor(
-        public name: string,
-        public description: string,
-        public websiteUrl: string,
-        public isMembership: boolean,
+        rawBlog: BlogDBModel | BlogViewModel
     ) {
-        this.id = uuidv4()
-        this.createdAt = new Date().toISOString()
+        this.id = rawBlog.id
+        this.createdAt = rawBlog.createdAt
+        this.name = rawBlog.name
+        this.description = rawBlog.description
+        this.websiteUrl = rawBlog.websiteUrl
+        this.isMembership = rawBlog.isMembership
     }
 }
 

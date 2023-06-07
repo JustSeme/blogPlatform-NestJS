@@ -1,10 +1,10 @@
 import { ICommandHandler } from "@nestjs/cqrs"
 import { PostInputModel } from "../../../../Blogger/api/models/PostInputModel"
-import { BlogsRepository } from "../../../../Blogger/infrastructure/blogs/blogs-db-repository"
 import { PostsRepository } from "../../../../Blogger/infrastructure/posts/posts-db-repository"
 import { PostsService } from "../../posts-service"
 import { PostDBModel } from "../../../../Blogger/domain/posts/PostsTypes"
 import { PostsViewModel } from "../../dto/PostViewModel"
+import { BlogsSQLRepository } from "../../../../Blogger/infrastructure/blogs/blogs-sql-repository"
 
 export class CreatePostCommand {
     constructor(
@@ -14,7 +14,7 @@ export class CreatePostCommand {
 
 export class CreatePostUseCase implements ICommandHandler<CreatePostCommand> {
     constructor(
-        private readonly blogsRepository: BlogsRepository,
+        private readonly blogsRepository: BlogsSQLRepository,
         private readonly postsRepository: PostsRepository,
         private readonly postsService: PostsService,
     ) { }

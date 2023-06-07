@@ -5,9 +5,9 @@ import { ReadBannedUsersQueryParams } from "../../../api/models/ReadBannedUsersQ
 import { BannedUsersOutputModel } from "../../dto/BannedUserViewModel"
 import { UsersQueryRepository } from "../../../../SuperAdmin/infrastructure/users-query-repository"
 import { BloggerService } from "../../blogger.service"
-import { BlogsRepository } from "../../../infrastructure/blogs/blogs-db-repository"
 import { ForbiddenException } from "@nestjs/common"
 import { generateErrorsMessages } from "../../../../general/helpers"
+import { BlogsSQLRepository } from "../../../infrastructure/blogs/blogs-sql-repository"
 
 export class GetAllBannedUsersForBlogCommand {
     constructor(
@@ -23,14 +23,14 @@ export class GetAllBannedUsersForBlogUseCase implements ICommandHandler<GetAllBa
     constructor(
         private usersQueryRepository: UsersQueryRepository,
         private bloggerService: BloggerService,
-        private blogsRepository: BlogsRepository,
+        private blogsRepository: BlogsSQLRepository,
     ) { }
 
 
     async execute(command: GetAllBannedUsersForBlogCommand): Promise<BannedUsersOutputModel> {
         const blogById = await this.blogsRepository.findBlogById(command.blogId)
 
-        if (!blogById.isCurrentUserOwner(command.currentUserId)) {
+        if (blogById.blogOwnerInfo.userId !== command.currentUserId) {
             throw new ForbiddenException(generateErrorsMessages('That is not your own', 'userId'))
         }
 

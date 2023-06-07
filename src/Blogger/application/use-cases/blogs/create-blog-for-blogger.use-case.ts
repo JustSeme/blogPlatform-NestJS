@@ -2,11 +2,10 @@ import {
     CommandHandler, ICommand, ICommandHandler
 } from "@nestjs/cqrs"
 import { BlogInputModel } from "../../../api/models/BlogInputModel"
-import { BlogsRepository } from "../../../infrastructure/blogs/blogs-db-repository"
 import { BlogViewModel } from "../../../../blogs/application/dto/BlogViewModel"
 import { BlogDTO } from "../../../domain/blogs/BlogsTypes"
-import { BlogsService } from "../../../../blogs/application/blogs-service"
 import { UsersQuerySQLRepository } from "../../../../SuperAdmin/infrastructure/users-query-sql-repository"
+import { BlogsSQLRepository } from "../../../infrastructure/blogs/blogs-sql-repository"
 
 // Command
 export class CreateBlogForBloggerCommand implements ICommand {
@@ -20,8 +19,7 @@ export class CreateBlogForBloggerCommand implements ICommand {
 @CommandHandler(CreateBlogForBloggerCommand)
 export class CreateBlogForBloggerUseCase implements ICommandHandler<CreateBlogForBloggerCommand> {
     constructor(
-        private readonly blogsRepository: BlogsRepository,
-        private readonly blogsService: BlogsService,
+        private readonly blogsRepository: BlogsSQLRepository,
         private readonly usersQueryRepository: UsersQuerySQLRepository
     ) { }
 
@@ -33,7 +31,7 @@ export class CreateBlogForBloggerUseCase implements ICommandHandler<CreateBlogFo
 
         const creator = await this.usersQueryRepository.findUserById(creatorId)
 
-        const createdBlog = new BlogDTO(
+        const creatingBlog = new BlogDTO(
             blogInputModel.name,
             blogInputModel.description,
             blogInputModel.websiteUrl,
@@ -42,9 +40,8 @@ export class CreateBlogForBloggerUseCase implements ICommandHandler<CreateBlogFo
             creator.id
         )
 
-        await this.blogsRepository.createBlog(createdBlog)
+        const createdBlog = await this.blogsRepository.createBlog(creatingBlog)
 
-        const displayedBlog = this.blogsService.prepareBlogForDisplay([createdBlog])
-        return displayedBlog[0]
+        return new BlogViewModel(createdBlog)
     }
 }

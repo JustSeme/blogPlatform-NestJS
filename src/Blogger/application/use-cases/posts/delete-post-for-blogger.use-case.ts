@@ -1,9 +1,9 @@
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
-import { BlogsRepository } from "../../../infrastructure/blogs/blogs-db-repository"
 import { ForbiddenException } from "@nestjs/common"
 import { PostsRepository } from "../../../infrastructure/posts/posts-db-repository"
+import { BlogsSQLRepository } from "../../../infrastructure/blogs/blogs-sql-repository"
 
 export class DeletePostForBloggerCommand {
     constructor(
@@ -17,7 +17,7 @@ export class DeletePostForBloggerCommand {
 @CommandHandler(DeletePostForBloggerCommand)
 export class DeletePostForBloggerUseCase implements ICommandHandler<DeletePostForBloggerCommand> {
     constructor(
-        private blogsRepository: BlogsRepository,
+        private blogsRepository: BlogsSQLRepository,
         private postsRepository: PostsRepository,
     ) { }
 

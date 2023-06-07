@@ -2,9 +2,9 @@ import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
 import { BlogInputModel } from "../../../api/models/BlogInputModel"
-import { BlogsRepository } from "../../../infrastructure/blogs/blogs-db-repository"
 import { ForbiddenException } from "@nestjs/common"
 import { generateErrorsMessages } from "../../../../general/helpers"
+import { BlogsSQLRepository } from "../../../infrastructure/blogs/blogs-sql-repository"
 
 export class UpdateBlogForBloggerCommand {
     constructor(
@@ -18,7 +18,7 @@ export class UpdateBlogForBloggerCommand {
 @CommandHandler(UpdateBlogForBloggerCommand)
 export class UpdateBlogForBloggerUseCase implements ICommandHandler<UpdateBlogForBloggerCommand> {
     constructor(
-        private readonly blogsRepository: BlogsRepository
+        private readonly blogsRepository: BlogsSQLRepository
     ) { }
 
     async execute(command: UpdateBlogForBloggerCommand): Promise<boolean> {

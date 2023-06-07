@@ -3,8 +3,9 @@ import {
 } from '@nestjs/cqrs'
 import { ReadBlogsQueryParams } from '../../../api/models/ReadBlogsQuery'
 import { BlogsRepository } from '../../../../Blogger/infrastructure/blogs/blogs-db-repository'
-import { BlogsService } from '../../blogs-service'
-import { BlogsWithQueryOutputModel } from '../../dto/BlogViewModel'
+import {
+    BlogViewModel, BlogsWithQueryOutputModel
+} from '../../dto/BlogViewModel'
 import { NotFoundException } from '@nestjs/common'
 
 export class GetBlogsCommand implements ICommand {
@@ -15,12 +16,11 @@ export class GetBlogsCommand implements ICommand {
 export class GetBlogsUseCase implements ICommandHandler<GetBlogsCommand> {
     constructor(
         private readonly blogsRepository: BlogsRepository,
-        private readonly blogsService: BlogsService,
     ) { }
 
     async execute({ blogsQueryParams }: GetBlogsCommand): Promise<BlogsWithQueryOutputModel> {
         const findedBlogsQueryData = await this.blogsRepository.findBlogs(blogsQueryParams)
-        findedBlogsQueryData.items = this.blogsService.prepareBlogForDisplay(findedBlogsQueryData.items)
+        findedBlogsQueryData.items = findedBlogsQueryData.items.map(blog => new BlogViewModel(blog))
 
         if (!findedBlogsQueryData.items.length) {
             throw new NotFoundException('No one blogs is founded')

@@ -2,9 +2,9 @@ import {
     CommandHandler, ICommand, ICommandHandler
 } from "@nestjs/cqrs"
 import { BlogInputModel } from "../../../../Blogger/api/models/BlogInputModel"
-import { BlogsRepository } from "../../../../Blogger/infrastructure/blogs/blogs-db-repository"
 import { BlogViewModel } from "../../dto/BlogViewModel"
 import { BlogDTO } from "../../../../Blogger/domain/blogs/BlogsTypes"
+import { BlogsSQLRepository } from "../../../../Blogger/infrastructure/blogs/blogs-sql-repository"
 
 // Command
 export class CreateBlogCommand implements ICommand {
@@ -17,12 +17,13 @@ export class CreateBlogCommand implements ICommand {
 @CommandHandler(CreateBlogCommand)
 export class CreateBlogUseCase implements ICommandHandler<CreateBlogCommand> {
     constructor(
-        private readonly blogsRepository: BlogsRepository
+        private readonly blogsRepository: BlogsSQLRepository
     ) { }
 
     async execute(command: CreateBlogCommand): Promise<BlogViewModel> {
         const { blogInputModel } = command
-        const createdBlog = new BlogDTO(
+
+        const creatingBlog = new BlogDTO(
             blogInputModel.name,
             blogInputModel.description,
             blogInputModel.websiteUrl,
@@ -30,7 +31,8 @@ export class CreateBlogUseCase implements ICommandHandler<CreateBlogCommand> {
             'superAdmin',
             'superAdmin',
         )
-        await this.blogsRepository.createBlog(createdBlog)
-        return createdBlog
+
+        const createdBlog = await this.blogsRepository.createBlog(creatingBlog)
+        return new BlogViewModel(createdBlog)
     }
 }
