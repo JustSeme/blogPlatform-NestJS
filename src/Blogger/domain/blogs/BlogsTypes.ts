@@ -1,5 +1,4 @@
 import { Model } from "mongoose"
-import { v4 as uuidv4 } from "uuid"
 import {
     Blog, BlogBanInfoType
 } from "./BlogsSchema"
@@ -11,8 +10,6 @@ export type BlogOwnerInfoType = {
 
 // data transfer object
 export class BlogDTO {
-    public id: string
-    public createdAt: string
     public blogOwnerInfo: BlogOwnerInfoType
     public banInfo: BlogBanInfoType
 
@@ -32,8 +29,6 @@ export class BlogDTO {
             userId,
             userLogin
         }
-        this.id = uuidv4()
-        this.createdAt = new Date().toISOString()
     }
 }
 
