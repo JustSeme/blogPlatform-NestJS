@@ -4,7 +4,7 @@ import {
 import { BlogInputModel } from "../../../../Blogger/api/models/BlogInputModel"
 import { BlogsRepository } from "../../../../Blogger/infrastructure/blogs/blogs-db-repository"
 import { BlogViewModel } from "../../dto/BlogViewModel"
-import { BlogDBModel } from "../../../../Blogger/domain/blogs/BlogsTypes"
+import { BlogDTO } from "../../../../Blogger/domain/blogs/BlogsTypes"
 
 // Command
 export class CreateBlogCommand implements ICommand {
@@ -22,7 +22,7 @@ export class CreateBlogUseCase implements ICommandHandler<CreateBlogCommand> {
 
     async execute(command: CreateBlogCommand): Promise<BlogViewModel> {
         const { blogInputModel } = command
-        const createdBlog = new BlogDBModel(
+        const createdBlog = new BlogDTO(
             blogInputModel.name,
             blogInputModel.description,
             blogInputModel.websiteUrl,

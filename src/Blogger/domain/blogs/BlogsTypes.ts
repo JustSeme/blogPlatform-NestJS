@@ -10,7 +10,7 @@ export type BlogOwnerInfoType = {
 }
 
 // data transfer object
-export class BlogDBModel {
+export class BlogDTO {
     public id: string
     public createdAt: string
     public blogOwnerInfo: BlogOwnerInfoType
@@ -35,6 +35,51 @@ export class BlogDBModel {
         this.id = uuidv4()
         this.createdAt = new Date().toISOString()
     }
+}
+
+export class BlogSQLModel {
+    public id: string
+    public name: string
+    public description: string
+    public websiteUrl: string
+    public createdAt: Date
+    public isMembership: boolean
+    public ownerId: string
+    public ownerLogin: string
+    public isBanned: boolean
+    public banDate: Date
+}
+
+export class BlogDBModel {
+    public id: string
+    public createdAt: Date
+    public blogOwnerInfo: BlogOwnerInfoType
+    public banInfo: BlogBanInfoType
+    public name: string
+    public description: string
+    public websiteUrl: string
+    public isMembership: boolean
+
+    constructor(rawBlog: BlogSQLModel) {
+        this.id = rawBlog.id
+        this.createdAt = rawBlog.createdAt
+
+        this.blogOwnerInfo = {
+            userId: rawBlog.ownerId,
+            userLogin: rawBlog.ownerLogin
+        }
+
+        this.banInfo = {
+            isBanned: rawBlog.isBanned,
+            banDate: rawBlog.banDate
+        }
+
+        this.name = rawBlog.name
+        this.description = rawBlog.description
+        this.websiteUrl = rawBlog.websiteUrl
+        this.isMembership = rawBlog.isMembership
+    }
+
 }
 
 export type BlogModelType = Model<Blog>

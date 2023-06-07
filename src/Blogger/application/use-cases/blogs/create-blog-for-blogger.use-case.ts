@@ -4,7 +4,7 @@ import {
 import { BlogInputModel } from "../../../api/models/BlogInputModel"
 import { BlogsRepository } from "../../../infrastructure/blogs/blogs-db-repository"
 import { BlogViewModel } from "../../../../blogs/application/dto/BlogViewModel"
-import { BlogDBModel } from "../../../domain/blogs/BlogsTypes"
+import { BlogDTO } from "../../../domain/blogs/BlogsTypes"
 import { BlogsService } from "../../../../blogs/application/blogs-service"
 import { UsersQuerySQLRepository } from "../../../../SuperAdmin/infrastructure/users-query-sql-repository"
 
@@ -33,7 +33,7 @@ export class CreateBlogForBloggerUseCase implements ICommandHandler<CreateBlogFo
 
         const creator = await this.usersQueryRepository.findUserById(creatorId)
 
-        const createdBlog = new BlogDBModel(
+        const createdBlog = new BlogDTO(
             blogInputModel.name,
             blogInputModel.description,
             blogInputModel.websiteUrl,

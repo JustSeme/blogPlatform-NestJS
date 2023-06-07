@@ -125,6 +125,7 @@ import { AttemptEntity } from "./security/domain/attempt.entity"
 import {
   DeviceAuthSession, DeviceAuthSessionsSchema
 } from "./security/domain/DeviceAuthSessionSchema"
+import { BlogEntity } from "./Blogger/domain/blogs/blog.entity"
 
 const authUseCases = [
   LogoutUseCase,
@@ -305,7 +306,7 @@ const {
       autoLoadEntities: true,
       synchronize: true,
       ssl: true,
-      entities: [UserEntity, AuthSession, AttemptEntity]
+      entities: [UserEntity, AuthSession, AttemptEntity, BlogEntity]
     }),
     PassportModule,
   ],

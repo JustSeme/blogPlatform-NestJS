@@ -1,7 +1,7 @@
 import {
     Prop, Schema, SchemaFactory
 } from "@nestjs/mongoose"
-import { BlogDBModel } from "./BlogsTypes"
+import { BlogDTO } from "./BlogsTypes"
 import {
     BlogOwnerInfo, BlogOwnerInfoSchema
 } from "./BlogOwnerInfoSchema"
@@ -61,6 +61,6 @@ export class Blog {
     }
 }
 
-export const BlogSchema = SchemaFactory.createForClass<BlogDBModel>(Blog)
+export const BlogSchema = SchemaFactory.createForClass<BlogDTO>(Blog)
 
 BlogSchema.methods = { isCurrentUserOwner: Blog.prototype.isCurrentUserOwner }

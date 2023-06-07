@@ -5,7 +5,7 @@ import {
     Blog, BlogBanInfoType
 } from "../../domain/blogs/BlogsSchema"
 import {
-    BlogDBModel, BlogModelType
+    BlogDTO, BlogModelType
 } from "../../domain/blogs/BlogsTypes"
 import { BlogDocument } from "./BlogsTypes"
 import { ReadBlogsQueryParams } from "../../../blogs/api/models/ReadBlogsQuery"
@@ -28,7 +28,7 @@ export class BlogsRepository {
         return result.deletedCount === 1
     }
 
-    async createBlog(createdBlog: BlogDBModel) {
+    async createBlog(createdBlog: BlogDTO) {
         await this.BlogsModel.create(createdBlog)
     }
 

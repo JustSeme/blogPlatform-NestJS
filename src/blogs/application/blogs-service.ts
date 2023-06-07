@@ -1,12 +1,12 @@
 import { Injectable } from "@nestjs/common"
-import { BlogDBModel } from "../../Blogger/domain/blogs/BlogsTypes"
+import { BlogDTO } from "../../Blogger/domain/blogs/BlogsTypes"
 import { BlogViewModel } from "./dto/BlogViewModel"
 
 @Injectable()
 export class BlogsService {
 
-    prepareBlogForDisplay(rawBlogs: Array<BlogDBModel | BlogViewModel>): BlogViewModel[] {
-        const displayedBlogs = rawBlogs.map((rawBlog: BlogDBModel) => {
+    prepareBlogForDisplay(rawBlogs: Array<BlogDTO | BlogViewModel>): BlogViewModel[] {
+        const displayedBlogs = rawBlogs.map((rawBlog: BlogDTO) => {
             return {
                 id: rawBlog.id,
                 createdAt: rawBlog.createdAt,
