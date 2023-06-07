@@ -4,6 +4,7 @@ import {
     Entity, OneToMany, PrimaryGeneratedColumn
 } from "typeorm"
 import { AuthSession } from "../../security/domain/auth-session.entity"
+import { BlogEntity } from "../../Blogger/domain/blogs/blog.entity"
 
 @Entity()
 export class UserEntity {
@@ -52,4 +53,7 @@ export class UserEntity {
 
     @OneToMany(() => AuthSession, (authSession) => authSession.user)
     authSessions: AuthSession[]
+
+    @OneToMany(() => BlogEntity, (blog) => blog.user)
+    userBlogs: BlogEntity[]
 }

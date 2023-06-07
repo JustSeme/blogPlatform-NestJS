@@ -1,8 +1,9 @@
 import {
     Column,
     CreateDateColumn,
-    Entity, PrimaryGeneratedColumn
+    Entity, ManyToOne, PrimaryGeneratedColumn
 } from "typeorm"
+import { UserEntity } from "../../../SuperAdmin/domain/user.entity"
 
 @Entity()
 export class BlogEntity {
@@ -35,4 +36,7 @@ export class BlogEntity {
 
     @Column({ default: null })
     banDate: Date
+
+    @ManyToOne(() => UserEntity, (user) => user.userBlogs)
+    user: UserEntity
 }
