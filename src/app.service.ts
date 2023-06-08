@@ -45,13 +45,13 @@ export class AppService {
       DELETE FROM public."auth_session"
         WHERE 1 = 1;
 
+      DELETE FROM public."blog_entity"
+        WHERE 1 = 1;
+
       DELETE FROM public."user_entity"
         WHERE 1 = 1;
 
       DELETE FROM public."attempt_entity"
-        WHERE 1 = 1;
-
-      DELETE FROM public."blog_entity"
         WHERE 1 = 1;
       `)
   }
