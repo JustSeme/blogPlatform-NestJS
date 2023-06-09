@@ -2,7 +2,7 @@ import { LikeType } from '../api/models/LikeInputModel'
 import { PostsViewModel } from './dto/PostViewModel'
 import { Injectable } from '@nestjs/common'
 import {
-    ExtendedLikeObjectType, PostDTO
+    ExtendedLikeObjectType, PostDBModel
 } from '../../Blogger/domain/posts/PostsTypes'
 import { JwtService } from '../../general/adapters/jwt.adapter'
 
@@ -12,7 +12,7 @@ export class PostsService {
         private jwtService: JwtService
     ) { }
 
-    /* transformPostWithDefaultLikesInfo(rawPost: PostDTO): PostsViewModel {
+    transformPostWithDefaultLikesInfo(rawPost: PostDBModel | PostsViewModel): PostsViewModel {
         return {
             id: rawPost.id,
             content: rawPost.content,
@@ -30,14 +30,14 @@ export class PostsService {
         }
     }
 
-    async transformPostsForDisplay(postsArray: PostDTO[], accessToken: string | null): Promise<PostsViewModel[]> {
+    async transformPostsForDisplay(postsArray: Array<PostDBModel>, accessToken: string | null): Promise<PostsViewModel[]> {
         let userId: string | null = null
         if (accessToken) {
             const jwtResult = await this.jwtService.verifyAccessToken(accessToken)
             userId = jwtResult ? jwtResult.userId : null
         }
 
-        const convertedPosts = postsArray.map((post: PostDTO) => {
+        const convertedPosts = postsArray.map((post: PostDBModel) => {
             const likesInfoData = post.extendedLikesInfo
 
             likesInfoData.likes = likesInfoData.likes.filter((like) => !like.isBanned)
@@ -85,5 +85,5 @@ export class PostsService {
         })
 
         return convertedPosts
-    } */
+    }
 }

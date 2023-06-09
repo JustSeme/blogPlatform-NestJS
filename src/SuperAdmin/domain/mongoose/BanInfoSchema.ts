@@ -2,7 +2,7 @@ import {
     Prop, Schema, SchemaFactory
 } from "@nestjs/mongoose"
 import mongoose from "mongoose"
-import { BanInfoDBType } from "../application/dto/UsersViewModel"
+import { BanInfoDBType } from "../../application/dto/UsersViewModel"
 
 @Schema()
 export class BanInfo {

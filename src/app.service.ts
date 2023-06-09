@@ -9,7 +9,7 @@ import { Attempt } from './security/domain/AttemptsSchema'
 import { AttemptModelType } from './security/domain/AttemptsType'
 import { CommentEntity } from './blogs/domain/comments/Comments.schema'
 import { UserModelType } from './SuperAdmin/domain/UsersTypes'
-import { User } from './SuperAdmin/domain/UsersSchema'
+import { User } from './SuperAdmin/domain/mongoose/UsersSchema'
 import { InjectDataSource } from '@nestjs/typeorm'
 import { DataSource } from 'typeorm'
 

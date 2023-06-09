@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common"
 import { InjectDataSource } from "@nestjs/typeorm"
 import { DataSource } from "typeorm"
 import {
+    PostDBModel,
     PostDTO, PostSQLModel
 } from "../../domain/posts/PostsTypes"
 import { PostsViewModel } from "../../../blogs/application/dto/PostViewModel"
@@ -10,6 +11,10 @@ import { PostInputModel } from "../../api/models/PostInputModel"
 @Injectable()
 export class PostsSQLRepository {
     constructor(@InjectDataSource() private dataSource: DataSource) { }
+
+    async unHideAllLikeEntitiesForPostsByUserId(userId: string) {
+        return true
+    }
 
     async createPost(creatingPost: PostDTO): Promise<PostsViewModel> {
         const queryString = `
@@ -48,7 +53,7 @@ export class PostsSQLRepository {
         }
     }
 
-    async getPostById(postId: string): Promise<PostsViewModel> {
+    async getPostById(postId: string): Promise<PostDBModel> {
         const queryString = `
             SELECT *
                 FROM public."post_entity"
@@ -62,7 +67,7 @@ export class PostsSQLRepository {
                 return null
             }
 
-            return new PostsViewModel(postData[0])
+            return new PostDBModel(postData[0])
         } catch (err) {
             console.error(err)
             return null

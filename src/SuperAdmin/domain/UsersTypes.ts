@@ -1,7 +1,7 @@
 import { add } from 'date-fns'
 import { Model } from 'mongoose'
 import { v4 as uuidv4 } from 'uuid'
-import { User } from './UsersSchema'
+import { User } from './mongoose/UsersSchema'
 import { HydratedUser } from '../infrastructure/UsersTypes'
 import { BanInfoDBType } from '../application/dto/UsersViewModel'
 import { BanUserForBlogInfoType } from '../../Blogger/infrastructure/blogs/BanUserForBlogInfoType'

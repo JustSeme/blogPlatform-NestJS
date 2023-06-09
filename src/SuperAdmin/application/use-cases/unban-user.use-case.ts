@@ -1,9 +1,9 @@
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
-import { PostsRepository } from "../../../Blogger/infrastructure/posts/posts-db-repository"
 import { CommentsRepository } from "../../../blogs/infrastructure/comments/comments-db-repository"
 import { UsersSQLRepository } from "../../infrastructure/users-sql-repository"
+import { PostsSQLRepository } from "../../../Blogger/infrastructure/posts/posts-sql-repository"
 
 export class UnbanUserCommand {
     constructor(
@@ -15,7 +15,7 @@ export class UnbanUserCommand {
 export class UnbanUserUseCase implements ICommandHandler<UnbanUserCommand> {
     constructor(
         private usersRepository: UsersSQLRepository,
-        private postsRepository: PostsRepository,
+        private postsRepository: PostsSQLRepository,
         private commentsRepository: CommentsRepository,
     ) { }
 
@@ -28,7 +28,7 @@ export class UnbanUserUseCase implements ICommandHandler<UnbanUserCommand> {
     }
 
     async unHideUserEnitties(userId: string) {
-        const isPostsHided = await this.postsRepository.unHideAllPostsForCurrentUser(userId)
+        const isPostsHided = await this.postsRepository.hideAllPostsForCurrentUser(userId)
         const isPostsLikesHided = await this.postsRepository.unHideAllLikeEntitiesForPostsByUserId(userId)
 
         const isCommentsHided = await this.commentsRepository.unHideAllCommentsForCurrentUser(userId)

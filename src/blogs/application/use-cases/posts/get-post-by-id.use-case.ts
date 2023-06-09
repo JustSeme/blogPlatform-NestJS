@@ -1,10 +1,10 @@
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
-import { PostsRepository } from "../../../../Blogger/infrastructure/posts/posts-db-repository"
 import { PostsService } from "../../posts-service"
 import { PostsViewModel } from "../../dto/PostViewModel"
 import { NotFoundException } from '@nestjs/common'
+import { PostsSQLRepository } from "../../../../Blogger/infrastructure/posts/posts-sql-repository"
 
 export class GetPostByIdCommand {
     constructor(
@@ -17,7 +17,7 @@ export class GetPostByIdCommand {
 @CommandHandler(GetPostByIdCommand)
 export class GetPostByIdUseCase implements ICommandHandler<GetPostByIdCommand> {
     constructor(
-        private readonly postsRepository: PostsRepository,
+        private readonly postsRepository: PostsSQLRepository,
         private readonly postsService: PostsService,
     ) { }
 

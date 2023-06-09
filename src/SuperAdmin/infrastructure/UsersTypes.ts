@@ -1,5 +1,5 @@
 import { HydratedDocument } from "mongoose"
-import { User } from "../domain/UsersSchema"
+import { User } from "../domain/mongoose/UsersSchema"
 import {
     EmailConfirmationType, PasswordConfirmationType
 } from "../domain/UsersTypes"

@@ -96,7 +96,7 @@ import { UsersRepository } from "./SuperAdmin/infrastructure/users-db-repository
 import { UsersQueryRepository } from "./SuperAdmin/infrastructure/users-query-repository"
 import {
   User, UsersSchema
-} from "./SuperAdmin/domain/UsersSchema"
+} from "./SuperAdmin/domain/mongoose/UsersSchema"
 import { GetPostsForBlogUseCase } from "./blogs/application/use-cases/blogs/get-posts-for-blog.use-case"
 import { GetPostsUseCase } from "./blogs/application/use-cases/posts/get-posts.use-case"
 import { GetPostByIdUseCase } from "./blogs/application/use-cases/posts/get-post-by-id.use-case"
@@ -118,7 +118,7 @@ import { UsersSQLRepository } from "./SuperAdmin/infrastructure/users-sql-reposi
 import { UsersQuerySQLRepository } from "./SuperAdmin/infrastructure/users-query-sql-repository"
 import { DevicesSQLRepository } from "./security/infrastructure/devices-sql-repository"
 import { AttemptsSQLRepository } from "./security/infrastructure/attempts-sql-repository"
-import { UserEntity } from "./SuperAdmin/domain/user.entity"
+import { UserEntity } from "./SuperAdmin/domain/typeORM/user.entity"
 import { AuthSession } from "./security/domain/auth-session.entity"
 import { AttemptEntity } from "./security/domain/attempt.entity"
 import {

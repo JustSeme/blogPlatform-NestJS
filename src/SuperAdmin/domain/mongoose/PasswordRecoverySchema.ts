@@ -1,4 +1,4 @@
-import { PasswordConfirmationType } from "./UsersTypes"
+import { PasswordConfirmationType } from "../UsersTypes"
 import {
     Prop, Schema, SchemaFactory
 } from "@nestjs/mongoose/dist"

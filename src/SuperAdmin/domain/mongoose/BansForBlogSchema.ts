@@ -1,7 +1,7 @@
 import {
     Prop, Schema, SchemaFactory
 } from "@nestjs/mongoose"
-import { BanUserForBlogInfoType } from "../../Blogger/infrastructure/blogs/BanUserForBlogInfoType"
+import { BanUserForBlogInfoType } from "../../../Blogger/infrastructure/blogs/BanUserForBlogInfoType"
 
 @Schema()
 export class BanForBlog {

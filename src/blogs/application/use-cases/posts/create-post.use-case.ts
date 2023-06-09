@@ -1,10 +1,10 @@
 import { ICommandHandler } from "@nestjs/cqrs"
 import { PostInputModel } from "../../../../Blogger/api/models/PostInputModel"
-import { PostsRepository } from "../../../../Blogger/infrastructure/posts/posts-db-repository"
 import { PostsService } from "../../posts-service"
 import { PostDTO } from "../../../../Blogger/domain/posts/PostsTypes"
 import { PostsViewModel } from "../../dto/PostViewModel"
 import { BlogsSQLRepository } from "../../../../Blogger/infrastructure/blogs/blogs-sql-repository"
+import { PostsSQLRepository } from "../../../../Blogger/infrastructure/posts/posts-sql-repository"
 
 export class CreatePostCommand {
     constructor(
@@ -15,7 +15,7 @@ export class CreatePostCommand {
 export class CreatePostUseCase implements ICommandHandler<CreatePostCommand> {
     constructor(
         private readonly blogsRepository: BlogsSQLRepository,
-        private readonly postsRepository: PostsRepository,
+        private readonly postsRepository: PostsSQLRepository,
         private readonly postsService: PostsService,
     ) { }
 
@@ -24,7 +24,7 @@ export class CreatePostUseCase implements ICommandHandler<CreatePostCommand> {
 
         const blogById = await this.blogsRepository.findBlogById(body.blogId)
 
-        const createdPost: PostDTO = new PostDTO(
+        const creatingPost: PostDTO = new PostDTO(
             body.title,
             body.shortDescription,
             body.content,
@@ -35,9 +35,6 @@ export class CreatePostUseCase implements ICommandHandler<CreatePostCommand> {
             false
         )
 
-        await this.postsRepository.createPost(createdPost)
-
-        const displayedPost = await this.postsService.transformPostWithDefaultLikesInfo(createdPost)
-        return displayedPost
+        return this.postsRepository.createPost(creatingPost)
     }
 }
