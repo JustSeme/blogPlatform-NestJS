@@ -43,6 +43,6 @@ export class BlogEntity {
     @OneToMany(() => BansUsersForBlogs, (ban) => ban.blog)
     bansForBlog: BansUsersForBlogs[]
 
-    @OneToMany(() => PostEntity, (post) => post.blog)
+    @OneToMany(() => PostEntity, (post) => post.blogId)
     blogPosts: PostEntity[]
 }

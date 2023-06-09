@@ -2,9 +2,9 @@ import {
     CommandHandler, ICommand, ICommandHandler
 } from '@nestjs/cqrs'
 import { ReadPostsQueryParams } from '../../../api/models/ReadPostsQuery'
-import { PostsRepository } from '../../../../Blogger/infrastructure/posts/posts-db-repository'
 import { PostsService } from '../../posts-service'
 import { PostsWithQueryOutputModel } from '../../../../Blogger/domain/posts/PostsTypes'
+import { PostsQuerySQLRepository } from '../../../../Blogger/infrastructure/posts/posts-query-sql-repository'
 
 export class GetPostsForBlogCommand implements ICommand {
     constructor(
@@ -17,13 +17,13 @@ export class GetPostsForBlogCommand implements ICommand {
 @CommandHandler(GetPostsForBlogCommand)
 export class GetPostsForBlogUseCase implements ICommandHandler<GetPostsForBlogCommand> {
     constructor(
-        private readonly postsRepository: PostsRepository,
+        private readonly postsQueryRepository: PostsQuerySQLRepository,
         private readonly postsService: PostsService,
     ) { }
 
     async execute(command: GetPostsForBlogCommand): Promise<PostsWithQueryOutputModel> {
         const accessToken = command.authorizationHeader ? command.authorizationHeader.split(' ')[1] : null
-        const postsWithQueryData = await this.postsRepository.findPosts(command.queryParams, command.blogId)
+        const postsWithQueryData = await this.postsQueryRepository.findPosts(command.queryParams, command.blogId)
 
         const displayedPosts = await this.postsService.transformPostsForDisplay(postsWithQueryData.items, accessToken)
         const postsViewQueryData = {

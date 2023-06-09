@@ -1,6 +1,7 @@
 import { PostsViewModel } from "../../../blogs/application/dto/PostViewModel"
 import { Model } from "mongoose"
 import { Post } from "./PostsSchema"
+import { PostEntity } from "./post.entity"
 
 //data transfer object
 export class PostDTO {
@@ -44,7 +45,7 @@ export class PostDBModel {
     public isBanned: boolean
 
 
-    constructor(rawPost: PostSQLModel) {
+    constructor(rawPost: PostEntity) {
         this.id = rawPost.id
         this.createdAt = rawPost.createdAt
 
@@ -55,31 +56,18 @@ export class PostDBModel {
         }
 
         this.postOwnerInfo = {
-            userId: rawPost.ownerId,
+            userId: rawPost.ownerId as string,
             userLogin: rawPost.ownerLogin
         }
 
         this.title = rawPost.title
         this.shortDescription = rawPost.shortDescription
         this.content = rawPost.content
-        this.blogId = rawPost.blogId
+        this.blogId = rawPost.blogId as string
         this.blogName = rawPost.blogName
         this.isBanned = rawPost.isBanned
     }
 
-}
-
-export class PostSQLModel {
-    public id: string
-    public title: string
-    public shortDescription: string
-    public content: string
-    public createdAt: Date
-    public isBanned: boolean
-    public blogId: string
-    public blogName: string
-    public ownerId: string
-    public ownerLogin: string
 }
 
 export type PostsWithQueryOutputModel = {

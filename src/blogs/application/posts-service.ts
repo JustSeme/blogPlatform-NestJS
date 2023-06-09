@@ -30,7 +30,7 @@ export class PostsService {
         }
     }
 
-    async transformPostsForDisplay(postsArray: Array<PostDBModel>, accessToken: string | null): Promise<PostsViewModel[]> {
+    async transformPostsForDisplay(postsArray: Array<PostDBModel | PostsViewModel>, accessToken: string | null): Promise<PostsViewModel[]> {
         let userId: string | null = null
         if (accessToken) {
             const jwtResult = await this.jwtService.verifyAccessToken(accessToken)

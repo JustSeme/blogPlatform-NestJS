@@ -1,4 +1,4 @@
-import { PostSQLModel } from "../../../Blogger/domain/posts/PostsTypes"
+import { PostEntity } from "../../../Blogger/domain/posts/post.entity"
 import { LikeType } from "../../api/models/LikeInputModel"
 
 export class PostsViewModel {
@@ -11,12 +11,12 @@ export class PostsViewModel {
     public createdAt: Date
     public extendedLikesInfo: ExtendedLikesInfoViewType
 
-    constructor(rawPost: PostSQLModel) {
+    constructor(rawPost: PostEntity) {
         this.id = rawPost.id
         this.title = rawPost.title
         this.shortDescription = rawPost.shortDescription
         this.content = rawPost.content
-        this.blogId = rawPost.blogId
+        this.blogId = rawPost.blogId as string
         this.blogName = rawPost.blogName
         this.createdAt = rawPost.createdAt
         this.extendedLikesInfo = {

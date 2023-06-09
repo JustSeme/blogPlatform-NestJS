@@ -25,7 +25,7 @@ export class PostEntity {
 
     @ManyToOne(() => BlogEntity, (blog) => blog.blogPosts)
     @JoinColumn({ name: 'blogId' })
-    blog: BlogEntity
+    blogId: BlogEntity | string
 
     @Column()
     blogName: string
@@ -35,7 +35,7 @@ export class PostEntity {
 
     @ManyToOne(() => UserEntity, (user) => user.userPosts)
     @JoinColumn({ name: 'ownerId' })
-    user: UserEntity
+    ownerId: UserEntity | string
 
     @Column()
     ownerLogin: string

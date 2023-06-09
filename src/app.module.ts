@@ -130,6 +130,10 @@ import { BlogsQuerySQLRepository } from "./Blogger/infrastructure/blogs/blogs-qu
 import { BansUsersForBlogs } from "./Blogger/domain/blogs/bans-users-for-blogs.entity"
 import { PostEntity } from "./Blogger/domain/posts/post.entity"
 import { PostsSQLRepository } from "./Blogger/infrastructure/posts/posts-sql-repository"
+import { PostsQuerySQLRepository } from "./Blogger/infrastructure/posts/posts-query-sql-repository"
+import { UserBanInfo } from "./SuperAdmin/domain/typeORM/user-ban-info.entity"
+import { UserEmailConfitmation } from "./SuperAdmin/domain/typeORM/user-email-confirmation.entity"
+import { UserPasswordRecovery } from "./SuperAdmin/domain/typeORM/user-password-recovery.entity"
 
 const authUseCases = [
   LogoutUseCase,
@@ -229,6 +233,7 @@ const SQLrepositories = [
   BlogsSQLRepository,
   BlogsQuerySQLRepository,
   PostsSQLRepository,
+  PostsQuerySQLRepository,
 ]
 
 const decorators = [
@@ -268,6 +273,13 @@ const controllers = [
 const {
   PGHOST, PGDATABASE, PGUSER, PGPASSWORD
 } = process.env
+
+const userEntities = [
+  UserEntity,
+  UserBanInfo,
+  UserEmailConfitmation,
+  UserPasswordRecovery
+]
 
 @Module({
   imports: [
@@ -312,7 +324,7 @@ const {
       autoLoadEntities: true,
       synchronize: true,
       ssl: true,
-      entities: [UserEntity, AuthSession, AttemptEntity, BlogEntity, BansUsersForBlogs, PostEntity]
+      entities: [...userEntities, AuthSession, AttemptEntity, BlogEntity, BansUsersForBlogs, PostEntity]
     }),
     PassportModule,
   ],

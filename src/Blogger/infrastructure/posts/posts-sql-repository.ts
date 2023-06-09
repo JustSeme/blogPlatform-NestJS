@@ -3,10 +3,11 @@ import { InjectDataSource } from "@nestjs/typeorm"
 import { DataSource } from "typeorm"
 import {
     PostDBModel,
-    PostDTO, PostSQLModel
+    PostDTO
 } from "../../domain/posts/PostsTypes"
 import { PostsViewModel } from "../../../blogs/application/dto/PostViewModel"
 import { PostInputModel } from "../../api/models/PostInputModel"
+import { PostEntity } from "../../domain/posts/post.entity"
 
 @Injectable()
 export class PostsSQLRepository {
@@ -40,7 +41,7 @@ export class PostsSQLRepository {
                 creatingPost.postOwnerInfo.userId,
             ])
 
-            const createdPost: PostSQLModel[] = await this.dataSource.query(selectString, [creatingPost.title, creatingPost.postOwnerInfo.userId])
+            const createdPost: PostEntity[] = await this.dataSource.query(selectString, [creatingPost.title, creatingPost.postOwnerInfo.userId])
 
             if (!createdPost[0]) {
                 return null
