@@ -5,6 +5,7 @@ import {
 } from "typeorm"
 import { AuthSession } from "../../security/domain/auth-session.entity"
 import { BlogEntity } from "../../Blogger/domain/blogs/blog.entity"
+import { BansUsersForBlogs } from "../../Blogger/domain/blogs/bans-users-for-blogs.entity"
 
 @Entity()
 export class UserEntity {
@@ -56,4 +57,7 @@ export class UserEntity {
 
     @OneToMany(() => BlogEntity, (blog) => blog.user)
     userBlogs: BlogEntity[]
+
+    @OneToMany(() => BansUsersForBlogs, (ban) => ban.user)
+    bansForBlog
 }

@@ -1,7 +1,7 @@
 import {
     Column,
     CreateDateColumn,
-    Entity, ManyToOne, PrimaryGeneratedColumn
+    Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn
 } from "typeorm"
 import { UserEntity } from "../../../SuperAdmin/domain/user.entity"
 
@@ -26,9 +26,6 @@ export class BlogEntity {
     isMembership: boolean
 
     @Column()
-    ownerId: string
-
-    @Column()
     ownerLogin: string
 
     @Column({ default: false })
@@ -38,5 +35,6 @@ export class BlogEntity {
     banDate: Date
 
     @ManyToOne(() => UserEntity, (user) => user.userBlogs)
+    @JoinColumn({ name: 'ownerId' })
     user: UserEntity
 }
