@@ -12,7 +12,7 @@ export class PostsService {
         private jwtService: JwtService
     ) { }
 
-    transformPostWithDefaultLikesInfo(rawPost: PostDTO): PostsViewModel {
+    /* transformPostWithDefaultLikesInfo(rawPost: PostDTO): PostsViewModel {
         return {
             id: rawPost.id,
             content: rawPost.content,
@@ -85,5 +85,5 @@ export class PostsService {
         })
 
         return convertedPosts
-    }
+    } */
 }

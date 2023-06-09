@@ -2,12 +2,11 @@ import {
     CommandHandler, ICommand, ICommandHandler
 } from "@nestjs/cqrs"
 import { PostDTO } from "../../../domain/posts/PostsTypes"
-import { PostsRepository } from "../../../infrastructure/posts/posts-db-repository"
-import { PostsService } from "../../../../blogs/application/posts-service"
 import { PostsViewModel } from "../../../../blogs/application/dto/PostViewModel"
 import { ForbiddenException } from '@nestjs/common'
 import { PostInputModelWithoutBlogId } from "../../../api/models/PostInputModelWithoutBlogId"
 import { BlogsSQLRepository } from "../../../infrastructure/blogs/blogs-sql-repository"
+import { PostsSQLRepository } from "../../../infrastructure/posts/posts-sql-repository"
 
 // Command
 export class CreatePostForBloggerCommand implements ICommand {
@@ -23,8 +22,7 @@ export class CreatePostForBloggerCommand implements ICommand {
 export class CreatePostForBloggerUseCase implements ICommandHandler<CreatePostForBloggerCommand> {
     constructor(
         private readonly blogsRepository: BlogsSQLRepository,
-        private readonly postsRepository: PostsRepository,
-        private readonly postsService: PostsService,
+        private readonly postsRepository: PostsSQLRepository,
     ) { }
 
     async execute(command: CreatePostForBloggerCommand): Promise<PostsViewModel> {
@@ -51,9 +49,6 @@ export class CreatePostForBloggerUseCase implements ICommandHandler<CreatePostFo
             false
         )
 
-        await this.postsRepository.createPost(createdPost)
-
-        const displayedPost = this.postsService.transformPostWithDefaultLikesInfo(createdPost)
-        return displayedPost
+        return this.postsRepository.createPost(createdPost)
     }
 }

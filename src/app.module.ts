@@ -130,6 +130,7 @@ import { BlogsSQLRepository } from "./Blogger/infrastructure/blogs/blogs-sql-rep
 import { BlogsQuerySQLRepository } from "./Blogger/infrastructure/blogs/blogs-query-sql-repository"
 import { BansUsersForBlogs } from "./Blogger/domain/blogs/bans-users-for-blogs.entity"
 import { PostEntity } from "./Blogger/domain/posts/post.entity"
+import { PostsSQLRepository } from "./Blogger/infrastructure/posts/posts-sql-repository"
 
 const authUseCases = [
   LogoutUseCase,
@@ -229,6 +230,7 @@ const SQLrepositories = [
   AttemptsSQLRepository,
   BlogsSQLRepository,
   BlogsQuerySQLRepository,
+  PostsSQLRepository,
 ]
 
 const decorators = [
