@@ -61,7 +61,6 @@ import { CqrsModule } from "@nestjs/cqrs"
 import { CreateBlogUseCase } from "./blogs/application/use-cases/blogs/create-blog.use-case"
 import { UpdateBlogUseCase } from "./blogs/application/use-cases/blogs/update-blog.use-case"
 import { DeleteBlogUseCase } from "./blogs/application/use-cases/blogs/delete-blog.use-case"
-import { PostsQueryRepository } from "./Blogger/infrastructure/posts/posts-query-repository"
 import { DeletePostUseCase } from "./blogs/application/use-cases/posts/delete-post.use-case"
 import { UpdatePostUseCase } from "./blogs/application/use-cases/posts/update-post.use-case"
 import { UpdateLikeStatusForPostUseCase } from "./blogs/application/use-cases/posts/update-like-status-for-post.use-case"
@@ -210,7 +209,6 @@ const adapters = [
 ]
 
 const repositories = [
-  PostsQueryRepository,
   BlogsQueryRepository,
   CommentsQueryRepository,
   UsersQueryRepository,

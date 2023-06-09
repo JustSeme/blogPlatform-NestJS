@@ -72,7 +72,7 @@ export class PostsRepository {
     async updatePost(id: string, body: PostInputModel) {
         const result = await this.PostModel.updateOne({ id: id }, {
             $set: {
-                content: body.content, title: body.title, shortDescription: body.shortDescription, blogId: body.blogId
+                content: body.content, title: body.title, shortDescription: body.shortDescription
             }
         })
         return result.matchedCount === 1

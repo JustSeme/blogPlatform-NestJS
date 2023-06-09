@@ -5,6 +5,7 @@ import {
     PostDTO, PostSQLModel
 } from "../../domain/posts/PostsTypes"
 import { PostsViewModel } from "../../../blogs/application/dto/PostViewModel"
+import { PostInputModel } from "../../api/models/PostInputModel"
 
 @Injectable()
 export class PostsSQLRepository {
@@ -44,6 +45,149 @@ export class PostsSQLRepository {
         } catch (err) {
             console.error(err)
             return null
+        }
+    }
+
+    async getPostById(postId: string): Promise<PostsViewModel> {
+        const queryString = `
+            SELECT *
+                FROM public."post_entity"
+                WHERE id = $1 AND "isBanned" = false
+        `
+
+        try {
+            const postData = this.dataSource.query(queryString, [postId])
+
+            if (!postData[0]) {
+                return null
+            }
+
+            return new PostsViewModel(postData[0])
+        } catch (err) {
+            console.error(err)
+            return null
+        }
+    }
+
+    async deletePost(id: string): Promise<boolean> {
+        const queryString = `
+            DELETE FROM public."post_entity"
+                WHERE id=$1;
+        `
+
+        try {
+            await this.dataSource.query(queryString, [id])
+
+            return true
+        } catch (err) {
+            console.error(err)
+            return false
+        }
+    }
+
+    async hideAllPostsForCurrentUser(userId: string): Promise<boolean> {
+        const queryString = `
+            UPDATE public."post_entity"
+                SET "isBanned"=true
+                WHERE "ownerId"=$1
+        `
+
+        try {
+            await this.dataSource.query(queryString, [userId])
+
+            return true
+        } catch (err) {
+            console.error(err)
+            return false
+        }
+    }
+
+    async unhideAllPostsForCurrentUser(userId: string): Promise<boolean> {
+        const queryString = `
+            UPDATE public."post_entity"
+                SET "isBanned"=false
+                WHERE "ownerId"=$1
+        `
+
+        try {
+            await this.dataSource.query(queryString, [userId])
+
+            return true
+        } catch (err) {
+            console.error(err)
+            return false
+        }
+    }
+
+    async updatePost(postId: string, body: PostInputModel): Promise<boolean> {
+        const queryString = `
+            UPDATE public."post_enity"
+                SET "title"=$2, "shortDescription"=$3, "content"=$4
+                WHERE id=$1
+        `
+
+        try {
+            await this.dataSource.query(queryString, [postId, body.title, body.shortDescription, body.content])
+
+            return true
+        } catch (err) {
+            console.error(err)
+            return false
+        }
+    }
+
+    async isPostExists(postId: string): Promise<boolean> {
+        const queryString = `
+            SELECT *
+                FROM public."post_entity"
+                WHERE id = $1
+        `
+
+        try {
+            const postData = await this.dataSource.query(queryString, [postId])
+
+            if (!postData[0]) {
+                return false
+            }
+
+            return true
+        } catch (err) {
+            console.error(err)
+            return false
+        }
+    }
+
+    async hidePostsByBlogId(blogId: string): Promise<boolean> {
+        const queryString = `
+            UPDATE public."post_entity"
+                SET "isBanned"=true
+                WHERE "blogId"=$1
+        `
+
+        try {
+            await this.dataSource.query(queryString, [blogId])
+
+            return true
+        } catch (err) {
+            console.error(err)
+            return false
+        }
+    }
+
+    async unhidePostsByBlogId(blogId: string): Promise<boolean> {
+        const queryString = `
+            UPDATE public."post_entity"
+                SET "isBanned"=false
+                WHERE "blogId"=$1
+        `
+
+        try {
+            await this.dataSource.query(queryString, [blogId])
+
+            return true
+        } catch (err) {
+            console.error(err)
+            return false
         }
     }
 }
