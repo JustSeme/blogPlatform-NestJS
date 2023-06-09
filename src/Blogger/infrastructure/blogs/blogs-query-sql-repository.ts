@@ -25,10 +25,10 @@ export class BlogsQuerySQLRepository {
         const queryCount = `
             SELECT count(*)
                 FROM public."blog_entity"
-                WHERE lower("name") LIKE lower($1) AND "isBanned"=false ${creatorId ? `AND "ownerId" = ${creatorId}` : ''}
+                WHERE lower("name") LIKE lower($1) AND "isBanned"=false AND "ownerId" = $2
         `
 
-        const totalCountData = await this.dataSource.query(queryCount, [`%${searchNameTerm}%`])
+        const totalCountData = await this.dataSource.query(queryCount, [`%${searchNameTerm}%`, creatorId])
         const totalCount = totalCountData[0].count
         const pagesCount = Math.ceil(totalCount / +pageSize)
 
@@ -37,12 +37,12 @@ export class BlogsQuerySQLRepository {
         const query = `
             SELECT *
                 FROM public."blog_entity"
-                WHERE lower("name") LIKE lower($1) AND "isBanned"=false ${creatorId ? `AND "ownerId" = ${creatorId}` : ''}
+                WHERE lower("name") LIKE lower($1) AND "isBanned"=false AND "ownerId" = $2
                 ORDER BY "${sortBy}" ${sortDirection}
-                LIMIT $2 OFFSET $3;
+                LIMIT ${pageSize} OFFSET ${skipCount};
         `
 
-        const resultedBlogs: BlogSQLModel[] = await this.dataSource.query(query, [`%${searchNameTerm}%`, pageSize, skipCount])
+        const resultedBlogs: BlogSQLModel[] = await this.dataSource.query(query, [`%${searchNameTerm}%`, creatorId])
         const displayedBlogs = resultedBlogs.map(blog => new BlogViewModel(blog))
 
         return {

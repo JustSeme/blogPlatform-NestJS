@@ -12,7 +12,7 @@ import { BanUserForBlogInfoType } from '../../Blogger/infrastructure/blogs/BanUs
 export class UsersSQLRepository {
     constructor(@InjectDataSource() private dataSource: DataSource) { }
 
-    async createNewUser(newUser: UserDTO): Promise<UserDBModel | null> {
+    async createNewUser(newUser: UserDTO): Promise<UserViewModelType | null> {
         const query = `
             INSERT INTO public."user_entity"
                 (
@@ -39,7 +39,7 @@ export class UsersSQLRepository {
 
             const createdUser: UserSQLModel[] = await this.dataSource.query(querySelect, [newUser.login])
 
-            return new UserDBModel(createdUser[0])
+            return new UserViewModelType(createdUser[0])
         } catch (err) {
             console.error(err)
             return null
@@ -141,6 +141,22 @@ export class UsersSQLRepository {
 
         try {
             await this.dataSource.query(queryString, [banInfo.banReason, userId, banInfo.blogId])
+
+            return true
+        } catch (err) {
+            console.error(err)
+            return false
+        }
+    }
+
+    async unbanUserForCurrentBlog(userId: string, blogId: string): Promise<boolean> {
+        const queryString = `
+            DELETE FROM public.bans_users_for_blogs
+                WHERE "userId"=$1 AND "blogId"=$2;        
+        `
+
+        try {
+            await this.dataSource.query(queryString, [userId, blogId])
 
             return true
         } catch (err) {
