@@ -2,10 +2,10 @@ import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
 import { BanUserForBlogInputModel } from "../../../api/models/BanUserForBlogInputModel"
-import { UsersRepository } from "../../../../SuperAdmin/infrastructure/users-db-repository"
 import { ForbiddenException } from "@nestjs/common"
 import { generateErrorsMessages } from "../../../../general/helpers"
 import { BlogsSQLRepository } from "../../../infrastructure/blogs/blogs-sql-repository"
+import { UsersSQLRepository } from "../../../../SuperAdmin/infrastructure/users-sql-repository"
 
 export class BanUserForBlogCommand {
     constructor(
@@ -19,7 +19,7 @@ export class BanUserForBlogCommand {
 @CommandHandler(BanUserForBlogCommand)
 export class BanUserForBlogUseCase implements ICommandHandler<BanUserForBlogCommand> {
     constructor(
-        private usersRepository: UsersRepository,
+        private usersRepository: UsersSQLRepository,
         private blogsRepository: BlogsSQLRepository,
     ) { }
 

@@ -17,7 +17,7 @@ export class BansUsersForBlogs {
     @Column()
     banReason: string
 
-    @CreateDateColumn()
+    @CreateDateColumn({ type: 'timestamptz' })
     banDate: Date
 
     @ManyToOne(() => UserEntity, (user) => user.bansForUser)

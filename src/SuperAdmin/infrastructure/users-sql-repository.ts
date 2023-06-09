@@ -6,12 +6,13 @@ import { UserViewModelType } from '../application/dto/UsersViewModel'
 import {
     UserDBModel, UserSQLModel
 } from './UsersTypes'
+import { BanUserForBlogInfoType } from '../../Blogger/infrastructure/blogs/BanUserForBlogInfoType'
 
 @Injectable()
 export class UsersSQLRepository {
     constructor(@InjectDataSource() private dataSource: DataSource) { }
 
-    async createNewUser(newUser: UserDTO): Promise<UserSQLModel | null> {
+    async createNewUser(newUser: UserDTO): Promise<UserDBModel | null> {
         const query = `
             INSERT INTO public."user_entity"
                 (
@@ -36,9 +37,9 @@ export class UsersSQLRepository {
                 newUser.emailConfirmation.isConfirmed
             ])
 
-            const createdUser = await this.dataSource.query(querySelect, [newUser.login])
+            const createdUser: UserSQLModel[] = await this.dataSource.query(querySelect, [newUser.login])
 
-            return createdUser[0]
+            return new UserDBModel(createdUser[0])
         } catch (err) {
             console.error(err)
             return null
@@ -129,5 +130,22 @@ export class UsersSQLRepository {
         const user = await this.findUserById(userId)
 
         return user ? true : false
+    }
+
+    async banUserForCurrentBlog(userId: string, banInfo: BanUserForBlogInfoType): Promise<boolean> {
+        const queryString = `
+            INSERT INTO public.bans_users_for_blogs
+                ("isBanned", "banReason", "banDate", "userId", "blogId")
+                VALUES(true, $1, now(), $2, $3);
+        `
+
+        try {
+            await this.dataSource.query(queryString, [banInfo.banReason, userId, banInfo.blogId])
+
+            return true
+        } catch (err) {
+            console.error(err)
+            return false
+        }
     }
 }
