@@ -6,6 +6,7 @@ import {
 import { AuthSession } from "../../security/domain/auth-session.entity"
 import { BlogEntity } from "../../Blogger/domain/blogs/blog.entity"
 import { BansUsersForBlogs } from "../../Blogger/domain/blogs/bans-users-for-blogs.entity"
+import { PostEntity } from "../../Blogger/domain/posts/post.entity"
 
 @Entity()
 export class UserEntity {
@@ -60,4 +61,7 @@ export class UserEntity {
 
     @OneToMany(() => BansUsersForBlogs, (ban) => ban.user)
     bansForUser: BansUsersForBlogs[]
+
+    @OneToMany(() => PostEntity, (post) => post.user)
+    userPosts: PostEntity[]
 }

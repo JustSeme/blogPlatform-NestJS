@@ -1,8 +1,10 @@
 import {
     Column,
     CreateDateColumn,
-    Entity, PrimaryGeneratedColumn
+    Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn
 } from "typeorm"
+import { UserEntity } from "../../../SuperAdmin/domain/user.entity"
+import { BlogEntity } from "../blogs/blog.entity"
 
 @Entity()
 export class PostEntity {
@@ -21,18 +23,20 @@ export class PostEntity {
     @CreateDateColumn()
     createdAt: Date
 
-    @Column()
-    blogId: string
+    @ManyToOne(() => BlogEntity, (blog) => blog.blogPosts)
+    @JoinColumn({ name: 'blogId' })
+    blog: BlogEntity
 
     @Column()
     blogName: string
 
-    @Column()
-    ownerLogin: string
-
-    @Column()
-    ownerId: string
-
     @Column({ default: false })
     isBanned: boolean
+
+    @ManyToOne(() => UserEntity, (user) => user.userPosts)
+    @JoinColumn({ name: 'ownerId' })
+    user: UserEntity
+
+    @Column()
+    ownerLogin: string
 }

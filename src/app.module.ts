@@ -129,6 +129,7 @@ import { BlogEntity } from "./Blogger/domain/blogs/blog.entity"
 import { BlogsSQLRepository } from "./Blogger/infrastructure/blogs/blogs-sql-repository"
 import { BlogsQuerySQLRepository } from "./Blogger/infrastructure/blogs/blogs-query-sql-repository"
 import { BansUsersForBlogs } from "./Blogger/domain/blogs/bans-users-for-blogs.entity"
+import { PostEntity } from "./Blogger/domain/posts/post.entity"
 
 const authUseCases = [
   LogoutUseCase,
@@ -311,7 +312,7 @@ const {
       autoLoadEntities: true,
       synchronize: true,
       ssl: true,
-      entities: [UserEntity, AuthSession, AttemptEntity, BlogEntity, BansUsersForBlogs]
+      entities: [UserEntity, AuthSession, AttemptEntity, BlogEntity, BansUsersForBlogs, PostEntity]
     }),
     PassportModule,
   ],
