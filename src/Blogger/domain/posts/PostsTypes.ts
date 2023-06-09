@@ -1,12 +1,9 @@
-import { v4 as uuidv4 } from "uuid"
 import { PostsViewModel } from "../../../blogs/application/dto/PostViewModel"
 import { Model } from "mongoose"
 import { Post } from "./PostsSchema"
 
 //data transfer object
-export class PostDBModel {
-    public id: string
-    public createdAt: string
+export class PostDTO {
     public extendedLikesInfo: ExtendedLikesInfoDBType
     public postOwnerInfo: PostOwnerInfoType
 
@@ -20,8 +17,6 @@ export class PostDBModel {
         userLogin: string,
         public isBanned: boolean,
     ) {
-        this.id = uuidv4()
-        this.createdAt = new Date().toISOString()
 
         this.postOwnerInfo = {
             userId,
@@ -34,6 +29,57 @@ export class PostDBModel {
             noneEntities: []
         }
     }
+}
+
+export class PostDBModel {
+    public id: string
+    public createdAt: Date
+    public extendedLikesInfo: ExtendedLikesInfoDBType
+    public postOwnerInfo: PostOwnerInfoType
+    public title: string
+    public shortDescription: string
+    public content: string
+    public blogId: string
+    public blogName: string
+    public isBanned: boolean
+
+
+    constructor(rawPost: PostSQLModel) {
+        this.id = rawPost.id
+        this.createdAt = rawPost.createdAt
+
+        this.extendedLikesInfo = {
+            likes: [],
+            dislikes: [],
+            noneEntities: []
+        }
+
+        this.postOwnerInfo = {
+            userId: rawPost.ownerId,
+            userLogin: rawPost.ownerLogin
+        }
+
+        this.title = rawPost.title
+        this.shortDescription = rawPost.shortDescription
+        this.content = rawPost.content
+        this.blogId = rawPost.blogId
+        this.blogName = rawPost.blogName
+        this.isBanned = rawPost.isBanned
+    }
+
+}
+
+export class PostSQLModel {
+    public id: string
+    public title: string
+    public shortDescription: string
+    public content: string
+    public createdAt: Date
+    public isBanned: boolean
+    public blogId: string
+    public blogName: string
+    public ownerId: string
+    public ownerLogin: string
 }
 
 export type PostsWithQueryOutputModel = {

@@ -1,14 +1,32 @@
+import { PostSQLModel } from "../../../Blogger/domain/posts/PostsTypes"
 import { LikeType } from "../../api/models/LikeInputModel"
 
-export type PostsViewModel = {
-    id: string,
-    title: string,
-    shortDescription: string,
-    content: string,
-    blogId: string,
-    blogName: string,
-    createdAt: string,
-    extendedLikesInfo: ExtendedLikesInfoViewType
+export class PostsViewModel {
+    public id: string
+    public title: string
+    public shortDescription: string
+    public content: string
+    public blogId: string
+    public blogName: string
+    public createdAt: Date
+    public extendedLikesInfo: ExtendedLikesInfoViewType
+
+    constructor(rawPost: PostSQLModel) {
+        this.id = rawPost.id
+        this.title = rawPost.title
+        this.shortDescription = rawPost.shortDescription
+        this.content = rawPost.content
+        this.blogId = rawPost.blogId
+        this.blogName = rawPost.blogName
+        this.createdAt = rawPost.createdAt
+        this.extendedLikesInfo = {
+            likesCount: 0,
+            dislikesCount: 0,
+            myStatus: 'None',
+            newestLikes: []
+        }
+    }
+
 }
 
 type ExtendedLikesInfoViewType = {

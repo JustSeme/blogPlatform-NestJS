@@ -1,4 +1,4 @@
-import { PostDBModel } from "./PostsTypes"
+import { PostDTO } from "./PostsTypes"
 import {
     Prop, Schema, SchemaFactory
 } from "@nestjs/mongoose"
@@ -63,4 +63,4 @@ export class Post {
     isBanned: boolean
 }
 
-export const PostSchema = SchemaFactory.createForClass<PostDBModel>(Post)
+export const PostSchema = SchemaFactory.createForClass<PostDTO>(Post)

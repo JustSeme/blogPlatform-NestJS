@@ -5,7 +5,7 @@ import {
 import { InjectModel } from '@nestjs/mongoose/dist'
 import { Post } from '../../domain/posts/PostsSchema'
 import {
-    ExtendedLikeObjectType, PostDBModel, PostModelType
+    ExtendedLikeObjectType, PostDTO, PostModelType
 } from '../../domain/posts/PostsTypes'
 import { HydratedPost } from './PostsTypes'
 import { ReadPostsQueryParams } from '../../../blogs/api/models/ReadPostsQuery'
@@ -61,7 +61,7 @@ export class PostsRepository {
         return result.upsertedCount > 0 ? true : false
     }
 
-    async createPost(createdPost: PostDBModel) {
+    async createPost(createdPost: PostDTO) {
         await this.PostModel.create(createdPost)
     }
 

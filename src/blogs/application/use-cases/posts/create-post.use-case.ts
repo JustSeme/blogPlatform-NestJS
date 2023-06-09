@@ -2,7 +2,7 @@ import { ICommandHandler } from "@nestjs/cqrs"
 import { PostInputModel } from "../../../../Blogger/api/models/PostInputModel"
 import { PostsRepository } from "../../../../Blogger/infrastructure/posts/posts-db-repository"
 import { PostsService } from "../../posts-service"
-import { PostDBModel } from "../../../../Blogger/domain/posts/PostsTypes"
+import { PostDTO } from "../../../../Blogger/domain/posts/PostsTypes"
 import { PostsViewModel } from "../../dto/PostViewModel"
 import { BlogsSQLRepository } from "../../../../Blogger/infrastructure/blogs/blogs-sql-repository"
 
@@ -24,7 +24,7 @@ export class CreatePostUseCase implements ICommandHandler<CreatePostCommand> {
 
         const blogById = await this.blogsRepository.findBlogById(body.blogId)
 
-        const createdPost: PostDBModel = new PostDBModel(
+        const createdPost: PostDTO = new PostDTO(
             body.title,
             body.shortDescription,
             body.content,

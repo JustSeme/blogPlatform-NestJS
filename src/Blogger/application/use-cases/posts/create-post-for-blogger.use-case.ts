@@ -1,7 +1,7 @@
 import {
     CommandHandler, ICommand, ICommandHandler
 } from "@nestjs/cqrs"
-import { PostDBModel } from "../../../domain/posts/PostsTypes"
+import { PostDTO } from "../../../domain/posts/PostsTypes"
 import { PostsRepository } from "../../../infrastructure/posts/posts-db-repository"
 import { PostsService } from "../../../../blogs/application/posts-service"
 import { PostsViewModel } from "../../../../blogs/application/dto/PostViewModel"
@@ -40,7 +40,7 @@ export class CreatePostForBloggerUseCase implements ICommandHandler<CreatePostFo
             throw new ForbiddenException('that is not your own')
         }
 
-        const createdPost = new PostDBModel(
+        const createdPost = new PostDTO(
             postInputModel.title,
             postInputModel.shortDescription,
             postInputModel.content,
