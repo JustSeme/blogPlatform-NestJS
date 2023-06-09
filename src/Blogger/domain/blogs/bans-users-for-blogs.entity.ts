@@ -4,6 +4,7 @@ import {
     Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn
 } from "typeorm"
 import { UserEntity } from "../../../SuperAdmin/domain/user.entity"
+import { BlogEntity } from "./blog.entity"
 
 @Entity()
 export class BansUsersForBlogs {
@@ -19,7 +20,11 @@ export class BansUsersForBlogs {
     @CreateDateColumn()
     banDate: Date
 
-    @ManyToOne(() => UserEntity, (user) => user.bansForBlog)
+    @ManyToOne(() => UserEntity, (user) => user.bansForUser)
     @JoinColumn({ name: 'userId' })
     user: UserEntity
+
+    @ManyToOne(() => BlogEntity, (blog) => blog.bansForBlog)
+    @JoinColumn({ name: 'blogId' })
+    blog: BlogEntity
 }

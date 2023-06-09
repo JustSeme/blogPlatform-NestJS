@@ -1,9 +1,10 @@
 import {
     Column,
     CreateDateColumn,
-    Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn
+    Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn
 } from "typeorm"
 import { UserEntity } from "../../../SuperAdmin/domain/user.entity"
+import { BansUsersForBlogs } from "./bans-users-for-blogs.entity"
 
 @Entity()
 export class BlogEntity {
@@ -37,4 +38,7 @@ export class BlogEntity {
     @ManyToOne(() => UserEntity, (user) => user.userBlogs)
     @JoinColumn({ name: 'ownerId' })
     user: UserEntity
+
+    @OneToMany(() => BansUsersForBlogs, (ban) => ban.blog)
+    bansForBlog: BansUsersForBlogs[]
 }

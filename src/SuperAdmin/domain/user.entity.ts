@@ -59,5 +59,5 @@ export class UserEntity {
     userBlogs: BlogEntity[]
 
     @OneToMany(() => BansUsersForBlogs, (ban) => ban.user)
-    bansForBlog
+    bansForUser: BansUsersForBlogs[]
 }
