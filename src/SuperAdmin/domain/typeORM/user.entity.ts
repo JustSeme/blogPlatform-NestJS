@@ -31,8 +31,14 @@ export class UserEntity {
     @OneToOne(() => UserBanInfo, (banInfo) => banInfo.user)
     banInfo: UserBanInfo
 
+    @Column({ default: false })
+    isBanned: boolean
+
     @OneToOne(() => UserEmailConfitmation, (emailConfirmation) => emailConfirmation.user)
     emailConfirmation: UserEmailConfitmation
+
+    @Column({ default: false })
+    isConfirmed: boolean
 
     @OneToOne(() => UserPasswordRecovery, (passwordRecovery) => passwordRecovery.user)
     passwordRecovery: UserPasswordRecovery

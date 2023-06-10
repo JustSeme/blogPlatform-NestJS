@@ -8,7 +8,7 @@ import { BanUserForBlogInfoType } from '../../Blogger/infrastructure/blogs/BanUs
 
 export class UserDTO {
     public id: string
-    public createdAt: string
+    public createdAt: Date
 
     public emailConfirmation: EmailConfirmationType
     public passwordRecovery: PasswordConfirmationType
@@ -22,7 +22,7 @@ export class UserDTO {
         isConfirmed: boolean
     ) {
         this.id = uuidv4()
-        this.createdAt = new Date().toISOString()
+        this.createdAt = new Date()
         this.emailConfirmation = {
             confirmationCode: uuidv4(),
             expirationDate: add(new Date(), {

@@ -3,10 +3,11 @@ import { Injectable } from "@nestjs/common"
 import { DataSource } from 'typeorm'
 import { UserDTO } from '../domain/UsersTypes'
 import { UserViewModelType } from '../application/dto/UsersViewModel'
-import {
-    UserDBModel, UserSQLModel
-} from './UsersTypes'
 import { BanUserForBlogInfoType } from '../../Blogger/infrastructure/blogs/BanUserForBlogInfoType'
+import { UserEntity } from '../domain/typeORM/user.entity'
+import { UserEmailConfitmation } from '../domain/typeORM/user-email-confirmation.entity'
+import { UserPasswordRecovery } from '../domain/typeORM/user-password-recovery.entity'
+import { UserBanInfo } from '../domain/typeORM/user-ban-info.entity'
 
 @Injectable()
 export class UsersSQLRepository {
@@ -27,6 +28,13 @@ export class UsersSQLRepository {
                 WHERE "login" = $1
         `
 
+        const queryRunner = this.dataSource.createQueryRunner()
+
+        await queryRunner.connect()
+
+        await queryRunner.startTransaction()
+
+
         try {
             await this.dataSource.query(query, [
                 newUser.login,
@@ -37,7 +45,7 @@ export class UsersSQLRepository {
                 newUser.emailConfirmation.isConfirmed
             ])
 
-            const createdUser: UserSQLModel[] = await this.dataSource.query(querySelect, [newUser.login])
+            const createdUser: UserEntity[] = await this.dataSource.query(querySelect, [newUser.login])
 
             return new UserViewModelType(createdUser[0])
         } catch (err) {
@@ -49,12 +57,13 @@ export class UsersSQLRepository {
     async findUserById(userId: string): Promise<UserViewModelType> {
         const queryString = `
             SELECT *
-                FROM public."user_entity"
+                FROM public."user_entity" ue
+                LEFT JOIN user_ban_info ubi ON ubi."userId" = ue.id
                 WHERE id = $1;
         `
 
         try {
-            const findedUserData: UserSQLModel = await this.dataSource.query(queryString, [userId])
+            const findedUserData: UserEntity & UserBanInfo = await this.dataSource.query(queryString, [userId])
 
             if (!findedUserData[0]) {
                 return null
@@ -67,16 +76,42 @@ export class UsersSQLRepository {
         }
     }
 
-    async findUserDBModelById(userId: string): Promise<UserDBModel> {
+    async findUserData(userId: string): Promise<UserEntity> {
         const queryString = `
             SELECT *
-                FROM public."user_entity"
-                WHERE id = $1;
+                FROM user_entity
+                WHERE "id" = $1;
         `
 
-        const findedUserData: UserSQLModel = await this.dataSource.query(queryString, [userId])
+        const findedUserData: UserEntity = await this.dataSource.query(queryString, [userId])
 
-        return new UserDBModel(findedUserData[0])
+        return findedUserData[0]
+    }
+
+    async findUserDataWithPasswordRecovery(userId: string): Promise<UserEntity & UserPasswordRecovery> {
+        const queryString = `
+            SELECT *
+                FROM user_entity ue
+                LEFT JOIN user_password_recovery upr ON upr."userId" = ue.id
+                WHERE "id" = $1;
+        `
+
+        const findedUserData: UserEntity & UserPasswordRecovery = await this.dataSource.query(queryString, [userId])
+
+        return findedUserData[0]
+    }
+
+    async findUserDataWithEmailConfirmation(userId: string): Promise<UserEntity & UserEmailConfitmation> {
+        const queryString = `
+            SELECT *
+                FROM user_entity ue
+                LEFT JOIN user_email_confirmation uec ON uec."userId" = ue.id 
+                WHERE "id" = $1;
+        `
+
+        const findedConfirmationData: UserEntity & UserEmailConfitmation = await this.dataSource.query(queryString, [userId])
+
+        return findedConfirmationData[0]
     }
 
     async deleteUser(userId: string): Promise<boolean> {

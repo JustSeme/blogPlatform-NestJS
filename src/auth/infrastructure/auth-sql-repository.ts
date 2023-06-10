@@ -1,31 +1,32 @@
 import { InjectDataSource } from '@nestjs/typeorm'
 import { Injectable } from "@nestjs/common"
 import { DataSource } from 'typeorm'
-import {
-    UserDBModel, UserSQLModel
-} from '../../SuperAdmin/infrastructure/UsersTypes'
 import { EmailConfirmationType } from '../../SuperAdmin/domain/UsersTypes'
 import { add } from 'date-fns'
+import { UserPasswordRecovery } from '../../SuperAdmin/domain/typeORM/user-password-recovery.entity'
+import { UserEntity } from '../../SuperAdmin/domain/typeORM/user.entity'
+import { UserEmailConfitmation } from '../../SuperAdmin/domain/typeORM/user-email-confirmation.entity'
 
 
 @Injectable()
 export class AuthRepository {
     constructor(@InjectDataSource() private dataSource: DataSource) { }
 
-    async findUserByRecoveryPasswordCode(recoveryCode: string): Promise<UserDBModel> {
+    async findUserDataWithPasswordRecovery(recoveryCode: string): Promise<UserPasswordRecovery & UserEntity> {
         const queryString = `
             SELECT *
-                FROM public."user_entity"
+                FROM public."user_password_recovery" upr
+                LEFT JOIN user_entity ue ON ue.id = upr."userId" 
                 WHERE "passwordRecoveryConfirmationCode" = $1;
         `
 
-        const findedUserData: UserSQLModel = await this.dataSource.query(queryString, [recoveryCode])
+        const findedUserData: UserPasswordRecovery & UserEntity = await this.dataSource.query(queryString, [recoveryCode])
 
         if (!findedUserData[0]) {
             return null
         }
 
-        return new UserDBModel(findedUserData[0])
+        return findedUserData[0]
     }
 
     async isUserByLoginExists(userLogin: string): Promise<boolean> {
@@ -72,36 +73,36 @@ export class AuthRepository {
         }
     }
 
-    async findUserByLoginOrEmail(loginOrEmail: string): Promise<UserDBModel> {
+    async findUserByLoginOrEmail(loginOrEmail: string): Promise<UserEntity> {
         const queryString = `
             SELECT *
                 FROM public."user_entity"
                 WHERE "login" = $1 OR "email" = $1;
         `
 
-        const findedUserData: UserSQLModel = await this.dataSource.query(queryString, [loginOrEmail])
+        const findedUserData: UserEntity = await this.dataSource.query(queryString, [loginOrEmail])
 
         if (!findedUserData[0]) {
             return null
         }
 
-        return new UserDBModel(findedUserData[0])
+        return findedUserData[0]
     }
 
-    async findUserByLogin(login: string): Promise<UserDBModel> {
+    async findUserByLogin(login: string): Promise<UserEntity> {
         const queryString = `
             SELECT *
                 FROM public."user_entity"
                 WHERE "login" = $1;
         `
 
-        const findedUserData: UserSQLModel[] = await this.dataSource.query(queryString, [login])
+        const findedUserData: UserEntity[] = await this.dataSource.query(queryString, [login])
 
         if (!findedUserData[0]) {
             return null
         }
 
-        return new UserDBModel(findedUserData[0])
+        return findedUserData[0]
     }
 
     async updateIsConfirmedByConfirmationCode(code: string) {
@@ -114,19 +115,35 @@ export class AuthRepository {
         await this.dataSource.query(queryString, [code])
     }
 
-    async findUserByEmail(email: string): Promise<UserDBModel> {
+    async findUserByEmail(email: string): Promise<UserEntity> {
         const queryString = ` 
             SELECT *
                 FROM public."user_entity"
                 WHERE "email" = $1;
         `
 
-        const user: UserSQLModel = await this.dataSource.query(queryString, [email])
+        const user: UserEntity = await this.dataSource.query(queryString, [email])
         if (!user[0]) {
             return null
         }
 
-        return new UserDBModel(user[0])
+        return user[0]
+    }
+
+    async findUserWithEmailConfirmationByEmail(email: string): Promise<UserEntity & UserEmailConfitmation> {
+        const queryString = ` 
+            SELECT *
+                FROM public."user_entity" ue
+                LEFT JOIN user_email_confirmation uec ON uec."userId" = ue.id
+                WHERE "email" = $1;
+        `
+
+        const user: UserEntity & UserEmailConfitmation = await this.dataSource.query(queryString, [email])
+        if (!user[0]) {
+            return null
+        }
+
+        return user[0]
     }
 
     async updateEmailConfirmationInfo(userId: string, newConfirmationCode: string) {

@@ -4,36 +4,24 @@ import {
     EmailConfirmationType, PasswordConfirmationType
 } from "../domain/UsersTypes"
 import { BanInfoDBType } from "../application/dto/UsersViewModel"
+import { UserEntity } from "../domain/typeORM/user.entity"
+import { UserEmailConfitmation } from "../domain/typeORM/user-email-confirmation.entity"
+import { UserPasswordRecovery } from "../domain/typeORM/user-password-recovery.entity"
+import { UserBanInfo } from "../domain/typeORM/user-ban-info.entity"
 
 export type HydratedUser = HydratedDocument<User>
-
-export class UserSQLModel {
-    public id: string
-    public login: string
-    public email: string
-    public createdAt: string
-    public isBanned: boolean
-    public banReason: string
-    public banDate: Date
-    public passwordHash: string
-    public emailConfirmationCode: string
-    public emailExpirationDate: Date
-    public isEmailConfirmed: boolean
-    public passwordRecoveryConfirmationCode: string
-    public passwordRecoveryExpirationDate: Date
-}
 
 export class UserDBModel {
     public id: string
     public login: string
     public email: string
     public passwordHash: string
-    public createdAt: string
+    public createdAt: Date
     public emailConfirmation: EmailConfirmationType
     public passwordRecovery: PasswordConfirmationType
     public banInfo: BanInfoDBType
 
-    constructor(user: UserSQLModel) {
+    constructor(user: UserEntity & UserEmailConfitmation & UserPasswordRecovery & UserBanInfo) {
         this.id = user.id
         this.login = user.login
         this.email = user.email

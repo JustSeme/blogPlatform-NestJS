@@ -25,9 +25,9 @@ export class ConfirmRecoveryPasswordUseCase implements ICommandHandler<ConfirmRe
             recoveryCode
         } = command
 
-        const user = await this.authRepository.findUserByRecoveryPasswordCode(recoveryCode)
+        const user = await this.authRepository.findUserDataWithPasswordRecovery(recoveryCode)
 
-        if (!user || user.passwordRecovery.expirationDate < new Date()) {
+        if (!user || user.passwordRecoveryExpirationDate < new Date()) {
             throw new BadRequestException(generateErrorsMessages('recoveryCode is incorrect', 'recoveryCode'))
         }
 

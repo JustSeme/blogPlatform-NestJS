@@ -33,7 +33,7 @@ export class User {
     passwordHash: string
 
     @Prop({ required: true })
-    createdAt: string
+    createdAt: Date
 
     @Prop({
         required: true, type: EmailConfirmationSchema

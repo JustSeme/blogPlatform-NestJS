@@ -65,18 +65,18 @@ describe('integration tests for auth use cases', () => {
 
             expect(result).toBe(true)
 
-            const user = await authRepository.findUserByEmail(command.email)
+            const user = await authRepository.findUserWithEmailConfirmationByEmail(command.email)
 
             expect(user.login).toEqual(command.login)
             expect(user.email).toEqual(command.email)
 
-            const userConfirmationCode = user.emailConfirmation.confirmationCode
+            const userConfirmationCode = user.emailConfirmationCode
 
             expect(bcryptAdapter.generatePasswordHash).toHaveBeenCalledWith(command.password, 10)
 
             expect(emailManager.sendConfirmationCode).toHaveBeenCalledWith(command.email, command.login, userConfirmationCode)
 
-            expect(user.emailConfirmation.isConfirmed).toBe(false)
+            expect(user.isConfirmed).toBe(false)
         })
     })
 

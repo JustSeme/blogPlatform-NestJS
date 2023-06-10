@@ -1,15 +1,16 @@
 import { OutputData } from "../../../general/types/OutputData"
-import { UserSQLModel } from "../../infrastructure/UsersTypes"
+import { UserBanInfo } from "../../domain/typeORM/user-ban-info.entity"
+import { UserEntity } from "../../domain/typeORM/user.entity"
 
 export class UserViewModelType {
     public banInfo: BanInfoViewType
     public id: string
     public login: string
     public email: string
-    public createdAt: string
+    public createdAt: Date
 
     constructor(
-        user: UserSQLModel,
+        user: UserEntity & UserBanInfo,
     ) {
         this.id = user.id
         this.login = user.login

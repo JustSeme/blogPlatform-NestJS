@@ -3,8 +3,9 @@ import { DataSource } from "typeorm"
 import {
     UserViewModelType, UsersWithQueryOutputModel
 } from "../application/dto/UsersViewModel"
-import { UserSQLModel } from "./UsersTypes"
 import { ReadUsersQuery } from "../api/models/ReadUsersQuery"
+import { UserEntity } from "../domain/typeORM/user.entity"
+import { UserBanInfo } from "../domain/typeORM/user-ban-info.entity"
 
 @Injectable()
 export class UsersQuerySQLRepository {
@@ -33,13 +34,14 @@ export class UsersQuerySQLRepository {
 
         const query = `
             SELECT *
-                FROM public."user_entity"
+                FROM public."user_entity" ue
+                LEFT JOIN user_ban_info ubi ON ubi."userId" = ue.id 
                 WHERE (lower("login") LIKE lower($1) OR lower("email") LIKE lower($2)) ${banStatus !== 'all' ? `AND "isBanned" = ${isBanned}` : ''}
                 ORDER BY "${sortBy}" ${sortDirection}
                 LIMIT $3 OFFSET $4;
         `
 
-        const resultedUsers: UserSQLModel[] = await this.dataSource.query(query, [`%${searchLoginTerm}%`, `%${searchEmailTerm}%`, pageSize, skipCount])
+        const resultedUsers: Array<UserEntity & UserBanInfo> = await this.dataSource.query(query, [`%${searchLoginTerm}%`, `%${searchEmailTerm}%`, pageSize, skipCount])
 
         const diapayedUsers = resultedUsers.map((user) => new UserViewModelType(user))
 
@@ -55,11 +57,12 @@ export class UsersQuerySQLRepository {
     async findUserById(userId: string): Promise<UserViewModelType> {
         const queryString = `
             SELECT *
-                FROM public."user_entity"
+                FROM public."user_entity" ue
+                LEFT JOIN user_ban_info ubi on ubi."userId" = ue.id 
                 WHERE id = $1;
         `
 
-        const findedUserData: UserSQLModel = await this.dataSource.query(queryString, [userId])
+        const findedUserData: UserEntity & UserBanInfo = await this.dataSource.query(queryString, [userId])
 
         return new UserViewModelType(findedUserData[0])
     }
