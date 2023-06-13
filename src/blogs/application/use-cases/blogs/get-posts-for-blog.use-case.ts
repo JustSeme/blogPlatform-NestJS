@@ -25,11 +25,11 @@ export class GetPostsForBlogUseCase implements ICommandHandler<GetPostsForBlogCo
         const accessToken = command.authorizationHeader ? command.authorizationHeader.split(' ')[1] : null
         const postsWithQueryData = await this.postsQueryRepository.findPosts(command.queryParams, command.blogId)
 
-        const displayedPosts = await this.postsService.transformPostsForDisplay(postsWithQueryData.items, accessToken)
+        /* const displayedPosts = await this.postsService.transformPostsForDisplay(postsWithQueryData.items, accessToken)
         const postsViewQueryData = {
             ...postsWithQueryData, items: displayedPosts
-        }
+        } */
 
-        return postsViewQueryData
+        return postsWithQueryData
     }
 }

@@ -177,13 +177,20 @@ export class UsersSQLRepository {
 
     async banUserById(userId: string, banReason: string): Promise<boolean> {
         const queryString = `
-            UPDATE public."user_entity"
+            UPDATE public."user_ban_info"
                 SET "isBanned"=true, "banReason"=$2, "banDate"=CURRENT_TIMESTAMP
+                WHERE "userId" = $1
+        `
+
+        const banUserQuery = `
+            UPDATE public."user_entity"
+                SET "isBanned"=true
                 WHERE id = $1;
         `
 
         try {
             await this.dataSource.query(queryString, [userId, banReason])
+            await this.dataSource.query(banUserQuery, [userId])
             return true
         } catch (err) {
             console.error(err)
@@ -193,13 +200,20 @@ export class UsersSQLRepository {
 
     async unbanUserById(userId: string): Promise<boolean> {
         const queryString = `
-            UPDATE public."user_entity"
+            UPDATE public."user_ban_info"
                 SET "isBanned"=false, "banReason"=null, "banDate"=null
+                WHERE "userId" = $1;
+        `
+
+        const unbanUserQuery = `
+            UPDATE public."user_entity"
+                SET "isBanned"=false
                 WHERE id = $1;
         `
 
         try {
             await this.dataSource.query(queryString, [userId])
+            await this.dataSource.query(unbanUserQuery, [userId])
             return true
         } catch (err) {
             console.error(err)

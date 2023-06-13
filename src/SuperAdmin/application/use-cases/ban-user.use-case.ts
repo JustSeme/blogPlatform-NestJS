@@ -1,10 +1,10 @@
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
-import { PostsRepository } from "../../../Blogger/infrastructure/posts/posts-db-repository"
 import { CommentsRepository } from "../../../blogs/infrastructure/comments/comments-db-repository"
 import { DevicesSQLRepository } from "../../../security/infrastructure/devices-sql-repository"
 import { UsersSQLRepository } from "../../infrastructure/users-sql-repository"
+import { PostsSQLRepository } from "../../../Blogger/infrastructure/posts/posts-sql-repository"
 
 export class BanUserCommand {
     constructor(
@@ -18,7 +18,7 @@ export class BanUserUseCase implements ICommandHandler<BanUserCommand> {
     constructor(
         private usersRepository: UsersSQLRepository,
         private deviceRepository: DevicesSQLRepository,
-        private postsRepository: PostsRepository,
+        private postsRepository: PostsSQLRepository,
         private commentsRepository: CommentsRepository,
     ) { }
 
@@ -28,9 +28,9 @@ export class BanUserUseCase implements ICommandHandler<BanUserCommand> {
             userId,
         } = command
 
-        await this.usersRepository.banUserById(userId, banReason)
+        const isBanned = await this.usersRepository.banUserById(userId, banReason)
 
-        return this.hideUserEntities(userId)
+        return this.hideUserEntities(userId) && isBanned
     }
 
     async hideUserEntities(userId: string) {

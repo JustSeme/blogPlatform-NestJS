@@ -31,6 +31,9 @@ export class UserEntity {
     @OneToOne(() => UserBanInfo, (banInfo) => banInfo.user, { cascade: true })
     banInfo: UserBanInfo
 
+    @Column({ default: false })
+    isBanned: boolean
+
     @OneToOne(() => UserEmailConfirmation, (emailConfirmation) => emailConfirmation.user, { cascade: true })
     emailConfirmation: UserEmailConfirmation
 

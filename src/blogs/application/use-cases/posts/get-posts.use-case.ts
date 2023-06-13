@@ -24,11 +24,11 @@ export class GetPostsUseCase implements ICommandHandler<GetPostsCommand> {
         const accessToken = query.authorizationHeader ? query.authorizationHeader.split(' ')[1] : null
         const postsWithQueryData = await this.postsQueryRepository.findPosts(query.queryParams, null)
 
-        const displayedPosts = await this.postsService.transformPostsForDisplay(postsWithQueryData.items, accessToken)
+        /* const displayedPosts = await this.postsService.transformPostsForDisplay(postsWithQueryData.items, accessToken)
         const postsViewQueryData = {
             ...postsWithQueryData, items: displayedPosts
-        }
+        } */
 
-        return postsViewQueryData
+        return postsWithQueryData
     }
 }

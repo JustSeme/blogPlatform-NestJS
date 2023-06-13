@@ -21,10 +21,10 @@ export class PostsQuerySQLRepository {
         const queryCount = `
             SELECT count(*)
                 FROM public."post_entity"
-                WHERE "isBanned"=false ${blogId ? `AND "blogId" = $1` : ''}
+                WHERE "isBanned"=false ${blogId ? `AND "blogId" = ${blogId}` : ''}
         `
 
-        const totalCountData = await this.dataSource.query(queryCount, [blogId])
+        const totalCountData = await this.dataSource.query(queryCount)
         const totalCount = totalCountData[0].count
         const pagesCount = Math.ceil(totalCount / +pageSize)
 
@@ -33,12 +33,12 @@ export class PostsQuerySQLRepository {
         const query = `
             SELECT *
                 FROM public."post_entity"
-                WHERE "isBanned"=false ${blogId ? `AND "blogId" = $1` : ''}
+                WHERE "isBanned"=false ${blogId ? `AND "blogId" = ${blogId}` : ''}
                 ORDER BY "${sortBy}" ${sortDirection}
                 LIMIT ${pageSize} OFFSET ${skipCount};
         `
 
-        const resultedPosts: PostEntity[] = await this.dataSource.query(query, [blogId])
+        const resultedPosts: PostEntity[] = await this.dataSource.query(query)
         const displayedPosts = resultedPosts.map(post => new PostsViewModel(post))
 
         return {

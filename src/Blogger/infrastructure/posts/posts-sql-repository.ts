@@ -17,6 +17,10 @@ export class PostsSQLRepository {
         return true
     }
 
+    async hideAllLikeEntitiesForPostsByUserId(userId: string) {
+        return true
+    }
+
     async createPost(creatingPost: PostDTO): Promise<PostsViewModel> {
         const queryString = `
             INSERT INTO public.post_entity
