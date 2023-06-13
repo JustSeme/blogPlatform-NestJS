@@ -59,7 +59,7 @@ export class PostsSQLRepository {
         `
 
         try {
-            const postData = this.dataSource.query(queryString, [postId])
+            const postData = await this.dataSource.query(queryString, [postId])
 
             if (!postData[0]) {
                 return null

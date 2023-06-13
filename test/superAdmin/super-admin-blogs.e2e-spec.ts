@@ -24,6 +24,10 @@ describe('super-admin-blogs', () => {
 
         await app.init()
 
+        jest.spyOn(console, 'error')
+        // @ts-ignore jest.spyOn adds this functionallity
+        console.error.mockImplementation(() => null);
+
         httpServer = app.getHttpServer()
         await request(httpServer)
             .delete('/testing/all-data')
