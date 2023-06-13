@@ -25,7 +25,7 @@ export class GetBlogsForBloggerUseCase implements ICommandHandler<GetBlogsForBlo
         blogsQueryParams,
         bloggerId
     }: GetBlogsForBloggerCommand): Promise<BlogsWithQueryOutputModel> {
-        const findedBlogsQueryData = await this.blogsQueryRepository.findBlogs(blogsQueryParams, bloggerId)
+        const findedBlogsQueryData = await this.blogsQueryRepository.findBlogsForBlogger(blogsQueryParams, bloggerId)
         findedBlogsQueryData.items = findedBlogsQueryData.items.map(blog => new BlogViewModel(blog))
 
         if (!findedBlogsQueryData.items.length) {
