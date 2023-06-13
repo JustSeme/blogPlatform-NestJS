@@ -5,7 +5,7 @@ import { EmailConfirmationType } from '../../SuperAdmin/domain/UsersTypes'
 import { add } from 'date-fns'
 import { UserPasswordRecovery } from '../../SuperAdmin/domain/typeORM/user-password-recovery.entity'
 import { UserEntity } from '../../SuperAdmin/domain/typeORM/user.entity'
-import { UserEmailConfitmation } from '../../SuperAdmin/domain/typeORM/user-email-confirmation.entity'
+import { UserEmailConfirmation } from '../../SuperAdmin/domain/typeORM/user-email-confirmation.entity'
 
 
 @Injectable()
@@ -130,7 +130,7 @@ export class AuthRepository {
         return user[0]
     }
 
-    async findUserWithEmailConfirmationByEmail(email: string): Promise<UserEntity & UserEmailConfitmation> {
+    async findUserWithEmailConfirmationByEmail(email: string): Promise<UserEntity & UserEmailConfirmation> {
         const queryString = ` 
             SELECT *
                 FROM public."user_entity" ue
@@ -138,7 +138,7 @@ export class AuthRepository {
                 WHERE "email" = $1;
         `
 
-        const user: UserEntity & UserEmailConfitmation = await this.dataSource.query(queryString, [email])
+        const user: UserEntity & UserEmailConfirmation = await this.dataSource.query(queryString, [email])
         if (!user[0]) {
             return null
         }

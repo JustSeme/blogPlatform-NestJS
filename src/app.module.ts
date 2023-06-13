@@ -132,7 +132,7 @@ import { PostEntity } from "./Blogger/domain/posts/post.entity"
 import { PostsSQLRepository } from "./Blogger/infrastructure/posts/posts-sql-repository"
 import { PostsQuerySQLRepository } from "./Blogger/infrastructure/posts/posts-query-sql-repository"
 import { UserBanInfo } from "./SuperAdmin/domain/typeORM/user-ban-info.entity"
-import { UserEmailConfitmation } from "./SuperAdmin/domain/typeORM/user-email-confirmation.entity"
+import { UserEmailConfirmation } from "./SuperAdmin/domain/typeORM/user-email-confirmation.entity"
 import { UserPasswordRecovery } from "./SuperAdmin/domain/typeORM/user-password-recovery.entity"
 
 const authUseCases = [
@@ -277,7 +277,7 @@ const {
 const userEntities = [
   UserEntity,
   UserBanInfo,
-  UserEmailConfitmation,
+  UserEmailConfirmation,
   UserPasswordRecovery
 ]
 

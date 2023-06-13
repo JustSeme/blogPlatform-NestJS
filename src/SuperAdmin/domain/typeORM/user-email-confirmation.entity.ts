@@ -5,7 +5,7 @@ import {
 import { UserEntity } from "./user.entity"
 
 @Entity()
-export class UserEmailConfitmation {
+export class UserEmailConfirmation {
     @PrimaryGeneratedColumn('uuid')
     id: string
 

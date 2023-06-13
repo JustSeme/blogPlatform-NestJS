@@ -5,7 +5,7 @@ import {
 } from "../domain/UsersTypes"
 import { BanInfoDBType } from "../application/dto/UsersViewModel"
 import { UserEntity } from "../domain/typeORM/user.entity"
-import { UserEmailConfitmation } from "../domain/typeORM/user-email-confirmation.entity"
+import { UserEmailConfirmation } from "../domain/typeORM/user-email-confirmation.entity"
 import { UserPasswordRecovery } from "../domain/typeORM/user-password-recovery.entity"
 import { UserBanInfo } from "../domain/typeORM/user-ban-info.entity"
 
@@ -21,7 +21,7 @@ export class UserDBModel {
     public passwordRecovery: PasswordConfirmationType
     public banInfo: BanInfoDBType
 
-    constructor(user: UserEntity & UserEmailConfitmation & UserPasswordRecovery & UserBanInfo) {
+    constructor(user: UserEntity & UserEmailConfirmation & UserPasswordRecovery & UserBanInfo) {
         this.id = user.id
         this.login = user.login
         this.email = user.email

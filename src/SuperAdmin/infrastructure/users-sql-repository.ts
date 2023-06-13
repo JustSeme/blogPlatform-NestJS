@@ -5,7 +5,7 @@ import { UserDTO } from '../domain/UsersTypes'
 import { UserViewModelType } from '../application/dto/UsersViewModel'
 import { BanUserForBlogInfoType } from '../../Blogger/infrastructure/blogs/BanUserForBlogInfoType'
 import { UserEntity } from '../domain/typeORM/user.entity'
-import { UserEmailConfitmation } from '../domain/typeORM/user-email-confirmation.entity'
+import { UserEmailConfirmation } from '../domain/typeORM/user-email-confirmation.entity'
 import { UserPasswordRecovery } from '../domain/typeORM/user-password-recovery.entity'
 import { UserBanInfo } from '../domain/typeORM/user-ban-info.entity'
 
@@ -14,17 +14,42 @@ export class UsersSQLRepository {
     constructor(@InjectDataSource() private dataSource: DataSource) { }
 
     async createNewUser(newUser: UserDTO): Promise<UserViewModelType | null> {
-        const query = `
+        const createUserQuery = `
             INSERT INTO public."user_entity"
                 (
-                "login", "email", "passwordHash", "emailConfirmationCode", "emailExpirationDate", "isEmailConfirmed"
+                "login", "email", "passwordHash", "id"
                 )
-                VALUES ($1, $2, $3, $4, $5, $6);
+                VALUES ($1, $2, $3, $4);
+        `
+
+        const createEmailConfirmationQuery = `
+            INSERT INTO public."user_email_confirmation"
+                (
+                "emailConfirmationCode", "emailExpirationDate", "userId"
+                )
+                VALUES ($1, $2, $3)
+        `
+
+        const createBanInfoQuery = `
+            INSERT INTO public."user_ban_info"
+                (
+                "userId"
+                )
+                VALUES ($1)
+        `
+
+        const createPasswordRecoveryQuery = `
+            INSERT INTO public."user_password_recovery"
+                (
+                "userId"
+                )
+                VALUES ($1)
         `
 
         const querySelect = `
             SELECT *
-                FROM public."user_entity"
+                FROM public."user_entity" ue
+                LEFT JOIN user_ban_info ubi on ubi."userId" = ue.id
                 WHERE "login" = $1
         `
 
@@ -34,23 +59,41 @@ export class UsersSQLRepository {
 
         await queryRunner.startTransaction()
 
-
         try {
-            await this.dataSource.query(query, [
+            await queryRunner.query(createUserQuery, [
                 newUser.login,
                 newUser.email,
                 newUser.passwordHash,
-                newUser.emailConfirmation.confirmationCode,
-                newUser.emailConfirmation.expirationDate,
-                newUser.emailConfirmation.isConfirmed
+                newUser.id
             ])
 
-            const createdUser: UserEntity[] = await this.dataSource.query(querySelect, [newUser.login])
+            await queryRunner.query(createEmailConfirmationQuery, [
+                newUser.emailConfirmation.confirmationCode,
+                newUser.emailConfirmation.expirationDate,
+                newUser.id
+            ])
+
+            await queryRunner.query(createBanInfoQuery, [
+                newUser.id
+            ])
+
+            await queryRunner.query(createPasswordRecoveryQuery, [
+                newUser.id
+            ])
+
+            const createdUser: Array<UserEntity & UserBanInfo> = await queryRunner.query(querySelect, [newUser.login])
+
+            await queryRunner.commitTransaction()
 
             return new UserViewModelType(createdUser[0])
         } catch (err) {
-            console.error(err)
+            console.error('Error in create user transaction', err)
+
+            await queryRunner.rollbackTransaction()
+
             return null
+        } finally {
+            await queryRunner.release()
         }
     }
 
@@ -101,7 +144,7 @@ export class UsersSQLRepository {
         return findedUserData[0]
     }
 
-    async findUserDataWithEmailConfirmation(userId: string): Promise<UserEntity & UserEmailConfitmation> {
+    async findUserDataWithEmailConfirmation(userId: string): Promise<UserEntity & UserEmailConfirmation> {
         const queryString = `
             SELECT *
                 FROM user_entity ue
@@ -109,7 +152,7 @@ export class UsersSQLRepository {
                 WHERE "id" = $1;
         `
 
-        const findedConfirmationData: UserEntity & UserEmailConfitmation = await this.dataSource.query(queryString, [userId])
+        const findedConfirmationData: UserEntity & UserEmailConfirmation = await this.dataSource.query(queryString, [userId])
 
         return findedConfirmationData[0]
     }

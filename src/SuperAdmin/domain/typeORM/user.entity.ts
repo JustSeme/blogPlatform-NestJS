@@ -8,7 +8,7 @@ import { BlogEntity } from "../../../Blogger/domain/blogs/blog.entity"
 import { BansUsersForBlogs } from "../../../Blogger/domain/blogs/bans-users-for-blogs.entity"
 import { PostEntity } from "../../../Blogger/domain/posts/post.entity"
 import { UserBanInfo } from "./user-ban-info.entity"
-import { UserEmailConfitmation } from "./user-email-confirmation.entity"
+import { UserEmailConfirmation } from "./user-email-confirmation.entity"
 import { UserPasswordRecovery } from "./user-password-recovery.entity"
 
 @Entity()
@@ -31,11 +31,8 @@ export class UserEntity {
     @OneToOne(() => UserBanInfo, (banInfo) => banInfo.user)
     banInfo: UserBanInfo
 
-    @Column({ default: false })
-    isBanned: boolean
-
-    @OneToOne(() => UserEmailConfitmation, (emailConfirmation) => emailConfirmation.user)
-    emailConfirmation: UserEmailConfitmation
+    @OneToOne(() => UserEmailConfirmation, (emailConfirmation) => emailConfirmation.user)
+    emailConfirmation: UserEmailConfirmation
 
     @Column({ default: false })
     isConfirmed: boolean
