@@ -219,12 +219,10 @@ describe('super-admin-users', () => {
     })
 
     it('should delete two users by id', async () => {
-        const err = await request(httpServer)
+        await request(httpServer)
             .delete(`/sa/users/${id1}`)
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
-        //.expect(HttpStatus.NO_CONTENT)
-        console.log(err.body);
-
+            .expect(HttpStatus.NO_CONTENT)
 
         await request(httpServer)
             .delete(`/sa/users/${id2}`)

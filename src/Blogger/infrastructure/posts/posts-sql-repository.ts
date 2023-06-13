@@ -21,17 +21,12 @@ export class PostsSQLRepository {
         const queryString = `
             INSERT INTO public.post_entity
                 (title, "shortDescription", "content", "blogName", "ownerLogin", "blogId", "ownerId")
-                VALUES($1, $2, $3, $4, $5, $6, $7);
-        `
-
-        const selectString = `
-            SELECT *
-                FROM public.post_entity
-                WHERE "title" = $1 AND "ownerId" = #2
+                VALUES($1, $2, $3, $4, $5, $6, $7)
+                RETURNING *;
         `
 
         try {
-            await this.dataSource.query(queryString, [
+            const createdPost: PostEntity[] = await this.dataSource.query(queryString, [
                 creatingPost.title,
                 creatingPost.shortDescription,
                 creatingPost.content,
@@ -40,8 +35,6 @@ export class PostsSQLRepository {
                 creatingPost.blogId,
                 creatingPost.postOwnerInfo.userId,
             ])
-
-            const createdPost: PostEntity[] = await this.dataSource.query(selectString, [creatingPost.title, creatingPost.postOwnerInfo.userId])
 
             if (!createdPost[0]) {
                 return null
