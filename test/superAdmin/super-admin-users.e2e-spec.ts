@@ -28,6 +28,10 @@ describe('super-admin-users', () => {
 
         await app.init()
 
+        jest.spyOn(console, 'error')
+        // @ts-ignore jest.spyOn adds this functionallity
+        console.error.mockImplementation(() => null);
+
         httpServer = app.getHttpServer()
         await request(httpServer)
             .delete('/testing/all-data')
@@ -215,10 +219,12 @@ describe('super-admin-users', () => {
     })
 
     it('should delete two users by id', async () => {
-        await request(httpServer)
+        const err = await request(httpServer)
             .delete(`/sa/users/${id1}`)
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
-            .expect(HttpStatus.NO_CONTENT)
+        //.expect(HttpStatus.NO_CONTENT)
+        console.log(err.body);
+
 
         await request(httpServer)
             .delete(`/sa/users/${id2}`)
@@ -455,15 +461,13 @@ describe('super-admin-users', () => {
     })
 
     it('should like/dislike early created post and comment, should display correct info', async () => {
-        const err = await request(httpServer)
+        await request(httpServer)
             .put(`/comments/${secondCommentId}/like-status`)
             .set('Authorization', `Bearer ${recievedAccessToken}`)
             .send({
                 likeStatus: 'Like'
             })
-        //.expect(HttpStatus.NO_CONTENT)
-        console.log(err.body, 'error');
-
+            .expect(HttpStatus.NO_CONTENT)
 
         await request(httpServer)
             .put(`/posts/${secondPostId}/like-status`)

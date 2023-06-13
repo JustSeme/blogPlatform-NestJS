@@ -9,7 +9,7 @@ export class UserBanInfo {
     @PrimaryGeneratedColumn('uuid')
     id: string
 
-    @OneToOne(() => UserEntity, (user) => user.banInfo)
+    @OneToOne(() => UserEntity, (user) => user.banInfo, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'userId' })
     user: UserEntity
 

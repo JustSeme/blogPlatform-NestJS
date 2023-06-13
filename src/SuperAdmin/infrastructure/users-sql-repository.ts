@@ -161,7 +161,7 @@ export class UsersSQLRepository {
     async deleteUser(userId: string): Promise<boolean> {
         const queryString = `
             DELETE FROM public."user_entity"
-                WHERE id = $1
+                WHERE "id" = $1;
         `
 
         try {
@@ -169,6 +169,8 @@ export class UsersSQLRepository {
             return true
         } catch (err) {
             console.error(err)
+            console.log(err)
+
             return false
         }
     }

@@ -28,16 +28,16 @@ export class UserEntity {
     @Column()
     passwordHash: string
 
-    @OneToOne(() => UserBanInfo, (banInfo) => banInfo.user)
+    @OneToOne(() => UserBanInfo, (banInfo) => banInfo.user, { cascade: true })
     banInfo: UserBanInfo
 
-    @OneToOne(() => UserEmailConfirmation, (emailConfirmation) => emailConfirmation.user)
+    @OneToOne(() => UserEmailConfirmation, (emailConfirmation) => emailConfirmation.user, { cascade: true })
     emailConfirmation: UserEmailConfirmation
 
     @Column({ default: false })
     isConfirmed: boolean
 
-    @OneToOne(() => UserPasswordRecovery, (passwordRecovery) => passwordRecovery.user)
+    @OneToOne(() => UserPasswordRecovery, (passwordRecovery) => passwordRecovery.user, { cascade: true })
     passwordRecovery: UserPasswordRecovery
 
     @OneToMany(() => AuthSession, (authSession) => authSession.user)

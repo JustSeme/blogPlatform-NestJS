@@ -20,7 +20,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "testmatch:e2e": "jest --detectOpenHandles --watch --config ./test/jest-e2e.json -t",
+    "testmatch:e2e": "jest --watch --config ./test/jest-e2e.json -t",
     "test:integration": "jest --config ./src/jest.config.js --watch --detectOpenHandles",
     "testmatch:integration": "jest --detectOpenHandles --watch --config ./src/jest.config.js -t"
   },
