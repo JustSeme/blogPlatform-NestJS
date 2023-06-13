@@ -124,9 +124,10 @@ export class PostsSQLRepository {
 
     async updatePost(postId: string, body: PostInputModel): Promise<boolean> {
         const queryString = `
-            UPDATE public."post_enity"
+            UPDATE public."post_entity"
                 SET "title"=$2, "shortDescription"=$3, "content"=$4
                 WHERE id=$1
+                RETURNING *;
         `
 
         try {
@@ -134,6 +135,7 @@ export class PostsSQLRepository {
 
             return true
         } catch (err) {
+            console.log(err)
             console.error(err)
             return false
         }

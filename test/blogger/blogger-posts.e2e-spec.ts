@@ -23,6 +23,10 @@ describe('blogger-posts-only', () => {
 
         await app.init()
 
+        jest.spyOn(console, 'error')
+        // @ts-ignore jest.spyOn adds this functionallity
+        console.error.mockImplementation(() => null);
+
         httpServer = app.getHttpServer()
         await request(httpServer)
             .delete('/testing/all-data')
@@ -439,7 +443,7 @@ describe('blogger-posts-only', () => {
         expect(notDeletedPostData.body.content).toEqual(updatePostInputBody.content)
     })
 
-    it('blogger should delete early created post and post should be deleted', async () => {
+    it('blogger should delete early created post, then post should be deleted', async () => {
         await request(httpServer)
             .delete(`/blogger/blogs/${createdBlogId}/posts/${createdPostId}`)
             .set('Authorization', `Bearer ${recievedAccessToken}`)

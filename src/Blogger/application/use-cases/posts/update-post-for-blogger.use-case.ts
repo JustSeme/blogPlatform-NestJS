@@ -1,11 +1,11 @@
 import {
     CommandHandler, ICommand, ICommandHandler
 } from "@nestjs/cqrs"
-import { PostsRepository } from "../../../infrastructure/posts/posts-db-repository"
 import { ForbiddenException } from '@nestjs/common'
 import { PostInputModelWithoutBlogId } from "../../../api/models/PostInputModelWithoutBlogId"
 import { PostInputModel } from "../../../api/models/PostInputModel"
 import { BlogsSQLRepository } from "../../../infrastructure/blogs/blogs-sql-repository"
+import { PostsSQLRepository } from "../../../infrastructure/posts/posts-sql-repository"
 
 // Command
 export class UpdatePostForBloggerCommand implements ICommand {
@@ -22,7 +22,7 @@ export class UpdatePostForBloggerCommand implements ICommand {
 export class UpdatePostForBloggerUseCase implements ICommandHandler<UpdatePostForBloggerCommand> {
     constructor(
         private readonly blogsRepository: BlogsSQLRepository,
-        private readonly postsRepository: PostsRepository,
+        private readonly postsRepository: PostsSQLRepository,
     ) { }
 
     async execute(command: UpdatePostForBloggerCommand): Promise<boolean> {
@@ -43,8 +43,6 @@ export class UpdatePostForBloggerUseCase implements ICommandHandler<UpdatePostFo
             ...postInputModel, blogId
         }
 
-        await this.postsRepository.updatePost(postId, postInputModelWithBlogId)
-
-        return true
+        return this.postsRepository.updatePost(postId, postInputModelWithBlogId)
     }
 }
