@@ -87,8 +87,6 @@ export class UsersSQLRepository {
 
             await queryRunner.commitTransaction()
 
-            console.log(createdUser[0].id, userId[0].id)
-
             return new UserViewModelType(createdUser[0])
         } catch (err) {
             console.error('Error in create user transaction', err)
@@ -106,7 +104,7 @@ export class UsersSQLRepository {
             SELECT *
                 FROM public."user_entity" ue
                 LEFT JOIN user_ban_info ubi ON ubi."userId" = ue.id
-                WHERE id = $1;
+                WHERE ue."id" = $1;
         `
 
         try {
@@ -140,7 +138,7 @@ export class UsersSQLRepository {
             SELECT *
                 FROM user_entity ue
                 LEFT JOIN user_password_recovery upr ON upr."userId" = ue.id
-                WHERE "id" = $1;
+                WHERE ue."id" = $1;
         `
 
         const findedUserData: UserEntity & UserPasswordRecovery = await this.dataSource.query(queryString, [userId])
@@ -150,14 +148,13 @@ export class UsersSQLRepository {
 
     async findUserDataWithEmailConfirmation(userId: string): Promise<UserEntity & UserEmailConfirmation> {
         const queryString = `
-            SELECT *
+            SELECT *, ue."id"
                 FROM public."user_entity" ue
                 LEFT JOIN public."user_email_confirmation" uec ON uec."userId" = ue."id"
                 WHERE ue."id" = $1;
         `
 
         const findedConfirmationData: UserEntity & UserEmailConfirmation = await this.dataSource.query(queryString, [userId])
-
         return findedConfirmationData[0]
     }
 

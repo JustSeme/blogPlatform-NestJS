@@ -33,7 +33,7 @@ export class UsersQuerySQLRepository {
         const skipCount = (+pageNumber - 1) * +pageSize
 
         const query = `
-            SELECT *
+            SELECT *, ue."id"
                 FROM public."user_entity" ue
                 LEFT JOIN user_ban_info ubi ON ubi."userId" = ue.id 
                 WHERE (lower("login") LIKE lower($1) OR lower("email") LIKE lower($2)) ${banStatus !== 'all' ? `AND "isBanned" = ${isBanned}` : ''}
@@ -56,10 +56,10 @@ export class UsersQuerySQLRepository {
 
     async findUserById(userId: string): Promise<UserViewModelType> {
         const queryString = `
-            SELECT *
+            SELECT *, ue."id"
                 FROM public."user_entity" ue
                 LEFT JOIN user_ban_info ubi on ubi."userId" = ue.id 
-                WHERE id = $1;
+                WHERE ue."id" = $1;
         `
 
         const findedUserData: UserEntity & UserBanInfo = await this.dataSource.query(queryString, [userId])

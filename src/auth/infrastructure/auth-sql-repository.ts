@@ -56,7 +56,7 @@ export class AuthRepository {
     async findUserEmailConfirmationDataByCode(code: string): Promise<EmailConfirmationType> {
         const queryString = `
             SELECT "emailConfirmationCode", "emailExpirationDate", "isEmailConfirmed"
-                FROM public."user_entity"
+                FROM public."user_email_confirmation"
                 WHERE "emailConfirmationCode" = $1;
         `
 
@@ -107,12 +107,27 @@ export class AuthRepository {
 
     async updateIsConfirmedByConfirmationCode(code: string) {
         const queryString = `
-            UPDATE public."user_entity"
+            UPDATE public."user_email_confirmation" uec
                 SET "emailConfirmationCode"=null, "emailExpirationDate"=null, "isEmailConfirmed"=true
-                WHERE "emailConfirmationCode" = $1;
+                WHERE "emailConfirmationCode" = $1
+                RETURNING uec."userId"
         `
 
-        await this.dataSource.query(queryString, [code])
+        const updateUserQuery = `
+            UPDATE public."user_entity" ue
+            SET "isConfirmed"=true
+            WHERE "id" = $1
+        `
+
+        try {
+            const userIdData = await this.dataSource.query(queryString, [code])
+
+            await this.dataSource.query(updateUserQuery, [userIdData[0][0].userId])
+            return true
+        } catch (error) {
+            console.error('Error in confirm email', error)
+            return false
+        }
     }
 
     async findUserByEmail(email: string): Promise<UserEntity> {
@@ -148,9 +163,9 @@ export class AuthRepository {
 
     async updateEmailConfirmationInfo(userId: string, newConfirmationCode: string) {
         const queryString = `
-            UPDATE public."user_entity"
+            UPDATE public."user_email_confirmation"
                 SET "emailConfirmationCode"=$2, "emailExpirationDate"=$3
-                WHERE "id" = $1;
+                WHERE "userId" = $1;
         `
 
         const expirationDate = add(new Date(), {
@@ -185,12 +200,21 @@ export class AuthRepository {
     async updateUserPassword(userId: string, newPasswordHash: string): Promise<boolean> {
         const queryString = `
             UPDATE public."user_entity"
-                SET "passwordRecoveryConfirmationCode"=null, "passwordRecoveryExpirationDate"=null, "passwordHash"=$2
+                SET "passwordHash"=$2
                 WHERE id = $1;
+        `
+
+        const updatePasswordRecovery = `
+            UPDATE public."user_password_recovery"
+                SET "passwordRecoveryConfirmationCode"=null, "passwordRecoveryExpirationDate"=null
+                WHERE "userId" = $1;
         `
 
         try {
             await this.dataSource.query(queryString, [userId, newPasswordHash])
+
+            await this.dataSource.query(updatePasswordRecovery, [userId])
+
             return true
         } catch (err) {
             console.error(err)
