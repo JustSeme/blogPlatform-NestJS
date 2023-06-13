@@ -17,17 +17,18 @@ export class UsersSQLRepository {
         const createUserQuery = `
             INSERT INTO public."user_entity"
                 (
-                "login", "email", "passwordHash", "id"
+                "login", "email", "passwordHash", "isConfirmed"
                 )
-                VALUES ($1, $2, $3, $4);
+                VALUES ($1, $2, $3, $4)
+                RETURNING id;
         `
 
         const createEmailConfirmationQuery = `
             INSERT INTO public."user_email_confirmation"
                 (
-                "emailConfirmationCode", "emailExpirationDate", "userId"
+                "emailConfirmationCode", "emailExpirationDate", "userId", "isEmailConfirmed"
                 )
-                VALUES ($1, $2, $3)
+                VALUES ($1, $2, $3, $4)
         `
 
         const createBanInfoQuery = `
@@ -47,10 +48,10 @@ export class UsersSQLRepository {
         `
 
         const querySelect = `
-            SELECT *
+            SELECT *, ue."id"
                 FROM public."user_entity" ue
                 LEFT JOIN user_ban_info ubi on ubi."userId" = ue.id
-                WHERE "login" = $1
+                WHERE ue."id" = $1
         `
 
         const queryRunner = this.dataSource.createQueryRunner()
@@ -60,30 +61,33 @@ export class UsersSQLRepository {
         await queryRunner.startTransaction()
 
         try {
-            await queryRunner.query(createUserQuery, [
+            const userId = await queryRunner.query(createUserQuery, [
                 newUser.login,
                 newUser.email,
                 newUser.passwordHash,
-                newUser.id
+                newUser.emailConfirmation.isConfirmed
             ])
 
             await queryRunner.query(createEmailConfirmationQuery, [
                 newUser.emailConfirmation.confirmationCode,
                 newUser.emailConfirmation.expirationDate,
-                newUser.id
+                userId[0].id,
+                newUser.emailConfirmation.isConfirmed
             ])
 
             await queryRunner.query(createBanInfoQuery, [
-                newUser.id
+                userId[0].id
             ])
 
             await queryRunner.query(createPasswordRecoveryQuery, [
-                newUser.id
+                userId[0].id
             ])
 
-            const createdUser: Array<UserEntity & UserBanInfo> = await queryRunner.query(querySelect, [newUser.login])
+            const createdUser: Array<UserEntity & UserBanInfo> = await queryRunner.query(querySelect, [userId[0].id])
 
             await queryRunner.commitTransaction()
+
+            console.log(createdUser[0].id, userId[0].id)
 
             return new UserViewModelType(createdUser[0])
         } catch (err) {
@@ -147,9 +151,9 @@ export class UsersSQLRepository {
     async findUserDataWithEmailConfirmation(userId: string): Promise<UserEntity & UserEmailConfirmation> {
         const queryString = `
             SELECT *
-                FROM user_entity ue
-                LEFT JOIN user_email_confirmation uec ON uec."userId" = ue.id 
-                WHERE "id" = $1;
+                FROM public."user_entity" ue
+                LEFT JOIN public."user_email_confirmation" uec ON uec."userId" = ue."id"
+                WHERE ue."id" = $1;
         `
 
         const findedConfirmationData: UserEntity & UserEmailConfirmation = await this.dataSource.query(queryString, [userId])

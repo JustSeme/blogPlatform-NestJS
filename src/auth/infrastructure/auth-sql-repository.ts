@@ -163,9 +163,9 @@ export class AuthRepository {
 
     async updatePasswordConfirmationInfo(userId: string, passwordRecoveryCode: string) {
         const queryString = `
-            UPDATE public."user_entity"
+            UPDATE public."user_password_recovery"
                 SET "passwordRecoveryConfirmationCode"=$2, "passwordRecoveryExpirationDate"=$3
-                WHERE id = $1;
+                WHERE "userId" = $1;
         `
 
         const expirationDate = add(new Date(), {

@@ -51,6 +51,15 @@ export class AppService {
       DELETE FROM public."blog_entity"
         WHERE 1 = 1;
 
+      DELETE FROM public."user_ban_info"
+        WHERE 1 = 1;
+
+      DELETE FROM public."user_email_confirmation"
+        WHERE 1 = 1;
+
+      DELETE FROM public."user_password_recovery"
+        WHERE 1 = 1;
+
       DELETE FROM public."user_entity"
         WHERE 1 = 1;
 
