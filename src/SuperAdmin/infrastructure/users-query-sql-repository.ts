@@ -64,7 +64,7 @@ export class UsersQuerySQLRepository {
 
         const queryCount = `
             SELECT count(*)
-                FROM public."bans_users_for_blog" bufb
+                FROM public."bans_users_for_blogs" bufb
                 LEFT JOIN public."user_entity" ue ON bufb."userId" = ue."id"
                 WHERE lower(ue."login") LIKE lower($1) AND bufb."blogId" = $2
         `
@@ -77,7 +77,7 @@ export class UsersQuerySQLRepository {
 
         const query = `
             SELECT *, ue."id", bufb."isBanned"
-                FROM public."bans_users_for_blog" bufb
+                FROM public."bans_users_for_blogs" bufb
                 LEFT JOIN user_entity ue ON bufb."userId" = ue."id"
                 WHERE lower(ue."login") LIKE lower($1) AND bufb."blogId" = $2
                 ORDER BY "${sortBy}" ${sortDirection}

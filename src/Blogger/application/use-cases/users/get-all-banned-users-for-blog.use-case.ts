@@ -3,7 +3,6 @@ import {
 } from "@nestjs/cqrs"
 import { ReadBannedUsersQueryParams } from "../../../api/models/ReadBannedUsersQueryParams"
 import { BannedUsersOutputModel } from "../../dto/BannedUserViewModel"
-import { BloggerService } from "../../blogger.service"
 import { ForbiddenException } from "@nestjs/common"
 import { generateErrorsMessages } from "../../../../general/helpers"
 import { BlogsSQLRepository } from "../../../infrastructure/blogs/blogs-sql-repository"
@@ -22,7 +21,6 @@ export class GetAllBannedUsersForBlogCommand {
 export class GetAllBannedUsersForBlogUseCase implements ICommandHandler<GetAllBannedUsersForBlogCommand> {
     constructor(
         private usersQueryRepository: UsersQuerySQLRepository,
-        private bloggerService: BloggerService,
         private blogsRepository: BlogsSQLRepository,
     ) { }
 
