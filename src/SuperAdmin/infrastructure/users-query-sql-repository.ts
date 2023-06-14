@@ -6,6 +6,9 @@ import {
 import { ReadUsersQuery } from "../api/models/ReadUsersQuery"
 import { UserEntity } from "../domain/typeORM/user.entity"
 import { UserBanInfo } from "../domain/typeORM/user-ban-info.entity"
+import { ReadBannedUsersQueryParams } from "../../Blogger/api/models/ReadBannedUsersQueryParams"
+import { UsersBloggerViewModel } from "../application/dto/UsersBloggerViewModel"
+import { BansUsersForBlogs } from "../../Blogger/domain/blogs/bans-users-for-blogs.entity"
 
 @Injectable()
 export class UsersQuerySQLRepository {
@@ -44,6 +47,46 @@ export class UsersQuerySQLRepository {
         const resultedUsers: Array<UserEntity & UserBanInfo> = await this.dataSource.query(query, [`%${searchLoginTerm}%`, `%${searchEmailTerm}%`, pageSize, skipCount])
 
         const diapayedUsers = resultedUsers.map((user) => new UserViewModelType(user))
+
+        return {
+            pagesCount: pagesCount,
+            page: +pageNumber,
+            pageSize: +pageSize,
+            totalCount: +totalCount,
+            items: diapayedUsers
+        }
+    }
+
+    async findBannedUsersByBlogId(queryParams: ReadBannedUsersQueryParams, blogId: string) {
+        const {
+            sortDirection = 'desc', sortBy = 'createdAt', pageNumber = 1, pageSize = 10, searchLoginTerm = ''
+        } = queryParams
+
+        const queryCount = `
+            SELECT count(*)
+                FROM public."bans_users_for_blog" bufb
+                LEFT JOIN public."user_entity" ue ON bufb."userId" = ue."id"
+                WHERE lower(ue."login") LIKE lower($1) AND bufb."blogId" = $2
+        `
+
+        const totalCountData = await this.dataSource.query(queryCount, [`%${searchLoginTerm}%`, blogId])
+        const totalCount = totalCountData[0].count
+        const pagesCount = Math.ceil(totalCount / +pageSize)
+
+        const skipCount = (+pageNumber - 1) * +pageSize
+
+        const query = `
+            SELECT *, ue."id", bufb."isBanned"
+                FROM public."bans_users_for_blog" bufb
+                LEFT JOIN user_entity ue ON bufb."userId" = ue."id"
+                WHERE lower(ue."login") LIKE lower($1) AND bufb."blogId" = $2
+                ORDER BY "${sortBy}" ${sortDirection}
+                LIMIT $3 OFFSET $4;
+        `
+
+        const resultedUsers: Array<UserEntity & BansUsersForBlogs> = await this.dataSource.query(query, [`%${searchLoginTerm}%`, blogId, pageSize, skipCount])
+
+        const diapayedUsers = resultedUsers.map((user) => new UsersBloggerViewModel(user))
 
         return {
             pagesCount: pagesCount,
