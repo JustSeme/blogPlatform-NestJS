@@ -179,7 +179,7 @@ export class PostsSQLRepository {
         }
     }
 
-    async unhidePostsByBlogId(blogId: string): Promise<boolean> {
+    async unHidePostsByBlogId(blogId: string): Promise<boolean> {
         const queryString = `
             UPDATE public."post_entity"
                 SET "isBanned"=false
