@@ -90,7 +90,7 @@ export class BlogsQuerySQLRepository {
             pagesCount: pagesCount,
             page: +pageNumber,
             pageSize: +pageSize,
-            totalCount: totalCount,
+            totalCount: +totalCount,
             items: displayedBlogs
         }
     }
@@ -131,7 +131,7 @@ export class BlogsQuerySQLRepository {
             pagesCount: pagesCount,
             page: +pageNumber,
             pageSize: +pageSize,
-            totalCount: totalCount,
+            totalCount: +totalCount,
             items: displayedBlogs
         }
     }

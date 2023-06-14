@@ -45,7 +45,7 @@ export class PostsQuerySQLRepository {
             pagesCount: pagesCount,
             page: +pageNumber,
             pageSize: +pageSize,
-            totalCount: totalCount,
+            totalCount: +totalCount,
             items: displayedPosts
         }
     }
