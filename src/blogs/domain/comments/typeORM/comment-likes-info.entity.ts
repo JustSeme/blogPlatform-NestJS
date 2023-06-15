@@ -4,6 +4,7 @@ import {
     Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn
 } from "typeorm"
 import { UserEntity } from "../../../../SuperAdmin/domain/typeORM/user.entity"
+import { CommentEntity } from "./comment.entity"
 
 @Entity()
 export class CommentLikesInfo {
@@ -22,4 +23,8 @@ export class CommentLikesInfo {
 
     @Column({ default: 'None' })
     likeStatus: string
+
+    @ManyToOne(() => CommentEntity, (comment) => comment.commentLikes)
+    @JoinColumn({ name: 'commentId' })
+    comment: CommentEntity
 }
