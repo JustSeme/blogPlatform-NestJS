@@ -136,6 +136,7 @@ import { UserEmailConfirmation } from "./SuperAdmin/domain/typeORM/user-email-co
 import { UserPasswordRecovery } from "./SuperAdmin/domain/typeORM/user-password-recovery.entity"
 import { CommentEntity } from "./blogs/domain/comments/typeORM/comment.entity"
 import { CommentPostInfoEntity } from "./blogs/domain/comments/typeORM/comment-post-info.entity"
+import { CommentLikesInfo } from "./blogs/domain/comments/typeORM/comment-likes-info.entity"
 
 const authUseCases = [
   LogoutUseCase,
@@ -287,7 +288,8 @@ const typeORMEntityes = [
   BansUsersForBlogs,
   PostEntity,
   CommentEntity,
-  CommentPostInfoEntity
+  CommentPostInfoEntity,
+  CommentLikesInfo,
 ]
 
 @Module({

@@ -22,7 +22,7 @@ export class BlogEntity {
     @Column()
     websiteUrl: string
 
-    @CreateDateColumn()
+    @CreateDateColumn({ type: 'timestamptz' })
     createdAt: Date
 
     @Column({ default: true })

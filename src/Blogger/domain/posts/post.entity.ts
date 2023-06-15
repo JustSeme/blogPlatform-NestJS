@@ -20,7 +20,7 @@ export class PostEntity {
     @Column()
     content: string
 
-    @CreateDateColumn()
+    @CreateDateColumn({ type: 'timestamptz' })
     createdAt: Date
 
     @ManyToOne(() => BlogEntity, (blog) => blog.blogPosts)

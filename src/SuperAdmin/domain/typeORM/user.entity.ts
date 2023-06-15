@@ -11,13 +11,14 @@ import { UserBanInfo } from "./user-ban-info.entity"
 import { UserEmailConfirmation } from "./user-email-confirmation.entity"
 import { UserPasswordRecovery } from "./user-password-recovery.entity"
 import { CommentEntity } from "../../../blogs/domain/comments/typeORM/comment.entity"
+import { CommentLikesInfo } from "../../../blogs/domain/comments/typeORM/comment-likes-info.entity"
 
 @Entity()
 export class UserEntity {
     @PrimaryGeneratedColumn('uuid')
     id: string
 
-    @CreateDateColumn()
+    @CreateDateColumn({ type: 'timestamptz' })
     createdAt: Date
 
     @Column()
@@ -58,4 +59,7 @@ export class UserEntity {
 
     @OneToMany(() => CommentEntity, (comment) => comment.user)
     comments: CommentEntity[]
+
+    @OneToMany(() => CommentLikesInfo, (likesInfo) => likesInfo.user)
+    commentsLikeEntities: CommentLikesInfo
 }
