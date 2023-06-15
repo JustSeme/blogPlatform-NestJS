@@ -1,18 +1,18 @@
 import {
     Prop, Schema, SchemaFactory
 } from "@nestjs/mongoose"
-import { CommentDBModel } from "./CommentTypes"
+import { CommentDBModel } from "../CommentTypes"
 import {
     CommentatorInfo, CommentatorInfoSchema
 } from "./CommentatorInfoSchema"
 import {
     LikesInfo, LikesInfoSchema
 } from "./LikesInfoSchema"
-import { PostInfoType } from "../../application/dto/PostInfoType"
+import { PostInfoType } from "../../../application/dto/PostInfoType"
 import { PostInfoSchema } from "./PostInfoSchema"
 
 @Schema()
-export class CommentEntity {
+export class Comment {
     @Prop({ required: true })
     id: string
 
@@ -49,6 +49,6 @@ export class CommentEntity {
     postInfo: PostInfoType
 }
 
-export const CommentsSchema = SchemaFactory.createForClass<CommentDBModel>(CommentEntity)
+export const CommentsSchema = SchemaFactory.createForClass<CommentDBModel>(Comment)
 
 CommentsSchema.methods = {}

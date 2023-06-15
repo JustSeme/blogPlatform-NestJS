@@ -1,6 +1,6 @@
 import { Model } from 'mongoose'
 import { v4 as uuidv4 } from 'uuid'
-import { CommentEntity } from './Comments.schema'
+import { Comment } from './mongoose/Comments.schema'
 import { PostInfoType } from '../../application/dto/PostInfoType'
 
 export class CommentDBModel {
@@ -56,4 +56,4 @@ export type LikeObjectType = {
     isBanned: boolean
 }
 
-export type CommentModelType = Model<CommentEntity>
+export type CommentModelType = Model<Comment>

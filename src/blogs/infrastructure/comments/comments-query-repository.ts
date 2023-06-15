@@ -1,11 +1,11 @@
 import { InjectModel } from "@nestjs/mongoose"
 import { CommentViewModel } from "../../application/dto/CommentViewModel"
 import { CommentModelType } from "../../domain/comments/CommentTypes"
-import { CommentEntity } from "../../domain/comments/Comments.schema"
+import { Comment } from "../../domain/comments/mongoose/Comments.schema"
 
 export class CommentsQueryRepository {
     constructor(
-        @InjectModel(CommentEntity.name) protected CommentModel: CommentModelType) { }
+        @InjectModel(Comment.name) protected CommentModel: CommentModelType) { }
 
     async findCommentById(commentId: string): Promise<CommentViewModel> {
         return this.CommentModel.findOne({ $and: [{ id: commentId }, { isBanned: false }] }, {

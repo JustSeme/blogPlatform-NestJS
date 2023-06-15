@@ -86,8 +86,8 @@ import { RemoveAllSessionsExcludeCurrentUseCase } from "./security/application/u
 import { DeleteDeviceUseCase } from "./security/application/use-cases/delete-device.use-case"
 import { GetActiveDevicesUseCase } from "./security/application/use-cases/get-active-devices-for-user.use-case"
 import {
-  CommentEntity, CommentsSchema
-} from "./blogs/domain/comments/Comments.schema"
+  Comment, CommentsSchema
+} from "./blogs/domain/comments/mongoose/Comments.schema"
 import { UsersService } from "./SuperAdmin/application/users.service"
 import { GetBlogsUseCase } from "./blogs/application/use-cases/blogs/get-blogs.use-case"
 import { GetBlogByIdUseCase } from "./blogs/application/use-cases/blogs/get-blog-by-id.use-case"
@@ -134,6 +134,8 @@ import { PostsQuerySQLRepository } from "./Blogger/infrastructure/posts/posts-qu
 import { UserBanInfo } from "./SuperAdmin/domain/typeORM/user-ban-info.entity"
 import { UserEmailConfirmation } from "./SuperAdmin/domain/typeORM/user-email-confirmation.entity"
 import { UserPasswordRecovery } from "./SuperAdmin/domain/typeORM/user-password-recovery.entity"
+import { CommentEntity } from "./blogs/domain/comments/typeORM/comment.entity"
+import { CommentPostInfoEntity } from "./blogs/domain/comments/typeORM/comment-post-info.entity"
 
 const authUseCases = [
   LogoutUseCase,
@@ -274,11 +276,18 @@ const {
   PGHOST, PGDATABASE, PGUSER, PGPASSWORD
 } = process.env
 
-const userEntities = [
+const typeORMEntityes = [
   UserEntity,
   UserBanInfo,
   UserEmailConfirmation,
-  UserPasswordRecovery
+  UserPasswordRecovery,
+  AuthSession,
+  AttemptEntity,
+  BlogEntity,
+  BansUsersForBlogs,
+  PostEntity,
+  CommentEntity,
+  CommentPostInfoEntity
 ]
 
 @Module({
@@ -305,7 +314,7 @@ const userEntities = [
         schema: PostSchema
       },
       {
-        name: CommentEntity.name,
+        name: Comment.name,
         schema: CommentsSchema
       },
 
@@ -324,7 +333,7 @@ const userEntities = [
       autoLoadEntities: true,
       synchronize: true,
       ssl: true,
-      entities: [...userEntities, AuthSession, AttemptEntity, BlogEntity, BansUsersForBlogs, PostEntity]
+      entities: [...typeORMEntityes]
     }),
     PassportModule,
   ],

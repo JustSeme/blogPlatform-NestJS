@@ -1,7 +1,7 @@
 import {
     Prop, Schema, SchemaFactory
 } from "@nestjs/mongoose"
-import { CommentatorInfoType } from "./CommentTypes"
+import { CommentatorInfoType } from "../CommentTypes"
 
 @Schema()
 export class CommentatorInfo {

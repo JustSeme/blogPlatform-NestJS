@@ -7,7 +7,7 @@ import { BlogModelType } from './Blogger/domain/blogs/BlogsTypes'
 import { CommentModelType } from './blogs/domain/comments/CommentTypes'
 import { Attempt } from './security/domain/AttemptsSchema'
 import { AttemptModelType } from './security/domain/AttemptsType'
-import { CommentEntity } from './blogs/domain/comments/Comments.schema'
+import { Comment } from './blogs/domain/comments/mongoose/Comments.schema'
 import { UserModelType } from './SuperAdmin/domain/UsersTypes'
 import { User } from './SuperAdmin/domain/mongoose/UsersSchema'
 import { InjectDataSource } from '@nestjs/typeorm'
@@ -19,7 +19,7 @@ export class AppService {
     @InjectModel(User.name) private UsersModel: UserModelType,
     @InjectModel(Post.name) protected PostModel: PostModelType,
     @InjectModel(Blog.name) protected BlogModel: BlogModelType,
-    @InjectModel(CommentEntity.name) protected CommentModel: CommentModelType,
+    @InjectModel(Comment.name) protected CommentModel: CommentModelType,
     @InjectModel(Attempt.name) protected AttemptsModel: AttemptModelType,
     @InjectDataSource() protected dataSource: DataSource
   ) { }

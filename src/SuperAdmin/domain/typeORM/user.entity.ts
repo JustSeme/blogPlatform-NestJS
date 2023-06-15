@@ -10,6 +10,7 @@ import { PostEntity } from "../../../Blogger/domain/posts/post.entity"
 import { UserBanInfo } from "./user-ban-info.entity"
 import { UserEmailConfirmation } from "./user-email-confirmation.entity"
 import { UserPasswordRecovery } from "./user-password-recovery.entity"
+import { CommentEntity } from "../../../blogs/domain/comments/typeORM/comment.entity"
 
 @Entity()
 export class UserEntity {
@@ -54,4 +55,7 @@ export class UserEntity {
 
     @OneToMany(() => PostEntity, (post) => post.ownerId)
     userPosts: PostEntity[]
+
+    @OneToMany(() => CommentEntity, (comment) => comment.user)
+    comments: CommentEntity[]
 }

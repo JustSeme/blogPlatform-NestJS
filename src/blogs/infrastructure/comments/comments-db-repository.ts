@@ -6,13 +6,13 @@ import {
     CommentDBModel, CommentModelType, LikeObjectType
 } from "../../domain/comments/CommentTypes"
 import { HydratedComment } from "./CommentsTypes"
-import { CommentEntity } from "../../domain/comments/Comments.schema"
+import { Comment } from "../../domain/comments/mongoose/Comments.schema"
 import { ReadCommentsQueryParams } from "../../api/models/ReadCommentsQuery"
 import { ReadOutputQuery } from "../../../general/types/ReadQuery"
 
 @Injectable()
 export class CommentsRepository {
-    constructor(@InjectModel(CommentEntity.name) protected CommentModel: CommentModelType) { }
+    constructor(@InjectModel(Comment.name) protected CommentModel: CommentModelType) { }
 
     async createComment(createdComment: CommentDBModel) {
         await this.CommentModel.create(createdComment)

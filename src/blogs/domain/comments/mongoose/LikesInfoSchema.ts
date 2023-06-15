@@ -3,7 +3,7 @@ import {
 } from "@nestjs/mongoose"
 import {
     LikeObjectType, LikesInfoType
-} from "./CommentTypes"
+} from "../CommentTypes"
 
 @Schema()
 export class LikesInfo {
