@@ -269,16 +269,10 @@ export class UsersSQLRepository {
         `
 
         try {
-            const bansUserForBlogData = this.dataSource.query(queryString, [userId])
-
-            if (!bansUserForBlogData[0]) {
-                return null
-            }
-
-            return bansUserForBlogData
+            return this.dataSource.query(queryString, [userId])
         } catch (err) {
             console.error(err)
-            return null
+            throw new Error(`Something happened, the application can't get userBansInfo`)
         }
     }
 }

@@ -135,9 +135,9 @@ import { UserBanInfo } from "./SuperAdmin/domain/typeORM/user-ban-info.entity"
 import { UserEmailConfirmation } from "./SuperAdmin/domain/typeORM/user-email-confirmation.entity"
 import { UserPasswordRecovery } from "./SuperAdmin/domain/typeORM/user-password-recovery.entity"
 import { CommentEntity } from "./blogs/domain/comments/typeORM/comment.entity"
-import { CommentPostInfoEntity } from "./blogs/domain/comments/typeORM/comment-post-info.entity"
 import { CommentLikesInfo } from "./blogs/domain/comments/typeORM/comment-likes-info.entity"
-import { CommentSQLRepository } from "./blogs/infrastructure/comments/comments-sql-repository"
+import { CommentsSQLRepository } from "./blogs/infrastructure/comments/comments-sql-repository"
+import { CommentPostInfo } from "./blogs/domain/comments/typeORM/comment-post-info.entity"
 
 const authUseCases = [
   LogoutUseCase,
@@ -238,7 +238,7 @@ const SQLrepositories = [
   BlogsQuerySQLRepository,
   PostsSQLRepository,
   PostsQuerySQLRepository,
-  CommentSQLRepository,
+  CommentsSQLRepository,
 ]
 
 const decorators = [
@@ -290,7 +290,7 @@ const typeORMEntityes = [
   BansUsersForBlogs,
   PostEntity,
   CommentEntity,
-  CommentPostInfoEntity,
+  CommentPostInfo,
   CommentLikesInfo,
 ]
 

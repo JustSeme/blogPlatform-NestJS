@@ -1,9 +1,9 @@
 import {
     CommandHandler, ICommandHandler
 } from '@nestjs/cqrs'
-import { CommentsRepository } from '../../../infrastructure/comments/comments-db-repository'
 import { ForbiddenException } from '@nestjs/common'
 import { generateErrorsMessages } from '../../../../general/helpers'
+import { CommentsSQLRepository } from '../../../infrastructure/comments/comments-sql-repository'
 
 // Command
 export class DeleteCommentCommand {
@@ -13,7 +13,7 @@ export class DeleteCommentCommand {
 // CommandHandler
 @CommandHandler(DeleteCommentCommand)
 export class DeleteCommentUseCase implements ICommandHandler<DeleteCommentCommand> {
-    constructor(private readonly commentsRepository: CommentsRepository) { }
+    constructor(private readonly commentsRepository: CommentsSQLRepository) { }
 
     async execute(command: DeleteCommentCommand): Promise<boolean> {
         const commentByCommentId = await this.commentsRepository.getCommentById(command.commentId)
@@ -22,7 +22,6 @@ export class DeleteCommentUseCase implements ICommandHandler<DeleteCommentComman
             throw new ForbiddenException(generateErrorsMessages('That is not your own', 'commentId'))
         }
 
-        const deletedComment = await this.commentsRepository.deleteComment(command.commentId)
-        return deletedComment // cast to boolean
+        return this.commentsRepository.deleteComment(command.commentId)
     }
 }

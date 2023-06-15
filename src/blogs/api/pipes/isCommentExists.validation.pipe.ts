@@ -1,12 +1,12 @@
 import {
     Injectable, NotFoundException, PipeTransform
 } from "@nestjs/common"
-import { CommentsRepository } from "../../infrastructure/comments/comments-db-repository"
 import { generateErrorsMessages } from "../../../general/helpers"
+import { CommentsSQLRepository } from "../../infrastructure/comments/comments-sql-repository"
 
 @Injectable()
 export class IsCommentExistsPipe implements PipeTransform {
-    constructor(private commentsRepository: CommentsRepository) { }
+    constructor(private commentsRepository: CommentsSQLRepository) { }
 
     async transform(commentId: string): Promise<string> {
         if (!(await this.commentsRepository.isCommentExists(commentId))) {

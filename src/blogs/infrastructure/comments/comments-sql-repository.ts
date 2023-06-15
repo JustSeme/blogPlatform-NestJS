@@ -6,7 +6,7 @@ import { CommentViewModel } from "../../application/dto/CommentViewModel"
 import { CommentEntity } from "../../domain/comments/typeORM/comment.entity"
 
 @Injectable()
-export class CommentSQLRepository {
+export class CommentsSQLRepository {
     constructor(@InjectDataSource() private dataSource: DataSource) { }
 
     async createComment(creatingComment: CommentDBModel): Promise<CommentViewModel> {
@@ -18,7 +18,7 @@ export class CommentSQLRepository {
         `
 
         const createPostInfoQuery = `
-            INSERT INTO public.comment_post_info_entity
+            INSERT INTO public.comment_post_info
                 (title, "blogName", "blogId", "commentId")
                 VALUES($1, $2, $3, $4);
         `
@@ -52,5 +52,78 @@ export class CommentSQLRepository {
         }
     }
 
-    async
+    async deleteComment(commentId: string): Promise<boolean> {
+        const deleteLikesInfoQuery = `
+        DELETE FROM public.comment_likes_info
+            WHERE "commentId" = $1
+        `
+
+        const deletePostInfoQuery = `
+        DELETE FROM public.comment_post_info
+            WHERE "commentId" = $1
+        `
+
+        const deleteCommentQuery = `
+        DELETE FROM public.comment_entity
+            WHERE id = $1;
+        `
+
+        const queryRunner = await this.dataSource.createQueryRunner()
+        await queryRunner.connect()
+        await queryRunner.startTransaction()
+
+        try {
+            await queryRunner.query(deleteLikesInfoQuery, [commentId])
+            await queryRunner.query(deletePostInfoQuery, [commentId])
+            await queryRunner.query(deleteCommentQuery, [commentId])
+
+            await queryRunner.commitTransaction()
+            return true
+        } catch (err) {
+            console.error(err)
+
+            await queryRunner.rollbackTransaction()
+            return false
+        } finally {
+            await queryRunner.release()
+        }
+    }
+
+    async isCommentExists(commentId: string): Promise<boolean> {
+        const queryString = `
+            SELECT id
+                FROM public.comment_entity
+                WHERE id = $1;
+        `
+
+        try {
+            const idData = await this.dataSource.query(queryString, [commentId])
+
+            return idData[0] ? true : false
+        } catch (err) {
+            console.error(err)
+            return false
+        }
+    }
+
+    async getCommentById(commentId: string): Promise<CommentViewModel> {
+        const queryString = `
+            SELECT *
+                FROM public.comment_entity
+                WHERE id = $1 AND "isBanned" = false;
+        `
+
+        try {
+            const commentData: CommentEntity[] = await this.dataSource.query(queryString, [commentId])
+
+            if (!commentData[0]) {
+                return null
+            }
+
+            return new CommentViewModel(commentData[0])
+        } catch (err) {
+            console.error(err)
+            return null
+        }
+    }
 }

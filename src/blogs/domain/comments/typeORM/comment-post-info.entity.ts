@@ -6,7 +6,7 @@ import { BlogEntity } from "../../../../Blogger/domain/blogs/blog.entity"
 import { CommentEntity } from "./comment.entity"
 
 @Entity()
-export class CommentPostInfoEntity {
+export class CommentPostInfo {
     @PrimaryGeneratedColumn('uuid')
     id: string
 

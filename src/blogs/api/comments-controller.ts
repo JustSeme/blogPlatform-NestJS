@@ -42,9 +42,13 @@ export class CommentsController {
         commentId: string,
         @CurrentUserId() userId: string
     ): Promise<void> {
-        await this.commandBus.execute(
+        const isDeleted = await this.commandBus.execute(
             new DeleteCommentCommand(commentId, userId)
         )
+
+        if (!isDeleted) {
+            throw new NotImplementedException()
+        }
     }
 
     @UseGuards(JwtAuthGuard)

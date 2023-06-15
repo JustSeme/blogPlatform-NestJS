@@ -5,7 +5,7 @@ import { CommentDBModel } from "../../../domain/comments/CommentTypes"
 import { CommentViewModel } from "../../dto/CommentViewModel"
 import { ForbiddenException } from "@nestjs/common"
 import { generateErrorsMessages } from "../../../../general/helpers"
-import { CommentSQLRepository } from "../../../infrastructure/comments/comments-sql-repository"
+import { CommentsSQLRepository } from "../../../infrastructure/comments/comments-sql-repository"
 import { PostsSQLRepository } from "../../../../Blogger/infrastructure/posts/posts-sql-repository"
 import { UsersSQLRepository } from "../../../../SuperAdmin/infrastructure/users-sql-repository"
 import { BansUsersForBlogs } from "../../../../Blogger/domain/blogs/bans-users-for-blogs.entity"
@@ -22,7 +22,7 @@ export class CreateCommentCommand {
 @CommandHandler(CreateCommentCommand)
 export class CreateCommentUseCase implements ICommandHandler<CreateCommentCommand> {
     constructor(
-        private readonly commentsRepository: CommentSQLRepository,
+        private readonly commentsRepository: CommentsSQLRepository,
         private readonly usersRepository: UsersSQLRepository,
         private readonly postsRepository: PostsSQLRepository,
     ) { }
@@ -36,11 +36,13 @@ export class CreateCommentUseCase implements ICommandHandler<CreateCommentComman
             return null
         }
 
-        bansUserForBlogs.some((ban: BansUsersForBlogs) => {
-            if (String(ban.blogId) === post.blogId) {
-                throw new ForbiddenException(generateErrorsMessages(`You are banned for this blog by reason: ${ban.banReason}`, 'commentator'))
-            }
-        })
+        if (bansUserForBlogs.length) {
+            bansUserForBlogs.some((ban: BansUsersForBlogs) => {
+                if (String(ban.blogId) === post.blogId) {
+                    throw new ForbiddenException(generateErrorsMessages(`You are banned for this blog by reason: ${ban.banReason}`, 'commentator'))
+                }
+            })
+        }
 
         const creatingComment = new CommentDBModel(
             command.content,
