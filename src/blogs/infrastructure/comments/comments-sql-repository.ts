@@ -184,11 +184,79 @@ export class CommentsSQLRepository {
         const queryString = `
         UPDATE public.comment_likes_info
             SET "likeStatus"='None'
-            WHERE "userId" = $1 AND "commentId" = $2
+            WHERE "userId" = $1 AND "commentId" = $2;
         `
 
         try {
             await this.dataSource.query(queryString, [userId, commentId])
+
+            return true
+        } catch (err) {
+            console.error(err)
+            return false
+        }
+    }
+
+    async hideAllCommentsForCurrentUser(userId: string): Promise<boolean> {
+        const queryString = `
+        UPDATE public.comment_entity
+            SET "isBanned"=true
+            WHERE "commentatorId"=$1;
+        `
+
+        try {
+            await this.dataSource.query(queryString, [userId])
+
+            return true
+        } catch (err) {
+            console.error(err)
+            return false
+        }
+    }
+
+    async unHideAllCommentsForCurrentUser(userId: string): Promise<boolean> {
+        const queryString = `
+        UPDATE public.comment_entity
+            SET "isBanned"=false
+            WHERE "commentatorId"=$1;
+        `
+
+        try {
+            await this.dataSource.query(queryString, [userId])
+
+            return true
+        } catch (err) {
+            console.error(err)
+            return false
+        }
+    }
+
+    async hideAllLikeEntitiesForCommentsByUserId(userId: string): Promise<boolean> {
+        const queryString = `
+        UPDATE public.comment_likes_info
+            SET "isBanned"=true
+            WHERE "userId"=$1
+        `
+
+        try {
+            await this.dataSource.query(queryString, [userId])
+
+            return true
+        } catch (err) {
+            console.error(err)
+            return false
+        }
+    }
+
+    async unHideAllLikeEntitiesForCommentsByUserId(userId: string): Promise<boolean> {
+        const queryString = `
+        UPDATE public.comment_likes_info
+            SET "isBanned"=false
+            WHERE "userId"=$1
+        `
+
+        try {
+            await this.dataSource.query(queryString, [userId])
 
             return true
         } catch (err) {

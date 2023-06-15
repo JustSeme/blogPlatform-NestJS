@@ -147,10 +147,6 @@ export class CommentsRepository {
         }
     }
 
-    async getCommentsByBlogId(blogId: string): Promise<CommentDBModel[]> {
-        return this.CommentModel.find({ 'postInfo.blogId': blogId })
-    }
-
     async getAllCommentsByAllBlogIds(readCommentsQuery: ReadCommentsQueryParams, blogIds: string[]): Promise<ReadOutputQuery & { items: CommentDBModel[] }> {
         const {
             sortDirection = 'desc', sortBy = 'createdAt', pageNumber = 1, pageSize = 10
