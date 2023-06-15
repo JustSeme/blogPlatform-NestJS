@@ -1,9 +1,9 @@
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
-import { CommentsRepository } from "../../../infrastructure/comments/comments-db-repository"
 import { LikeType } from "../../../api/models/LikeInputModel"
 import { LikeObjectType } from "../../../domain/comments/CommentTypes"
+import { CommentsSQLRepository } from "../../../infrastructure/comments/comments-sql-repository"
 
 export class UpdateLikeStatusForCommentCommand {
     constructor(
@@ -15,7 +15,9 @@ export class UpdateLikeStatusForCommentCommand {
 
 @CommandHandler(UpdateLikeStatusForCommentCommand)
 export class UpdateLikeStatusForCommentUseCase implements ICommandHandler<UpdateLikeStatusForCommentCommand> {
-    constructor(private readonly commentsRepository: CommentsRepository) { }
+
+    constructor(private readonly commentsRepository: CommentsSQLRepository) { }
+
     async execute(command: UpdateLikeStatusForCommentCommand): Promise<boolean> {
         const updatingComment = await this.commentsRepository.getCommentById(command.commentId)
         if (!updatingComment) {

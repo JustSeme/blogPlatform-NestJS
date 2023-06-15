@@ -1,10 +1,10 @@
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
-import { CommentsRepository } from "../../../blogs/infrastructure/comments/comments-db-repository"
 import { DevicesSQLRepository } from "../../../security/infrastructure/devices-sql-repository"
 import { UsersSQLRepository } from "../../infrastructure/users-sql-repository"
 import { PostsSQLRepository } from "../../../Blogger/infrastructure/posts/posts-sql-repository"
+import { CommentsSQLRepository } from "../../../blogs/infrastructure/comments/comments-sql-repository"
 
 export class BanUserCommand {
     constructor(
@@ -19,7 +19,7 @@ export class BanUserUseCase implements ICommandHandler<BanUserCommand> {
         private usersRepository: UsersSQLRepository,
         private deviceRepository: DevicesSQLRepository,
         private postsRepository: PostsSQLRepository,
-        private commentsRepository: CommentsRepository,
+        private commentsRepository: CommentsSQLRepository,
     ) { }
 
     async execute(command: BanUserCommand) {

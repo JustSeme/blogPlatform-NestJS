@@ -1,9 +1,9 @@
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
-import { CommentsRepository } from "../../../infrastructure/comments/comments-db-repository"
 import { generateErrorsMessages } from "../../../../general/helpers"
 import { ForbiddenException } from '@nestjs/common'
+import { CommentsSQLRepository } from "../../../infrastructure/comments/comments-sql-repository"
 
 // command
 export class UpdateCommentCommand {
@@ -17,8 +17,7 @@ export class UpdateCommentCommand {
 // handler
 @CommandHandler(UpdateCommentCommand)
 export class UpdateCommentUseCase implements ICommandHandler<UpdateCommentCommand> {
-    constructor(private readonly commentsRepository: CommentsRepository) { }
-
+    constructor(private readonly commentsRepository: CommentsSQLRepository) { }
 
     async execute(command: UpdateCommentCommand) {
         const commentByCommentId = await this.commentsRepository.getCommentById(command.commentId)
