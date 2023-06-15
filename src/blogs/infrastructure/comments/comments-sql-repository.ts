@@ -1,7 +1,9 @@
 import { Injectable } from "@nestjs/common"
 import { InjectDataSource } from "@nestjs/typeorm"
 import { DataSource } from "typeorm"
-import { CommentDBModel } from "../../domain/comments/CommentTypes"
+import {
+    CommentDBModel, LikeObjectType
+} from "../../domain/comments/CommentTypes"
 import { CommentViewModel } from "../../application/dto/CommentViewModel"
 import { CommentEntity } from "../../domain/comments/typeORM/comment.entity"
 
@@ -124,6 +126,74 @@ export class CommentsSQLRepository {
         } catch (err) {
             console.error(err)
             return null
+        }
+    }
+
+    async updateComment(commentId: string, content: string): Promise<boolean> {
+        const queryString = `
+        UPDATE public.comment_entity
+            SET "content"=$2
+            WHERE id=$1;
+        `
+
+        try {
+            await this.dataSource.query(queryString, [commentId, content])
+
+            return true
+        } catch (err) {
+            console.error()
+            return false
+        }
+    }
+
+    async setLike(likeData: LikeObjectType, commentId: string): Promise<boolean> {
+        const queryString = `
+        INSERT INTO public.comment_likes_info
+            ("userId", "likeStatus", "commentId")
+            VALUES($1, 'Like', $2);
+        `
+
+        try {
+            await this.dataSource.query(queryString, [likeData.userId, commentId])
+
+            return true
+        } catch (err) {
+            console.error(err)
+            return false
+        }
+    }
+
+    async setDislike(likeData: LikeObjectType, commentId: string): Promise<boolean> {
+        const queryString = `
+        INSERT INTO public.comment_likes_info
+            ("userId", "likeStatus", "commentId")
+            VALUES($1, 'Dislike', $2);
+        `
+
+        try {
+            await this.dataSource.query(queryString, [likeData.userId, commentId])
+
+            return true
+        } catch (err) {
+            console.error(err)
+            return false
+        }
+    }
+
+    async setNoneLike(userId: string, commentId: string) {
+        const queryString = `
+        UPDATE public.comment_likes_info
+            SET "likeStatus"='None'
+            WHERE "userId" = $1 AND "commentId" = $2
+        `
+
+        try {
+            await this.dataSource.query(queryString, [userId, commentId])
+
+            return true
+        } catch (err) {
+            console.error(err)
+            return false
         }
     }
 }
