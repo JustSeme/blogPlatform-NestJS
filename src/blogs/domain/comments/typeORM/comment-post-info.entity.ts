@@ -21,5 +21,6 @@ export class CommentPostInfoEntity {
     blogName: string
 
     @OneToOne(() => CommentEntity, (comment) => comment.postInfo)
+    @JoinColumn({ name: 'commentId' })
     comment: CommentEntity
 }

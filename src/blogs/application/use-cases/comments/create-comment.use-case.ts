@@ -1,15 +1,14 @@
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
-import { CommentsRepository } from "../../../infrastructure/comments/comments-db-repository"
 import { CommentDBModel } from "../../../domain/comments/CommentTypes"
 import { CommentViewModel } from "../../dto/CommentViewModel"
-import { CommentsService } from "../../comments-service"
-import { UsersQueryRepository } from "../../../../SuperAdmin/infrastructure/users-query-repository"
-import { PostsRepository } from "../../../../Blogger/infrastructure/posts/posts-db-repository"
 import { ForbiddenException } from "@nestjs/common"
 import { generateErrorsMessages } from "../../../../general/helpers"
-import { BanUserForBlogInfoType } from "../../../../Blogger/infrastructure/blogs/BanUserForBlogInfoType"
+import { CommentSQLRepository } from "../../../infrastructure/comments/comments-sql-repository"
+import { PostsSQLRepository } from "../../../../Blogger/infrastructure/posts/posts-sql-repository"
+import { UsersSQLRepository } from "../../../../SuperAdmin/infrastructure/users-sql-repository"
+import { BansUsersForBlogs } from "../../../../Blogger/domain/blogs/bans-users-for-blogs.entity"
 
 // Command
 export class CreateCommentCommand {
@@ -23,27 +22,27 @@ export class CreateCommentCommand {
 @CommandHandler(CreateCommentCommand)
 export class CreateCommentUseCase implements ICommandHandler<CreateCommentCommand> {
     constructor(
-        private readonly commentsRepository: CommentsRepository,
-        private readonly commentsService: CommentsService,
-        private readonly usersQueryRepository: UsersQueryRepository,
-        private readonly postsRepository: PostsRepository,
+        private readonly commentsRepository: CommentSQLRepository,
+        private readonly usersRepository: UsersSQLRepository,
+        private readonly postsRepository: PostsSQLRepository,
     ) { }
 
     async execute(command: CreateCommentCommand): Promise<CommentViewModel> {
-        const commentator = await this.usersQueryRepository.findUserById(command.commentatorId)
+        const commentator = await this.usersRepository.findUserById(command.commentatorId)
+        const bansUserForBlogs = await this.usersRepository.findUserBlogBansInfo(command.commentatorId)
         const post = await this.postsRepository.getPostById(command.postId)
 
         if (!commentator) {
             return null
         }
 
-        commentator.bansForBlog.some((ban: BanUserForBlogInfoType) => {
-            if (ban.blogId === post.blogId) {
+        bansUserForBlogs.some((ban: BansUsersForBlogs) => {
+            if (String(ban.blogId) === post.blogId) {
                 throw new ForbiddenException(generateErrorsMessages(`You are banned for this blog by reason: ${ban.banReason}`, 'commentator'))
             }
         })
 
-        const createdComment = new CommentDBModel(
+        const creatingComment = new CommentDBModel(
             command.content,
             command.postId,
             command.commentatorId,
@@ -54,8 +53,6 @@ export class CreateCommentUseCase implements ICommandHandler<CreateCommentComman
             post.blogName
         )
 
-        await this.commentsRepository.createComment(createdComment)
-
-        return this.commentsService.transformCommentWithDefaultLikeInfo(createdComment)
+        return this.commentsRepository.createComment(creatingComment)
     }
 }

@@ -8,6 +8,7 @@ import { UserEntity } from '../domain/typeORM/user.entity'
 import { UserEmailConfirmation } from '../domain/typeORM/user-email-confirmation.entity'
 import { UserPasswordRecovery } from '../domain/typeORM/user-password-recovery.entity'
 import { UserBanInfo } from '../domain/typeORM/user-ban-info.entity'
+import { BansUsersForBlogs } from '../../Blogger/domain/blogs/bans-users-for-blogs.entity'
 
 @Injectable()
 export class UsersSQLRepository {
@@ -257,6 +258,27 @@ export class UsersSQLRepository {
         } catch (err) {
             console.error(err)
             return false
+        }
+    }
+
+    async findUserBlogBansInfo(userId: string): Promise<BansUsersForBlogs[]> {
+        const queryString = `
+            SELECT *
+                FROM public.bans_users_for_blogs
+                WHERE "userId" = $1;
+        `
+
+        try {
+            const bansUserForBlogData = this.dataSource.query(queryString, [userId])
+
+            if (!bansUserForBlogData[0]) {
+                return null
+            }
+
+            return bansUserForBlogData
+        } catch (err) {
+            console.error(err)
+            return null
         }
     }
 }

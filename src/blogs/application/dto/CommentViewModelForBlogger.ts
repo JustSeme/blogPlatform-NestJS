@@ -11,7 +11,7 @@ export type CommentViewModelForBlogger = {
     id: string
     content: string
     commentatorInfo: CommentatorInfoType
-    createdAt: string
+    createdAt: Date
     postInfo: PostInfoType
     likesInfo: LikesInfoViewType
 }

@@ -21,7 +21,7 @@ export class CommentEntity {
 
     @ManyToOne(() => UserEntity, (user) => user.comments)
     @JoinColumn({ name: 'commentatorId' })
-    user: UserEntity
+    commentatorId: UserEntity
 
     @Column()
     commentatorLogin: string

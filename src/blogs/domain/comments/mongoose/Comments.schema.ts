@@ -24,7 +24,7 @@ export class Comment {
     @Prop({
         required: true, default: new Date().toISOString()
     })
-    createdAt: string
+    createdAt: Date
 
     @Prop({
         required: true, type: CommentatorInfoSchema

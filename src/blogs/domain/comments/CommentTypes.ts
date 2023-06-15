@@ -5,7 +5,7 @@ import { PostInfoType } from '../../application/dto/PostInfoType'
 
 export class CommentDBModel {
     public id: string
-    public createdAt: string
+    public createdAt: Date
 
     public commentatorInfo: CommentatorInfoType
     public likesInfo: LikesInfoType
@@ -21,7 +21,7 @@ export class CommentDBModel {
         blogName: string
     ) {
         this.id = uuidv4()
-        this.createdAt = new Date().toISOString()
+        this.createdAt = new Date()
 
         this.commentatorInfo = {
             userId,
