@@ -6,6 +6,8 @@ import {
 } from "../domain/comments/CommentTypes"
 import { JwtService } from "../../general/adapters/jwt.adapter"
 import { CommentViewModelForBlogger } from './dto/CommentViewModelForBlogger'
+import { CommentEntity } from "../domain/comments/typeORM/comment.entity"
+import { CommentLikesInfo } from "../domain/comments/typeORM/comment-likes-info.entity"
 
 @Injectable()
 export class CommentsService {
@@ -77,12 +79,8 @@ export class CommentsService {
         }
     }
 
-    async transformCommentsForDisplay(commentsArray: Array<CommentViewModel | CommentDBModel>, accessToken: string | null): Promise<CommentViewModel[]> {
-        let userId: string | null = null
-        if (accessToken) {
-            const jwtResult = await this.jwtService.verifyAccessToken(accessToken)
-            userId = jwtResult ? jwtResult.userId : null
-        }
+    async transformCommentsForDisplay(commentsArray: Array<CommentDBModel>, accessToken: string | null): Promise<CommentViewModel[]> {
+        const userId = await this.getCorrectUserIdByAccessToken(accessToken)
 
         const convertedComments = commentsArray.map((comment: CommentDBModel) => {
             const likesInfoData = comment.likesInfo
@@ -116,5 +114,49 @@ export class CommentsService {
         })
 
         return convertedComments
+    }
+
+    /* async transformCommentsForDisplayOnSQL(commentsArray: Array<CommentEntity & CommentLikesInfo>, accessToken: string | null) {
+        const userId = await this.getCorrectUserIdByAccessToken(accessToken)
+
+        const convertedComments = commentsArray.map((comment: CommentEntity & CommentLikesInfo) => {
+            const likes = comment.
+
+                likesInfoData.likes = likesInfoData.likes.filter((like) => !like.isBanned)
+            likesInfoData.dislikes = likesInfoData.dislikes.filter((dislike) => !dislike.isBanned)
+
+            let myStatus: LikeType = 'None'
+
+            // check that comment was liked current user
+            if (likesInfoData.likes.some((el: LikeObjectType) => el.userId === userId)) {
+                myStatus = 'Like'
+            }
+
+            //check that comment was disliked current user
+            if (likesInfoData.dislikes.some((el: LikeObjectType) => el.userId === userId)) {
+                myStatus = 'Dislike'
+            }
+
+            // return a comment with defualt likesInfo
+            const convertedComment = this.transformCommentWithDefaultLikeInfo(comment)
+
+            // modify likes info
+            convertedComment.likesInfo = {
+                likesCount: likesInfoData.likes.length,
+                dislikesCount: likesInfoData.dislikes.length,
+                myStatus: myStatus
+            }
+
+            return convertedComment
+        })
+
+        return convertedComments
+    } */
+
+    async getCorrectUserIdByAccessToken(accessToken: string | null): Promise<string | null> {
+        if (accessToken) {
+            const jwtResult = await this.jwtService.verifyAccessToken(accessToken)
+            return jwtResult ? jwtResult.userId : null
+        }
     }
 }

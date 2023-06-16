@@ -21,8 +21,8 @@ export class CommentsSQLRepository {
 
         const createPostInfoQuery = `
             INSERT INTO public.comment_post_info
-                (title, "blogName", "blogId", "commentId")
-                VALUES($1, $2, $3, $4);
+                ("title", "blogName", "blogId", "commentId", "id")
+                VALUES($1, $2, $3, $4, $5);
         `
 
         const queryRunner = this.dataSource.createQueryRunner()
@@ -40,12 +40,14 @@ export class CommentsSQLRepository {
                 creatingComment.postInfo.title,
                 creatingComment.postInfo.blogName,
                 creatingComment.postInfo.blogId,
-                createdCommentData[0].id
+                createdCommentData[0].id,
+                creatingComment.postInfo.id
             ])
 
             await queryRunner.commitTransaction()
             return new CommentViewModel(createdCommentData[0])
         } catch (err) {
+            console.error(err)
 
             await queryRunner.rollbackTransaction()
             return null

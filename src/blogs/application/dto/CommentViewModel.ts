@@ -1,4 +1,5 @@
 import { LikeType } from "../../api/models/LikeInputModel"
+import { CommentLikesInfo } from "../../domain/comments/typeORM/comment-likes-info.entity"
 import { CommentEntity } from "../../domain/comments/typeORM/comment.entity"
 
 export type LikesInfoViewType = {
@@ -14,7 +15,7 @@ export class CommentViewModel {
     public createdAt: Date
     public likesInfo: LikesInfoViewType
 
-    constructor(rawComment: CommentEntity) {
+    constructor(rawComment: CommentEntity & CommentLikesInfo | CommentEntity) {
         this.id = rawComment.id
         this.content = rawComment.content
 

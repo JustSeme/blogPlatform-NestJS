@@ -6,7 +6,7 @@ import {
 import { UserEntity } from "../../../SuperAdmin/domain/typeORM/user.entity"
 import { BansUsersForBlogs } from "./bans-users-for-blogs.entity"
 import { PostEntity } from "../posts/post.entity"
-import { CommentPostInfo } from "../../../blogs/domain/comments/typeORM/comment-post-info.entity"
+import { CommentEntity } from "../../../blogs/domain/comments/typeORM/comment.entity"
 
 @Entity()
 export class BlogEntity {
@@ -47,6 +47,6 @@ export class BlogEntity {
     @OneToMany(() => PostEntity, (post) => post.blogId)
     blogPosts: PostEntity[]
 
-    @OneToMany(() => CommentPostInfo, (commentPostInfo) => commentPostInfo.blog)
-    blogComments: CommentPostInfo[]
+    @OneToMany(() => CommentEntity, (comment) => comment.blog)
+    blogComments: CommentEntity[]
 }

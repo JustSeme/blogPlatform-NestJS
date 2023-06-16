@@ -1,10 +1,11 @@
 import {
     Column,
     CreateDateColumn,
-    Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn
+    Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn
 } from "typeorm"
 import { UserEntity } from "../../../SuperAdmin/domain/typeORM/user.entity"
 import { BlogEntity } from "../blogs/blog.entity"
+import { CommentEntity } from "../../../blogs/domain/comments/typeORM/comment.entity"
 
 @Entity()
 export class PostEntity {
@@ -39,4 +40,7 @@ export class PostEntity {
 
     @Column()
     ownerLogin: string
+
+    @OneToMany(() => CommentEntity, (comment) => comment.post)
+    comment: CommentEntity
 }

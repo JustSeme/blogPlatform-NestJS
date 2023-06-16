@@ -1,5 +1,5 @@
 import {
-    Controller, Get, Post, Put, Param, Query, Body, Headers, HttpStatus, HttpCode, UseGuards
+    Controller, Get, Post, Put, Param, Query, Body, Headers, HttpStatus, HttpCode, UseGuards, NotImplementedException
 } from '@nestjs/common'
 import { ReadCommentsQueryParams } from "./models/ReadCommentsQuery"
 import { CommentsWithQueryOutputModel } from "../application/dto/CommentViewModel"
@@ -63,9 +63,14 @@ export class PostsController {
         @Body() comment: CommentInputModel,
         @CurrentUserId() userId: string,
     ): Promise<CommentViewModel> {
-        return this.commandBus.execute(
+        const createdComment = await this.commandBus.execute(
             new CreateCommentCommand(comment.content, userId, postId)
         )
+
+        if (!createdComment) {
+            throw new NotImplementedException(`Comment wasn't created`)
+        }
+        return createdComment
     }
 
     @UseGuards(JwtAuthGuard)

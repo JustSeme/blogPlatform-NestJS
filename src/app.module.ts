@@ -137,7 +137,7 @@ import { UserPasswordRecovery } from "./SuperAdmin/domain/typeORM/user-password-
 import { CommentEntity } from "./blogs/domain/comments/typeORM/comment.entity"
 import { CommentLikesInfo } from "./blogs/domain/comments/typeORM/comment-likes-info.entity"
 import { CommentsSQLRepository } from "./blogs/infrastructure/comments/comments-sql-repository"
-import { CommentPostInfo } from "./blogs/domain/comments/typeORM/comment-post-info.entity"
+import { CommentsQuerySQLRepository } from "./blogs/infrastructure/comments/comments-query-sql-repository"
 
 const authUseCases = [
   LogoutUseCase,
@@ -239,6 +239,7 @@ const SQLrepositories = [
   PostsSQLRepository,
   PostsQuerySQLRepository,
   CommentsSQLRepository,
+  CommentsQuerySQLRepository,
 ]
 
 const decorators = [
@@ -290,7 +291,6 @@ const typeORMEntityes = [
   BansUsersForBlogs,
   PostEntity,
   CommentEntity,
-  CommentPostInfo,
   CommentLikesInfo,
 ]
 
