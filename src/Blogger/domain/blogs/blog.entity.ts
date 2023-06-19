@@ -5,7 +5,7 @@ import {
 } from "typeorm"
 import { UserEntity } from "../../../SuperAdmin/domain/typeORM/user.entity"
 import { BansUsersForBlogs } from "./bans-users-for-blogs.entity"
-import { PostEntity } from "../posts/post.entity"
+import { PostEntity } from "../posts/typeORM/post.entity"
 import { CommentEntity } from "../../../blogs/domain/comments/typeORM/comment.entity"
 
 @Entity()

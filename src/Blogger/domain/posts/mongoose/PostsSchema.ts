@@ -1,4 +1,4 @@
-import { PostDTO } from "./PostsTypes"
+import { PostDTO } from "../PostsTypes"
 import {
     Prop, Schema, SchemaFactory
 } from "@nestjs/mongoose"

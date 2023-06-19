@@ -3,7 +3,7 @@ import {
 } from "@nestjs/mongoose"
 import {
     ExtendedLikeObjectType, ExtendedLikesInfoDBType
-} from "./PostsTypes"
+} from "../PostsTypes"
 
 @Schema()
 export class ExtendedLikesInfo {

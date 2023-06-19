@@ -3,7 +3,7 @@ import {
 } from "typeorm"
 import { UserEntity } from "../../../../SuperAdmin/domain/typeORM/user.entity"
 import { CommentLikesInfo } from "./comment-likes-info.entity"
-import { PostEntity } from "../../../../Blogger/domain/posts/post.entity"
+import { PostEntity } from "../../../../Blogger/domain/posts/typeORM/post.entity"
 import { BlogEntity } from "../../../../Blogger/domain/blogs/blog.entity"
 
 @Entity()

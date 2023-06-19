@@ -1,7 +1,7 @@
 import { PostsViewModel } from "../../../blogs/application/dto/PostViewModel"
 import { Model } from "mongoose"
-import { Post } from "./PostsSchema"
-import { PostEntity } from "./post.entity"
+import { Post } from "./mongoose/PostsSchema"
+import { PostEntity } from "./typeORM/post.entity"
 
 //data transfer object
 export class PostDTO {

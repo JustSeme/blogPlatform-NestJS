@@ -7,18 +7,44 @@ import {
 } from "../../domain/posts/PostsTypes"
 import { PostsViewModel } from "../../../blogs/application/dto/PostViewModel"
 import { PostInputModel } from "../../api/models/PostInputModel"
-import { PostEntity } from "../../domain/posts/post.entity"
+import { PostEntity } from "../../domain/posts/typeORM/post.entity"
 
 @Injectable()
 export class PostsSQLRepository {
     constructor(@InjectDataSource() private dataSource: DataSource) { }
 
     async unHideAllLikeEntitiesForPostsByUserId(userId: string) {
-        return true
+        const queryString = `
+            UPDATE public.post_likes_info
+                SET "isBanned"=false
+                WHERE "userId" = $1
+            `
+
+        try {
+            await this.dataSource.query(queryString, [userId])
+
+            return true
+        } catch (err) {
+            console.error(err)
+            return false
+        }
     }
 
     async hideAllLikeEntitiesForPostsByUserId(userId: string) {
-        return true
+        const queryString = `
+            UPDATE public.post_likes_info
+                SET "isBanned"=true
+                WHERE "userId" = $1
+            `
+
+        try {
+            await this.dataSource.query(queryString, [userId])
+
+            return true
+        } catch (err) {
+            console.error(err)
+            return false
+        }
     }
 
     async createPost(creatingPost: PostDTO): Promise<PostsViewModel> {
@@ -135,7 +161,6 @@ export class PostsSQLRepository {
 
             return true
         } catch (err) {
-            console.log(err)
             console.error(err)
             return false
         }
@@ -188,6 +213,74 @@ export class PostsSQLRepository {
 
         try {
             await this.dataSource.query(queryString, [blogId])
+
+            return true
+        } catch (err) {
+            console.error(err)
+            return false
+        }
+    }
+
+    async isLikeEntityExists(userId: string, postId: string) {
+        const queryString = `
+        SELECT id
+            FROM public."post_likes_info"
+            WHERE "userId" = $1 AND "postId" = $2;
+        `
+
+        try {
+            const idData = this.dataSource.query(queryString, [userId, postId])
+
+            return idData[0] ? true : false
+        } catch (err) {
+            console.error(err)
+            return false
+        }
+    }
+
+    async updateLikeStatus(userId: string, postId: string, likeStatus: string): Promise<boolean> {
+        const queryString = `
+        UPDATE public.post_likes_info
+            SET "likeStatus"=$3
+            WHERE "userId" = $1 AND "postId" = $2;
+        `
+
+        try {
+            await this.dataSource.query(queryString, [userId, postId, likeStatus])
+
+            return true
+        } catch (err) {
+            console.error(err)
+            return false
+        }
+    }
+
+    async createLike(userId: string, postId: string, ownerLogin: string): Promise<boolean> {
+        const queryString = `
+        INSERT INTO public.post_likes_info
+            ("userId", "likeStatus", "postId", "ownerLogin")
+            VALUES($1, 'Like', $2, $3);
+        `
+
+        try {
+            await this.dataSource.query(queryString, [userId, postId, ownerLogin])
+
+            return true
+        } catch (err) {
+            console.error(err)
+            return false
+        }
+    }
+
+    async createDislike(userId: string, postId: string, ownerLogin: string): Promise<boolean> {
+        const queryString = `
+        INSERT INTO public.post_likes_info
+            ("userId", "likeStatus", "postId", "ownerLogin")
+            VALUES($1, 'Dislike', $2, $3);
+        `
+
+        try {
+            await this.dataSource.query(queryString, [userId, postId, ownerLogin])
 
             return true
         } catch (err) {

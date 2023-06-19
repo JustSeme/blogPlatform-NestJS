@@ -3,7 +3,7 @@ import {
     Injectable, NotImplementedException
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose/dist'
-import { Post } from '../../domain/posts/PostsSchema'
+import { Post } from '../../domain/posts/mongoose/PostsSchema'
 import {
     ExtendedLikeObjectType, PostDTO, PostModelType
 } from '../../domain/posts/PostsTypes'

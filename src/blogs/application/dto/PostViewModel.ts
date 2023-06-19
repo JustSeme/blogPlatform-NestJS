@@ -1,4 +1,4 @@
-import { PostEntity } from "../../../Blogger/domain/posts/post.entity"
+import { PostEntity } from "../../../Blogger/domain/posts/typeORM/post.entity"
 import { LikeType } from "../../api/models/LikeInputModel"
 
 export class PostsViewModel {

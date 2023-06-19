@@ -10,7 +10,7 @@ import {
 } from "./Blogger/domain/blogs/BlogsSchema"
 import {
   Post, PostSchema
-} from "./Blogger/domain/posts/PostsSchema"
+} from "./Blogger/domain/posts/mongoose/PostsSchema"
 import { PassportModule } from "@nestjs/passport"
 import { AppController } from "./app.controller"
 import { BlogsController } from "./blogs/api/blogs-controller"
@@ -127,7 +127,7 @@ import { BlogEntity } from "./Blogger/domain/blogs/blog.entity"
 import { BlogsSQLRepository } from "./Blogger/infrastructure/blogs/blogs-sql-repository"
 import { BlogsQuerySQLRepository } from "./Blogger/infrastructure/blogs/blogs-query-sql-repository"
 import { BansUsersForBlogs } from "./Blogger/domain/blogs/bans-users-for-blogs.entity"
-import { PostEntity } from "./Blogger/domain/posts/post.entity"
+import { PostEntity } from "./Blogger/domain/posts/typeORM/post.entity"
 import { PostsSQLRepository } from "./Blogger/infrastructure/posts/posts-sql-repository"
 import { PostsQuerySQLRepository } from "./Blogger/infrastructure/posts/posts-query-sql-repository"
 import { UserBanInfo } from "./SuperAdmin/domain/typeORM/user-ban-info.entity"
@@ -137,6 +137,7 @@ import { CommentEntity } from "./blogs/domain/comments/typeORM/comment.entity"
 import { CommentLikesInfo } from "./blogs/domain/comments/typeORM/comment-likes-info.entity"
 import { CommentsSQLRepository } from "./blogs/infrastructure/comments/comments-sql-repository"
 import { CommentsQuerySQLRepository } from "./blogs/infrastructure/comments/comments-query-sql-repository"
+import { PostLikesInfo } from "./Blogger/domain/posts/typeORM/post-likes-info"
 
 const authUseCases = [
   LogoutUseCase,
@@ -290,6 +291,7 @@ const typeORMEntityes = [
   PostEntity,
   CommentEntity,
   CommentLikesInfo,
+  PostLikesInfo,
 ]
 
 @Module({

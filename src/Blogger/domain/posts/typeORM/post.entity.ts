@@ -3,9 +3,10 @@ import {
     CreateDateColumn,
     Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn
 } from "typeorm"
-import { UserEntity } from "../../../SuperAdmin/domain/typeORM/user.entity"
-import { BlogEntity } from "../blogs/blog.entity"
-import { CommentEntity } from "../../../blogs/domain/comments/typeORM/comment.entity"
+import { UserEntity } from "../../../../SuperAdmin/domain/typeORM/user.entity"
+import { BlogEntity } from "../../blogs/blog.entity"
+import { CommentEntity } from "../../../../blogs/domain/comments/typeORM/comment.entity"
+import { PostLikesInfo } from "./post-likes-info"
 
 @Entity()
 export class PostEntity {
@@ -43,4 +44,7 @@ export class PostEntity {
 
     @OneToMany(() => CommentEntity, (comment) => comment.postId)
     comment: CommentEntity
+
+    @OneToMany(() => PostLikesInfo, (likesInfo) => likesInfo.postId)
+    postLikeEntities: PostLikesInfo
 }
