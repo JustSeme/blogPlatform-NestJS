@@ -16,7 +16,7 @@ export class DeleteCommentUseCase implements ICommandHandler<DeleteCommentComman
     constructor(private readonly commentsRepository: CommentsSQLRepository) { }
 
     async execute(command: DeleteCommentCommand): Promise<boolean> {
-        const commentByCommentId = await this.commentsRepository.getCommentById(command.commentId)
+        const commentByCommentId = await this.commentsRepository.getCommentByIdWithLikesInfo(command.commentId, command.userId)
 
         if (commentByCommentId.commentatorInfo.userId !== command.userId) {
             throw new ForbiddenException(generateErrorsMessages('That is not your own', 'commentId'))

@@ -89,15 +89,30 @@ export class CommentsSQLRepository {
         }
     }
 
-    async getCommentById(commentId: string): Promise<CommentViewModel> {
+    async getCommentByIdWithLikesInfo(commentId: string, userId: string): Promise<CommentViewModel> {
         const queryString = `
-            SELECT *
-                FROM public.comment_entity
-                WHERE id = $1 AND "isBanned" = false;
+            SELECT *,
+            (
+                SELECT count(*)
+                    FROM public."comment_likes_info" cli
+                    WHERE cli."commentId" = ce.id AND cli."likeStatus" = 'Like' AND cli."isBanned" = false
+            ) as "likesCount",
+            (
+                SELECT count(*)
+                    FROM public."comment_likes_info" cli
+                    WHERE cli."commentId" = ce.id AND cli."likeStatus" = 'Dislike' AND cli."isBanned" = false
+            ) as "dislikesCount"
+            (
+                SELECT "likeStatus"
+                    FROM public."comment_likes_info" cli
+                    WHERE cli."commentId" = ce.id AND cli."userId" = $2 AND cli."isBanned" = false
+            )
+                FROM public.comment_entity ce
+                WHERE ce.id = $1 AND ce."isBanned" = false;
         `
 
         try {
-            const commentData: CommentEntity[] = await this.dataSource.query(queryString, [commentId])
+            const commentData: Array<CommentEntity & { dislikesCount: number, likesCount: number }> = await this.dataSource.query(queryString, [commentId, userId])
 
             if (!commentData[0]) {
                 return null
@@ -137,11 +152,7 @@ export class CommentsSQLRepository {
         try {
             const likeIdData = await this.dataSource.query(queryString, [userId, commentId])
 
-            if (!likeIdData[0].id) {
-                return false
-            }
-
-            return true
+            return likeIdData[0] ? true : false
         } catch (err) {
             console.error(err)
             return false

@@ -18,8 +18,8 @@ export class UpdateLikeStatusForCommentUseCase implements ICommandHandler<Update
     constructor(private readonly commentsRepository: CommentsSQLRepository) { }
 
     async execute(command: UpdateLikeStatusForCommentCommand): Promise<boolean> {
-        const updatingComment = await this.commentsRepository.getCommentById(command.commentId)
-        if (!updatingComment) {
+        const isCommentExists = await this.commentsRepository.isCommentExists(command.commentId)
+        if (!isCommentExists) {
             return false
         }
 

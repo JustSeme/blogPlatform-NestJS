@@ -48,6 +48,12 @@ export class AppService {
       DELETE FROM public."bans_users_for_blogs"
         WHERE 1 = 1;
 
+      DELETE FROM public."comment_likes_info"
+        WHERE 1 = 1;
+
+      DELETE FROM public."comment_entity"
+        WHERE 1 = 1;
+
       DELETE FROM public."post_entity"
         WHERE 1 = 1;
       

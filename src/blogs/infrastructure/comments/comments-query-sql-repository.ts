@@ -28,14 +28,24 @@ export class CommentsQuerySQLRepository {
         const skipCount = (+pageNumber - 1) * +pageSize
 
         const query = `
-            SELECT *
+            SELECT *,
+            (
+                SELECT count(*)
+                    FROM public."comment_likes_info" cli
+                    WHERE cli."commentId" = ce.id AND cli."likeStatus" = 'Like' AND cli."isBanned" = false
+            ) as "likesCount",
+            (
+                SELECT count(*)
+                    FROM public."comment_likes_info" cli
+                    WHERE cli."commentId" = ce.id AND cli."likeStatus" = 'Dislike' AND cli."isBanned" = false
+            ) as "dislikesCount"
                 FROM public."comment_entity" ce
                 WHERE ce."isBanned"=false AND ce.postId = $1
                 ORDER BY "${sortBy}" ${sortDirection}
                 LIMIT ${pageSize} OFFSET ${skipCount};
         `
 
-        const resultedComments: Array<CommentEntity> = await this.dataSource.query(query, [postId])
+        const resultedComments: Array<CommentEntity & { dislikesCount: number, likesCount: number }> = await this.dataSource.query(query, [postId])
         const displayedComments = resultedComments.map(comment => new CommentViewModel(comment))
 
         return {
