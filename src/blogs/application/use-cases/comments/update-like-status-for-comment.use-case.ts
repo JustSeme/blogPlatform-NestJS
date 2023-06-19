@@ -2,7 +2,6 @@ import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
 import { LikeType } from "../../../api/models/LikeInputModel"
-import { LikeObjectType } from "../../../domain/comments/CommentTypes"
 import { CommentsSQLRepository } from "../../../infrastructure/comments/comments-sql-repository"
 
 export class UpdateLikeStatusForCommentCommand {
@@ -23,21 +22,20 @@ export class UpdateLikeStatusForCommentUseCase implements ICommandHandler<Update
         if (!updatingComment) {
             return false
         }
-        const likeData: LikeObjectType = {
-            userId: command.userId,
-            createdAt: new Date().toISOString(),
-            isBanned: false,
-        }
 
-        const isNoneSetted = await this.commentsRepository.setNoneLike(command.userId, command.commentId)
+        const isLikeEntityExists = await this.commentsRepository.isLikeEntityExists(command.userId, command.commentId)
 
-        if (command.status === 'Like') {
-            return this.commentsRepository.setLike(likeData, command.commentId)
-        }
+        if (isLikeEntityExists) {
+            return this.commentsRepository.updateLikeStatus(command.userId, command.commentId, command.status)
+        } else {
+            if (command.status === 'Like') {
+                return this.commentsRepository.createLike(command.userId, command.commentId)
+            }
 
-        if (command.status === 'Dislike') {
-            return this.commentsRepository.setDislike(likeData, command.commentId)
+            if (command.status === 'Dislike') {
+                return this.commentsRepository.createDislike(command.userId, command.commentId)
+            }
         }
-        return isNoneSetted
+        return true
     }
 }
