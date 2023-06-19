@@ -32,14 +32,14 @@ export class CommentEntity {
 
     @ManyToOne(() => PostEntity, (post) => post.comment)
     @JoinColumn({ name: 'postId' })
-    post: PostEntity
+    postId: PostEntity
 
     @Column()
     postTitle: string
 
     @ManyToOne(() => BlogEntity, (blog) => blog.blogComments)
     @JoinColumn({ name: 'blogId' })
-    blog: BlogEntity
+    blogId: BlogEntity
 
     @Column()
     blogName: string

@@ -47,6 +47,6 @@ export class BlogEntity {
     @OneToMany(() => PostEntity, (post) => post.blogId)
     blogPosts: PostEntity[]
 
-    @OneToMany(() => CommentEntity, (comment) => comment.blog)
+    @OneToMany(() => CommentEntity, (comment) => comment.blogId)
     blogComments: CommentEntity[]
 }

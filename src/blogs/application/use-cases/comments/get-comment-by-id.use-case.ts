@@ -25,7 +25,7 @@ export class GetCommentByIdUseCase implements ICommandHandler<GetCommentByIdComm
     async execute(query: GetCommentByIdCommand): Promise<CommentViewModel> {
         const accessToken = query.authorizationHeader ? query.authorizationHeader.split(' ')[1] : null
 
-        const userId = await this.getCorrectUserIdByAccessToken(accessToken)
+        const userId = await this.jwtService.getCorrectUserIdByAccessToken(accessToken)
 
         const findedComment = await this.commentsRepository.getCommentByIdWithLikesInfo(query.commentId, userId)
 
@@ -34,12 +34,5 @@ export class GetCommentByIdUseCase implements ICommandHandler<GetCommentByIdComm
         }
 
         return findedComment
-    }
-
-    async getCorrectUserIdByAccessToken(accessToken: string | null): Promise<string | null> {
-        if (accessToken) {
-            const jwtResult = await this.jwtService.verifyAccessToken(accessToken)
-            return jwtResult ? jwtResult.userId : null
-        }
     }
 }

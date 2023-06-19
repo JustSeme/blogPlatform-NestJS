@@ -84,4 +84,11 @@ export class JwtService {
             newAccessToken
         }
     }
+
+    async getCorrectUserIdByAccessToken(accessToken: string | null): Promise<string | null> {
+        if (accessToken) {
+            const jwtResult = await this.verifyAccessToken(accessToken)
+            return jwtResult ? jwtResult.userId : null
+        }
+    }
 }

@@ -2,9 +2,9 @@ import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
 import { ReadCommentsQueryParams } from "../../../api/models/ReadCommentsQuery"
-import { CommentsService } from "../../comments-service"
 import { CommentsWithQueryOutputModel } from "../../dto/CommentViewModel"
 import { CommentsQuerySQLRepository } from "../../../infrastructure/comments/comments-query-sql-repository"
+import { JwtService } from "../../../../general/adapters/jwt.adapter"
 
 export class GetCommentsForPostCommand {
     constructor(
@@ -18,7 +18,7 @@ export class GetCommentsForPostCommand {
 export class GetCommentsForPostUseCase implements ICommandHandler<GetCommentsForPostCommand> {
     constructor(
         private commentsQueryRepository: CommentsQuerySQLRepository,
-        private commentsService: CommentsService,
+        private jwtService: JwtService,
     ) { }
 
 
@@ -30,11 +30,9 @@ export class GetCommentsForPostUseCase implements ICommandHandler<GetCommentsFor
         } = command
 
         const accessToken = authorizationHeader ? authorizationHeader.split(' ')[1] : null
-        const findedCommentsQueryData = await this.commentsQueryRepository.getCommentsForPost(queryParams, postId)
 
-        const displayedComments = await this.commentsService.transformCommentsForDisplay(findedCommentsQueryData.items, accessToken)
+        const userId = await this.jwtService.getCorrectUserIdByAccessToken(accessToken)
 
-        findedCommentsQueryData.items = displayedComments
-        return findedCommentsQueryData
+        return this.commentsQueryRepository.getCommentsForPost(queryParams, postId, userId)
     }
 }

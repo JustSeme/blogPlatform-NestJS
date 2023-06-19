@@ -32,13 +32,14 @@ import { DeletePostForBloggerCommand } from "../application/use-cases/posts/dele
 import { GetBlogsForBloggerCommand } from "../application/use-cases/blogs/get-blogs-for-blogger.use.case"
 import { ReadCommentsQueryParams } from "../../blogs/api/models/ReadCommentsQuery"
 import { CommentsForBloggerWithQueryOutputModel } from "../../blogs/application/dto/CommentViewModelForBlogger"
-import { GetAllCommentsForBloggerBlogsCommand } from "../application/use-cases/comments/get-all-comments-for-blogger-blogs.use-case"
+import { CommentsQuerySQLRepository } from "../../blogs/infrastructure/comments/comments-query-sql-repository"
 
 @UseGuards(JwtAuthGuard)
 @Controller('blogger/blogs')
 export class BloggerBlogsController {
     constructor(
         private commandBus: CommandBus,
+        private commentsQueryRepository: CommentsQuerySQLRepository
     ) { }
 
     @Post('')
@@ -128,8 +129,6 @@ export class BloggerBlogsController {
         @Query() commentsQueryParams: ReadCommentsQueryParams,
         @CurrentUserId() userId: string,
     ): Promise<CommentsForBloggerWithQueryOutputModel> {
-        return this.commandBus.execute(
-            new GetAllCommentsForBloggerBlogsCommand(commentsQueryParams, userId)
-        )
+        return this.commentsQueryRepository.getAllCommentsForBlogger(commentsQueryParams, userId)
     }
 }

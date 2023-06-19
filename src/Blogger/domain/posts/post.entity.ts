@@ -41,6 +41,6 @@ export class PostEntity {
     @Column()
     ownerLogin: string
 
-    @OneToMany(() => CommentEntity, (comment) => comment.post)
+    @OneToMany(() => CommentEntity, (comment) => comment.postId)
     comment: CommentEntity
 }

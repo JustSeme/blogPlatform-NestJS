@@ -4,6 +4,7 @@ import { DataSource } from "typeorm"
 import { CommentDBModel } from "../../domain/comments/CommentTypes"
 import { CommentViewModel } from "../../application/dto/CommentViewModel"
 import { CommentEntity } from "../../domain/comments/typeORM/comment.entity"
+import { LikeType } from "../../api/models/LikeInputModel"
 
 @Injectable()
 export class CommentsSQLRepository {
@@ -112,7 +113,7 @@ export class CommentsSQLRepository {
         `
 
         try {
-            const commentData: Array<CommentEntity & { dislikesCount: number, likesCount: number }> = await this.dataSource.query(queryString, [commentId, userId])
+            const commentData: Array<CommentEntity & { dislikesCount: number, likesCount: number, likeStatus: LikeType }> = await this.dataSource.query(queryString, [commentId, userId])
 
             if (!commentData[0]) {
                 return null

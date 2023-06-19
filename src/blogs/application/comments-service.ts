@@ -6,8 +6,6 @@ import {
 } from "../domain/comments/CommentTypes"
 import { JwtService } from "../../general/adapters/jwt.adapter"
 import { CommentViewModelForBlogger } from './dto/CommentViewModelForBlogger'
-import { CommentEntity } from "../domain/comments/typeORM/comment.entity"
-import { CommentLikesInfo } from "../domain/comments/typeORM/comment-likes-info.entity"
 
 @Injectable()
 export class CommentsService {
@@ -80,7 +78,7 @@ export class CommentsService {
     }
 
     async transformCommentsForDisplay(commentsArray: Array<CommentDBModel>, accessToken: string | null): Promise<CommentViewModel[]> {
-        const userId = await this.getCorrectUserIdByAccessToken(accessToken)
+        const userId = await this.jwtService.getCorrectUserIdByAccessToken(accessToken)
 
         const convertedComments = commentsArray.map((comment: CommentDBModel) => {
             const likesInfoData = comment.likesInfo
@@ -152,11 +150,4 @@ export class CommentsService {
 
         return convertedComments
     } */
-
-    async getCorrectUserIdByAccessToken(accessToken: string | null): Promise<string | null> {
-        if (accessToken) {
-            const jwtResult = await this.jwtService.verifyAccessToken(accessToken)
-            return jwtResult ? jwtResult.userId : null
-        }
-    }
 }

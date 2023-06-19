@@ -106,7 +106,6 @@ import { GetBlogsForSuperAdminUseCase } from "./SuperAdmin/application/use-cases
 import { BanBlogUseCase } from "./SuperAdmin/application/use-cases/ban-blog.use-case"
 import { UnbanBlogUseCase } from "./SuperAdmin/application/use-cases/unban-blog.use-case"
 import { UpdateCommentUseCase } from "./blogs/application/use-cases/comments/update-comment.use-case"
-import { GetAllCommentsForBloggerBlogsUseCase } from "./Blogger/application/use-cases/comments/get-all-comments-for-blogger-blogs.use-case"
 import { BloggerUsersController } from "./Blogger/api/blogger-users.controller"
 import { BanUserForBlogUseCase } from "./Blogger/application/use-cases/users/ban-user-for-blog.use-case"
 import { GetAllBannedUsersForBlogUseCase } from "./Blogger/application/use-cases/users/get-all-banned-users-for-blog.use-case"
@@ -182,7 +181,6 @@ const blogsUseCases = [
   BanBlogUseCase,
   UnbanBlogUseCase,
   UpdateCommentUseCase,
-  GetAllCommentsForBloggerBlogsUseCase,
   BanUserForBlogUseCase,
   GetAllBannedUsersForBlogUseCase,
   UnbanUserForBlogUseCase,
