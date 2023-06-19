@@ -23,7 +23,7 @@ export class PostsViewModel {
             likesCount: rawPost.likesCount || 0,
             dislikesCount: rawPost.dislikesCount || 0,
             myStatus: rawPost.myStatus || 'None',
-            newestLikes: []
+            newestLikes: rawPost.newestLikes || []
         }
     }
 

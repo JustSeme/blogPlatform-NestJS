@@ -24,6 +24,9 @@ export class PostLikesInfo {
     @Column({ default: false })
     isBanned: boolean
 
+    @Column({ default: 'None' })
+    likeStatus: string
+
     @ManyToOne(() => PostEntity, (post) => post.postLikeEntities)
     @JoinColumn({ name: 'postId' })
     postId: PostEntity

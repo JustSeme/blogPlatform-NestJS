@@ -100,7 +100,7 @@ export class PostsSQLRepository {
         }
     }
 
-    async getPostByIdWithLikesInfo(postId: string): Promise<PostsViewModel> {
+    async getPostByIdWithLikesInfo(postId: string, userId: string): Promise<PostsViewModel> {
         const queryString = `
             SELECT *,
             (
@@ -116,20 +116,20 @@ export class PostsSQLRepository {
             (
                 SELECT "likeStatus"
                     FROM public."post_likes_info" pli
-                    WHERE pli."postId" = pe.id AND pli."userId" = $1 AND pli."isBanned" = false
-            ) as "myStatus"
+                    WHERE pli."postId" = pe.id AND pli."userId" = $2 AND pli."isBanned" = false
+            ) as "myStatus",
             (
-                SELECT jsonb_agg(json_build_object('addedAt', pli.createdAt, 'userId', pli.userId, 'login', pli.ownerLogin ))
+                SELECT jsonb_agg(json_build_object('addedAt', pli."createdAt", 'userId', pli."userId", 'login', pli."ownerLogin" ))
                     FROM public."post_likes_info" pli
-                    WHERE pli."isBanned" = false
+                    WHERE pli."isBanned" = false AND pli."likeStatus" = 'Like'
                     LIMIT 3
             ) as "newestLikes"
                 FROM public."post_entity" pe
-                WHERE id = $1 AND "isBanned" = false
+                WHERE pe.id = $1 AND "isBanned" = false
         `
 
         try {
-            const postData: Array<PostEntity & ExtendedLikesInfoViewType> = await this.dataSource.query(queryString, [postId])
+            const postData: Array<PostEntity & ExtendedLikesInfoViewType> = await this.dataSource.query(queryString, [postId, userId])
 
             if (!postData[0]) {
                 return null
@@ -272,7 +272,7 @@ export class PostsSQLRepository {
         `
 
         try {
-            const idData = this.dataSource.query(queryString, [userId, postId])
+            const idData = await this.dataSource.query(queryString, [userId, postId])
 
             return idData[0] ? true : false
         } catch (err) {

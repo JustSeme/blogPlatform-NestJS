@@ -12,7 +12,7 @@ import {
 export class PostsQuerySQLRepository {
     constructor(@InjectDataSource() private dataSource: DataSource) { }
 
-    async findPosts(queryParams: ReadPostsQueryParams, blogId: string | null) {
+    async findPosts(queryParams: ReadPostsQueryParams, blogId: string | null, userId: string) {
         const {
             sortDirection = 'desc',
             sortBy = 'createdAt',
@@ -48,20 +48,20 @@ export class PostsQuerySQLRepository {
                 SELECT "likeStatus"
                     FROM public."post_likes_info" pli
                     WHERE pli."postId" = pe.id AND pli."userId" = $1 AND pli."isBanned" = false
-            ) as "myStatus"
+            ) as "myStatus",
             (
-                SELECT jsonb_agg(json_build_object('addedAt', pli.createdAt, 'userId', pli.userId, 'login', pli.ownerLogin ))
+                SELECT jsonb_agg(json_build_object('addedAt', pli."createdAt", 'userId', pli."userId", 'login', pli."ownerLogin" ))
                     FROM public."post_likes_info" pli
-                    WHERE pli."isBanned" = false
+                    WHERE pli."isBanned" = false AND pli."likeStatus" = 'Like'
                     LIMIT 3
             ) as "newestLikes"
-                FROM public."post_entity"
-                WHERE "isBanned"=false ${blogId ? `AND "blogId" = ${blogId}` : ''}
+                FROM public."post_entity" pe
+                WHERE pe."isBanned"=false ${blogId ? `AND pe."blogId" = ${blogId}` : ''}
                 ORDER BY "${sortBy}" ${sortDirection}
                 LIMIT ${pageSize} OFFSET ${skipCount};
         `
 
-        const resultedPosts: Array<PostEntity & ExtendedLikesInfoViewType> = await this.dataSource.query(query)
+        const resultedPosts: Array<PostEntity & ExtendedLikesInfoViewType> = await this.dataSource.query(query, [userId])
         const displayedPosts = resultedPosts.map(post => new PostsViewModel(post))
 
         return {

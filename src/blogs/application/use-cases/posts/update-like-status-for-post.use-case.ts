@@ -34,16 +34,17 @@ export class UpdateLikeStatusForPostUseCase implements ICommandHandler<UpdateLik
 
         const likedUser = await this.usersQueryRepository.findUserById(userId)
 
-        const isLikeEntityExists = this.postsRepository.isLikeEntityExists(userId, postId)
+        const isLikeEntityExists = await this.postsRepository.isLikeEntityExists(userId, postId)
 
         if (isLikeEntityExists) {
             return this.postsRepository.updateLikeStatus(userId, postId, status)
         } else {
-            switch (status) {
-                case "Like":
-                    return this.postsRepository.createLike(userId, postId, likedUser.login)
-                case "Dislike":
-                    return this.postsRepository.createDislike(userId, postId, likedUser.login)
+            if (status === 'Like') {
+                return this.postsRepository.createLike(userId, postId, likedUser.login)
+            }
+
+            if (status === 'Dislike') {
+                return this.postsRepository.createDislike(userId, postId, likedUser.login)
             }
         }
     }
