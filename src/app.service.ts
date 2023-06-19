@@ -54,6 +54,9 @@ export class AppService {
       DELETE FROM public."comment_entity"
         WHERE 1 = 1;
 
+      DELETE FROM public."post_likes_info"
+        WHERE 1 = 1;
+
       DELETE FROM public."post_entity"
         WHERE 1 = 1;
       
