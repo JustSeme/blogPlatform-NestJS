@@ -14,7 +14,7 @@ export class CommentViewModel {
     public createdAt: Date
     public likesInfo: LikesInfoViewType
 
-    constructor(rawComment: CommentEntity & { dislikesCount: number, likesCount: number, likeStatus: LikeType }) {
+    constructor(rawComment: CommentEntity & LikesInfoViewType) {
         this.id = rawComment.id
         this.content = rawComment.content
 
@@ -26,7 +26,7 @@ export class CommentViewModel {
         this.likesInfo = {
             likesCount: rawComment.likesCount,
             dislikesCount: rawComment.dislikesCount,
-            myStatus: rawComment.likeStatus
+            myStatus: rawComment.myStatus || 'None'
         }
     }
 

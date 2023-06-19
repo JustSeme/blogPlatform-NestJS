@@ -3,7 +3,9 @@ import { ReadPostsQueryParams } from "../../../blogs/api/models/ReadPostsQuery"
 import { InjectDataSource } from "@nestjs/typeorm"
 import { DataSource } from "typeorm"
 import { PostEntity } from "../../domain/posts/typeORM/post.entity"
-import { PostsViewModel } from "../../../blogs/application/dto/PostViewModel"
+import {
+    ExtendedLikesInfoViewType, PostsViewModel
+} from "../../../blogs/application/dto/PostViewModel"
 
 
 @Injectable()
@@ -31,14 +33,35 @@ export class PostsQuerySQLRepository {
         const skipCount = (+pageNumber - 1) * +pageSize
 
         const query = `
-            SELECT *
+            SELECT *,
+            (
+                SELECT count(*)
+                    FROM public."post_likes_info" pli
+                    WHERE pli."postId" = pe.id AND pli."likeStatus" = 'Like' AND pli."isBanned" = false
+            ) as "likesCount",
+            (
+                SELECT count(*)
+                    FROM public."post_likes_info" pli
+                    WHERE pli."postId" = pe.id AND pli."likeStatus" = 'Dislike' AND pli."isBanned" = false
+            ) as "dislikesCount",
+            (
+                SELECT "likeStatus"
+                    FROM public."post_likes_info" pli
+                    WHERE pli."postId" = pe.id AND pli."userId" = $1 AND pli."isBanned" = false
+            ) as "myStatus"
+            (
+                SELECT jsonb_agg(json_build_object('addedAt', pli.createdAt, 'userId', pli.userId, 'login', pli.ownerLogin ))
+                    FROM public."post_likes_info" pli
+                    WHERE pli."isBanned" = false
+                    LIMIT 3
+            ) as "newestLikes"
                 FROM public."post_entity"
                 WHERE "isBanned"=false ${blogId ? `AND "blogId" = ${blogId}` : ''}
                 ORDER BY "${sortBy}" ${sortDirection}
                 LIMIT ${pageSize} OFFSET ${skipCount};
         `
 
-        const resultedPosts: PostEntity[] = await this.dataSource.query(query)
+        const resultedPosts: Array<PostEntity & ExtendedLikesInfoViewType> = await this.dataSource.query(query)
         const displayedPosts = resultedPosts.map(post => new PostsViewModel(post))
 
         return {

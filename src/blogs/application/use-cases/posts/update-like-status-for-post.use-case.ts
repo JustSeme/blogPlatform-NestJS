@@ -46,7 +46,5 @@ export class UpdateLikeStatusForPostUseCase implements ICommandHandler<UpdateLik
                     return this.postsRepository.createDislike(userId, postId, likedUser.login)
             }
         }
-
-
     }
 }

@@ -4,7 +4,7 @@ import { DataSource } from "typeorm"
 import { ReadCommentsQueryParams } from "../../api/models/ReadCommentsQuery"
 import { CommentEntity } from "../../domain/comments/typeORM/comment.entity"
 import {
-    CommentViewModel, CommentsWithQueryOutputModel
+    CommentViewModel, CommentsWithQueryOutputModel, LikesInfoViewType
 } from "../../application/dto/CommentViewModel"
 import { LikeType } from "../../api/models/LikeInputModel"
 import {
@@ -48,14 +48,14 @@ export class CommentsQuerySQLRepository {
                 SELECT "likeStatus"
                     FROM public."comment_likes_info" cli
                     WHERE cli."commentId" = ce.id AND cli."userId" = $2 AND cli."isBanned" = false
-            )
+            ) as "myStatus"
                 FROM public."comment_entity" ce
                 WHERE ce."isBanned"=false AND ce.postId = $1
                 ORDER BY "${sortBy}" ${sortDirection}
                 LIMIT ${pageSize} OFFSET ${skipCount};
         `
 
-        const resultedComments: Array<CommentEntity & { dislikesCount: number, likesCount: number, likeStatus: LikeType }> = await this.dataSource.query(query, [postId, userId])
+        const resultedComments: Array<CommentEntity & LikesInfoViewType> = await this.dataSource.query(query, [postId, userId])
         const displayedComments = resultedComments.map(comment => new CommentViewModel(comment))
 
         return {
@@ -100,14 +100,14 @@ export class CommentsQuerySQLRepository {
                 SELECT "likeStatus"
                     FROM public."comment_likes_info" cli
                     WHERE cli."commentId" = ce.id AND cli."userId" = $2 AND cli."isBanned" = false
-            )
+            ) as "myStatus"
                 FROM public."comment_entity" ce
                 WHERE ce."isBanned"=false
                 ORDER BY "${sortBy}" ${sortDirection}
                 LIMIT ${pageSize} OFFSET ${skipCount};
         `
 
-        const resultedComments: Array<CommentEntity & { likesCount: number, dislikesCount: number, likeStatus: LikeType }> = await this.dataSource.query(query)
+        const resultedComments: Array<CommentEntity & LikesInfoViewType> = await this.dataSource.query(query)
         const displayedComments = resultedComments.map(comment => new CommentViewModel(comment))
 
         return {

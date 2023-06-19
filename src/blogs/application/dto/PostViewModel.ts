@@ -11,7 +11,7 @@ export class PostsViewModel {
     public createdAt: Date
     public extendedLikesInfo: ExtendedLikesInfoViewType
 
-    constructor(rawPost: PostEntity) {
+    constructor(rawPost: PostEntity & ExtendedLikesInfoViewType) {
         this.id = rawPost.id
         this.title = rawPost.title
         this.shortDescription = rawPost.shortDescription
@@ -20,16 +20,16 @@ export class PostsViewModel {
         this.blogName = rawPost.blogName
         this.createdAt = rawPost.createdAt
         this.extendedLikesInfo = {
-            likesCount: 0,
-            dislikesCount: 0,
-            myStatus: 'None',
+            likesCount: rawPost.likesCount || 0,
+            dislikesCount: rawPost.dislikesCount || 0,
+            myStatus: rawPost.myStatus || 'None',
             newestLikes: []
         }
     }
 
 }
 
-type ExtendedLikesInfoViewType = {
+export type ExtendedLikesInfoViewType = {
     likesCount: number,
     dislikesCount: number,
     myStatus: LikeType,

@@ -2,9 +2,10 @@ import { Injectable } from "@nestjs/common"
 import { InjectDataSource } from "@nestjs/typeorm"
 import { DataSource } from "typeorm"
 import { CommentDBModel } from "../../domain/comments/CommentTypes"
-import { CommentViewModel } from "../../application/dto/CommentViewModel"
+import {
+    CommentViewModel, LikesInfoViewType
+} from "../../application/dto/CommentViewModel"
 import { CommentEntity } from "../../domain/comments/typeORM/comment.entity"
-import { LikeType } from "../../api/models/LikeInputModel"
 
 @Injectable()
 export class CommentsSQLRepository {
@@ -107,13 +108,13 @@ export class CommentsSQLRepository {
                 SELECT "likeStatus"
                     FROM public."comment_likes_info" cli
                     WHERE cli."commentId" = ce.id AND cli."userId" = $2 AND cli."isBanned" = false
-            )
+            ) as "myStatus"
                 FROM public.comment_entity ce
                 WHERE ce.id = $1 AND ce."isBanned" = false;
         `
 
         try {
-            const commentData: Array<CommentEntity & { dislikesCount: number, likesCount: number, likeStatus: LikeType }> = await this.dataSource.query(queryString, [commentId, userId])
+            const commentData: Array<CommentEntity & LikesInfoViewType> = await this.dataSource.query(queryString, [commentId, userId])
 
             if (!commentData[0]) {
                 return null

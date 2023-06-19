@@ -5,7 +5,9 @@ import {
     PostDBModel,
     PostDTO
 } from "../../domain/posts/PostsTypes"
-import { PostsViewModel } from "../../../blogs/application/dto/PostViewModel"
+import {
+    ExtendedLikesInfoViewType, PostsViewModel
+} from "../../../blogs/application/dto/PostViewModel"
 import { PostInputModel } from "../../api/models/PostInputModel"
 import { PostEntity } from "../../domain/posts/typeORM/post.entity"
 
@@ -56,7 +58,7 @@ export class PostsSQLRepository {
         `
 
         try {
-            const createdPost: PostEntity[] = await this.dataSource.query(queryString, [
+            const createdPost = await this.dataSource.query(queryString, [
                 creatingPost.title,
                 creatingPost.shortDescription,
                 creatingPost.content,
@@ -98,6 +100,47 @@ export class PostsSQLRepository {
         }
     }
 
+    async getPostByIdWithLikesInfo(postId: string): Promise<PostsViewModel> {
+        const queryString = `
+            SELECT *,
+            (
+                SELECT count(*)
+                    FROM public."post_likes_info" pli
+                    WHERE pli."postId" = pe.id AND pli."likeStatus" = 'Like' AND pli."isBanned" = false
+            ) as "likesCount",
+            (
+                SELECT count(*)
+                    FROM public."post_likes_info" pli
+                    WHERE pli."postId" = pe.id AND pli."likeStatus" = 'Dislike' AND pli."isBanned" = false
+            ) as "dislikesCount",
+            (
+                SELECT "likeStatus"
+                    FROM public."post_likes_info" pli
+                    WHERE pli."postId" = pe.id AND pli."userId" = $1 AND pli."isBanned" = false
+            ) as "myStatus"
+            (
+                SELECT jsonb_agg(json_build_object('addedAt', pli.createdAt, 'userId', pli.userId, 'login', pli.ownerLogin ))
+                    FROM public."post_likes_info" pli
+                    WHERE pli."isBanned" = false
+                    LIMIT 3
+            ) as "newestLikes"
+                FROM public."post_entity" pe
+                WHERE id = $1 AND "isBanned" = false
+        `
+
+        try {
+            const postData: Array<PostEntity & ExtendedLikesInfoViewType> = await this.dataSource.query(queryString, [postId])
+
+            if (!postData[0]) {
+                return null
+            }
+
+            return new PostsViewModel(postData[0])
+        } catch (err) {
+            console.error(err)
+            return null
+        }
+    }
     async deletePost(id: string): Promise<boolean> {
         const queryString = `
             DELETE FROM public."post_entity"
