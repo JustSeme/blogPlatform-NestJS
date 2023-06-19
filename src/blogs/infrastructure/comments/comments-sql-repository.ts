@@ -14,45 +14,26 @@ export class CommentsSQLRepository {
     async createComment(creatingComment: CommentDBModel): Promise<CommentViewModel> {
         const createCommentQuery = `
             INSERT INTO public.comment_entity
-                ("content", "commentatorId", "commentatorLogin")
-                VALUES($1, $2, $3)
+                ("content", "commentatorId", "commentatorLogin", "postTitle", "blogName", "blogId", "postId")
+                VALUES($1, $2, $3, $4, $5, $6, $7)
                 RETURNING *;
         `
 
-        const createPostInfoQuery = `
-            INSERT INTO public.comment_post_info
-                ("title", "blogName", "blogId", "commentId", "id")
-                VALUES($1, $2, $3, $4, $5);
-        `
-
-        const queryRunner = this.dataSource.createQueryRunner()
-        await queryRunner.connect()
-        await queryRunner.startTransaction()
-
         try {
-            const createdCommentData: CommentEntity = await queryRunner.query(createCommentQuery, [
+            const createdCommentData: CommentEntity = await this.dataSource.query(createCommentQuery, [
                 creatingComment.content,
                 creatingComment.commentatorInfo.userId,
                 creatingComment.commentatorInfo.userLogin,
-            ])
-
-            await queryRunner.query(createPostInfoQuery, [
                 creatingComment.postInfo.title,
                 creatingComment.postInfo.blogName,
                 creatingComment.postInfo.blogId,
-                createdCommentData[0].id,
                 creatingComment.postInfo.id
             ])
 
-            await queryRunner.commitTransaction()
             return new CommentViewModel(createdCommentData[0])
         } catch (err) {
             console.error(err)
-
-            await queryRunner.rollbackTransaction()
             return null
-        } finally {
-            await queryRunner.release()
         }
     }
 

@@ -17,9 +17,8 @@ export class CommentsQuerySQLRepository {
 
         const queryCount = `
             SELECT count(*)
-                FROM public."comment_post_info" cpi
-                LEFT JOIN public."comment_entity" ce ON ce.id = cpi."commentId"
-                WHERE ce."isBanned"=false AND cpi.id = $1
+                FROM public."comment_entity" ce
+                WHERE ce."isBanned"=false AND ce.postId = $1
         `
 
         const totalCountData = await this.dataSource.query(queryCount, [postId])
@@ -30,9 +29,8 @@ export class CommentsQuerySQLRepository {
 
         const query = `
             SELECT *
-                FROM public."comment_post_info" cpi
-                LEFT JOIN public."comment_entity" ce ON ce.id = cpi."commentId"
-                WHERE ce."isBanned"=false AND cpi.id = $1
+                FROM public."comment_entity" ce
+                WHERE ce."isBanned"=false AND ce.postId = $1
                 ORDER BY "${sortBy}" ${sortDirection}
                 LIMIT ${pageSize} OFFSET ${skipCount};
         `

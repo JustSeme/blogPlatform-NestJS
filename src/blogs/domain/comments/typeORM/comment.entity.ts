@@ -35,7 +35,7 @@ export class CommentEntity {
     post: PostEntity
 
     @Column()
-    title: string
+    postTitle: string
 
     @ManyToOne(() => BlogEntity, (blog) => blog.blogComments)
     @JoinColumn({ name: 'blogId' })
