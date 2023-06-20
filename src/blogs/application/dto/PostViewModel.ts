@@ -12,7 +12,8 @@ export class PostsViewModel {
     public extendedLikesInfo: ExtendedLikesInfoViewType
 
     constructor(rawPost: PostEntity & ExtendedLikesInfoViewType) {
-        const mappedNewestLikes = rawPost.newestLikes.map((like) => ({
+        const newestLikes = rawPost.newestLikes ? rawPost.newestLikes : []
+        const mappedNewestLikes = newestLikes.map((like) => ({
             addedAt: like.addedAt,
             userId: like.userId,
             login: like.login
