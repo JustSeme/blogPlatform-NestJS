@@ -62,7 +62,7 @@ export class CommentsQuerySQLRepository {
             pagesCount: pagesCount,
             page: +pageNumber,
             pageSize: +pageSize,
-            totalCount: totalCount,
+            totalCount: +totalCount,
             items: displayedComments
         }
     }
@@ -114,7 +114,7 @@ export class CommentsQuerySQLRepository {
             pagesCount: pagesCount,
             page: +pageNumber,
             pageSize: +pageSize,
-            totalCount: totalCount,
+            totalCount: +totalCount,
             items: displayedComments
         }
     }
