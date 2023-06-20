@@ -123,7 +123,7 @@ export class PostsSQLRepository {
             (
                 SELECT jsonb_agg(json_build_object('addedAt', agg."createdAt", 'userId', agg."userId", 'login', agg."ownerLogin" ))
                     FROM (
-                        SELECT pli."createadAt" 
+                        SELECT pli."createdAt", pli."userId", pli."ownerLogin"
                             FROM public."post_likes_info" pli
                             WHERE pli."isBanned" = false AND pli."likeStatus" = 'Like' AND pli."postId" = pe.id
                             ORDER BY pli."createdAt" DESC
