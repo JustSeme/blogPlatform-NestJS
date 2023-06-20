@@ -30,7 +30,8 @@ export class BanUserUseCase implements ICommandHandler<BanUserCommand> {
 
         const isBanned = await this.usersRepository.banUserById(userId, banReason)
 
-        return this.hideUserEntities(userId) && isBanned
+        const isEntitiesHided = await this.hideUserEntities(userId)
+        return isEntitiesHided && isBanned
     }
 
     async hideUserEntities(userId: string) {

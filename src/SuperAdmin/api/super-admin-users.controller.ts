@@ -71,14 +71,19 @@ export class SuperAdminUsersController {
         @Param('userId', IsUserExistOrThrow400Pipe) userId: string,
         @Body() banUserInputModel: BanUserInputModel
     ) {
+        let isImplemented
         if (banUserInputModel.isBanned) {
-            await this.commandBus.execute(
+            isImplemented = await this.commandBus.execute(
                 new BanUserCommand(banUserInputModel.banReason, userId)
             )
         } else {
-            await this.commandBus.execute(
+            isImplemented = await this.commandBus.execute(
                 new UnbanUserCommand(userId)
             )
+        }
+
+        if (!isImplemented) {
+            throw new NotImplementedException()
         }
     }
 }

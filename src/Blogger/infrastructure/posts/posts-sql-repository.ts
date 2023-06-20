@@ -125,7 +125,7 @@ export class PostsSQLRepository {
                     LIMIT 3
             ) as "newestLikes"
                 FROM public."post_entity" pe
-                WHERE pe.id = $1 AND "isBanned" = false
+                WHERE pe.id = $1 AND pe."isBanned" = false
         `
 
         try {

@@ -22,9 +22,11 @@ export class UnbanUserUseCase implements ICommandHandler<UnbanUserCommand> {
     async execute(command: UnbanUserCommand) {
         const { userId } = command
 
-        await this.usersRepository.unbanUserById(userId)
+        const isUserUnbanned = await this.usersRepository.unbanUserById(userId)
 
-        return this.unHideUserEnitties(userId)
+        const isAllEntitiesUnhided = await this.unHideUserEnitties(userId)
+
+        return isUserUnbanned && isAllEntitiesUnhided
     }
 
     async unHideUserEnitties(userId: string) {
