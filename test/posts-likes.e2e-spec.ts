@@ -333,7 +333,39 @@ describe('posts-likes', () => {
             .set('Authorization', `Bearer ${accessToken1}`)
             .expect(HttpStatus.OK)
 
+        expect(postsData.body.totalCount).toEqual(6)
+
         expect(postsData.body.items[0].extendedLikesInfo.newestLikes[0].login).toEqual(createUserInputData1.login)
+        expect(postsData.body.items[0].extendedLikesInfo.dislikesCount).toEqual(1)
+        expect(postsData.body.items[0].extendedLikesInfo.likesCount).toEqual(1)
         expect(postsData.body.items[0].extendedLikesInfo.myStatus).toEqual('Like')
+
+        expect(postsData.body.items[1].extendedLikesInfo.newestLikes[0].login).toEqual(createUserInputData2.login)
+        expect(postsData.body.items[1].extendedLikesInfo.dislikesCount).toEqual(1)
+        expect(postsData.body.items[1].extendedLikesInfo.likesCount).toEqual(1)
+        expect(postsData.body.items[1].extendedLikesInfo.myStatus).toEqual('None')
+
+        expect(postsData.body.items[2].extendedLikesInfo.newestLikes[0].login).toEqual(createUserInputData3.login)
+        expect(postsData.body.items[2].extendedLikesInfo.newestLikes[1].login).toEqual(createUserInputData2.login)
+        expect(postsData.body.items[2].extendedLikesInfo.newestLikes[2].login).toEqual(createUserInputData4.login)
+        expect(postsData.body.items[2].extendedLikesInfo.dislikesCount).toEqual(0)
+        expect(postsData.body.items[2].extendedLikesInfo.likesCount).toEqual(4)
+        expect(postsData.body.items[2].extendedLikesInfo.myStatus).toEqual('Like')
+
+        expect(postsData.body.items[3].extendedLikesInfo.dislikesCount).toEqual(1)
+        expect(postsData.body.items[3].extendedLikesInfo.likesCount).toEqual(0)
+        expect(postsData.body.items[3].extendedLikesInfo.myStatus).toEqual('Dislike')
+
+        expect(postsData.body.items[4].extendedLikesInfo.newestLikes[0].login).toEqual(createUserInputData3.login)
+        expect(postsData.body.items[4].extendedLikesInfo.newestLikes[1].login).toEqual(createUserInputData2.login)
+        expect(postsData.body.items[4].extendedLikesInfo.dislikesCount).toEqual(0)
+        expect(postsData.body.items[4].extendedLikesInfo.likesCount).toEqual(2)
+        expect(postsData.body.items[4].extendedLikesInfo.myStatus).toEqual('None')
+
+        expect(postsData.body.items[5].extendedLikesInfo.newestLikes[0].login).toEqual(createUserInputData2.login)
+        expect(postsData.body.items[5].extendedLikesInfo.newestLikes[1].login).toEqual(createUserInputData1.login)
+        expect(postsData.body.items[5].extendedLikesInfo.dislikesCount).toEqual(0)
+        expect(postsData.body.items[5].extendedLikesInfo.likesCount).toEqual(2)
+        expect(postsData.body.items[5].extendedLikesInfo.myStatus).toEqual('Like')
     })
 })
