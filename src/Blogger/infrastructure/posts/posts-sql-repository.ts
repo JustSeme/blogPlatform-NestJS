@@ -103,6 +103,8 @@ export class PostsSQLRepository {
     async getPostByIdWithLikesInfo(postId: string, userId: string): Promise<PostsViewModel> {
         const queryString = `
             SELECT *,
+                pe."createdAt" as "createdAt",
+                pe.id as "id",
             (
                 SELECT count(*)
                     FROM public."post_likes_info" pli

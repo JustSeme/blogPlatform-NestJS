@@ -34,6 +34,8 @@ export class PostsQuerySQLRepository {
 
         const query = `
             SELECT *,
+                pe."createdAt" as "createdAt",
+                pe.id as "id",
             (
                 SELECT count(*)
                     FROM public."post_likes_info" pli

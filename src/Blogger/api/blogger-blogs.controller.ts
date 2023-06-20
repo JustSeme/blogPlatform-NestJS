@@ -93,10 +93,9 @@ export class BloggerBlogsController {
         @Param('blogId', IsBlogByIdExistPipe) blogId,
         @CurrentUserId() userId
     ): Promise<PostsViewModel> {
-        const createdPostViewModel = await this.commandBus.execute(
+        return this.commandBus.execute(
             new CreatePostForBloggerCommand(postInputModel, blogId, userId)
         )
-        return createdPostViewModel
     }
 
     @HttpCode(HttpStatus.NO_CONTENT)

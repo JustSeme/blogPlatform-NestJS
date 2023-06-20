@@ -12,6 +12,12 @@ export class PostsViewModel {
     public extendedLikesInfo: ExtendedLikesInfoViewType
 
     constructor(rawPost: PostEntity & ExtendedLikesInfoViewType) {
+        const mappedNewestLikes = rawPost.newestLikes.map((like) => ({
+            addedAt: like.addedAt,
+            userId: like.userId,
+            login: like.login
+        }))
+
         this.id = rawPost.id
         this.title = rawPost.title
         this.shortDescription = rawPost.shortDescription
@@ -23,7 +29,7 @@ export class PostsViewModel {
             likesCount: +rawPost.likesCount || 0,
             dislikesCount: +rawPost.dislikesCount || 0,
             myStatus: rawPost.myStatus || 'None',
-            newestLikes: rawPost.newestLikes || []
+            newestLikes: mappedNewestLikes || []
         }
     }
 

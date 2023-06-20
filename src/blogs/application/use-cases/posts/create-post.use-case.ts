@@ -1,6 +1,5 @@
 import { ICommandHandler } from "@nestjs/cqrs"
 import { PostInputModel } from "../../../../Blogger/api/models/PostInputModel"
-import { PostsService } from "../../posts-service"
 import { PostDTO } from "../../../../Blogger/domain/posts/PostsTypes"
 import { PostsViewModel } from "../../dto/PostViewModel"
 import { BlogsSQLRepository } from "../../../../Blogger/infrastructure/blogs/blogs-sql-repository"
@@ -16,11 +15,10 @@ export class CreatePostUseCase implements ICommandHandler<CreatePostCommand> {
     constructor(
         private readonly blogsRepository: BlogsSQLRepository,
         private readonly postsRepository: PostsSQLRepository,
-        private readonly postsService: PostsService,
     ) { }
 
     async execute(command: CreatePostCommand): Promise<PostsViewModel> {
-        const { body, } = command
+        const { body } = command
 
         const blogById = await this.blogsRepository.findBlogById(body.blogId)
 
