@@ -25,6 +25,6 @@ export class GetPostsUseCase implements ICommandHandler<GetPostsCommand> {
 
         const userId = await this.jwtService.getCorrectUserIdByAccessToken(accessToken)
 
-        return this.postsQueryRepository.findPosts(query.queryParams, null, userId)
+        return this.postsQueryRepository.findPosts(query.queryParams, userId)
     }
 }

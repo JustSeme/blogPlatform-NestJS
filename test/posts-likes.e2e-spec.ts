@@ -329,7 +329,7 @@ describe('posts-likes', () => {
 
     it('get the posts by user 1 after all likes', async () => {
         const postsData = await request(httpServer)
-            .get('/posts')
+            .get(`/blogs/${createdBlogId}/posts`)
             .set('Authorization', `Bearer ${accessToken1}`)
         //.expect(HttpStatus.OK)
 
@@ -337,6 +337,6 @@ describe('posts-likes', () => {
 
 
         expect(postsData.body.items[0].extendedLikesInfo.newestLikes[0].login).toEqual(createUserInputData1.login)
-        expect(postsData.body.items[0].extendedLikesInfo.newestLikes[1].login).toEqual(createUserInputData2.login)
+        expect(postsData.body.items[0].extendedLikesInfo.myStatus).toEqual('Like')
     })
 })
