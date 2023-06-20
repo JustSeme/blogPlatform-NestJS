@@ -51,7 +51,7 @@ export class CommentsQuerySQLRepository {
             ) as "myStatus"
                 FROM public."comment_entity" ce
                 WHERE ce."isBanned"=false AND ce."postId" = $1
-                ORDER BY "${sortBy}" ${sortDirection}
+                ORDER BY ce."${sortBy}" ${sortDirection}
                 LIMIT ${pageSize} OFFSET ${skipCount};
         `
 

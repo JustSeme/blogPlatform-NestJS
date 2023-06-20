@@ -30,13 +30,13 @@ export class UnbanUserUseCase implements ICommandHandler<UnbanUserCommand> {
     }
 
     async unHideUserEnitties(userId: string) {
-        const isPostsHided = await this.postsRepository.hideAllPostsForCurrentUser(userId)
-        const isPostsLikesHided = await this.postsRepository.unHideAllLikeEntitiesForPostsByUserId(userId)
+        const isPostsUnhided = await this.postsRepository.hideAllPostsForCurrentUser(userId)
+        const isPostsLikesUnhided = await this.postsRepository.unHideAllLikeEntitiesForPostsByUserId(userId)
 
-        const isCommentsHided = await this.commentsRepository.unHideAllCommentsForCurrentUser(userId)
-        const isCommentLikesHided = await this.commentsRepository.unHideAllLikeEntitiesForCommentsByUserId(userId)
+        const isCommentsUnhided = await this.commentsRepository.unHideAllCommentsForCurrentUser(userId)
+        const isCommentLikesUnhided = await this.commentsRepository.unHideAllLikeEntitiesForCommentsByUserId(userId)
 
-        const isAllEntitiesForUserHided = isPostsHided && isPostsLikesHided && isCommentsHided && isCommentLikesHided
+        const isAllEntitiesForUserHided = isPostsUnhided && isPostsLikesUnhided && isCommentsUnhided && isCommentLikesUnhided
 
         return isAllEntitiesForUserHided
     }

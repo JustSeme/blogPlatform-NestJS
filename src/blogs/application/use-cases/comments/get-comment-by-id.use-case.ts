@@ -22,12 +22,12 @@ export class GetCommentByIdUseCase implements ICommandHandler<GetCommentByIdComm
     ) { }
 
 
-    async execute(query: GetCommentByIdCommand): Promise<CommentViewModel> {
-        const accessToken = query.authorizationHeader ? query.authorizationHeader.split(' ')[1] : null
+    async execute(command: GetCommentByIdCommand): Promise<CommentViewModel> {
+        const accessToken = command.authorizationHeader ? command.authorizationHeader.split(' ')[1] : null
 
         const userId = await this.jwtService.getCorrectUserIdByAccessToken(accessToken)
 
-        const findedComment = await this.commentsRepository.getCommentByIdWithLikesInfo(query.commentId, userId)
+        const findedComment = await this.commentsRepository.getCommentByIdWithLikesInfo(command.commentId, userId)
 
         if (!findedComment) {
             throw new NotFoundException(generateErrorsMessages('Creator of this comment is banned', 'commentId'))

@@ -103,14 +103,14 @@ export class CommentsSQLRepository {
                 SELECT count(*)
                     FROM public."comment_likes_info" cli
                     WHERE cli."commentId" = ce.id AND cli."likeStatus" = 'Dislike' AND cli."isBanned" = false
-            ) as "dislikesCount"
+            ) as "dislikesCount",
             (
                 SELECT "likeStatus"
                     FROM public."comment_likes_info" cli
                     WHERE cli."commentId" = ce.id AND cli."userId" = $2 AND cli."isBanned" = false
             ) as "myStatus"
-                FROM public.comment_entity ce
-                WHERE ce.id = $1 AND ce."isBanned" = false;
+                FROM public."comment_entity" ce
+                WHERE ce.id = $1 AND ce."isBanned" = false
         `
 
         try {
@@ -122,6 +122,7 @@ export class CommentsSQLRepository {
 
             return new CommentViewModel(commentData[0])
         } catch (err) {
+            console.log(err)
             console.error(err)
             return null
         }
