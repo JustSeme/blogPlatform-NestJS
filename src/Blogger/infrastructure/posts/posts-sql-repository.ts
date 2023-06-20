@@ -124,7 +124,7 @@ export class PostsSQLRepository {
                 SELECT jsonb_agg(json_build_object('addedAt', pli."createdAt", 'userId', pli."userId", 'login', pli."ownerLogin" ))
                     FROM public."post_likes_info" pli
                     WHERE pli."isBanned" = false AND pli."likeStatus" = 'Like' AND pli."postId" = pe.id
-                    ORDER BY "addedAt" DESC
+                    ORDER BY pli."createdAt" DESC
                     LIMIT 3
             ) as "newestLikes"
                 FROM public."post_entity" pe
