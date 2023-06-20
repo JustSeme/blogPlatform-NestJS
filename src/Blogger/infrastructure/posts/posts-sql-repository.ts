@@ -121,13 +121,14 @@ export class PostsSQLRepository {
                     WHERE pli."postId" = pe.id AND pli."userId" = $2 AND pli."isBanned" = false
             ) as "myStatus",
             (
-                SELECT jsonb_agg(json_build_object('addedAt', pli."createdAt", 'userId', pli."userId", 'login', pli."ownerLogin" ))
-                    FROM public."post_likes_info" pli
-                    WHERE pli."isBanned" = false AND pli."likeStatus" = 'Like' AND pli."postId" = pe.id
-                    GROUP BY pli."createdAt"
-                    ORDER BY pli."createdAt" DESC
-                    LIMIT 3
-            ) as "newestLikes"
+                SELECT jsonb_agg(json_build_object('addedAt', agg."createdAt", 'userId', agg."userId", 'login', agg."ownerLogin" ))
+                    FROM (
+                        SELECT pli."createadAt" 
+                            FROM public."post_likes_info" pli
+                            WHERE pli."isBanned" = false AND pli."likeStatus" = 'Like' AND pli."postId" = pe.id
+                            ORDER BY pli."createdAt" DESC
+                            LIMIT 3
+                        ) as agg ) as "newestLikes"
                 FROM public."post_entity" pe
                 LEFT JOIN public."user_entity" ue ON ue.id = pe."ownerId"
                 WHERE pe.id = $1 AND ue."isBanned" = false

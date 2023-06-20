@@ -53,11 +53,13 @@ export class PostsQuerySQLRepository {
             ) as "myStatus",
             (
                 SELECT jsonb_agg(json_build_object('addedAt', pli."createdAt", 'userId', pli."userId", 'login', pli."ownerLogin" ))
-                    FROM public."post_likes_info" pli
-                    WHERE pli."isBanned" = false AND pli."likeStatus" = 'Like' AND pli."postId" = pe.id
-                    GROUP BY pli."createdAt"
-                    ORDER BY pli."createdAt" DESC
-                    LIMIT 3
+                    FROM (
+                        SELECT pli."createadAt" 
+                            FROM public."post_likes_info" pli
+                            WHERE pli."isBanned" = false AND pli."likeStatus" = 'Like' AND pli."postId" = pe.id
+                            ORDER BY pli."createdAt" DESC
+                            LIMIT 3
+                        ) as agg ) as "newestLikes"
             ) as "newestLikes"
                 FROM public."post_entity" pe
                 WHERE pe."isBanned"=false ${blogId ? `AND pe."blogId" = ${blogId}` : ''}
