@@ -52,7 +52,7 @@ export class PostsQuerySQLRepository {
                     WHERE pli."postId" = pe.id AND pli."userId" = $1 AND pli."isBanned" = false
             ) as "myStatus",
             (
-                SELECT jsonb_agg(json_build_object('addedAt', pli."createdAt", 'userId', pli."userId", 'login', pli."ownerLogin" ))
+                SELECT jsonb_agg(json_build_object('addedAt', agg."createdAt", 'userId', agg."userId", 'login', agg."ownerLogin" ))
                     FROM (
                         SELECT pli."createdAt", pli."userId", pli."ownerLogin"
                             FROM public."post_likes_info" pli
@@ -60,7 +60,6 @@ export class PostsQuerySQLRepository {
                             ORDER BY pli."createdAt" DESC
                             LIMIT 3
                         ) as agg ) as "newestLikes"
-            ) as "newestLikes"
                 FROM public."post_entity" pe
                 WHERE pe."isBanned"=false ${blogId ? `AND pe."blogId" = ${blogId}` : ''}
                 ORDER BY "${sortBy}" ${sortDirection}

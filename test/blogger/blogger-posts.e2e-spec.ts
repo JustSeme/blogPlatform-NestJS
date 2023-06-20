@@ -154,7 +154,6 @@ describe('blogger-posts-only', () => {
             .expect(HttpStatus.OK)
 
         expect(postsData.body.items.length).toEqual(0);
-
     })
 
     it('blogger shouldn\'t create post if blog by blogId doesn\'t exists, should display empty posts array', async () => {
