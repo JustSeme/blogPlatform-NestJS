@@ -43,11 +43,6 @@ export class CommentsSQLRepository {
             WHERE "commentId" = $1
         `
 
-        const deletePostInfoQuery = `
-        DELETE FROM public.comment_post_info
-            WHERE "commentId" = $1
-        `
-
         const deleteCommentQuery = `
         DELETE FROM public.comment_entity
             WHERE id = $1;
@@ -59,7 +54,6 @@ export class CommentsSQLRepository {
 
         try {
             await queryRunner.query(deleteLikesInfoQuery, [commentId])
-            await queryRunner.query(deletePostInfoQuery, [commentId])
             await queryRunner.query(deleteCommentQuery, [commentId])
 
             await queryRunner.commitTransaction()
