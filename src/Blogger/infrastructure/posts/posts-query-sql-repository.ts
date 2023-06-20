@@ -78,7 +78,7 @@ export class PostsQuerySQLRepository {
         }
     }
 
-    async findPostsForBlog(queryParams: ReadPostsQueryParams, blogId: string | null, userId: string) {
+    async findPostsForBlog(queryParams: ReadPostsQueryParams, blogId: string, userId: string) {
         const {
             sortDirection = 'desc',
             sortBy = 'createdAt',

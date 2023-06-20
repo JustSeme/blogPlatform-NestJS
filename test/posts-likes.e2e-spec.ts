@@ -331,10 +331,7 @@ describe('posts-likes', () => {
         const postsData = await request(httpServer)
             .get(`/blogs/${createdBlogId}/posts`)
             .set('Authorization', `Bearer ${accessToken1}`)
-        //.expect(HttpStatus.OK)
-
-        console.log(postsData.body);
-
+            .expect(HttpStatus.OK)
 
         expect(postsData.body.items[0].extendedLikesInfo.newestLikes[0].login).toEqual(createUserInputData1.login)
         expect(postsData.body.items[0].extendedLikesInfo.myStatus).toEqual('Like')
