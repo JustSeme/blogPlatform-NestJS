@@ -74,6 +74,27 @@ export class CommentsSQLRepository {
         }
     }
 
+    async getCommentById(commentId: string): Promise<CommentViewModel> {
+        const queryString = `
+            SELECT *
+                FROM public.comment_entity
+                WHERE id = $1;
+        `
+
+        try {
+            const commentData = await this.dataSource.query(queryString, [commentId])
+
+            if (!commentData[0]) {
+                return null
+            }
+
+            return commentData[0]
+        } catch (err) {
+            console.error(err)
+            return null
+        }
+    }
+
     async isCommentExists(commentId: string): Promise<boolean> {
         const queryString = `
             SELECT id
@@ -122,7 +143,6 @@ export class CommentsSQLRepository {
 
             return new CommentViewModel(commentData[0])
         } catch (err) {
-            console.log(err)
             console.error(err)
             return null
         }
