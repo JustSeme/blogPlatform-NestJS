@@ -20,8 +20,8 @@ export class PostsViewModel {
         this.blogName = rawPost.blogName
         this.createdAt = rawPost.createdAt
         this.extendedLikesInfo = {
-            likesCount: rawPost.likesCount || 0,
-            dislikesCount: rawPost.dislikesCount || 0,
+            likesCount: +rawPost.likesCount || 0,
+            dislikesCount: +rawPost.dislikesCount || 0,
             myStatus: rawPost.myStatus || 'None',
             newestLikes: rawPost.newestLikes || []
         }

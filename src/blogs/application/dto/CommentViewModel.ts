@@ -24,8 +24,8 @@ export class CommentViewModel {
         }
         this.createdAt = rawComment.createdAt
         this.likesInfo = {
-            likesCount: rawComment.likesCount,
-            dislikesCount: rawComment.dislikesCount,
+            likesCount: +rawComment.likesCount,
+            dislikesCount: +rawComment.dislikesCount,
             myStatus: rawComment.myStatus || 'None'
         }
     }

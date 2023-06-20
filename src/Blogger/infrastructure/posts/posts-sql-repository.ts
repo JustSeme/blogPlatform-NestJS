@@ -213,7 +213,7 @@ export class PostsSQLRepository {
         const queryString = `
             SELECT *
                 FROM public."post_entity"
-                WHERE id = $1
+                WHERE id = $1;
         `
 
         try {

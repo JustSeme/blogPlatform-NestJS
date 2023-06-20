@@ -23,7 +23,7 @@ export class CommentsQuerySQLRepository {
         const queryCount = `
             SELECT count(*)
                 FROM public."comment_entity" ce
-                WHERE ce."isBanned"=false AND ce.postId = $1
+                WHERE ce."isBanned"=false AND ce."postId" = $1
         `
 
         const totalCountData = await this.dataSource.query(queryCount, [postId])
@@ -50,7 +50,7 @@ export class CommentsQuerySQLRepository {
                     WHERE cli."commentId" = ce.id AND cli."userId" = $2 AND cli."isBanned" = false
             ) as "myStatus"
                 FROM public."comment_entity" ce
-                WHERE ce."isBanned"=false AND ce.postId = $1
+                WHERE ce."isBanned"=false AND ce."postId" = $1
                 ORDER BY "${sortBy}" ${sortDirection}
                 LIMIT ${pageSize} OFFSET ${skipCount};
         `
@@ -127,8 +127,8 @@ export class CommentsQuerySQLRepository {
         const queryCount = `
             SELECT count(*)
                 FROM public."comment_entity" ce
-                LEFT JOIN public."blog_entity" be ON be.id = ce.blogId
-                WHERE ce."isBanned"=false AND be.ownerId = $1
+                LEFT JOIN public."blog_entity" be ON be.id = ce."blogId"
+                WHERE ce."isBanned"=false AND be."ownerId" = $1
         `
 
         const totalCountData = await this.dataSource.query(queryCount, [bloggerId])
@@ -155,9 +155,9 @@ export class CommentsQuerySQLRepository {
                     WHERE cli."commentId" = ce.id AND cli."userId" = $1 AND cli."isBanned" = false
             )
                 FROM public."comment_entity" ce
-                LEFT JOIN public."blog_entity" be ON be.id = ce.blogId
-                WHERE ce."isBanned"=false AND be.ownerId = $1
-                ORDER BY "${sortBy}" ${sortDirection}
+                LEFT JOIN public."blog_entity" be ON be.id = ce."blogId"
+                WHERE ce."isBanned"=false AND be."ownerId" = $1
+                ORDER BY ce."${sortBy}" ${sortDirection}
                 LIMIT ${pageSize} OFFSET ${skipCount};
         `
 
@@ -168,7 +168,7 @@ export class CommentsQuerySQLRepository {
             pagesCount: pagesCount,
             page: +pageNumber,
             pageSize: +pageSize,
-            totalCount: totalCount,
+            totalCount: +totalCount,
             items: displayedComments
         }
     }
