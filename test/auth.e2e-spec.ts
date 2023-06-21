@@ -186,7 +186,6 @@ describe('e2e-auth', () => {
             .expect(HttpStatus.UNAUTHORIZED)
     })
 
-    let correctAccessToken
     let correctRefreshToken
     it('should refresh tokens, using refreshToken', async () => {
         const response = await request(httpServer)
@@ -194,7 +193,6 @@ describe('e2e-auth', () => {
             .set('Cookie', refreshToken)
             .expect(HttpStatus.OK)
 
-        correctAccessToken = response.body.accessToken
         correctRefreshToken = response.header['set-cookie']
     })
 
@@ -297,7 +295,6 @@ describe('e2e-auth', () => {
             .set('Cookie', correctRefreshToken)
             .expect(HttpStatus.OK)
 
-        correctAccessToken = response.body.accessToken
         correctRefreshToken = response.header['set-cookie']
     })
 
