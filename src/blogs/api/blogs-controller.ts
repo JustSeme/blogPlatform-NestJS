@@ -1,34 +1,33 @@
 import { BlogViewModel } from "../application/dto/BlogViewModel"
-import { BlogsService } from "../application/blogs-service"
 import { BlogsWithQueryOutputModel } from '../application/dto/BlogViewModel'
 import { ReadBlogsQueryParams } from "./models/ReadBlogsQuery"
 import { IsBlogByIdExistPipe } from "./pipes/isBlogExists.validation.pipe"
 import { PostsWithQueryOutputModel } from "../../Blogger/domain/posts/PostsTypes"
-import { PostsService } from "../application/posts-service"
 import { ReadPostsQueryParams } from "./models/ReadPostsQuery"
 import { CommandBus } from "@nestjs/cqrs"
-import { GetBlogsCommand } from "../application/use-cases/blogs/get-blogs.use-case"
 import { GetBlogByIdCommand } from "../application/use-cases/blogs/get-blog-by-id.use-case"
-import { PostsRepository } from "../../Blogger/infrastructure/posts/posts-db-repository"
 import { GetPostsForBlogCommand } from "../application/use-cases/blogs/get-posts-for-blog.use-case"
 import {
-    Controller, Get, Headers, Param, Query
+    Controller, Get, Headers, NotFoundException, Param, Query
 } from "@nestjs/common"
+import { BlogsQuerySQLRepository } from "../../Blogger/infrastructure/blogs/blogs-query-sql-repository"
 
 @Controller('blogs')
 export class BlogsController {
     constructor(
-        protected blogsService: BlogsService,
-        protected postsService: PostsService,
-        protected postsRepository: PostsRepository,
         protected commandBus: CommandBus,
+        protected blogsQueryRepository: BlogsQuerySQLRepository
     ) { }
 
     @Get()
     async getBlogs(@Query() blogsQueryParams: ReadBlogsQueryParams): Promise<BlogsWithQueryOutputModel> {
-        return this.commandBus.execute(
-            new GetBlogsCommand(blogsQueryParams)
-        )
+        const findedBlogsData = this.blogsQueryRepository.findBlogs(blogsQueryParams)
+
+        if (!findedBlogsData) {
+            throw new NotFoundException('No one blogs founded')
+        }
+
+        return findedBlogsData
     }
 
     @Get(':blogId')

@@ -89,7 +89,6 @@ import {
   Comment, CommentsSchema
 } from "./blogs/domain/comments/mongoose/Comments.schema"
 import { UsersService } from "./SuperAdmin/application/users.service"
-import { GetBlogsUseCase } from "./blogs/application/use-cases/blogs/get-blogs.use-case"
 import { GetBlogByIdUseCase } from "./blogs/application/use-cases/blogs/get-blog-by-id.use-case"
 import { GetBlogsForBloggerUseCase } from "./Blogger/application/use-cases/blogs/get-blogs-for-blogger.use.case"
 import { UsersRepository } from "./SuperAdmin/infrastructure/users-db-repository"
@@ -170,7 +169,6 @@ const blogsUseCases = [
   BindUserUseCase,
   BanUserUseCase,
   UnbanUserUseCase,
-  GetBlogsUseCase,
   GetBlogByIdUseCase,
   GetBlogsForBloggerUseCase,
   GetPostsForBlogUseCase,
