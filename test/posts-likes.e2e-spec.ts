@@ -133,239 +133,474 @@ describe('posts-likes', () => {
         websiteUrl: 'www.url.com',
     };
 
-    let createdBlogId
-    it('blogger should create blog and display blogViewModel', async () => {
-        const createdBlogData = await request(httpServer)
-            .post('/blogger/blogs')
-            .set('Authorization', `Bearer ${accessToken1}`)
-            .send(correctBlogInputModel)
-            .expect(HttpStatus.CREATED)
-
-        expect(createdBlogData.body.name).toEqual(correctBlogInputModel.name)
-        expect(createdBlogData.body.description).toEqual(correctBlogInputModel.description)
-        expect(createdBlogData.body.websiteUrl).toEqual(correctBlogInputModel.websiteUrl)
-        expect(createdBlogData.body.creatorId).toBe(undefined)
-
-        createdBlogId = createdBlogData.body.id
-    })
-
     const correctPostInputModel: PostInputModelWithoutBlogId = {
         title: 'correct title', // min 3 max 30
         shortDescription: 'short desc', // min 3 max 100
         content: 'this is a content' // min 3 max 1000
     }
 
-    let createdPostId1
-    let createdPostId2
-    let createdPostId3
-    let createdPostId4
-    let createdPostId5
-    let createdPostId6
-    it('blogger should create 6 posts for early created blog', async () => {
-        const createdPostData1 = await request(httpServer)
-            .post(`/blogger/blogs/${createdBlogId}/posts`)
-            .set('Authorization', `Bearer ${accessToken1}`)
-            .send(correctPostInputModel)
-            .expect(HttpStatus.CREATED)
+    describe('create blog 1 and 6 posts for this blog, then get posts and check likes info', () => {
+        let createdBlogId
+        it('blogger should create blog and display blogViewModel', async () => {
+            const createdBlogData = await request(httpServer)
+                .post('/blogger/blogs')
+                .set('Authorization', `Bearer ${accessToken1}`)
+                .send(correctBlogInputModel)
+                .expect(HttpStatus.CREATED)
 
-        createdPostId1 = createdPostData1.body.id
+            expect(createdBlogData.body.name).toEqual(correctBlogInputModel.name)
+            expect(createdBlogData.body.description).toEqual(correctBlogInputModel.description)
+            expect(createdBlogData.body.websiteUrl).toEqual(correctBlogInputModel.websiteUrl)
+            expect(createdBlogData.body.creatorId).toBe(undefined)
 
-        const createdPostData2 = await request(httpServer)
-            .post(`/blogger/blogs/${createdBlogId}/posts`)
-            .set('Authorization', `Bearer ${accessToken1}`)
-            .send(correctPostInputModel)
-            .expect(HttpStatus.CREATED)
+            createdBlogId = createdBlogData.body.id
+        })
 
-        createdPostId2 = createdPostData2.body.id
+        let createdPostId1
+        let createdPostId2
+        let createdPostId3
+        let createdPostId4
+        let createdPostId5
+        let createdPostId6
+        it('blogger should create 6 posts for early created blog', async () => {
+            const createdPostData1 = await request(httpServer)
+                .post(`/blogger/blogs/${createdBlogId}/posts`)
+                .set('Authorization', `Bearer ${accessToken1}`)
+                .send(correctPostInputModel)
+                .expect(HttpStatus.CREATED)
 
-        const createdPostData3 = await request(httpServer)
-            .post(`/blogger/blogs/${createdBlogId}/posts`)
-            .set('Authorization', `Bearer ${accessToken1}`)
-            .send(correctPostInputModel)
-            .expect(HttpStatus.CREATED)
+            createdPostId1 = createdPostData1.body.id
 
-        createdPostId3 = createdPostData3.body.id
+            const createdPostData2 = await request(httpServer)
+                .post(`/blogger/blogs/${createdBlogId}/posts`)
+                .set('Authorization', `Bearer ${accessToken1}`)
+                .send(correctPostInputModel)
+                .expect(HttpStatus.CREATED)
 
-        const createdPostData4 = await request(httpServer)
-            .post(`/blogger/blogs/${createdBlogId}/posts`)
-            .set('Authorization', `Bearer ${accessToken1}`)
-            .send(correctPostInputModel)
-            .expect(HttpStatus.CREATED)
+            createdPostId2 = createdPostData2.body.id
 
-        createdPostId4 = createdPostData4.body.id
+            const createdPostData3 = await request(httpServer)
+                .post(`/blogger/blogs/${createdBlogId}/posts`)
+                .set('Authorization', `Bearer ${accessToken1}`)
+                .send(correctPostInputModel)
+                .expect(HttpStatus.CREATED)
 
-        const createdPostData5 = await request(httpServer)
-            .post(`/blogger/blogs/${createdBlogId}/posts`)
-            .set('Authorization', `Bearer ${accessToken1}`)
-            .send(correctPostInputModel)
-            .expect(HttpStatus.CREATED)
+            createdPostId3 = createdPostData3.body.id
 
-        createdPostId5 = createdPostData5.body.id
+            const createdPostData4 = await request(httpServer)
+                .post(`/blogger/blogs/${createdBlogId}/posts`)
+                .set('Authorization', `Bearer ${accessToken1}`)
+                .send(correctPostInputModel)
+                .expect(HttpStatus.CREATED)
 
-        const createdPostData6 = await request(httpServer)
-            .post(`/blogger/blogs/${createdBlogId}/posts`)
-            .set('Authorization', `Bearer ${accessToken1}`)
-            .send(correctPostInputModel)
-            .expect(HttpStatus.CREATED)
+            createdPostId4 = createdPostData4.body.id
 
-        createdPostId6 = createdPostData6.body.id
+            const createdPostData5 = await request(httpServer)
+                .post(`/blogger/blogs/${createdBlogId}/posts`)
+                .set('Authorization', `Bearer ${accessToken1}`)
+                .send(correctPostInputModel)
+                .expect(HttpStatus.CREATED)
+
+            createdPostId5 = createdPostData5.body.id
+
+            const createdPostData6 = await request(httpServer)
+                .post(`/blogger/blogs/${createdBlogId}/posts`)
+                .set('Authorization', `Bearer ${accessToken1}`)
+                .send(correctPostInputModel)
+                .expect(HttpStatus.CREATED)
+
+            createdPostId6 = createdPostData6.body.id
+        })
+
+        it('like post 1 by user 1, user 2', async () => {
+            await request(httpServer)
+                .put(`/posts/${createdPostId1}/like-status`)
+                .set('Authorization', `Bearer ${accessToken1}`)
+                .send({
+                    likeStatus: 'Like'
+                })
+                .expect(HttpStatus.NO_CONTENT)
+
+            await request(httpServer)
+                .put(`/posts/${createdPostId1}/like-status`)
+                .set('Authorization', `Bearer ${accessToken2}`)
+                .send({
+                    likeStatus: 'Like'
+                })
+                .expect(HttpStatus.NO_CONTENT)
+        })
+
+        it('like post 2 by user 2, user 3', async () => {
+            await request(httpServer)
+                .put(`/posts/${createdPostId2}/like-status`)
+                .set('Authorization', `Bearer ${accessToken2}`)
+                .send({
+                    likeStatus: 'Like'
+                })
+                .expect(HttpStatus.NO_CONTENT)
+
+            await request(httpServer)
+                .put(`/posts/${createdPostId2}/like-status`)
+                .set('Authorization', `Bearer ${accessToken3}`)
+                .send({
+                    likeStatus: 'Like'
+                })
+                .expect(HttpStatus.NO_CONTENT)
+        })
+
+        it('dislike post 3 by user 1', async () => {
+            await request(httpServer)
+                .put(`/posts/${createdPostId3}/like-status`)
+                .set('Authorization', `Bearer ${accessToken1}`)
+                .send({
+                    likeStatus: 'Dislike'
+                })
+                .expect(HttpStatus.NO_CONTENT)
+        })
+
+        it('like post 4 by user 1, user 4, user 2, user 3', async () => {
+            await request(httpServer)
+                .put(`/posts/${createdPostId4}/like-status`)
+                .set('Authorization', `Bearer ${accessToken1}`)
+                .send({
+                    likeStatus: 'Like'
+                })
+                .expect(HttpStatus.NO_CONTENT)
+
+            await request(httpServer)
+                .put(`/posts/${createdPostId4}/like-status`)
+                .set('Authorization', `Bearer ${accessToken4}`)
+                .send({
+                    likeStatus: 'Like'
+                })
+                .expect(HttpStatus.NO_CONTENT)
+
+            await request(httpServer)
+                .put(`/posts/${createdPostId4}/like-status`)
+                .set('Authorization', `Bearer ${accessToken2}`)
+                .send({
+                    likeStatus: 'Like'
+                })
+                .expect(HttpStatus.NO_CONTENT)
+
+            await request(httpServer)
+                .put(`/posts/${createdPostId4}/like-status`)
+                .set('Authorization', `Bearer ${accessToken3}`)
+                .send({
+                    likeStatus: 'Like'
+                })
+                .expect(HttpStatus.NO_CONTENT)
+        })
+
+        it('like post 5 by user 2, dislike by user 3', async () => {
+            await request(httpServer)
+                .put(`/posts/${createdPostId5}/like-status`)
+                .set('Authorization', `Bearer ${accessToken2}`)
+                .send({
+                    likeStatus: 'Like'
+                })
+                .expect(HttpStatus.NO_CONTENT)
+
+            await request(httpServer)
+                .put(`/posts/${createdPostId5}/like-status`)
+                .set('Authorization', `Bearer ${accessToken3}`)
+                .send({
+                    likeStatus: 'Dislike'
+                })
+                .expect(HttpStatus.NO_CONTENT)
+        })
+
+        it('like post 6 by user 1, dislike by user 2', async () => {
+            await request(httpServer)
+                .put(`/posts/${createdPostId6}/like-status`)
+                .set('Authorization', `Bearer ${accessToken1}`)
+                .send({
+                    likeStatus: 'Like'
+                })
+                .expect(HttpStatus.NO_CONTENT)
+
+            await request(httpServer)
+                .put(`/posts/${createdPostId6}/like-status`)
+                .set('Authorization', `Bearer ${accessToken2}`)
+                .send({
+                    likeStatus: 'Dislike'
+                })
+                .expect(HttpStatus.NO_CONTENT)
+        })
+
+        it('get the posts by user 1 after all likes', async () => {
+            const postsData = await request(httpServer)
+                .get(`/posts`)
+                .set('Authorization', `Bearer ${accessToken1}`)
+                .expect(HttpStatus.OK)
+
+            expect(postsData.body.totalCount).toEqual(6)
+
+            expect(postsData.body.items[0].extendedLikesInfo.newestLikes[0].login).toEqual(createUserInputData1.login)
+            expect(postsData.body.items[0].extendedLikesInfo.dislikesCount).toEqual(1)
+            expect(postsData.body.items[0].extendedLikesInfo.likesCount).toEqual(1)
+            expect(postsData.body.items[0].extendedLikesInfo.myStatus).toEqual('Like')
+
+            expect(postsData.body.items[1].extendedLikesInfo.newestLikes[0].login).toEqual(createUserInputData2.login)
+            expect(postsData.body.items[1].extendedLikesInfo.dislikesCount).toEqual(1)
+            expect(postsData.body.items[1].extendedLikesInfo.likesCount).toEqual(1)
+            expect(postsData.body.items[1].extendedLikesInfo.myStatus).toEqual('None')
+
+            expect(postsData.body.items[2].extendedLikesInfo.newestLikes[0].login).toEqual(createUserInputData3.login)
+            expect(postsData.body.items[2].extendedLikesInfo.newestLikes[1].login).toEqual(createUserInputData2.login)
+            expect(postsData.body.items[2].extendedLikesInfo.newestLikes[2].login).toEqual(createUserInputData4.login)
+            expect(postsData.body.items[2].extendedLikesInfo.dislikesCount).toEqual(0)
+            expect(postsData.body.items[2].extendedLikesInfo.likesCount).toEqual(4)
+            expect(postsData.body.items[2].extendedLikesInfo.myStatus).toEqual('Like')
+
+            expect(postsData.body.items[3].extendedLikesInfo.dislikesCount).toEqual(1)
+            expect(postsData.body.items[3].extendedLikesInfo.likesCount).toEqual(0)
+            expect(postsData.body.items[3].extendedLikesInfo.myStatus).toEqual('Dislike')
+
+            expect(postsData.body.items[4].extendedLikesInfo.newestLikes[0].login).toEqual(createUserInputData3.login)
+            expect(postsData.body.items[4].extendedLikesInfo.newestLikes[1].login).toEqual(createUserInputData2.login)
+            expect(postsData.body.items[4].extendedLikesInfo.dislikesCount).toEqual(0)
+            expect(postsData.body.items[4].extendedLikesInfo.likesCount).toEqual(2)
+            expect(postsData.body.items[4].extendedLikesInfo.myStatus).toEqual('None')
+
+            expect(postsData.body.items[5].extendedLikesInfo.newestLikes[0].login).toEqual(createUserInputData2.login)
+            expect(postsData.body.items[5].extendedLikesInfo.newestLikes[1].login).toEqual(createUserInputData1.login)
+            expect(postsData.body.items[5].extendedLikesInfo.dislikesCount).toEqual(0)
+            expect(postsData.body.items[5].extendedLikesInfo.likesCount).toEqual(2)
+            expect(postsData.body.items[5].extendedLikesInfo.myStatus).toEqual('Like')
+        })
     })
 
-    it('like post 1 by user 1, user 2', async () => {
-        await request(httpServer)
-            .put(`/posts/${createdPostId1}/like-status`)
-            .set('Authorization', `Bearer ${accessToken1}`)
-            .send({
-                likeStatus: 'Like'
-            })
-            .expect(HttpStatus.NO_CONTENT)
+    describe('create blog 2 and 6 posts for this blog, then get posts and check likes info', () => {
+        let createdBlogId
 
-        await request(httpServer)
-            .put(`/posts/${createdPostId1}/like-status`)
-            .set('Authorization', `Bearer ${accessToken2}`)
-            .send({
-                likeStatus: 'Like'
-            })
-            .expect(HttpStatus.NO_CONTENT)
-    })
+        it('blogger should create blog and display blogViewModel', async () => {
+            const createdBlogData = await request(httpServer)
+                .post('/blogger/blogs')
+                .set('Authorization', `Bearer ${accessToken1}`)
+                .send(correctBlogInputModel)
+                .expect(HttpStatus.CREATED)
 
-    it('like post 2 by user 2, user 3', async () => {
-        await request(httpServer)
-            .put(`/posts/${createdPostId2}/like-status`)
-            .set('Authorization', `Bearer ${accessToken2}`)
-            .send({
-                likeStatus: 'Like'
-            })
-            .expect(HttpStatus.NO_CONTENT)
+            expect(createdBlogData.body.name).toEqual(correctBlogInputModel.name)
+            expect(createdBlogData.body.description).toEqual(correctBlogInputModel.description)
+            expect(createdBlogData.body.websiteUrl).toEqual(correctBlogInputModel.websiteUrl)
+            expect(createdBlogData.body.creatorId).toBe(undefined)
 
-        await request(httpServer)
-            .put(`/posts/${createdPostId2}/like-status`)
-            .set('Authorization', `Bearer ${accessToken3}`)
-            .send({
-                likeStatus: 'Like'
-            })
-            .expect(HttpStatus.NO_CONTENT)
-    })
+            createdBlogId = createdBlogData.body.id
+        })
 
-    it('dislike post 3 by user 1', async () => {
-        await request(httpServer)
-            .put(`/posts/${createdPostId3}/like-status`)
-            .set('Authorization', `Bearer ${accessToken1}`)
-            .send({
-                likeStatus: 'Dislike'
-            })
-            .expect(HttpStatus.NO_CONTENT)
-    })
+        let createdPostId1
+        let createdPostId2
+        let createdPostId3
+        let createdPostId4
+        let createdPostId5
+        let createdPostId6
+        it('blogger should create 6 posts for early created blog', async () => {
+            const createdPostData1 = await request(httpServer)
+                .post(`/blogger/blogs/${createdBlogId}/posts`)
+                .set('Authorization', `Bearer ${accessToken1}`)
+                .send(correctPostInputModel)
+                .expect(HttpStatus.CREATED)
 
-    it('like post 4 by user 1, user 4, user 2, user 3', async () => {
-        await request(httpServer)
-            .put(`/posts/${createdPostId4}/like-status`)
-            .set('Authorization', `Bearer ${accessToken1}`)
-            .send({
-                likeStatus: 'Like'
-            })
-            .expect(HttpStatus.NO_CONTENT)
+            createdPostId1 = createdPostData1.body.id
 
-        await request(httpServer)
-            .put(`/posts/${createdPostId4}/like-status`)
-            .set('Authorization', `Bearer ${accessToken4}`)
-            .send({
-                likeStatus: 'Like'
-            })
-            .expect(HttpStatus.NO_CONTENT)
+            const createdPostData2 = await request(httpServer)
+                .post(`/blogger/blogs/${createdBlogId}/posts`)
+                .set('Authorization', `Bearer ${accessToken1}`)
+                .send(correctPostInputModel)
+                .expect(HttpStatus.CREATED)
 
-        await request(httpServer)
-            .put(`/posts/${createdPostId4}/like-status`)
-            .set('Authorization', `Bearer ${accessToken2}`)
-            .send({
-                likeStatus: 'Like'
-            })
-            .expect(HttpStatus.NO_CONTENT)
+            createdPostId2 = createdPostData2.body.id
 
-        await request(httpServer)
-            .put(`/posts/${createdPostId4}/like-status`)
-            .set('Authorization', `Bearer ${accessToken3}`)
-            .send({
-                likeStatus: 'Like'
-            })
-            .expect(HttpStatus.NO_CONTENT)
-    })
+            const createdPostData3 = await request(httpServer)
+                .post(`/blogger/blogs/${createdBlogId}/posts`)
+                .set('Authorization', `Bearer ${accessToken1}`)
+                .send(correctPostInputModel)
+                .expect(HttpStatus.CREATED)
 
-    it('like post 5 by user 2, dislike by user 3', async () => {
-        await request(httpServer)
-            .put(`/posts/${createdPostId5}/like-status`)
-            .set('Authorization', `Bearer ${accessToken2}`)
-            .send({
-                likeStatus: 'Like'
-            })
-            .expect(HttpStatus.NO_CONTENT)
+            createdPostId3 = createdPostData3.body.id
 
-        await request(httpServer)
-            .put(`/posts/${createdPostId5}/like-status`)
-            .set('Authorization', `Bearer ${accessToken3}`)
-            .send({
-                likeStatus: 'Dislike'
-            })
-            .expect(HttpStatus.NO_CONTENT)
-    })
+            const createdPostData4 = await request(httpServer)
+                .post(`/blogger/blogs/${createdBlogId}/posts`)
+                .set('Authorization', `Bearer ${accessToken1}`)
+                .send(correctPostInputModel)
+                .expect(HttpStatus.CREATED)
 
-    it('like post 6 by user 1, dislike by user 2', async () => {
-        await request(httpServer)
-            .put(`/posts/${createdPostId6}/like-status`)
-            .set('Authorization', `Bearer ${accessToken1}`)
-            .send({
-                likeStatus: 'Like'
-            })
-            .expect(HttpStatus.NO_CONTENT)
+            createdPostId4 = createdPostData4.body.id
 
-        await request(httpServer)
-            .put(`/posts/${createdPostId6}/like-status`)
-            .set('Authorization', `Bearer ${accessToken2}`)
-            .send({
-                likeStatus: 'Dislike'
-            })
-            .expect(HttpStatus.NO_CONTENT)
-    })
+            const createdPostData5 = await request(httpServer)
+                .post(`/blogger/blogs/${createdBlogId}/posts`)
+                .set('Authorization', `Bearer ${accessToken1}`)
+                .send(correctPostInputModel)
+                .expect(HttpStatus.CREATED)
 
-    it('get the posts by user 1 after all likes', async () => {
-        const postsData = await request(httpServer)
-            .get(`/blogs/${createdBlogId}/posts`)
-            .set('Authorization', `Bearer ${accessToken1}`)
-            .expect(HttpStatus.OK)
+            createdPostId5 = createdPostData5.body.id
 
-        expect(postsData.body.totalCount).toEqual(6)
+            const createdPostData6 = await request(httpServer)
+                .post(`/blogger/blogs/${createdBlogId}/posts`)
+                .set('Authorization', `Bearer ${accessToken1}`)
+                .send(correctPostInputModel)
+                .expect(HttpStatus.CREATED)
 
-        expect(postsData.body.items[0].extendedLikesInfo.newestLikes[0].login).toEqual(createUserInputData1.login)
-        expect(postsData.body.items[0].extendedLikesInfo.dislikesCount).toEqual(1)
-        expect(postsData.body.items[0].extendedLikesInfo.likesCount).toEqual(1)
-        expect(postsData.body.items[0].extendedLikesInfo.myStatus).toEqual('Like')
+            createdPostId6 = createdPostData6.body.id
+        })
 
-        expect(postsData.body.items[1].extendedLikesInfo.newestLikes[0].login).toEqual(createUserInputData2.login)
-        expect(postsData.body.items[1].extendedLikesInfo.dislikesCount).toEqual(1)
-        expect(postsData.body.items[1].extendedLikesInfo.likesCount).toEqual(1)
-        expect(postsData.body.items[1].extendedLikesInfo.myStatus).toEqual('None')
+        it('like post 1 by user 1, user 2', async () => {
+            await request(httpServer)
+                .put(`/posts/${createdPostId1}/like-status`)
+                .set('Authorization', `Bearer ${accessToken1}`)
+                .send({
+                    likeStatus: 'Like'
+                })
+                .expect(HttpStatus.NO_CONTENT)
 
-        expect(postsData.body.items[2].extendedLikesInfo.newestLikes[0].login).toEqual(createUserInputData3.login)
-        expect(postsData.body.items[2].extendedLikesInfo.newestLikes[1].login).toEqual(createUserInputData2.login)
-        expect(postsData.body.items[2].extendedLikesInfo.newestLikes[2].login).toEqual(createUserInputData4.login)
-        expect(postsData.body.items[2].extendedLikesInfo.dislikesCount).toEqual(0)
-        expect(postsData.body.items[2].extendedLikesInfo.likesCount).toEqual(4)
-        expect(postsData.body.items[2].extendedLikesInfo.myStatus).toEqual('Like')
+            await request(httpServer)
+                .put(`/posts/${createdPostId1}/like-status`)
+                .set('Authorization', `Bearer ${accessToken2}`)
+                .send({
+                    likeStatus: 'Like'
+                })
+                .expect(HttpStatus.NO_CONTENT)
+        })
 
-        expect(postsData.body.items[3].extendedLikesInfo.dislikesCount).toEqual(1)
-        expect(postsData.body.items[3].extendedLikesInfo.likesCount).toEqual(0)
-        expect(postsData.body.items[3].extendedLikesInfo.myStatus).toEqual('Dislike')
+        it('like post 2 by user 2, user 3', async () => {
+            await request(httpServer)
+                .put(`/posts/${createdPostId2}/like-status`)
+                .set('Authorization', `Bearer ${accessToken2}`)
+                .send({
+                    likeStatus: 'Like'
+                })
+                .expect(HttpStatus.NO_CONTENT)
 
-        expect(postsData.body.items[4].extendedLikesInfo.newestLikes[0].login).toEqual(createUserInputData3.login)
-        expect(postsData.body.items[4].extendedLikesInfo.newestLikes[1].login).toEqual(createUserInputData2.login)
-        expect(postsData.body.items[4].extendedLikesInfo.dislikesCount).toEqual(0)
-        expect(postsData.body.items[4].extendedLikesInfo.likesCount).toEqual(2)
-        expect(postsData.body.items[4].extendedLikesInfo.myStatus).toEqual('None')
+            await request(httpServer)
+                .put(`/posts/${createdPostId2}/like-status`)
+                .set('Authorization', `Bearer ${accessToken3}`)
+                .send({
+                    likeStatus: 'Like'
+                })
+                .expect(HttpStatus.NO_CONTENT)
+        })
 
-        expect(postsData.body.items[5].extendedLikesInfo.newestLikes[0].login).toEqual(createUserInputData2.login)
-        expect(postsData.body.items[5].extendedLikesInfo.newestLikes[1].login).toEqual(createUserInputData1.login)
-        expect(postsData.body.items[5].extendedLikesInfo.dislikesCount).toEqual(0)
-        expect(postsData.body.items[5].extendedLikesInfo.likesCount).toEqual(2)
-        expect(postsData.body.items[5].extendedLikesInfo.myStatus).toEqual('Like')
+        it('dislike post 3 by user 1', async () => {
+            await request(httpServer)
+                .put(`/posts/${createdPostId3}/like-status`)
+                .set('Authorization', `Bearer ${accessToken1}`)
+                .send({
+                    likeStatus: 'Dislike'
+                })
+                .expect(HttpStatus.NO_CONTENT)
+        })
+
+        it('like post 4 by user 1, user 4, user 2, user 3', async () => {
+            await request(httpServer)
+                .put(`/posts/${createdPostId4}/like-status`)
+                .set('Authorization', `Bearer ${accessToken1}`)
+                .send({
+                    likeStatus: 'Like'
+                })
+                .expect(HttpStatus.NO_CONTENT)
+
+            await request(httpServer)
+                .put(`/posts/${createdPostId4}/like-status`)
+                .set('Authorization', `Bearer ${accessToken4}`)
+                .send({
+                    likeStatus: 'Like'
+                })
+                .expect(HttpStatus.NO_CONTENT)
+
+            await request(httpServer)
+                .put(`/posts/${createdPostId4}/like-status`)
+                .set('Authorization', `Bearer ${accessToken2}`)
+                .send({
+                    likeStatus: 'Like'
+                })
+                .expect(HttpStatus.NO_CONTENT)
+
+            await request(httpServer)
+                .put(`/posts/${createdPostId4}/like-status`)
+                .set('Authorization', `Bearer ${accessToken3}`)
+                .send({
+                    likeStatus: 'Like'
+                })
+                .expect(HttpStatus.NO_CONTENT)
+        })
+
+        it('like post 5 by user 2, dislike by user 3', async () => {
+            await request(httpServer)
+                .put(`/posts/${createdPostId5}/like-status`)
+                .set('Authorization', `Bearer ${accessToken2}`)
+                .send({
+                    likeStatus: 'Like'
+                })
+                .expect(HttpStatus.NO_CONTENT)
+
+            await request(httpServer)
+                .put(`/posts/${createdPostId5}/like-status`)
+                .set('Authorization', `Bearer ${accessToken3}`)
+                .send({
+                    likeStatus: 'Dislike'
+                })
+                .expect(HttpStatus.NO_CONTENT)
+        })
+
+        it('like post 6 by user 1, dislike by user 2', async () => {
+            await request(httpServer)
+                .put(`/posts/${createdPostId6}/like-status`)
+                .set('Authorization', `Bearer ${accessToken1}`)
+                .send({
+                    likeStatus: 'Like'
+                })
+                .expect(HttpStatus.NO_CONTENT)
+
+            await request(httpServer)
+                .put(`/posts/${createdPostId6}/like-status`)
+                .set('Authorization', `Bearer ${accessToken2}`)
+                .send({
+                    likeStatus: 'Dislike'
+                })
+                .expect(HttpStatus.NO_CONTENT)
+        })
+
+        it('get the posts by user 1 after all likes', async () => {
+            const postsData = await request(httpServer)
+                .get(`/blogs/${createdBlogId}/posts`)
+                .set('Authorization', `Bearer ${accessToken1}`)
+                .expect(HttpStatus.OK)
+
+            expect(postsData.body.totalCount).toEqual(6)
+
+            expect(postsData.body.items[0].extendedLikesInfo.newestLikes[0].login).toEqual(createUserInputData1.login)
+            expect(postsData.body.items[0].extendedLikesInfo.dislikesCount).toEqual(1)
+            expect(postsData.body.items[0].extendedLikesInfo.likesCount).toEqual(1)
+            expect(postsData.body.items[0].extendedLikesInfo.myStatus).toEqual('Like')
+
+            expect(postsData.body.items[1].extendedLikesInfo.newestLikes[0].login).toEqual(createUserInputData2.login)
+            expect(postsData.body.items[1].extendedLikesInfo.dislikesCount).toEqual(1)
+            expect(postsData.body.items[1].extendedLikesInfo.likesCount).toEqual(1)
+            expect(postsData.body.items[1].extendedLikesInfo.myStatus).toEqual('None')
+
+            expect(postsData.body.items[2].extendedLikesInfo.newestLikes[0].login).toEqual(createUserInputData3.login)
+            expect(postsData.body.items[2].extendedLikesInfo.newestLikes[1].login).toEqual(createUserInputData2.login)
+            expect(postsData.body.items[2].extendedLikesInfo.newestLikes[2].login).toEqual(createUserInputData4.login)
+            expect(postsData.body.items[2].extendedLikesInfo.dislikesCount).toEqual(0)
+            expect(postsData.body.items[2].extendedLikesInfo.likesCount).toEqual(4)
+            expect(postsData.body.items[2].extendedLikesInfo.myStatus).toEqual('Like')
+
+            expect(postsData.body.items[3].extendedLikesInfo.dislikesCount).toEqual(1)
+            expect(postsData.body.items[3].extendedLikesInfo.likesCount).toEqual(0)
+            expect(postsData.body.items[3].extendedLikesInfo.myStatus).toEqual('Dislike')
+
+            expect(postsData.body.items[4].extendedLikesInfo.newestLikes[0].login).toEqual(createUserInputData3.login)
+            expect(postsData.body.items[4].extendedLikesInfo.newestLikes[1].login).toEqual(createUserInputData2.login)
+            expect(postsData.body.items[4].extendedLikesInfo.dislikesCount).toEqual(0)
+            expect(postsData.body.items[4].extendedLikesInfo.likesCount).toEqual(2)
+            expect(postsData.body.items[4].extendedLikesInfo.myStatus).toEqual('None')
+
+            expect(postsData.body.items[5].extendedLikesInfo.newestLikes[0].login).toEqual(createUserInputData2.login)
+            expect(postsData.body.items[5].extendedLikesInfo.newestLikes[1].login).toEqual(createUserInputData1.login)
+            expect(postsData.body.items[5].extendedLikesInfo.dislikesCount).toEqual(0)
+            expect(postsData.body.items[5].extendedLikesInfo.likesCount).toEqual(2)
+            expect(postsData.body.items[5].extendedLikesInfo.myStatus).toEqual('Like')
+        })
     })
 })

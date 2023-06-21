@@ -14,17 +14,12 @@ export class BlogsSQLRepository {
         const queryString = `
             INSERT INTO public.blog_entity
                 ("name", description, "websiteUrl", "isMembership", "ownerId", "ownerLogin", "isBanned", "banDate")
-                VALUES($1, $2, $3, $4, $5, $6, $7, $8);
-        `
-
-        const querySelect = `
-            SELECT *
-                FROM public."blog_entity"
-                WHERE "name"=$1 AND "ownerId"=$2
+                VALUES($1, $2, $3, $4, $5, $6, $7, $8)
+                RETURNING *;
         `
 
         try {
-            await this.dataSource.query(queryString, [
+            const createdBlog: BlogSQLModel = await this.dataSource.query(queryString, [
                 newBlog.name,
                 newBlog.description,
                 newBlog.websiteUrl,
@@ -34,8 +29,6 @@ export class BlogsSQLRepository {
                 newBlog.banInfo.isBanned,
                 newBlog.banInfo.banDate
             ])
-
-            const createdBlog: BlogSQLModel = await this.dataSource.query(querySelect, [newBlog.name, newBlog.blogOwnerInfo.userId])
 
             if (!createdBlog[0]) {
                 return null
