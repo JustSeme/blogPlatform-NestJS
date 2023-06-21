@@ -39,7 +39,7 @@ export class UsersQuerySQLRepository {
             SELECT *, ue."id"
                 FROM public."user_entity" ue
                 LEFT JOIN user_ban_info ubi ON ubi."userId" = ue.id 
-                WHERE (lower("login") LIKE lower($1) OR lower("email") LIKE lower($2)) ${banStatus !== 'all' ? `AND "isBanned" = ${isBanned}` : ''}
+                WHERE (lower("login") LIKE lower($1) OR lower("email") LIKE lower($2)) ${banStatus !== 'all' ? `AND ue."isBanned" = ${isBanned}` : ''}
                 ORDER BY "${sortBy}" ${sortDirection}
                 LIMIT $3 OFFSET $4;
         `

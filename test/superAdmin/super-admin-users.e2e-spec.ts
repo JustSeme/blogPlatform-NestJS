@@ -108,7 +108,7 @@ describe('super-admin-users', () => {
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
             .expect(HttpStatus.OK)
 
-        expect(response.body.totalCount === 1).toBe(true)
+        expect(response.body.totalCount).toBe(1)
         expect(response.body.items[0]).toEqual(createdUser)
     })
 
