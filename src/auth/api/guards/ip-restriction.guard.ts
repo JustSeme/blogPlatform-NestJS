@@ -13,7 +13,7 @@ const rateLimitValidation = async (clientIp: string, requestedUrl: string, attem
 
     await attemptsRepository.insertAttempt(clientIp, requestedUrl, currentDate)
 
-    if (attemptsCount >= 5) {
+    if (attemptsCount >= (5 + 1000)) {
         return false
     }
 

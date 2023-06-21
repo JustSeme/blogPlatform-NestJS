@@ -21,9 +21,9 @@ export class BlogsController {
 
     @Get()
     async getBlogs(@Query() blogsQueryParams: ReadBlogsQueryParams): Promise<BlogsWithQueryOutputModel> {
-        const findedBlogsData = this.blogsQueryRepository.findBlogs(blogsQueryParams)
+        const findedBlogsData = await this.blogsQueryRepository.findBlogs(blogsQueryParams)
 
-        if (!findedBlogsData) {
+        if (!findedBlogsData.items.length) {
             throw new NotFoundException('No one blogs founded')
         }
 

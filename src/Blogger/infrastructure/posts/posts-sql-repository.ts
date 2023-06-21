@@ -130,8 +130,7 @@ export class PostsSQLRepository {
                             LIMIT 3
                         ) as agg ) as "newestLikes"
                 FROM public."post_entity" pe
-                LEFT JOIN public."user_entity" ue ON ue.id = pe."ownerId"
-                WHERE pe.id = $1 AND ue."isBanned" = false
+                WHERE pe.id = $1 AND pe."isBanned" = false
         `
 
         try {
