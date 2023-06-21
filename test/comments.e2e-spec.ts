@@ -8,7 +8,7 @@ import { CommentInputModel } from '../src/blogs/api/models/CommentInputModel';
 import { BlogInputModel } from '../src/Blogger/api/models/BlogInputModel';
 import { PostInputModelWithoutBlogId } from '../src/Blogger/api/models/PostInputModelWithoutBlogId';
 
-describe('comments-e2e', () => {
+describe('e2e-comments', () => {
     let app: NestExpressApplication;
     let httpServer;
 
