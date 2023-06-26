@@ -38,7 +38,7 @@ export class CommentViewModelForBlogger {
         this.likesInfo = {
             likesCount: +rawComment.likesCount || 0,
             dislikesCount: +rawComment.dislikesCount || 0,
-            myStatus: rawComment.likeStatus
+            myStatus: rawComment.likeStatus || 'None'
         }
     }
 
