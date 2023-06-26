@@ -10,7 +10,7 @@ describe('super-admin-blogs', () => {
     let httpServer;
 
     beforeAll(async () => {
-        httpServer = initAppAndGetHttpServer()
+        httpServer = await initAppAndGetHttpServer()
         await request(httpServer)
             .delete('/testing/all-data')
     });

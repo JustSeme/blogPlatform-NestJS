@@ -2,7 +2,7 @@ import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
 import { DevicesSQLRepository } from "../../../security/infrastructure/devices-sql-repository"
-import { UsersSQLRepository } from "../../infrastructure/users-sql-repository"
+import { UsersSQLRepository } from "../../infrastructure/rawSQL/users-sql-repository"
 import { PostsSQLRepository } from "../../../Blogger/infrastructure/posts/posts-sql-repository"
 import { CommentsSQLRepository } from "../../../blogs/infrastructure/comments/comments-sql-repository"
 

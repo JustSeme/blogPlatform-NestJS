@@ -1,10 +1,10 @@
 import { add } from "date-fns"
-import { HydratedUser } from "./UsersTypes"
+import { HydratedUser } from "../UsersTypes"
 import { Injectable } from "@nestjs/common"
 import { InjectModel } from "@nestjs/mongoose/dist"
-import { User } from "../domain/mongoose/UsersSchema"
-import { UserModelType } from "../domain/UsersTypes"
-import { BanUserForBlogInfoType } from "../../Blogger/infrastructure/blogs/BanUserForBlogInfoType"
+import { User } from "../../domain/mongoose/UsersSchema"
+import { UserModelType } from "../../domain/UsersTypes"
+import { BanUserForBlogInfoType } from "../../../Blogger/infrastructure/blogs/BanUserForBlogInfoType"
 
 //transaction script
 @Injectable()

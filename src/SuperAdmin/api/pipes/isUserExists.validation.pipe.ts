@@ -3,7 +3,7 @@ import {
     Injectable, PipeTransform
 } from "@nestjs/common"
 import { generateErrorsMessages } from "../../../general/helpers"
-import { UsersSQLRepository } from "../../infrastructure/users-sql-repository"
+import { UsersSQLRepository } from "../../infrastructure/rawSQL/users-sql-repository"
 
 @Injectable()
 export class IsUserExistPipe implements PipeTransform {

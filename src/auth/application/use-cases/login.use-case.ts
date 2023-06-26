@@ -8,7 +8,7 @@ import {
 import { UnauthorizedException } from '@nestjs/common'
 import { generateErrorsMessages } from '../../../general/helpers'
 import { DeviceAuthSessionDBModel } from '../../../security/domain/DeviceAuthSessionTypes'
-import { UsersSQLRepository } from '../../../SuperAdmin/infrastructure/users-sql-repository'
+import { UsersSQLRepository } from '../../../SuperAdmin/infrastructure/rawSQL/users-sql-repository'
 import { DevicesSQLRepository } from '../../../security/infrastructure/devices-sql-repository'
 
 export class LoginCommand {

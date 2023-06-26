@@ -18,7 +18,7 @@ import { BanUserCommand } from '../application/use-cases/ban-user.use-case'
 import { UnbanUserCommand } from '../application/use-cases/unban-user.use-case'
 import { UsersService } from '../application/users.service'
 import { BanUserInputModel } from './models/BanUserInputModel'
-import { UsersQuerySQLRepository } from '../infrastructure/users-query-sql-repository'
+import { UsersQuerySQLRepository } from '../infrastructure/rawSQL/users-query-sql-repository'
 
 @UseGuards(BasicAuthGuard)
 @Controller('sa/users')
@@ -47,8 +47,6 @@ export class SuperAdminUsersController {
         @Query() usersQueryInputModel: ReadUsersQuery
     ): Promise<UsersWithQueryOutputModel> {
         const findedUsersQueryData = await this.usersQueryRepository.findUsers(usersQueryInputModel)
-
-        findedUsersQueryData.items = this.usersService.prepareUsersForDisplay(findedUsersQueryData.items)
 
         return findedUsersQueryData
     }

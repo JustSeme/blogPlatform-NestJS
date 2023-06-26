@@ -9,7 +9,7 @@ describe('blogger-posts-only', () => {
     let httpServer;
 
     beforeAll(async () => {
-        httpServer = initAppAndGetHttpServer()
+        httpServer = await initAppAndGetHttpServer()
 
         await request(httpServer)
             .delete('/testing/all-data')

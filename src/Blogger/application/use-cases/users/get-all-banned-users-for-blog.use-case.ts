@@ -6,7 +6,7 @@ import { BannedUsersOutputModel } from "../../dto/BannedUserViewModel"
 import { ForbiddenException } from "@nestjs/common"
 import { generateErrorsMessages } from "../../../../general/helpers"
 import { BlogsSQLRepository } from "../../../infrastructure/blogs/blogs-sql-repository"
-import { UsersQuerySQLRepository } from "../../../../SuperAdmin/infrastructure/users-query-sql-repository"
+import { UsersQuerySQLRepository } from "../../../../SuperAdmin/infrastructure/rawSQL/users-query-sql-repository"
 
 export class GetAllBannedUsersForBlogCommand {
     constructor(

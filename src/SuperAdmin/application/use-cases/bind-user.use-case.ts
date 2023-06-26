@@ -3,7 +3,7 @@ import {
 } from "@nestjs/cqrs"
 import { generateErrorsMessages } from "../../../general/helpers"
 import { BadRequestException } from '@nestjs/common'
-import { UsersQuerySQLRepository } from "../../infrastructure/users-query-sql-repository"
+import { UsersQuerySQLRepository } from "../../infrastructure/rawSQL/users-query-sql-repository"
 import { BlogsSQLRepository } from "../../../Blogger/infrastructure/blogs/blogs-sql-repository"
 
 export class BindUserCommand {

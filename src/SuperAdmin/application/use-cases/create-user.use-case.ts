@@ -4,7 +4,7 @@ import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs/dist"
 import { UserDTO } from "../../domain/UsersTypes"
-import { UsersSQLRepository } from "../../infrastructure/users-sql-repository"
+import { UsersSQLRepository } from "../../infrastructure/rawSQL/users-sql-repository"
 import { AuthRepository } from "../../../auth/infrastructure/auth-sql-repository"
 import { FieldError } from "../../../general/types/ErrorMessagesOutputModel"
 import { BadRequestException } from "@nestjs/common"

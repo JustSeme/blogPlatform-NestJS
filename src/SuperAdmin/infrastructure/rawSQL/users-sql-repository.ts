@@ -1,14 +1,14 @@
 import { InjectDataSource } from '@nestjs/typeorm'
 import { Injectable } from "@nestjs/common"
 import { DataSource } from 'typeorm'
-import { UserDTO } from '../domain/UsersTypes'
-import { UserViewModelType } from '../application/dto/UsersViewModel'
-import { BanUserForBlogInfoType } from '../../Blogger/infrastructure/blogs/BanUserForBlogInfoType'
-import { UserEntity } from '../domain/typeORM/user.entity'
-import { UserEmailConfirmation } from '../domain/typeORM/user-email-confirmation.entity'
-import { UserPasswordRecovery } from '../domain/typeORM/user-password-recovery.entity'
-import { UserBanInfo } from '../domain/typeORM/user-ban-info.entity'
-import { BansUsersForBlogs } from '../../Blogger/domain/blogs/bans-users-for-blogs.entity'
+import { UserDTO } from '../../domain/UsersTypes'
+import { UserViewModelType } from '../../application/dto/UsersViewModel'
+import { BanUserForBlogInfoType } from '../../../Blogger/infrastructure/blogs/BanUserForBlogInfoType'
+import { UserEntity } from '../../domain/typeORM/user.entity'
+import { UserEmailConfirmation } from '../../domain/typeORM/user-email-confirmation.entity'
+import { UserPasswordRecovery } from '../../domain/typeORM/user-password-recovery.entity'
+import { UserBanInfo } from '../../domain/typeORM/user-ban-info.entity'
+import { BansUsersForBlogs } from '../../../Blogger/domain/blogs/bans-users-for-blogs.entity'
 
 @Injectable()
 export class UsersSQLRepository {

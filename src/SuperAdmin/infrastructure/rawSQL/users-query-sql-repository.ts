@@ -2,13 +2,13 @@ import { Injectable } from "@nestjs/common/decorators"
 import { DataSource } from "typeorm"
 import {
     UserViewModelType, UsersWithQueryOutputModel
-} from "../application/dto/UsersViewModel"
-import { ReadUsersQuery } from "../api/models/ReadUsersQuery"
-import { UserEntity } from "../domain/typeORM/user.entity"
-import { UserBanInfo } from "../domain/typeORM/user-ban-info.entity"
-import { ReadBannedUsersQueryParams } from "../../Blogger/api/models/ReadBannedUsersQueryParams"
-import { UsersBloggerViewModel } from "../application/dto/UsersBloggerViewModel"
-import { BansUsersForBlogs } from "../../Blogger/domain/blogs/bans-users-for-blogs.entity"
+} from "../../application/dto/UsersViewModel"
+import { ReadUsersQuery } from "../../api/models/ReadUsersQuery"
+import { UserEntity } from "../../domain/typeORM/user.entity"
+import { UserBanInfo } from "../../domain/typeORM/user-ban-info.entity"
+import { ReadBannedUsersQueryParams } from "../../../Blogger/api/models/ReadBannedUsersQueryParams"
+import { UsersBloggerViewModel } from "../../application/dto/UsersBloggerViewModel"
+import { BansUsersForBlogs } from "../../../Blogger/domain/blogs/bans-users-for-blogs.entity"
 
 @Injectable()
 export class UsersQuerySQLRepository {

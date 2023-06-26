@@ -3,16 +3,16 @@ import { HttpStatus } from '@nestjs/common';
 import { LoginInputDTO } from '../src/auth/api/models/LoginInputDTO'
 import { NewPasswordInputModel } from '../src/auth/api/models/NewPasswordInputModel';
 import { UserInputModel } from '../src/SuperAdmin/api/models/UserInputModel';
-import { UsersSQLRepository } from '../src/SuperAdmin/infrastructure/users-sql-repository';
 import { funcSleep } from '../src/general/helpers';
 import { initAppAndGetHttpServer } from './test-utils';
+import { UsersSQLRepository } from '../src/SuperAdmin/infrastructure/rawSQL/users-sql-repository';
 
 describe('e2e-auth', () => {
     let httpServer;
     let usersRepository: UsersSQLRepository
 
     beforeAll(async () => {
-        httpServer = initAppAndGetHttpServer()
+        httpServer = await initAppAndGetHttpServer()
 
         await request(httpServer)
             .delete('/testing/all-data')

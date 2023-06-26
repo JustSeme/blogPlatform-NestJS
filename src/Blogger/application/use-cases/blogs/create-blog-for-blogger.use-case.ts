@@ -4,7 +4,7 @@ import {
 import { BlogInputModel } from "../../../api/models/BlogInputModel"
 import { BlogViewModel } from "../../../../blogs/application/dto/BlogViewModel"
 import { BlogDTO } from "../../../domain/blogs/BlogsTypes"
-import { UsersQuerySQLRepository } from "../../../../SuperAdmin/infrastructure/users-query-sql-repository"
+import { UsersQuerySQLRepository } from "../../../../SuperAdmin/infrastructure/rawSQL/users-query-sql-repository"
 import { BlogsSQLRepository } from "../../../infrastructure/blogs/blogs-sql-repository"
 
 // Command

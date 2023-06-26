@@ -4,7 +4,7 @@ import { BannedUserViewModel } from './dto/BannedUserViewModel'
 
 @Injectable()
 export class BloggerService {
-    prepareUsersForBloggerDisplay(rawUsers: Array<UserDTO>, blogId: string): Array<BannedUserViewModel> {
+    /* prepareUsersForBloggerDisplay(rawUsers: Array<UserDTO>, blogId: string): Array<BannedUserViewModel> {
         return rawUsers.map(user => {
             const currentBanByBlogId = user.bansForBlog.find((ban) => ban.blogId === blogId)
 
@@ -18,5 +18,5 @@ export class BloggerService {
                 }
             }
         })
-    }
+    } */
 }

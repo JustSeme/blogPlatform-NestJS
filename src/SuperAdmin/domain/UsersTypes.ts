@@ -7,9 +7,6 @@ import { BanInfoDBType } from '../application/dto/UsersViewModel'
 import { BanUserForBlogInfoType } from '../../Blogger/infrastructure/blogs/BanUserForBlogInfoType'
 
 export class UserDTO {
-    public id: string
-    public createdAt: Date
-
     public emailConfirmation: EmailConfirmationType
     public passwordRecovery: PasswordConfirmationType
     public banInfo: BanInfoDBType
@@ -21,8 +18,6 @@ export class UserDTO {
         public passwordHash: string,
         isConfirmed: boolean
     ) {
-        this.id = uuidv4()
-        this.createdAt = new Date()
         this.emailConfirmation = {
             confirmationCode: uuidv4(),
             expirationDate: add(new Date(), {

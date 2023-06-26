@@ -4,11 +4,11 @@ import { UserDTO } from "../domain/UsersTypes"
 
 @Injectable()
 export class UsersService {
-    prepareUsersForDisplay(rawUsers: Array<UserViewModelType | UserDTO>): Array<UserViewModelType> {
+    /* prepareUsersForDisplay(rawUsers: Array<UserViewModelType | UserDTO>): Array<UserViewModelType> {
         return rawUsers.map((user) => this.prepareUserForDisplay(user))
     }
-
-    prepareUserForDisplay(rawUser: UserViewModelType | UserDTO): UserViewModelType {
+ */
+    /* prepareUserForDisplay(rawUser: UserViewModelType | UserDTO): UserViewModelType {
         return {
             id: rawUser.id,
             login: rawUser.login,
@@ -20,5 +20,5 @@ export class UsersService {
                 banReason: rawUser.banInfo.banReason
             }
         }
-    }
+    } */
 }

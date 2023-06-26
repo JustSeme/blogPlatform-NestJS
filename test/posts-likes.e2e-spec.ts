@@ -9,7 +9,7 @@ describe('posts-likes', () => {
     let httpServer;
 
     beforeAll(async () => {
-        httpServer = initAppAndGetHttpServer()
+        httpServer = await initAppAndGetHttpServer()
 
         await request(httpServer)
             .delete('/testing/all-data')

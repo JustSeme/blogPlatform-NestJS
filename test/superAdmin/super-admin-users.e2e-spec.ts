@@ -14,7 +14,7 @@ describe('super-admin-users', () => {
     let httpServer;
 
     beforeAll(async () => {
-        httpServer = initAppAndGetHttpServer()
+        httpServer = await initAppAndGetHttpServer()
 
         await request(httpServer)
             .delete('/testing/all-data')

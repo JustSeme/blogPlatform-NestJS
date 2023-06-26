@@ -5,7 +5,7 @@ import { BanUserForBlogInputModel } from "../../../api/models/BanUserForBlogInpu
 import { ForbiddenException } from "@nestjs/common"
 import { generateErrorsMessages } from "../../../../general/helpers"
 import { BlogsSQLRepository } from "../../../infrastructure/blogs/blogs-sql-repository"
-import { UsersSQLRepository } from "../../../../SuperAdmin/infrastructure/users-sql-repository"
+import { UsersSQLRepository } from "../../../../SuperAdmin/infrastructure/rawSQL/users-sql-repository"
 
 export class BanUserForBlogCommand {
     constructor(

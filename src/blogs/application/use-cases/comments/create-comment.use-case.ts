@@ -7,7 +7,7 @@ import { ForbiddenException } from "@nestjs/common"
 import { generateErrorsMessages } from "../../../../general/helpers"
 import { CommentsSQLRepository } from "../../../infrastructure/comments/comments-sql-repository"
 import { PostsSQLRepository } from "../../../../Blogger/infrastructure/posts/posts-sql-repository"
-import { UsersSQLRepository } from "../../../../SuperAdmin/infrastructure/users-sql-repository"
+import { UsersSQLRepository } from "../../../../SuperAdmin/infrastructure/rawSQL/users-sql-repository"
 import { BansUsersForBlogs } from "../../../../Blogger/domain/blogs/bans-users-for-blogs.entity"
 
 // Command

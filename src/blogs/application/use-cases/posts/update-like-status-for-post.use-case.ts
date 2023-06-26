@@ -2,7 +2,7 @@ import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
 import { LikeType } from "../../../api/models/LikeInputModel"
-import { UsersQuerySQLRepository } from "../../../../SuperAdmin/infrastructure/users-query-sql-repository"
+import { UsersQuerySQLRepository } from "../../../../SuperAdmin/infrastructure/rawSQL/users-query-sql-repository"
 import { PostsSQLRepository } from "../../../../Blogger/infrastructure/posts/posts-sql-repository"
 
 export class UpdateLikeStatusForPostCommand {

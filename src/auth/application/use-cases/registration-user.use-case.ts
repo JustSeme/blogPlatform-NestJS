@@ -9,7 +9,7 @@ import {
     BadRequestException, NotImplementedException
 } from '@nestjs/common'
 import { AuthRepository } from "../../infrastructure/auth-sql-repository"
-import { UsersSQLRepository } from "../../../SuperAdmin/infrastructure/users-sql-repository"
+import { UsersSQLRepository } from "../../../SuperAdmin/infrastructure/rawSQL/users-sql-repository"
 
 export class RegistrationUserCommand {
     constructor(public login: string, public password: string, public email: string) { }
