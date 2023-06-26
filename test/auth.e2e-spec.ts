@@ -1,39 +1,21 @@
 import request from 'supertest';
-import { Test } from '@nestjs/testing';
-import { AppModule } from '../src/app.module';
 import { HttpStatus } from '@nestjs/common';
-import { NestExpressApplication } from "@nestjs/platform-express"
-import { createApp } from '../src/createApp'
 import { LoginInputDTO } from '../src/auth/api/models/LoginInputDTO'
 import { NewPasswordInputModel } from '../src/auth/api/models/NewPasswordInputModel';
 import { UserInputModel } from '../src/SuperAdmin/api/models/UserInputModel';
 import { UsersSQLRepository } from '../src/SuperAdmin/infrastructure/users-sql-repository';
 import { funcSleep } from '../src/general/helpers';
+import { initAppAndGetHttpServer } from './test-utils';
 
 describe('e2e-auth', () => {
-    let app: NestExpressApplication;
     let httpServer;
     let usersRepository: UsersSQLRepository
 
     beforeAll(async () => {
-        const moduleFixture = await Test.createTestingModule({
-            imports: [AppModule],
-        }).compile();
+        httpServer = initAppAndGetHttpServer()
 
-        app = moduleFixture.createNestApplication()
-        app = createApp(app)
-
-        usersRepository = await app.resolve(UsersSQLRepository)
-
-        await app.init()
-
-        httpServer = app.getHttpServer()
         await request(httpServer)
             .delete('/testing/all-data')
-    });
-
-    afterAll(async () => {
-        //await app.close();
     });
 
     const correctUserInputData: UserInputModel = {
@@ -216,7 +198,7 @@ describe('e2e-auth', () => {
     })
 
     it('should throw 404 if email is invalid', async () => {
-        await request(app.getHttpServer())
+        await request(httpServer)
             .post('/password-recovery')
             .send({ email: 'invalid-email' })
             .expect(HttpStatus.NOT_FOUND)

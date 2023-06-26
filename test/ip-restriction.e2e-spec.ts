@@ -1,27 +1,13 @@
 import request from 'supertest';
-import { Test } from '@nestjs/testing';
-import { AppModule } from '../src/app.module';
 import { HttpStatus } from '@nestjs/common';
-import { NestExpressApplication } from "@nestjs/platform-express"
-import { createApp } from '../src/createApp'
 import { funcSleep } from '../src/general/helpers';
+import { initAppAndGetHttpServer } from './test-utils';
 
 describe('ip-restriction', () => {
-    let app: NestExpressApplication;
     let httpServer;
 
     beforeAll(async () => {
-        const moduleFixture = await Test.createTestingModule({
-            imports: [AppModule],
-        }).compile();
-
-        app = moduleFixture.createNestApplication()
-        app = createApp(app)
-        // app.useGlobalPipes()
-
-        await app.init()
-
-        httpServer = app.getHttpServer()
+        httpServer = initAppAndGetHttpServer()
         await request(httpServer)
             .delete('/testing/all-data')
     });

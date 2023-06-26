@@ -1,44 +1,23 @@
-import { AppModule } from '../../src/app.module';
-import { createApp } from '../../src/createApp';
 import request from 'supertest';
-import { Test } from '@nestjs/testing';
 import { HttpStatus } from '@nestjs/common';
-import { NestExpressApplication } from "@nestjs/platform-express"
 import { UserInputModel } from '../../src/SuperAdmin/api/models/UserInputModel';
 import { BanUserInputModel } from '../../src/SuperAdmin/api/models/BanUserInputModel'
 import { LoginInputDTO } from '../../src/auth/api/models/LoginInputDTO'
 import { CommentInputModel } from '../../src/blogs/api/models/CommentInputModel';
 import { BlogInputModel } from '../../src/Blogger/api/models/BlogInputModel';
 import { PostInputModelWithoutBlogId } from '../../src/Blogger/api/models/PostInputModelWithoutBlogId';
+import { initAppAndGetHttpServer } from '../test-utils';
 
 const generateEmail = (str: string) => `${str}@mail.ru`
 
 describe('super-admin-users', () => {
-    let app: NestExpressApplication;
     let httpServer;
 
     beforeAll(async () => {
-        const moduleFixture = await Test.createTestingModule({
-            imports: [AppModule],
-        }).compile();
+        httpServer = initAppAndGetHttpServer()
 
-        app = moduleFixture.createNestApplication()
-        app = createApp(app)
-        // app.useGlobalPipes()
-
-        await app.init()
-
-        jest.spyOn(console, 'error')
-        // @ts-ignore jest.spyOn adds this functionallity
-        console.error.mockImplementation(() => null);
-
-        httpServer = app.getHttpServer()
         await request(httpServer)
             .delete('/testing/all-data')
-    });
-
-    afterAll(async () => {
-        //await app.close();
     });
 
     const correctUserInputData: UserInputModel = {

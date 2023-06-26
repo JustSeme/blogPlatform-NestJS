@@ -42,41 +42,29 @@ export class AppService {
 
   async clearSQLTables() {
     await this.dataSource.query(`
-      DELETE FROM public."auth_session"
-        WHERE 1 = 1;
+    CREATE OR REPLACE FUNCTION f_truncate_tables(_username text)
+  RETURNS void
+  LANGUAGE plpgsql AS
+$func$
+DECLARE
+  _tbl text;
+  _sch text;
+BEGIN
+    FOR _sch, _tbl IN 
+      SELECT schemaname, tablename
+      FROM   pg_tables
+      WHERE  tableowner = _username
+      AND    schemaname = 'public'
+  LOOP
+      -- dangerous, test before you execute!
+      RAISE NOTICE '%',  -- once confident, comment this line ...
+      -- EXECUTE         -- ... and uncomment this one
+        format('TRUNCATE TABLE %I.%I CASCADE', _sch, _tbl);
+  END LOOP;
+END
+$func$;
 
-      DELETE FROM public."bans_users_for_blogs"
-        WHERE 1 = 1;
-
-      DELETE FROM public."comment_likes_info"
-        WHERE 1 = 1;
-
-      DELETE FROM public."comment_entity"
-        WHERE 1 = 1;
-
-      DELETE FROM public."post_likes_info"
-        WHERE 1 = 1;
-
-      DELETE FROM public."post_entity"
-        WHERE 1 = 1;
-      
-      DELETE FROM public."blog_entity"
-        WHERE 1 = 1;
-
-      DELETE FROM public."user_ban_info"
-        WHERE 1 = 1;
-
-      DELETE FROM public."user_email_confirmation"
-        WHERE 1 = 1;
-
-      DELETE FROM public."user_password_recovery"
-        WHERE 1 = 1;
-
-      DELETE FROM public."user_entity"
-        WHERE 1 = 1;
-
-      DELETE FROM public."attempt_entity"
-        WHERE 1 = 1;
+SELECT truncate_tables('JustSeme')
       `)
   }
 }

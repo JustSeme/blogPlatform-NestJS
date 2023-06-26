@@ -1,33 +1,16 @@
-import { NestExpressApplication } from "@nestjs/platform-express";
-import { AppModule } from "../../src/app.module";
-import { Test } from "@nestjs/testing";
-import { createApp } from "../../src/createApp";
 import { HttpStatus } from "@nestjs/common";
 import request from 'supertest'
 import { UserInputModel } from "../../src/SuperAdmin/api/models/UserInputModel";
 import { BlogInputModel } from "../../src/Blogger/api/models/BlogInputModel";
 import { PostInputModelWithoutBlogId } from "../../src/Blogger/api/models/PostInputModelWithoutBlogId";
+import { initAppAndGetHttpServer } from "../test-utils";
 
 describe('blogger-posts-only', () => {
-    let app: NestExpressApplication;
     let httpServer;
 
     beforeAll(async () => {
-        const moduleFixture = await Test.createTestingModule({
-            imports: [AppModule],
-        }).compile();
+        httpServer = initAppAndGetHttpServer()
 
-        app = moduleFixture.createNestApplication()
-        app = createApp(app)
-        // app.useGlobalPipes()
-
-        await app.init()
-
-        jest.spyOn(console, 'error')
-        // @ts-ignore jest.spyOn adds this functionallity
-        console.error.mockImplementation(() => null);
-
-        httpServer = app.getHttpServer()
         await request(httpServer)
             .delete('/testing/all-data')
     });

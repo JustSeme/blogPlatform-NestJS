@@ -1,28 +1,17 @@
 import request from 'supertest';
-import { Test } from '@nestjs/testing';
 import { HttpStatus } from '@nestjs/common';
 import { NestExpressApplication } from "@nestjs/platform-express"
-import { AppModule } from '../../src/app.module';
-import { createApp } from '../../src/createApp';
 import { UserInputModel } from '../../src/SuperAdmin/api/models/UserInputModel';
 import { BlogInputModel } from '../../src/Blogger/api/models/BlogInputModel';
+import { initAppAndGetHttpServer } from '../test-utils';
 
 describe('blogger-blogs', () => {
     let app: NestExpressApplication;
     let httpServer;
 
     beforeAll(async () => {
-        const moduleFixture = await Test.createTestingModule({
-            imports: [AppModule],
-        }).compile();
+        httpServer = initAppAndGetHttpServer()
 
-        app = moduleFixture.createNestApplication()
-        app = createApp(app)
-        // app.useGlobalPipes()
-
-        await app.init()
-
-        httpServer = app.getHttpServer()
         await request(httpServer)
             .delete('/testing/all-data')
     });
