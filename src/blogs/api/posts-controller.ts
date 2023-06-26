@@ -67,6 +67,9 @@ export class PostsController {
             new CreateCommentCommand(comment.content, userId, postId)
         )
 
+        console.log(createdComment)
+
+
         if (!createdComment) {
             throw new NotImplementedException(`Comment wasn't created`)
         }

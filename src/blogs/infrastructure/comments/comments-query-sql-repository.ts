@@ -139,6 +139,7 @@ export class CommentsQuerySQLRepository {
 
         const query = `
             SELECT *,
+                ce.id, ce."createdAt", ce."isBanned",
             (
                 SELECT count(*)
                     FROM public."comment_likes_info" cli

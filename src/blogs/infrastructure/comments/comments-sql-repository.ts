@@ -30,6 +30,8 @@ export class CommentsSQLRepository {
                 creatingComment.postInfo.id
             ])
 
+            console.log(createdCommentData[0])
+
             return new CommentViewModel(createdCommentData[0])
         } catch (err) {
             console.error(err)
