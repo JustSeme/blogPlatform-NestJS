@@ -9,7 +9,7 @@ import {
     BadRequestException, NotImplementedException
 } from '@nestjs/common'
 import { AuthRepository } from "../../infrastructure/auth-sql-repository"
-import { UsersSQLRepository } from "../../../SuperAdmin/infrastructure/rawSQL/users-sql-repository"
+import { UsersTypeORMRepository } from "../../../SuperAdmin/infrastructure/typeORM/users-typeORM-repository"
 
 export class RegistrationUserCommand {
     constructor(public login: string, public password: string, public email: string) { }
@@ -20,7 +20,7 @@ export class RegistrationUserUseCase implements ICommandHandler<RegistrationUser
     constructor(
         private bcryptAdapter: BcryptAdapter,
         private authRepository: AuthRepository,
-        private usersRepository: UsersSQLRepository,
+        private usersRepository: UsersTypeORMRepository,
         private emailManager: EmailManager
     ) { }
 

@@ -4,15 +4,31 @@ import { LoginInputDTO } from '../src/auth/api/models/LoginInputDTO'
 import { NewPasswordInputModel } from '../src/auth/api/models/NewPasswordInputModel';
 import { UserInputModel } from '../src/SuperAdmin/api/models/UserInputModel';
 import { funcSleep } from '../src/general/helpers';
-import { initAppAndGetHttpServer } from './test-utils';
 import { UsersSQLRepository } from '../src/SuperAdmin/infrastructure/rawSQL/users-sql-repository';
+import { Test } from '@nestjs/testing';
+import { AppModule } from '../src/app.module';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { createApp } from '../src/createApp';
 
 describe('e2e-auth', () => {
     let httpServer;
     let usersRepository: UsersSQLRepository
 
     beforeAll(async () => {
-        httpServer = await initAppAndGetHttpServer()
+        const moduleFixture = await Test.createTestingModule({
+            imports: [AppModule],
+        }).compile();
+        let app: NestExpressApplication;
+        app = moduleFixture.createNestApplication()
+        app = createApp(app)
+
+        await app.init()
+
+        jest.spyOn(console, 'error')
+        // @ts-ignore jest.spyOn adds this functionallity
+        console.error.mockImplementation(() => null);
+
+        usersRepository = await app.resolve(UsersSQLRepository)
 
         await request(httpServer)
             .delete('/testing/all-data')

@@ -137,6 +137,8 @@ import { CommentLikesInfo } from "./blogs/domain/comments/typeORM/comment-likes-
 import { CommentsSQLRepository } from "./blogs/infrastructure/comments/comments-sql-repository"
 import { CommentsQuerySQLRepository } from "./blogs/infrastructure/comments/comments-query-sql-repository"
 import { PostLikesInfo } from "./Blogger/domain/posts/typeORM/post-likes-info"
+import { UsersTypeORMRepository } from "./SuperAdmin/infrastructure/typeORM/users-typeORM-repository"
+import { AuthTypeORMRepository } from "./auth/infrastructure/auth-typeORM-repository"
 
 const authUseCases = [
   LogoutUseCase,
@@ -239,6 +241,11 @@ const SQLrepositories = [
   CommentsQuerySQLRepository,
 ]
 
+const typeORMRepositories = [
+  UsersTypeORMRepository,
+  AuthTypeORMRepository,
+]
+
 const decorators = [
   IsBlogByIdExist,
   IsEmailAlreadyInUse,
@@ -335,8 +342,9 @@ const typeORMEntityes = [
       autoLoadEntities: true,
       synchronize: true,
       ssl: true,
-      entities: [...typeORMEntityes]
+      entities: typeORMEntityes
     }),
+    TypeOrmModule.forFeature(typeORMEntityes),
     PassportModule,
   ],
   controllers: [...controllers],
@@ -349,6 +357,7 @@ const typeORMEntityes = [
     ...adapters,
     ...repositories,
     ...SQLrepositories,
+    ...typeORMRepositories,
     ...decorators,
     ...guards,
     ...configs,

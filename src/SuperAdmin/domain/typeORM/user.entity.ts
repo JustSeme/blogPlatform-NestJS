@@ -1,7 +1,7 @@
 import {
     Column,
     CreateDateColumn,
-    Entity, OneToMany, OneToOne, PrimaryGeneratedColumn
+    Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn
 } from "typeorm"
 import { AuthSession } from "../../../security/domain/auth-session.entity"
 import { BlogEntity } from "../../../Blogger/domain/blogs/blog.entity"
@@ -31,7 +31,8 @@ export class UserEntity {
     @Column()
     passwordHash: string
 
-    @OneToOne(() => UserBanInfo, (banInfo) => banInfo.user, { cascade: true })
+    @OneToOne(() => UserBanInfo, (banInfo) => banInfo.userId, { cascade: true })
+    @JoinColumn({ name: 'banInfo' })
     banInfo: UserBanInfo
 
     @Column({ default: false })

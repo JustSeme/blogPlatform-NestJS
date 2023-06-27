@@ -8,8 +8,8 @@ import {
 import { UnauthorizedException } from '@nestjs/common'
 import { generateErrorsMessages } from '../../../general/helpers'
 import { DeviceAuthSessionDBModel } from '../../../security/domain/DeviceAuthSessionTypes'
-import { UsersSQLRepository } from '../../../SuperAdmin/infrastructure/rawSQL/users-sql-repository'
 import { DevicesSQLRepository } from '../../../security/infrastructure/devices-sql-repository'
+import { UsersTypeORMRepository } from '../../../SuperAdmin/infrastructure/typeORM/users-typeORM-repository'
 
 export class LoginCommand {
     constructor(
@@ -29,7 +29,7 @@ export class LoginUseCase implements ICommandHandler<LoginCommand> {
     constructor(
         private jwtService: JwtService,
         private deviceRepository: DevicesSQLRepository,
-        private usersRepository: UsersSQLRepository,
+        private usersRepository: UsersTypeORMRepository,
         private readonly authConfig: AuthConfig,
     ) {
         this.tokensSettings = this.authConfig.getTokensSettings()
@@ -45,7 +45,7 @@ export class LoginUseCase implements ICommandHandler<LoginCommand> {
 
         const user = await this.usersRepository.findUserById(userId)
 
-        if (user.banInfo.isBanned) {
+        if (!user || user.banInfo.isBanned) {
             throw new UnauthorizedException(generateErrorsMessages(`You are banned by banReason: ${user.banInfo.banReason}`, 'userId'))
         }
 

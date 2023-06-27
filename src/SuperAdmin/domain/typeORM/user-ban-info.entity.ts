@@ -11,7 +11,7 @@ export class UserBanInfo {
 
     @OneToOne(() => UserEntity, (user) => user.banInfo, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'userId' })
-    user: UserEntity
+    userId: UserEntity | string
 
     @Column({ default: false })
     isBanned: boolean

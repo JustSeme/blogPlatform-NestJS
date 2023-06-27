@@ -1,7 +1,11 @@
 import { Injectable } from "@nestjs/common"
-import { InjectRepository } from "@nestjs/typeorm"
+import {
+    InjectDataSource, InjectRepository
+} from "@nestjs/typeorm"
 import { UserEntity } from "../../domain/typeORM/user.entity"
-import { Repository } from "typeorm"
+import {
+    DataSource, Repository
+} from "typeorm"
 import { UserDTO } from "../../domain/UsersTypes"
 import { UserBanInfo } from "../../domain/typeORM/user-ban-info.entity"
 import { UserViewModelType } from "../../application/dto/UsersViewModel"
@@ -13,13 +17,17 @@ export class UsersTypeORMRepository {
     constructor(
         @InjectRepository(UserEntity)
         private usersRepository: Repository<UserEntity>,
+        @InjectRepository(UserBanInfo)
         private usersBanInfoRepository: Repository<UserBanInfo>,
+        @InjectRepository(UserEmailConfirmation)
         private usersEmailConfirmationsRepository: Repository<UserEmailConfirmation>,
-        private usersPasswordRecoveriesRepository: Repository<UserPasswordRecovery>
+        @InjectRepository(UserPasswordRecovery)
+        private usersPasswordRecoveriesRepository: Repository<UserPasswordRecovery>,
+        @InjectDataSource() private dataSource: DataSource,
     ) { }
 
     async createNewUser(newUser: UserDTO): Promise<UserViewModelType | null> {
-        const queryRunner = this.usersRepository.queryRunner
+        const queryRunner = this.dataSource.createQueryRunner()
 
         await queryRunner.connect()
 
@@ -75,4 +83,63 @@ export class UsersTypeORMRepository {
             await queryRunner.release()
         }
     }
+
+    async findUserById(userId: string): Promise<UserViewModelType> {
+        try {
+            const findedUserData = await this.usersRepository
+                .createQueryBuilder('u')
+                .where('u.id = :userId', { userId })
+                .getOne()
+
+            const findedBanInfoData = await this.usersBanInfoRepository
+                .createQueryBuilder('ubi')
+                .where(`ubi.userId = :userId`, { userId })
+                .getOne()
+
+            return new UserViewModelType({
+                ...findedUserData, ...findedBanInfoData
+            })
+        } catch (err) {
+            console.error(err)
+            return null
+        }
+    }
+
+    async findUserData(userId: string): Promise<UserEntity> {
+        try {
+            return this.usersRepository.findOneBy({ id: userId })
+        } catch (err) {
+            console.error(err)
+            return null
+        }
+    }
+
+    /* async findUserDataWithPasswordRecovery(userId: string): Promise<UserEntity & UserPasswordRecovery> {
+        try {
+            const findedUserData = await this.findUserData(userId)
+            const findedPasswordRecoveryData = await this.usersPasswordRecoveriesRepository.findOneBy({ userId })
+
+            return {
+                ...findedUserData, ...findedPasswordRecoveryData
+            }
+        } catch (err) {
+            console.error(err)
+            return null
+        }
+
+    }
+
+    async findUserDataWithEmailConfirmation(userId: string): Promise<UserEntity & UserEmailConfirmation> {
+        try {
+            const findedUserData = await this.findUserData(userId)
+            const findedEmailConfirmationData = await this.usersEmailConfirmationsRepository.findOneBy({ userId })
+
+            return {
+                ...findedUserData, ...findedEmailConfirmationData
+            }
+        } catch (err) {
+            console.error(err)
+            return null
+        }
+    } */
 }
