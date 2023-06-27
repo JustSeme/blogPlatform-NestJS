@@ -3,11 +3,11 @@ import {
     Injectable, PipeTransform
 } from "@nestjs/common"
 import { generateErrorsMessages } from "../../../general/helpers"
-import { UsersSQLRepository } from "../../infrastructure/rawSQL/users-sql-repository"
+import { UsersTypeORMRepository } from "../../infrastructure/typeORM/users-typeORM-repository"
 
 @Injectable()
 export class IsUserExistOrThrow400Pipe implements PipeTransform {
-    constructor(private usersRepository: UsersSQLRepository) { }
+    constructor(private usersRepository: UsersTypeORMRepository) { }
 
     async transform(userId: string): Promise<string> {
         if (!(await this.usersRepository.isUserExists(userId))) {

@@ -4,13 +4,13 @@ import {
 } from "@nestjs/typeorm"
 import { UserEntity } from "../../domain/typeORM/user.entity"
 import {
-    DataSource, Repository
+    DataSource, EntityManager, Repository
 } from "typeorm"
-import { UserDTO } from "../../domain/UsersTypes"
 import { UserBanInfo } from "../../domain/typeORM/user-ban-info.entity"
 import { UserViewModelType } from "../../application/dto/UsersViewModel"
 import { UserPasswordRecovery } from "../../domain/typeORM/user-password-recovery.entity"
 import { UserEmailConfirmation } from "../../domain/typeORM/user-email-confirmation.entity"
+import { UserEntitiesType } from "../UsersTypes"
 
 @Injectable()
 export class UsersTypeORMRepository {
@@ -26,65 +26,17 @@ export class UsersTypeORMRepository {
         @InjectDataSource() private dataSource: DataSource,
     ) { }
 
-    async createNewUser(newUser: UserDTO): Promise<UserViewModelType | null> {
-        const queryRunner = this.dataSource.createQueryRunner()
+    async queryRunnerSave(
+        entity: UserEntity | UserBanInfo | UserEmailConfirmation | UserPasswordRecovery,
+        queryRunnerManager: EntityManager
+    ): Promise<UserEntity | UserBanInfo | UserEmailConfirmation | UserPasswordRecovery> {
+        return queryRunnerManager.save(entity)
+    }
 
-        await queryRunner.connect()
-
-        await queryRunner.startTransaction()
-
-        try {
-            const userEntityData = {
-                login: newUser.login,
-                email: newUser.email,
-                passwordHash: newUser.passwordHash,
-                isConfirmed: newUser.emailConfirmation.isConfirmed
-            } as UserEntity
-
-            const user = await this.usersRepository.save(userEntityData)
-
-            const userBanInfoData = {
-                banReason: null,
-                banDate: null,
-                userId: user.id
-            }
-
-            const userBanInfo = await this.usersBanInfoRepository.save(userBanInfoData)
-
-            const userEmailConfirmationData = {
-                emailConfirmationCode: newUser.emailConfirmation.confirmationCode,
-                emailExpirationDate: newUser.emailConfirmation.expirationDate,
-                isEmailConfirmed: newUser.emailConfirmation.isConfirmed,
-                userId: user.id
-            }
-
-            await this.usersEmailConfirmationsRepository.save(userEmailConfirmationData)
-
-            const userPasswordRecoveryData = {
-                passwordRecoveryConfirmationCode: newUser.passwordRecovery.confirmationCode,
-                passwordRecoveryExpirationDate: newUser.passwordRecovery.expirationDate,
-                userId: user.id,
-            }
-
-            await this.usersPasswordRecoveriesRepository.save(userPasswordRecoveryData)
-
-            await queryRunner.commitTransaction()
-
-            return new UserViewModelType({
-                ...user,
-                ...userBanInfo,
-                id: user.id,
-                createdAt: user.createdAt,
-            })
-        } catch (err) {
-            console.error('Error in create user transaction', err)
-
-            await queryRunner.rollbackTransaction()
-
-            return null
-        } finally {
-            await queryRunner.release()
-        }
+    async dataSourceSave(
+        entity: UserEntitiesType
+    ): Promise<UserEntitiesType> {
+        return this.dataSource.manager.save(entity)
     }
 
     async findUserById(userId: string): Promise<UserViewModelType> {
@@ -186,4 +138,18 @@ export class UsersTypeORMRepository {
             return false
         }
     }
+
+    async isUserExists(userId: string): Promise<boolean> {
+        const user = await this.findUserData(userId)
+
+        return user ? true : false
+    }
+
+    /* async banUserForCurrentBlog(userId: string, banInfo: BanUserForBlogInfoType): Promise<boolean> {
+        try {
+
+        } catch (error) {
+
+        }
+    } */
 }

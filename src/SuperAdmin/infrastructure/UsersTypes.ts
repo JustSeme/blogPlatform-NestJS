@@ -44,3 +44,5 @@ export class UserDBModel {
     }
 
 }
+
+export type UserEntitiesType = UserEntity | UserBanInfo | UserEmailConfirmation | UserPasswordRecovery

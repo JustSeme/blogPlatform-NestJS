@@ -89,9 +89,13 @@ export class AuthController {
     @Post('registration')
     @HttpCode(HttpStatus.NO_CONTENT)
     async registration(@Body() userInput: UserInputModel) {
-        await this.commandBus.execute(
+        const isRegistrated = await this.commandBus.execute(
             new RegistrationUserCommand(userInput.login, userInput.password, userInput.email)
         )
+
+        if (!isRegistrated) {
+            throw new NotImplementedException('User is not saved in DB')
+        }
     }
 
     @UseGuards(IpRestrictionGuard)

@@ -10,7 +10,7 @@ export class UserEmailConfirmation {
     id: string
 
     @OneToOne(() => UserEntity, (user) => user.emailConfirmation, { onDelete: 'CASCADE' })
-    @JoinColumn({ name: 'userId' })
+    @JoinColumn()
     user: UserEntity
 
     @Column({ nullable: true })

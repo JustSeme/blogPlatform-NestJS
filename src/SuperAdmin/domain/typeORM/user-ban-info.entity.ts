@@ -10,7 +10,7 @@ export class UserBanInfo {
     id: string
 
     @OneToOne(() => UserEntity, (user) => user.banInfo, { onDelete: 'CASCADE' })
-    @JoinColumn({ name: 'userId' })
+    @JoinColumn()
     userId: UserEntity | string
 
     @Column({ default: false })

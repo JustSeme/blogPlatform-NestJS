@@ -3,13 +3,18 @@ import { EmailManager } from "../../../general/managers/emailManager"
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
-import { UserDTO } from "../../../SuperAdmin/domain/UsersTypes"
 import { FieldError } from "../../../general/types/ErrorMessagesOutputModel"
-import {
-    BadRequestException, NotImplementedException
-} from '@nestjs/common'
+import { BadRequestException } from '@nestjs/common'
 import { AuthRepository } from "../../infrastructure/auth-sql-repository"
 import { UsersTypeORMRepository } from "../../../SuperAdmin/infrastructure/typeORM/users-typeORM-repository"
+import { UserPasswordRecovery } from "../../../SuperAdmin/domain/typeORM/user-password-recovery.entity"
+import { UserEmailConfirmation } from "../../../SuperAdmin/domain/typeORM/user-email-confirmation.entity"
+import { UserBanInfo } from "../../../SuperAdmin/domain/typeORM/user-ban-info.entity"
+import { UserEntity } from "../../../SuperAdmin/domain/typeORM/user.entity"
+import { v4 as uuidv4 } from 'uuid'
+import { InjectDataSource } from "@nestjs/typeorm"
+import { add } from 'date-fns'
+import { DataSource } from "typeorm"
 
 export class RegistrationUserCommand {
     constructor(public login: string, public password: string, public email: string) { }
@@ -21,7 +26,8 @@ export class RegistrationUserUseCase implements ICommandHandler<RegistrationUser
         private bcryptAdapter: BcryptAdapter,
         private authRepository: AuthRepository,
         private usersRepository: UsersTypeORMRepository,
-        private emailManager: EmailManager
+        private emailManager: EmailManager,
+        @InjectDataSource() private dataSource: DataSource
     ) { }
 
     async execute(command: RegistrationUserCommand): Promise<boolean> {
@@ -30,16 +36,56 @@ export class RegistrationUserUseCase implements ICommandHandler<RegistrationUser
 
         const passwordHash = await this.bcryptAdapter.generatePasswordHash(command.password, 10)
 
-        const newUser = new UserDTO(command.login, command.email, passwordHash, false)
+        const queryRunner = this.dataSource.createQueryRunner()
 
-        const isCreated = await this.usersRepository.createNewUser(newUser)
-        if (!isCreated) {
-            throw new NotImplementedException('User is not saved in DB')
+        await queryRunner.connect()
+
+        await queryRunner.startTransaction()
+
+        try {
+            const queryRunnerManager = queryRunner.manager
+
+            const userEntityData = new UserEntity()
+            userEntityData.login = command.login
+            userEntityData.email = command.email
+            userEntityData.passwordHash = passwordHash
+            userEntityData.isConfirmed = true
+
+            await this.usersRepository.queryRunnerSave(userEntityData, queryRunnerManager)
+
+            const userBanInfoData = new UserBanInfo()
+            userBanInfoData.userId = userEntityData
+
+            await this.usersRepository.queryRunnerSave(userBanInfoData, queryRunnerManager)
+
+            const userEmailConfirmationData = new UserEmailConfirmation()
+            userEmailConfirmationData.emailConfirmationCode = uuidv4()
+            userEmailConfirmationData.emailExpirationDate = add(new Date(), {
+                hours: 1,
+                minutes: 3
+            })
+            userEmailConfirmationData.user = userEntityData
+
+            await this.usersRepository.queryRunnerSave(userEmailConfirmationData, queryRunnerManager)
+
+            const userPasswordRecoveryData = new UserPasswordRecovery()
+            userPasswordRecoveryData.user = userEntityData
+
+            await this.usersRepository.queryRunnerSave(userPasswordRecoveryData, queryRunnerManager)
+
+            await this.emailManager.sendConfirmationCode(command.email, command.login, userEmailConfirmationData.emailConfirmationCode)
+
+            await queryRunner.commitTransaction()
+            return true
+        } catch (err) {
+            console.error(err)
+
+            await queryRunner.rollbackTransaction()
+
+            return null
+        } finally {
+            await queryRunner.release()
         }
-
-        await this.emailManager.sendConfirmationCode(command.email, command.login, newUser.emailConfirmation.confirmationCode)
-
-        return true
     }
 
     async isEmailOrLoginAlreadyUsed(login: string, email: string) {

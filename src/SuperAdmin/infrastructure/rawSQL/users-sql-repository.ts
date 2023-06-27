@@ -174,7 +174,7 @@ export class UsersSQLRepository {
         }
     }
 
-    /* async banUserById(userId: string, banReason: string): Promise<boolean> {
+    async banUserById(userId: string, banReason: string): Promise<boolean> {
         const queryString = `
             UPDATE public."user_ban_info"
                 SET "isBanned"=true, "banReason"=$2, "banDate"=CURRENT_TIMESTAMP
@@ -218,7 +218,7 @@ export class UsersSQLRepository {
             console.error(err)
             return false
         }
-    } */
+    }
 
     async isUserExists(userId: string): Promise<boolean> {
         const user = await this.findUserById(userId)
