@@ -14,7 +14,8 @@ export class AuthSession {
 
     @ManyToOne(
         () => UserEntity,
-        (user) => user.authSessions
+        (user) => user.authSessions,
+        { onDelete: 'CASCADE' }
     )
     user: UserEntity
 

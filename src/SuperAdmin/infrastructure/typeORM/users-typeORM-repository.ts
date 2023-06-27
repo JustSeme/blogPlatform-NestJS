@@ -71,7 +71,10 @@ export class UsersTypeORMRepository {
             await queryRunner.commitTransaction()
 
             return new UserViewModelType({
-                ...user, ...userBanInfo
+                ...user,
+                ...userBanInfo,
+                id: user.id,
+                createdAt: user.createdAt,
             })
         } catch (err) {
             console.error('Error in create user transaction', err)
@@ -107,6 +110,7 @@ export class UsersTypeORMRepository {
 
     async findUserData(userId: string): Promise<UserEntity> {
         try {
+            //TODO Сделать каскадное удаление связанныех таблиц. В нынешнем варианте в связанных таблицах зануляется внешний ключ на user_entity
             return this.usersRepository.findOneBy({ id: userId })
         } catch (err) {
             console.error(err)
@@ -142,4 +146,14 @@ export class UsersTypeORMRepository {
             return null
         }
     } */
+
+    async deleteUser(userId: string): Promise<boolean> {
+        try {
+            await this.usersRepository.delete({ id: userId })
+            return true
+        } catch (err) {
+            console.error(err)
+            return false
+        }
+    }
 }

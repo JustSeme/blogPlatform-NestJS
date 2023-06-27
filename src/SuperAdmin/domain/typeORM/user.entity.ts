@@ -1,7 +1,7 @@
 import {
     Column,
     CreateDateColumn,
-    Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn
+    Entity, OneToMany, OneToOne, PrimaryGeneratedColumn
 } from "typeorm"
 import { AuthSession } from "../../../security/domain/auth-session.entity"
 import { BlogEntity } from "../../../Blogger/domain/blogs/blog.entity"
@@ -31,20 +31,19 @@ export class UserEntity {
     @Column()
     passwordHash: string
 
-    @OneToOne(() => UserBanInfo, (banInfo) => banInfo.userId, { cascade: true })
-    @JoinColumn({ name: 'banInfo' })
+    @OneToOne(() => UserBanInfo, (banInfo) => banInfo.userId)
     banInfo: UserBanInfo
 
     @Column({ default: false })
     isBanned: boolean
 
-    @OneToOne(() => UserEmailConfirmation, (emailConfirmation) => emailConfirmation.user, { cascade: true })
+    @OneToOne(() => UserEmailConfirmation, (emailConfirmation) => emailConfirmation.user)
     emailConfirmation: UserEmailConfirmation
 
     @Column({ default: false })
     isConfirmed: boolean
 
-    @OneToOne(() => UserPasswordRecovery, (passwordRecovery) => passwordRecovery.user, { cascade: true })
+    @OneToOne(() => UserPasswordRecovery, (passwordRecovery) => passwordRecovery.user)
     passwordRecovery: UserPasswordRecovery
 
     @OneToMany(() => AuthSession, (authSession) => authSession.user)

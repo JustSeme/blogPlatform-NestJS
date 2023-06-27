@@ -170,8 +170,6 @@ export class UsersSQLRepository {
             return true
         } catch (err) {
             console.error(err)
-            console.log(err)
-
             return false
         }
     }
