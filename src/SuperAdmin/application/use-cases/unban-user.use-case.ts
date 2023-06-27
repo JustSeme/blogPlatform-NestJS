@@ -1,9 +1,9 @@
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
-import { UsersSQLRepository } from "../../infrastructure/rawSQL/users-sql-repository"
 import { PostsSQLRepository } from "../../../Blogger/infrastructure/posts/posts-sql-repository"
 import { CommentsSQLRepository } from "../../../blogs/infrastructure/comments/comments-sql-repository"
+import { UsersTypeORMRepository } from "../../infrastructure/typeORM/users-typeORM-repository"
 
 export class UnbanUserCommand {
     constructor(
@@ -14,7 +14,7 @@ export class UnbanUserCommand {
 @CommandHandler(UnbanUserCommand)
 export class UnbanUserUseCase implements ICommandHandler<UnbanUserCommand> {
     constructor(
-        private usersRepository: UsersSQLRepository,
+        private usersRepository: UsersTypeORMRepository,
         private postsRepository: PostsSQLRepository,
         private commentsRepository: CommentsSQLRepository,
     ) { }

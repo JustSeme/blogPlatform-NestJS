@@ -1,7 +1,7 @@
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
-import { UsersSQLRepository } from "../../infrastructure/rawSQL/users-sql-repository"
+import { UsersTypeORMRepository } from "../../infrastructure/typeORM/users-typeORM-repository"
 
 export class DeleteUserCommand {
     constructor(
@@ -11,7 +11,7 @@ export class DeleteUserCommand {
 
 @CommandHandler(DeleteUserCommand)
 export class DeleteUserUseCase implements ICommandHandler<DeleteUserCommand>{
-    constructor(private usersRepository: UsersSQLRepository) { }
+    constructor(private usersRepository: UsersTypeORMRepository) { }
 
     async execute(command: DeleteUserCommand) {
         return this.usersRepository.deleteUser(command.userId)

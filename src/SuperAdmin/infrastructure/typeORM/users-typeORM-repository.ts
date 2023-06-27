@@ -110,7 +110,6 @@ export class UsersTypeORMRepository {
 
     async findUserData(userId: string): Promise<UserEntity> {
         try {
-            //TODO Сделать каскадное удаление связанныех таблиц. В нынешнем варианте в связанных таблицах зануляется внешний ключ на user_entity
             return this.usersRepository.findOneBy({ id: userId })
         } catch (err) {
             console.error(err)
@@ -149,7 +148,38 @@ export class UsersTypeORMRepository {
 
     async deleteUser(userId: string): Promise<boolean> {
         try {
+            //TODO Сделать каскадное удаление связанныех таблиц. В нынешнем варианте в связанных таблицах зануляется внешний ключ на user_entity
             await this.usersRepository.delete({ id: userId })
+            return true
+        } catch (err) {
+            console.error(err)
+            return false
+        }
+    }
+
+    async banUserById(userId: string, banReason: string): Promise<boolean> {
+        try {
+            await this.usersBanInfoRepository.update({ userId }, {
+                isBanned: true,
+                banDate: new Date(),
+                banReason: banReason
+            })
+            await this.usersRepository.update({ id: userId }, { isBanned: true })
+            return true
+        } catch (err) {
+            console.error(err)
+            return false
+        }
+    }
+
+    async unbanUserById(userId: string): Promise<boolean> {
+        try {
+            await this.usersBanInfoRepository.update({ userId }, {
+                isBanned: false,
+                banDate: null,
+                banReason: null
+            })
+            await this.usersRepository.update({ id: userId }, { isBanned: false })
             return true
         } catch (err) {
             console.error(err)
