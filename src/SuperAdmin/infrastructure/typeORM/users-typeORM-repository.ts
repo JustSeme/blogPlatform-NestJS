@@ -7,7 +7,6 @@ import {
     DataSource, EntityManager, Repository
 } from "typeorm"
 import { UserBanInfo } from "../../domain/typeORM/user-ban-info.entity"
-import { UserViewModelType } from "../../application/dto/UsersViewModel"
 import { UserPasswordRecovery } from "../../domain/typeORM/user-password-recovery.entity"
 import { UserEmailConfirmation } from "../../domain/typeORM/user-email-confirmation.entity"
 import { UserEntitiesType } from "../UsersTypes"
@@ -37,27 +36,6 @@ export class UsersTypeORMRepository {
         entity: UserEntitiesType
     ): Promise<UserEntitiesType> {
         return this.dataSource.manager.save(entity)
-    }
-
-    async findUserById(userId: string): Promise<UserViewModelType> {
-        try {
-            const findedUserData = await this.usersRepository
-                .createQueryBuilder('u')
-                .where('u.id = :userId', { userId })
-                .getOne()
-
-            const findedBanInfoData = await this.usersBanInfoRepository
-                .createQueryBuilder('ubi')
-                .where(`ubi.userId = :userId`, { userId })
-                .getOne()
-
-            return new UserViewModelType({
-                ...findedUserData, ...findedBanInfoData
-            })
-        } catch (err) {
-            console.error(err)
-            return null
-        }
     }
 
     async findUserData(userId: string): Promise<UserEntity> {

@@ -139,6 +139,7 @@ import { CommentsQuerySQLRepository } from "./blogs/infrastructure/comments/comm
 import { PostLikesInfo } from "./Blogger/domain/posts/typeORM/post-likes-info"
 import { UsersTypeORMRepository } from "./SuperAdmin/infrastructure/typeORM/users-typeORM-repository"
 import { AuthTypeORMRepository } from "./auth/infrastructure/auth-typeORM-repository"
+import { UsersTypeORMQueryRepository } from "./SuperAdmin/infrastructure/typeORM/users-typeORM-query-repository"
 
 const authUseCases = [
   LogoutUseCase,
@@ -243,6 +244,7 @@ const SQLrepositories = [
 
 const typeORMRepositories = [
   UsersTypeORMRepository,
+  UsersTypeORMQueryRepository,
   AuthTypeORMRepository,
 ]
 
