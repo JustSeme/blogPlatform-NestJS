@@ -5,18 +5,19 @@ import { IsBlogByIdExistPipe } from "./pipes/isBlogExists.validation.pipe"
 import { PostsWithQueryOutputModel } from "../../Blogger/domain/posts/PostsTypes"
 import { ReadPostsQueryParams } from "./models/ReadPostsQuery"
 import { CommandBus } from "@nestjs/cqrs"
-import { GetBlogByIdCommand } from "../application/use-cases/blogs/get-blog-by-id.use-case"
 import { GetPostsForBlogCommand } from "../application/use-cases/blogs/get-posts-for-blog.use-case"
 import {
     Controller, Get, Headers, NotFoundException, Param, Query
 } from "@nestjs/common"
 import { BlogsQuerySQLRepository } from "../../Blogger/infrastructure/blogs/rawSQL/blogs-query-sql-repository"
+import { BlogsQueryTypeORMRepository } from "../../Blogger/infrastructure/blogs/typeORM/blogs-query-typeORM-repository"
 
 @Controller('blogs')
 export class BlogsController {
     constructor(
         protected commandBus: CommandBus,
-        protected blogsQueryRepository: BlogsQuerySQLRepository
+        protected blogsQueryRepository: BlogsQuerySQLRepository,
+        protected blogsQueryTypeORMRepository: BlogsQueryTypeORMRepository,
     ) { }
 
     @Get()
@@ -34,9 +35,9 @@ export class BlogsController {
     async getBlogById(
         @Param('blogId', IsBlogByIdExistPipe) blogId: string
     ): Promise<BlogViewModel> {
-        return this.commandBus.execute(
-            new GetBlogByIdCommand(blogId)
-        )
+        const findedBlogData = await this.blogsQueryTypeORMRepository.findBlogById(blogId)
+
+        return new BlogViewModel(findedBlogData)
     }
 
     @Get(':blogId/posts')

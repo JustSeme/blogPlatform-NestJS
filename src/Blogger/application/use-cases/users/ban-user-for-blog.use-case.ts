@@ -30,7 +30,7 @@ export class BanUserForBlogUseCase implements ICommandHandler<BanUserForBlogComm
     async execute(command: BanUserForBlogCommand) {
         const blogByBlogId = await this.blogsQueryRepository.findBlogById(command.banUserForBlogInputModel.blogId)
 
-        if (blogByBlogId.user !== command.currentUserId) {
+        if (blogByBlogId.user.id !== command.currentUserId) {
             throw new ForbiddenException(generateErrorsMessages('That is not your own', 'userId'))
         }
 

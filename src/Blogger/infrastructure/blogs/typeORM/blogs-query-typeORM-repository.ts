@@ -12,7 +12,10 @@ export class BlogsQueryTypeORMRepository {
 
     async findBlogById(blogId: string): Promise<BlogEntity> {
         try {
-            return this.blogsRepository.findOneBy({ id: blogId })
+            return this.blogsRepository.findOne({
+                where: { id: blogId },
+                relations: ['user']
+            })
         } catch (err) {
             console.error(err)
             return null

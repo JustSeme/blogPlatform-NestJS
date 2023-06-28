@@ -2,8 +2,8 @@ import { ICommandHandler } from "@nestjs/cqrs"
 import { PostInputModel } from "../../../../Blogger/api/models/PostInputModel"
 import { PostDTO } from "../../../../Blogger/domain/posts/PostsTypes"
 import { PostsViewModel } from "../../dto/PostViewModel"
-import { BlogsSQLRepository } from "../../../../Blogger/infrastructure/blogs/rawSQL/blogs-sql-repository"
 import { PostsSQLRepository } from "../../../../Blogger/infrastructure/posts/posts-sql-repository"
+import { BlogsQueryTypeORMRepository } from "../../../../Blogger/infrastructure/blogs/typeORM/blogs-query-typeORM-repository"
 
 export class CreatePostCommand {
     constructor(
@@ -13,14 +13,14 @@ export class CreatePostCommand {
 
 export class CreatePostUseCase implements ICommandHandler<CreatePostCommand> {
     constructor(
-        private readonly blogsRepository: BlogsSQLRepository,
+        private readonly blogsQueryRepository: BlogsQueryTypeORMRepository,
         private readonly postsRepository: PostsSQLRepository,
     ) { }
 
     async execute(command: CreatePostCommand): Promise<PostsViewModel> {
         const { body } = command
 
-        const blogById = await this.blogsRepository.findBlogById(body.blogId)
+        const blogById = await this.blogsQueryRepository.findBlogById(body.blogId)
 
         const creatingPost: PostDTO = new PostDTO(
             body.title,
@@ -28,7 +28,7 @@ export class CreatePostUseCase implements ICommandHandler<CreatePostCommand> {
             body.content,
             blogById.id,
             blogById?.name ? blogById?.name : 'not found',
-            blogById.user as string,
+            blogById.user.id,
             blogById.ownerLogin,
             false
         )

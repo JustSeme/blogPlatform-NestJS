@@ -5,8 +5,8 @@ import { PostDTO } from "../../../domain/posts/PostsTypes"
 import { PostsViewModel } from "../../../../blogs/application/dto/PostViewModel"
 import { ForbiddenException } from '@nestjs/common'
 import { PostInputModelWithoutBlogId } from "../../../api/models/PostInputModelWithoutBlogId"
-import { BlogsSQLRepository } from "../../../infrastructure/blogs/rawSQL/blogs-sql-repository"
 import { PostsSQLRepository } from "../../../infrastructure/posts/posts-sql-repository"
+import { BlogsQueryTypeORMRepository } from "../../../infrastructure/blogs/typeORM/blogs-query-typeORM-repository"
 
 // Command
 export class CreatePostForBloggerCommand implements ICommand {
@@ -21,7 +21,7 @@ export class CreatePostForBloggerCommand implements ICommand {
 @CommandHandler(CreatePostForBloggerCommand)
 export class CreatePostForBloggerUseCase implements ICommandHandler<CreatePostForBloggerCommand> {
     constructor(
-        private readonly blogsRepository: BlogsSQLRepository,
+        private readonly blogsRepository: BlogsQueryTypeORMRepository,
         private readonly postsRepository: PostsSQLRepository,
     ) { }
 
@@ -34,7 +34,7 @@ export class CreatePostForBloggerUseCase implements ICommandHandler<CreatePostFo
 
         const blogById = await this.blogsRepository.findBlogById(blogId)
 
-        if (blogById.user !== creatorId) {
+        if (blogById.user.id !== creatorId) {
             throw new ForbiddenException('that is not your own')
         }
 
@@ -44,7 +44,7 @@ export class CreatePostForBloggerUseCase implements ICommandHandler<CreatePostFo
             postInputModel.content,
             blogId,
             blogById.name,
-            blogById.user as string,
+            blogById.user.id as string,
             blogById.ownerLogin,
             false
         )

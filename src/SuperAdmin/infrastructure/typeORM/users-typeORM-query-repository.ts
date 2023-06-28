@@ -24,7 +24,10 @@ export class UsersTypeORMQueryRepository {
                 .getOne()
 
             return new UserViewModelType({
-                ...findedUserData, ...findedBanInfoData
+                ...findedUserData,
+                ...findedBanInfoData,
+                id: findedUserData.id,
+                createdAt: findedUserData.createdAt,
             })
         } catch (err) {
             console.error(err)
@@ -42,8 +45,12 @@ export class UsersTypeORMQueryRepository {
     }
 
     async isUserExists(userId: string): Promise<boolean> {
-        const user = await this.findUserData(userId)
-
-        return user ? true : false
+        try {
+            const user = await this.findUserData(userId)
+            return user ? true : false
+        } catch (err) {
+            console.error(err)
+            return false
+        }
     }
 }

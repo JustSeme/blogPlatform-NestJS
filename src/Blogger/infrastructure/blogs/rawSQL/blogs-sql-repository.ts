@@ -5,7 +5,6 @@ import {
 } from '../../../domain/blogs/BlogsTypes'
 import { BlogInputModel } from '../../../api/models/BlogInputModel'
 import { BlogViewModel } from '../../../../blogs/application/dto/BlogViewModel'
-import { BlogEntity } from '../../../domain/blogs/blog.entity'
 
 @Injectable()
 export class BlogsSQLRepository {
@@ -14,7 +13,7 @@ export class BlogsSQLRepository {
     async createBlog(newBlog: BlogDTO): Promise<BlogViewModel> {
         const queryString = `
             INSERT INTO public.blog_entity
-                ("name", description, "websiteUrl", "isMembership", "ownerId", "ownerLogin", "isBanned", "banDate")
+                ("name", description, "websiteUrl", "isMembership", "userId", "ownerLogin", "isBanned", "banDate")
                 VALUES($1, $2, $3, $4, $5, $6, $7, $8)
                 RETURNING *;
         `
@@ -59,7 +58,7 @@ export class BlogsSQLRepository {
         }
     }
 
-    async findBlogById(blogId: string): Promise<BlogEntity> {
+    /* async findBlogById(blogId: string): Promise<BlogEntity> {
         const queryString = `
             SELECT *
                 FROM public."blog_entity"
@@ -78,7 +77,7 @@ export class BlogsSQLRepository {
             console.error(err)
             return null
         }
-    }
+    } */
 
     async isBlogExists(blogId: string): Promise<boolean> {
         const queryString = `

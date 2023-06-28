@@ -38,8 +38,8 @@ export class BlogEntity {
     banDate: Date
 
     @ManyToOne(() => UserEntity, (user) => user.userBlogs)
-    @JoinColumn({ name: 'ownerId' })
-    user: UserEntity | string
+    @JoinColumn()
+    user: UserEntity
 
     @OneToMany(() => BansUsersForBlogs, (ban) => ban.blogId)
     bansForBlog: BansUsersForBlogs[]

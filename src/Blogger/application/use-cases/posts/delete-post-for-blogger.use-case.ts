@@ -2,8 +2,8 @@ import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
 import { ForbiddenException } from "@nestjs/common"
-import { BlogsSQLRepository } from "../../../infrastructure/blogs/rawSQL/blogs-sql-repository"
 import { PostsSQLRepository } from "../../../infrastructure/posts/posts-sql-repository"
+import { BlogsQueryTypeORMRepository } from "../../../infrastructure/blogs/typeORM/blogs-query-typeORM-repository"
 
 export class DeletePostForBloggerCommand {
     constructor(
@@ -17,13 +17,13 @@ export class DeletePostForBloggerCommand {
 @CommandHandler(DeletePostForBloggerCommand)
 export class DeletePostForBloggerUseCase implements ICommandHandler<DeletePostForBloggerCommand> {
     constructor(
-        private blogsRepository: BlogsSQLRepository,
+        private blogsQueryRepository: BlogsQueryTypeORMRepository,
         private postsRepository: PostsSQLRepository,
     ) { }
 
     async execute(command: DeletePostForBloggerCommand) {
-        const blogById = await this.blogsRepository.findBlogById(command.blogId)
-        if (blogById.user !== command.userId) {
+        const blogById = await this.blogsQueryRepository.findBlogById(command.blogId)
+        if (blogById.user.id !== command.userId) {
             throw new ForbiddenException('this is not your own')
         }
 

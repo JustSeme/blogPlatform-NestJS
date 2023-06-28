@@ -4,8 +4,8 @@ import {
 import { BanUserForBlogInputModel } from "../../../api/models/BanUserForBlogInputModel"
 import { generateErrorsMessages } from "../../../../general/helpers"
 import { ForbiddenException } from "@nestjs/common"
-import { BlogsSQLRepository } from "../../../infrastructure/blogs/rawSQL/blogs-sql-repository"
 import { UsersSQLRepository } from "../../../../SuperAdmin/infrastructure/rawSQL/users-sql-repository"
+import { BlogsQueryTypeORMRepository } from "../../../infrastructure/blogs/typeORM/blogs-query-typeORM-repository"
 
 export class UnbanUserForBlogCommand {
     constructor(
@@ -20,14 +20,14 @@ export class UnbanUserForBlogCommand {
 export class UnbanUserForBlogUseCase implements ICommandHandler<UnbanUserForBlogCommand> {
     constructor(
         private usersRepository: UsersSQLRepository,
-        private blogsRepository: BlogsSQLRepository
+        private blogsRepository: BlogsQueryTypeORMRepository
     ) { }
 
 
     async execute(command: UnbanUserForBlogCommand) {
         const blogByBlogId = await this.blogsRepository.findBlogById(command.banUserForBlogInputModel.blogId)
 
-        if (blogByBlogId.user !== command.currentUserId) {
+        if (blogByBlogId.user.id !== command.currentUserId) {
             throw new ForbiddenException(generateErrorsMessages('That is not your own', 'userId'))
         }
 

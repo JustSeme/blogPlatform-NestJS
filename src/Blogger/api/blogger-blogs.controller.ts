@@ -47,7 +47,7 @@ export class BloggerBlogsController {
         @Body() blogInputModel: BlogInputModel,
         @CurrentUserId() creatorId,
     ): Promise<BlogViewModel> {
-        const createdBlog = this.commandBus.execute(
+        const createdBlog = await this.commandBus.execute(
             new CreateBlogForBloggerCommand(blogInputModel, creatorId)
         )
 

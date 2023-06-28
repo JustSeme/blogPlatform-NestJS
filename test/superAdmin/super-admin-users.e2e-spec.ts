@@ -319,7 +319,6 @@ describe('super-admin-users', () => {
             .send(BanUserInputModel)
             .expect(HttpStatus.BAD_REQUEST)
 
-
         const usersData = await request(httpServer)
             .get('/sa/users')
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
