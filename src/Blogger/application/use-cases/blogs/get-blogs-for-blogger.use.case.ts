@@ -6,7 +6,7 @@ import { ReadBlogsQueryParams } from '../../../../blogs/api/models/ReadBlogsQuer
 import {
     BlogViewModel, BlogsWithQueryOutputModel
 } from '../../../../blogs/application/dto/BlogViewModel'
-import { BlogsQuerySQLRepository } from '../../../infrastructure/blogs/blogs-query-sql-repository'
+import { BlogsQuerySQLRepository } from '../../../infrastructure/blogs/rawSQL/blogs-query-sql-repository'
 
 export class GetBlogsForBloggerCommand implements ICommand {
     constructor(

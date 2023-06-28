@@ -2,7 +2,7 @@ import { ICommandHandler } from "@nestjs/cqrs"
 import { PostInputModel } from "../../../../Blogger/api/models/PostInputModel"
 import { PostDTO } from "../../../../Blogger/domain/posts/PostsTypes"
 import { PostsViewModel } from "../../dto/PostViewModel"
-import { BlogsSQLRepository } from "../../../../Blogger/infrastructure/blogs/blogs-sql-repository"
+import { BlogsSQLRepository } from "../../../../Blogger/infrastructure/blogs/rawSQL/blogs-sql-repository"
 import { PostsSQLRepository } from "../../../../Blogger/infrastructure/posts/posts-sql-repository"
 
 export class CreatePostCommand {
@@ -28,8 +28,8 @@ export class CreatePostUseCase implements ICommandHandler<CreatePostCommand> {
             body.content,
             blogById.id,
             blogById?.name ? blogById?.name : 'not found',
-            blogById.blogOwnerInfo.userId,
-            blogById.blogOwnerInfo.userLogin,
+            blogById.user as string,
+            blogById.ownerLogin,
             false
         )
 

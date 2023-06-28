@@ -15,7 +15,7 @@ import { PassportModule } from "@nestjs/passport"
 import { AppController } from "./app.controller"
 import { BlogsController } from "./blogs/api/blogs-controller"
 import { BlogsService } from './blogs/application/blogs-service'
-import { BlogsRepository } from './Blogger/infrastructure/blogs/blogs-db-repository'
+import { BlogsRepository } from './Blogger/infrastructure/blogs/mongoose/blogs-db-repository'
 import { PostsController } from "./blogs/api/posts-controller"
 import { CommentsController } from "./blogs/api/comments-controller"
 import { AuthController } from "./auth/api/auth-controller"
@@ -30,7 +30,7 @@ import { SecurityService } from "./security/application/security-service"
 import { EmailManager } from "./general/managers/emailManager"
 import { BcryptAdapter } from "./general/adapters/bcrypt.adapter"
 import { EmailAdapter } from "./general/adapters/email.adapter"
-import { BlogsQueryRepository } from "./Blogger/infrastructure/blogs/blogs-query-repository"
+import { BlogsQueryRepository } from "./Blogger/infrastructure/blogs/mongoose/blogs-query-repository"
 import { CommentsQueryRepository } from "./blogs/infrastructure/comments/comments-query-repository"
 import { PostsRepository } from "./Blogger/infrastructure/posts/posts-db-repository"
 import { CommentsRepository } from "./blogs/infrastructure/comments/comments-db-repository"
@@ -123,8 +123,8 @@ import {
   DeviceAuthSession, DeviceAuthSessionsSchema
 } from "./security/domain/DeviceAuthSessionSchema"
 import { BlogEntity } from "./Blogger/domain/blogs/blog.entity"
-import { BlogsSQLRepository } from "./Blogger/infrastructure/blogs/blogs-sql-repository"
-import { BlogsQuerySQLRepository } from "./Blogger/infrastructure/blogs/blogs-query-sql-repository"
+import { BlogsSQLRepository } from "./Blogger/infrastructure/blogs/rawSQL/blogs-sql-repository"
+import { BlogsQuerySQLRepository } from "./Blogger/infrastructure/blogs/rawSQL/blogs-query-sql-repository"
 import { BansUsersForBlogs } from "./Blogger/domain/blogs/bans-users-for-blogs.entity"
 import { PostEntity } from "./Blogger/domain/posts/typeORM/post.entity"
 import { PostsSQLRepository } from "./Blogger/infrastructure/posts/posts-sql-repository"
@@ -140,6 +140,8 @@ import { PostLikesInfo } from "./Blogger/domain/posts/typeORM/post-likes-info"
 import { UsersTypeORMRepository } from "./SuperAdmin/infrastructure/typeORM/users-typeORM-repository"
 import { AuthTypeORMRepository } from "./auth/infrastructure/auth-typeORM-repository"
 import { UsersTypeORMQueryRepository } from "./SuperAdmin/infrastructure/typeORM/users-typeORM-query-repository"
+import { BlogsQueryTypeORMRepository } from "./Blogger/infrastructure/blogs/typeORM/blogs-query-typeORM-repository"
+import { BlogsTypeORMRepository } from "./Blogger/infrastructure/blogs/typeORM/blogs-typeORM-repository"
 
 const authUseCases = [
   LogoutUseCase,
@@ -246,6 +248,8 @@ const typeORMRepositories = [
   UsersTypeORMRepository,
   UsersTypeORMQueryRepository,
   AuthTypeORMRepository,
+  BlogsTypeORMRepository,
+  BlogsQueryTypeORMRepository,
 ]
 
 const decorators = [

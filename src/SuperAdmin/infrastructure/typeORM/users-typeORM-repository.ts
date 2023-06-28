@@ -26,9 +26,9 @@ export class UsersTypeORMRepository {
     ) { }
 
     async queryRunnerSave(
-        entity: UserEntity | UserBanInfo | UserEmailConfirmation | UserPasswordRecovery,
+        entity: UserEntitiesType,
         queryRunnerManager: EntityManager
-    ): Promise<UserEntity | UserBanInfo | UserEmailConfirmation | UserPasswordRecovery> {
+    ): Promise<UserEntitiesType> {
         return queryRunnerManager.save(entity)
     }
 
@@ -116,12 +116,4 @@ export class UsersTypeORMRepository {
             return false
         }
     }
-
-    /* async banUserForCurrentBlog(userId: string, banInfo: BanUserForBlogInfoType): Promise<boolean> {
-        try {
-            
-        } catch (error) {
-
-        }
-    } */
 }

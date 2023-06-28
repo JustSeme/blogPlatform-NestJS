@@ -2,12 +2,12 @@ import { Injectable } from "@nestjs/common"
 import { DataSource } from "typeorm"
 import {
     BlogViewModel, BlogsWithQueryOutputModel
-} from "../../../blogs/application/dto/BlogViewModel"
-import { ReadBlogsQueryParams } from "../../../blogs/api/models/ReadBlogsQuery"
-import { BlogsWithQuerySuperAdminOutputModel } from "../../../SuperAdmin/application/dto/BlogSuperAdminViewModel"
+} from "../../../../blogs/application/dto/BlogViewModel"
+import { ReadBlogsQueryParams } from "../../../../blogs/api/models/ReadBlogsQuery"
+import { BlogsWithQuerySuperAdminOutputModel } from "../../../../SuperAdmin/application/dto/BlogSuperAdminViewModel"
 import {
     BlogDBModel, BlogSQLModel
-} from "../../domain/blogs/BlogsTypes"
+} from "../../../domain/blogs/BlogsTypes"
 
 @Injectable()
 export class BlogsQuerySQLRepository {

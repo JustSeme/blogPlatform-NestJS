@@ -4,7 +4,7 @@ import {
 import { BlogViewModel } from '../../dto/BlogViewModel'
 import { NotFoundException } from '@nestjs/common'
 import { generateErrorsMessages } from '../../../../general/helpers'
-import { BlogsSQLRepository } from '../../../../Blogger/infrastructure/blogs/blogs-sql-repository'
+import { BlogsSQLRepository } from '../../../../Blogger/infrastructure/blogs/rawSQL/blogs-sql-repository'
 
 export class GetBlogByIdCommand implements ICommand {
     constructor(public readonly blogId: string) { }
@@ -19,7 +19,7 @@ export class GetBlogByIdUseCase implements ICommandHandler<GetBlogByIdCommand> {
     async execute({ blogId }: GetBlogByIdCommand): Promise<BlogViewModel> {
         const findedBlog = await this.blogsRepository.findBlogById(blogId)
 
-        if (findedBlog.banInfo.isBanned) {
+        if (findedBlog.isBanned) {
             throw new NotFoundException(generateErrorsMessages('This blog is banned', 'blogId'))
         }
         return new BlogViewModel(findedBlog)

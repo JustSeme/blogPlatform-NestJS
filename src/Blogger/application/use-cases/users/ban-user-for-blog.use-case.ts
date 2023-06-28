@@ -4,8 +4,10 @@ import {
 import { BanUserForBlogInputModel } from "../../../api/models/BanUserForBlogInputModel"
 import { ForbiddenException } from "@nestjs/common"
 import { generateErrorsMessages } from "../../../../general/helpers"
-import { BlogsSQLRepository } from "../../../infrastructure/blogs/blogs-sql-repository"
-import { UsersSQLRepository } from "../../../../SuperAdmin/infrastructure/rawSQL/users-sql-repository"
+import { BansUsersForBlogs } from "../../../domain/blogs/bans-users-for-blogs.entity"
+import { UsersTypeORMRepository } from "../../../../SuperAdmin/infrastructure/typeORM/users-typeORM-repository"
+import { BlogsQueryTypeORMRepository } from "../../../infrastructure/blogs/typeORM/blogs-query-typeORM-repository"
+import { BlogsTypeORMRepository } from "../../../infrastructure/blogs/typeORM/blogs-typeORM-repository"
 
 export class BanUserForBlogCommand {
     constructor(
@@ -19,23 +21,28 @@ export class BanUserForBlogCommand {
 @CommandHandler(BanUserForBlogCommand)
 export class BanUserForBlogUseCase implements ICommandHandler<BanUserForBlogCommand> {
     constructor(
-        private usersRepository: UsersSQLRepository,
-        private blogsRepository: BlogsSQLRepository,
+        private usersRepository: UsersTypeORMRepository,
+        private blogsQueryRepository: BlogsQueryTypeORMRepository,
+        private blogsRepository: BlogsTypeORMRepository,
     ) { }
 
 
     async execute(command: BanUserForBlogCommand) {
-        const blogByBlogId = await this.blogsRepository.findBlogById(command.banUserForBlogInputModel.blogId)
+        const blogByBlogId = await this.blogsQueryRepository.findBlogById(command.banUserForBlogInputModel.blogId)
 
-        if (blogByBlogId.blogOwnerInfo.userId !== command.currentUserId) {
+        if (blogByBlogId.user !== command.currentUserId) {
             throw new ForbiddenException(generateErrorsMessages('That is not your own', 'userId'))
         }
 
-        const banInfo = {
-            ...command.banUserForBlogInputModel,
-            banDate: new Date()
-        }
+        const findedUserData = await this.usersRepository.findUserData(command.bannedUserId)
 
-        await this.usersRepository.banUserForCurrentBlog(command.bannedUserId, banInfo)
+        const banUserForBlog = new BansUsersForBlogs()
+        banUserForBlog.user = findedUserData
+        banUserForBlog.banReason = command.banUserForBlogInputModel.banReason
+        banUserForBlog.blogId = blogByBlogId
+        banUserForBlog.isBanned = true
+        banUserForBlog.banDate = new Date()
+
+        await this.blogsRepository.dataSourceSave(banUserForBlog)
     }
 }

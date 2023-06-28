@@ -4,7 +4,7 @@ import {
 import { generateErrorsMessages } from "../../../general/helpers"
 import { BadRequestException } from '@nestjs/common'
 import { UsersQuerySQLRepository } from "../../infrastructure/rawSQL/users-query-sql-repository"
-import { BlogsSQLRepository } from "../../../Blogger/infrastructure/blogs/blogs-sql-repository"
+import { BlogsSQLRepository } from "../../../Blogger/infrastructure/blogs/rawSQL/blogs-sql-repository"
 
 export class BindUserCommand {
     constructor(
@@ -27,7 +27,7 @@ export class BindUserUseCase implements ICommandHandler<BindUserCommand> {
         } = command
 
         const blogById = await this.blogsRepository.findBlogById(blogId)
-        if (blogById.blogOwnerInfo.userId !== 'superAdmin') {
+        if (blogById.user !== 'superAdmin') {
             throw new BadRequestException(generateErrorsMessages('blog is already bounded with any user', 'blogId'))
         }
 

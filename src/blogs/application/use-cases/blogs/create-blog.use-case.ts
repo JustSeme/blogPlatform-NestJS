@@ -4,7 +4,7 @@ import {
 import { BlogInputModel } from "../../../../Blogger/api/models/BlogInputModel"
 import { BlogViewModel } from "../../dto/BlogViewModel"
 import { BlogDTO } from "../../../../Blogger/domain/blogs/BlogsTypes"
-import { BlogsSQLRepository } from "../../../../Blogger/infrastructure/blogs/blogs-sql-repository"
+import { BlogsSQLRepository } from "../../../../Blogger/infrastructure/blogs/rawSQL/blogs-sql-repository"
 
 // Command
 export class CreateBlogCommand implements ICommand {

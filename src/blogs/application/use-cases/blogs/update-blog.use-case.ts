@@ -2,7 +2,7 @@ import {
     CommandHandler, ICommand, ICommandHandler
 } from "@nestjs/cqrs"
 import { BlogInputModel } from "../../../../Blogger/api/models/BlogInputModel"
-import { BlogsSQLRepository } from "../../../../Blogger/infrastructure/blogs/blogs-sql-repository"
+import { BlogsSQLRepository } from "../../../../Blogger/infrastructure/blogs/rawSQL/blogs-sql-repository"
 
 // Command
 export class UpdateBlogCommand implements ICommand {

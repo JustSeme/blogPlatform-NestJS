@@ -4,7 +4,7 @@ import {
 import { BlogInputModel } from "../../../api/models/BlogInputModel"
 import { ForbiddenException } from "@nestjs/common"
 import { generateErrorsMessages } from "../../../../general/helpers"
-import { BlogsSQLRepository } from "../../../infrastructure/blogs/blogs-sql-repository"
+import { BlogsSQLRepository } from "../../../infrastructure/blogs/rawSQL/blogs-sql-repository"
 
 export class UpdateBlogForBloggerCommand {
     constructor(
@@ -24,7 +24,7 @@ export class UpdateBlogForBloggerUseCase implements ICommandHandler<UpdateBlogFo
     async execute(command: UpdateBlogForBloggerCommand): Promise<boolean> {
         const blogById = await this.blogsRepository.findBlogById(command.blogId)
 
-        if (blogById.blogOwnerInfo.userId !== command.bloggerId) {
+        if (blogById.user !== command.bloggerId) {
             throw new ForbiddenException(generateErrorsMessages('that is not your own', 'authorization header'))
         }
 

@@ -4,7 +4,7 @@ import {
 import { ForbiddenException } from '@nestjs/common'
 import { PostInputModelWithoutBlogId } from "../../../api/models/PostInputModelWithoutBlogId"
 import { PostInputModel } from "../../../api/models/PostInputModel"
-import { BlogsSQLRepository } from "../../../infrastructure/blogs/blogs-sql-repository"
+import { BlogsSQLRepository } from "../../../infrastructure/blogs/rawSQL/blogs-sql-repository"
 import { PostsSQLRepository } from "../../../infrastructure/posts/posts-sql-repository"
 
 // Command
@@ -35,7 +35,7 @@ export class UpdatePostForBloggerUseCase implements ICommandHandler<UpdatePostFo
 
         const blogById = await this.blogsRepository.findBlogById(blogId)
 
-        if (blogById.blogOwnerInfo.userId !== creatorId) {
+        if (blogById.user !== creatorId) {
             throw new ForbiddenException('that is not your own')
         }
 

@@ -1,17 +1,14 @@
-import { BlogInputModel } from "../../api/models/BlogInputModel"
+import { BlogInputModel } from "../../../api/models/BlogInputModel"
 import { Injectable } from "@nestjs/common"
 import { InjectModel } from "@nestjs/mongoose"
 import {
     Blog, BlogBanInfoType
-} from "../../domain/blogs/BlogsSchema"
+} from "../../../domain/blogs/BlogsSchema"
 import {
     BlogDTO, BlogModelType
-} from "../../domain/blogs/BlogsTypes"
-import { BlogDocument } from "./BlogsTypes"
-import { ReadBlogsQueryParams } from "../../../blogs/api/models/ReadBlogsQuery"
-import { BlogsWithQuerySuperAdminOutputModel } from "../../../SuperAdmin/application/dto/BlogSuperAdminViewModel"
-import { BlogsWithQueryOutputModel } from "../../../blogs/application/dto/BlogViewModel"
-import { BanBlogInputModel } from "../../../SuperAdmin/api/models/BanBlogInputModel"
+} from "../../../domain/blogs/BlogsTypes"
+import { BlogDocument } from "../BlogsTypes"
+import { BanBlogInputModel } from "../../../../SuperAdmin/api/models/BanBlogInputModel"
 
 @Injectable()
 export class BlogsRepository {

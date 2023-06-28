@@ -32,8 +32,17 @@ export class UsersTypeORMQueryRepository {
         }
     }
 
+    async findUserData(userId: string): Promise<UserEntity> {
+        try {
+            return this.usersRepository.findOneBy({ id: userId })
+        } catch (err) {
+            console.error(err)
+            return null
+        }
+    }
+
     async isUserExists(userId: string): Promise<boolean> {
-        const user = await this.usersRepository.findOneBy({ id: userId })
+        const user = await this.findUserData(userId)
 
         return user ? true : false
     }

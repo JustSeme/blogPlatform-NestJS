@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { DataSource } from 'typeorm'
 import {
-    BlogDBModel, BlogDTO, BlogSQLModel
-} from '../../domain/blogs/BlogsTypes'
-import { BlogInputModel } from '../../api/models/BlogInputModel'
-import { BlogViewModel } from '../../../blogs/application/dto/BlogViewModel'
+    BlogDTO, BlogSQLModel
+} from '../../../domain/blogs/BlogsTypes'
+import { BlogInputModel } from '../../../api/models/BlogInputModel'
+import { BlogViewModel } from '../../../../blogs/application/dto/BlogViewModel'
+import { BlogEntity } from '../../../domain/blogs/blog.entity'
 
 @Injectable()
 export class BlogsSQLRepository {
@@ -58,7 +59,7 @@ export class BlogsSQLRepository {
         }
     }
 
-    async findBlogById(blogId: string): Promise<BlogDBModel> {
+    async findBlogById(blogId: string): Promise<BlogEntity> {
         const queryString = `
             SELECT *
                 FROM public."blog_entity"
@@ -66,13 +67,13 @@ export class BlogsSQLRepository {
         `
 
         try {
-            const findedBlogData: BlogSQLModel = await this.dataSource.query(queryString, [blogId])
+            const findedBlogData: BlogEntity = await this.dataSource.query(queryString, [blogId])
 
             if (!findedBlogData[0]) {
                 return null
             }
 
-            return new BlogDBModel(findedBlogData[0])
+            return findedBlogData[0]
         } catch (err) {
             console.error(err)
             return null

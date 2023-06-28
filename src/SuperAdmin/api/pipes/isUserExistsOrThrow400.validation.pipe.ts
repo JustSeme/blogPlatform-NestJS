@@ -3,7 +3,6 @@ import {
     Injectable, PipeTransform
 } from "@nestjs/common"
 import { generateErrorsMessages } from "../../../general/helpers"
-import { UsersTypeORMRepository } from "../../infrastructure/typeORM/users-typeORM-repository"
 import { UsersTypeORMQueryRepository } from "../../infrastructure/typeORM/users-typeORM-query-repository"
 
 @Injectable()

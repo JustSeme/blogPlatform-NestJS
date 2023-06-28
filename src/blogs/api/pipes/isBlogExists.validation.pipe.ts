@@ -2,7 +2,7 @@ import {
     Injectable, NotFoundException, PipeTransform
 } from "@nestjs/common"
 import { generateErrorsMessages } from "../../../general/helpers"
-import { BlogsSQLRepository } from "../../../Blogger/infrastructure/blogs/blogs-sql-repository"
+import { BlogsSQLRepository } from "../../../Blogger/infrastructure/blogs/rawSQL/blogs-sql-repository"
 
 @Injectable()
 export class IsBlogByIdExistPipe implements PipeTransform {

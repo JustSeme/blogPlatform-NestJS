@@ -10,7 +10,7 @@ import { GetPostsForBlogCommand } from "../application/use-cases/blogs/get-posts
 import {
     Controller, Get, Headers, NotFoundException, Param, Query
 } from "@nestjs/common"
-import { BlogsQuerySQLRepository } from "../../Blogger/infrastructure/blogs/blogs-query-sql-repository"
+import { BlogsQuerySQLRepository } from "../../Blogger/infrastructure/blogs/rawSQL/blogs-query-sql-repository"
 
 @Controller('blogs')
 export class BlogsController {
