@@ -117,15 +117,9 @@ export class UsersTypeORMRepository {
         }
     }
 
-    async isUserExists(userId: string): Promise<boolean> {
-        const user = await this.findUserData(userId)
-
-        return user ? true : false
-    }
-
     /* async banUserForCurrentBlog(userId: string, banInfo: BanUserForBlogInfoType): Promise<boolean> {
         try {
-
+            
         } catch (error) {
 
         }

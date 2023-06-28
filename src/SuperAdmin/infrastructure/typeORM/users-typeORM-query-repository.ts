@@ -10,16 +10,13 @@ export class UsersTypeORMQueryRepository {
     constructor(
         @InjectRepository(UserEntity)
         private usersRepository: Repository<UserEntity>,
-        @InjectRepository(UserEntity)
+        @InjectRepository(UserBanInfo)
         private banInfoRepository: Repository<UserBanInfo>,
     ) { }
 
     async findUserById(userId: string): Promise<UserViewModelType> {
         try {
-            const findedUserData = await this.usersRepository
-                .createQueryBuilder('u')
-                .where('u.id = :userId', { userId })
-                .getOne()
+            const findedUserData = await this.usersRepository.findOneBy({ id: userId })
 
             const findedBanInfoData = await this.banInfoRepository
                 .createQueryBuilder('ubi')
@@ -33,5 +30,11 @@ export class UsersTypeORMQueryRepository {
             console.error(err)
             return null
         }
+    }
+
+    async isUserExists(userId: string): Promise<boolean> {
+        const user = await this.usersRepository.findOneBy({ id: userId })
+
+        return user ? true : false
     }
 }
