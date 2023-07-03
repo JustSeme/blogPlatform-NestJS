@@ -39,7 +39,7 @@ export class BanUserForBlogUseCase implements ICommandHandler<BanUserForBlogComm
         const banUserForBlog = new BansUsersForBlogs()
         banUserForBlog.user = findedUserData
         banUserForBlog.banReason = command.banUserForBlogInputModel.banReason
-        banUserForBlog.blogId = blogByBlogId
+        banUserForBlog.blog = blogByBlogId
         banUserForBlog.isBanned = true
         banUserForBlog.banDate = new Date()
 

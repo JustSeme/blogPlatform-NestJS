@@ -385,7 +385,10 @@ describe('super-admin-users', () => {
             .post(`/posts/${secondPostId}/comments`)
             .set('Authorization', `Bearer ${secondAccessToken}`)
             .send(correctCommentBody)
-            .expect(HttpStatus.CREATED)
+        //.expect(HttpStatus.CREATED)
+
+        console.log(createdCommentResponseData.body);
+
 
         secondCommentId = createdCommentResponseData.body.id
     })

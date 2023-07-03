@@ -41,7 +41,7 @@ export class BlogEntity {
     @JoinColumn()
     user: UserEntity
 
-    @OneToMany(() => BansUsersForBlogs, (ban) => ban.blogId)
+    @OneToMany(() => BansUsersForBlogs, (ban) => ban.blog)
     bansForBlog: BansUsersForBlogs[]
 
     @OneToMany(() => PostEntity, (post) => post.blogId)
