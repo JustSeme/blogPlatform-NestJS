@@ -29,9 +29,9 @@ export class CommentViewModelForBlogger {
         this.createdAt = rawComment.createdAt
 
         this.postInfo = {
-            blogId: String(rawComment.blogId),
+            blogId: String(rawComment.post),
             blogName: rawComment.blogName,
-            id: String(rawComment.postId),
+            id: String(rawComment.post),
             title: rawComment.postTitle
         }
 

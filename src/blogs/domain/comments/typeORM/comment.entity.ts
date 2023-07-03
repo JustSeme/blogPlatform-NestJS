@@ -1,5 +1,5 @@
 import {
-    Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn
+    Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn
 } from "typeorm"
 import { UserEntity } from "../../../../SuperAdmin/domain/typeORM/user.entity"
 import { CommentLikesInfo } from "./comment-likes-info.entity"
@@ -30,15 +30,13 @@ export class CommentEntity {
     commentLikes: CommentLikesInfo[]
 
     @ManyToOne(() => PostEntity, (post) => post.comment)
-    @JoinColumn({ name: 'postId' })
-    postId: PostEntity
+    post: PostEntity
 
     @Column()
     postTitle: string
 
     @ManyToOne(() => BlogEntity, (blog) => blog.blogComments)
-    @JoinColumn({ name: 'blogId' })
-    blogId: BlogEntity
+    blog: BlogEntity
 
     @Column()
     blogName: string

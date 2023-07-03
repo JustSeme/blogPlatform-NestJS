@@ -4,8 +4,8 @@ import {
 import { CommentViewModel } from "../../dto/CommentViewModel"
 import { NotFoundException } from "@nestjs/common"
 import { generateErrorsMessages } from "../../../../general/helpers"
-import { CommentsSQLRepository } from "../../../infrastructure/comments/rawSQL/comments-sql-repository"
 import { JwtService } from "../../../../general/adapters/jwt.adapter"
+import { CommentsTypeORMRepository } from "../../../infrastructure/comments/typeORM/comments-typeORM-repository"
 
 export class GetCommentByIdCommand {
     constructor(
@@ -17,7 +17,7 @@ export class GetCommentByIdCommand {
 @CommandHandler(GetCommentByIdCommand)
 export class GetCommentByIdUseCase implements ICommandHandler<GetCommentByIdCommand> {
     constructor(
-        private readonly commentsRepository: CommentsSQLRepository,
+        private readonly commentsRepository: CommentsTypeORMRepository,
         private readonly jwtService: JwtService,
     ) { }
 
