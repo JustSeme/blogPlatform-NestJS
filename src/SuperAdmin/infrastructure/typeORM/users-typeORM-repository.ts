@@ -10,12 +10,15 @@ import { UserBanInfo } from "../../domain/typeORM/user-ban-info.entity"
 import { UserPasswordRecovery } from "../../domain/typeORM/user-password-recovery.entity"
 import { UserEmailConfirmation } from "../../domain/typeORM/user-email-confirmation.entity"
 import { UserEntitiesType } from "../UsersTypes"
+import { BansUsersForBlogs } from "../../../Blogger/domain/blogs/bans-users-for-blogs.entity"
 
 @Injectable()
 export class UsersTypeORMRepository {
     constructor(
         @InjectRepository(UserEntity)
         private usersRepository: Repository<UserEntity>,
+        @InjectRepository(BansUsersForBlogs)
+        private bansUsersForBlogsRepository: Repository<BansUsersForBlogs>,
         @InjectRepository(UserBanInfo)
         private usersBanInfoRepository: Repository<UserBanInfo>,
         @InjectRepository(UserEmailConfirmation)
