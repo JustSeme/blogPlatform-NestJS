@@ -21,8 +21,7 @@ export class CommentEntity {
     isBanned: boolean
 
     @ManyToOne(() => UserEntity, (user) => user.comments)
-    @JoinColumn({ name: 'commentatorId' })
-    commentatorId: UserEntity
+    commentator: UserEntity
 
     @Column()
     commentatorLogin: string

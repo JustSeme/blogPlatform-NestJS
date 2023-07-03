@@ -43,7 +43,6 @@ export class BlogsQueryTypeORMRepository {
                 }
             })
         } catch (err) {
-            console.log(err)
             console.error(err)
             return null
         }

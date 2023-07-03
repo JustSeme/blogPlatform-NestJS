@@ -46,7 +46,7 @@ export class CreateCommentUseCase implements ICommandHandler<CreateCommentComman
         const creatingComment = new CommentEntity()
         creatingComment.content = command.content
         creatingComment.postId = post
-        creatingComment.commentatorId = commentator
+        creatingComment.commentator = commentator
         creatingComment.commentatorLogin = commentator.login
         creatingComment.createdAt = new Date()
         creatingComment.postTitle = post.title

@@ -3,7 +3,7 @@ import {
 } from '@nestjs/cqrs'
 import { ForbiddenException } from '@nestjs/common'
 import { generateErrorsMessages } from '../../../../general/helpers'
-import { CommentsSQLRepository } from '../../../infrastructure/comments/rawSQL/comments-sql-repository'
+import { CommentsTypeORMRepository } from '../../../infrastructure/comments/typeORM/comments-typeORM-repository'
 
 // Command
 export class DeleteCommentCommand {
@@ -13,15 +13,19 @@ export class DeleteCommentCommand {
 // CommandHandler
 @CommandHandler(DeleteCommentCommand)
 export class DeleteCommentUseCase implements ICommandHandler<DeleteCommentCommand> {
-    constructor(private readonly commentsRepository: CommentsSQLRepository) { }
+    constructor(private readonly commentsRepository: CommentsTypeORMRepository) { }
 
     async execute(command: DeleteCommentCommand): Promise<boolean> {
-        const commentByCommentId = await this.commentsRepository.getCommentByIdWithLikesInfo(command.commentId, command.userId)
+        const commentByCommentId = await this.commentsRepository.getCommentById(command.commentId)
 
-        if (commentByCommentId.commentatorInfo.userId !== command.userId) {
+        if (commentByCommentId.commentator.id !== command.userId) {
             throw new ForbiddenException(generateErrorsMessages('That is not your own', 'commentId'))
         }
 
-        return this.commentsRepository.deleteComment(command.commentId)
+        const isCommentLikesDeleted = await this.commentsRepository.deleteCommentLikesInfo(command.commentId)
+
+        const isCommentDeleted = await this.commentsRepository.deleteComment(command.commentId)
+
+        return isCommentLikesDeleted && isCommentDeleted
     }
 }

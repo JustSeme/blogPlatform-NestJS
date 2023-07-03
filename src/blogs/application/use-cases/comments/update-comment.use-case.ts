@@ -3,7 +3,7 @@ import {
 } from "@nestjs/cqrs"
 import { generateErrorsMessages } from "../../../../general/helpers"
 import { ForbiddenException } from '@nestjs/common'
-import { CommentsSQLRepository } from "../../../infrastructure/comments/rawSQL/comments-sql-repository"
+import { CommentsTypeORMRepository } from "../../../infrastructure/comments/typeORM/comments-typeORM-repository"
 
 // command
 export class UpdateCommentCommand {
@@ -17,14 +17,16 @@ export class UpdateCommentCommand {
 // handler
 @CommandHandler(UpdateCommentCommand)
 export class UpdateCommentUseCase implements ICommandHandler<UpdateCommentCommand> {
-    constructor(private readonly commentsRepository: CommentsSQLRepository) { }
+    constructor(private readonly commentsRepository: CommentsTypeORMRepository) { }
 
     async execute(command: UpdateCommentCommand) {
-        const commentByCommentId = await this.commentsRepository.getCommentByIdWithLikesInfo(command.commentId, command.userId)
-        if (commentByCommentId.commentatorInfo.userId !== command.userId) {
+        const commentByCommentId = await this.commentsRepository.getCommentById(command.commentId)
+        if (commentByCommentId.commentator.id !== command.userId) {
             throw new ForbiddenException(generateErrorsMessages('That is not your own', 'commentId'))
         }
 
-        await this.commentsRepository.updateComment(command.commentId, command.content)
+        commentByCommentId.content = command.content
+
+        await this.commentsRepository.dataSourceSave(commentByCommentId)
     }
 }

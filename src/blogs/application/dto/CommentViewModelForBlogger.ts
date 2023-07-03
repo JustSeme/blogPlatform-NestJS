@@ -22,7 +22,7 @@ export class CommentViewModelForBlogger {
         this.content = rawComment.content
 
         this.commentatorInfo = {
-            userId: String(rawComment.commentatorId),
+            userId: String(rawComment.commentator),
             userLogin: rawComment.commentatorLogin
         }
 
