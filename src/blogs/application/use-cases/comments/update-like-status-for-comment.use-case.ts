@@ -2,7 +2,9 @@ import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
 import { LikeType } from "../../../api/models/LikeInputModel"
-import { CommentsSQLRepository } from "../../../infrastructure/comments/rawSQL/comments-sql-repository"
+import { CommentsTypeORMRepository } from "../../../infrastructure/comments/typeORM/comments-typeORM-repository"
+import { CommentLikesInfo } from "../../../domain/comments/typeORM/comment-likes-info.entity"
+import { UsersTypeORMQueryRepository } from "../../../../SuperAdmin/infrastructure/typeORM/users-typeORM-query-repository"
 
 export class UpdateLikeStatusForCommentCommand {
     constructor(
@@ -15,27 +17,36 @@ export class UpdateLikeStatusForCommentCommand {
 @CommandHandler(UpdateLikeStatusForCommentCommand)
 export class UpdateLikeStatusForCommentUseCase implements ICommandHandler<UpdateLikeStatusForCommentCommand> {
 
-    constructor(private readonly commentsRepository: CommentsSQLRepository) { }
+    constructor(
+        private readonly commentsRepository: CommentsTypeORMRepository,
+        private readonly usersQueryRepository: UsersTypeORMQueryRepository,
+    ) { }
 
     async execute(command: UpdateLikeStatusForCommentCommand): Promise<boolean> {
-        const isCommentExists = await this.commentsRepository.isCommentExists(command.commentId)
-        if (!isCommentExists) {
+        const comment = await this.commentsRepository.getCommentById(command.commentId)
+        if (!comment) {
             return false
         }
 
-        const isLikeEntityExists = await this.commentsRepository.isLikeEntityExists(command.userId, command.commentId)
+        const commentator = await this.usersQueryRepository.findUserData(command.userId)
 
-        if (isLikeEntityExists) {
-            return this.commentsRepository.updateLikeStatus(command.userId, command.commentId, command.status)
+        const likeEntity = await this.commentsRepository.getLikeEntity(command.userId, command.commentId)
+
+        if (likeEntity) {
+            likeEntity.likeStatus = command.status
+
+            const savedEntity = await this.commentsRepository.dataSourceSave(likeEntity)
+
+            return savedEntity ? true : false
         } else {
-            if (command.status === 'Like') {
-                return this.commentsRepository.createLike(command.userId, command.commentId)
-            }
+            const likeEntity = new CommentLikesInfo()
+            likeEntity.user = commentator
+            likeEntity.comment = comment
+            likeEntity.createdAt = new Date()
+            likeEntity.likeStatus = command.status
 
-            if (command.status === 'Dislike') {
-                return this.commentsRepository.createDislike(command.userId, command.commentId)
-            }
+            const savedEntity = await this.commentsRepository.dataSourceSave(likeEntity)
+            return savedEntity ? true : false
         }
-        return true
     }
 }

@@ -208,14 +208,13 @@ describe('e2e-comments', () => {
     })
 
     it('should like created comment and display correct like info', async () => {
-        await request(httpServer)
+        const res = await request(httpServer)
             .put(`/comments/${createdCommentId}/like-status`)
             .set('Authorization', `Bearer ${recievedAccessToken}`)
             .send({
                 likeStatus: 'Like'
             })
             .expect(HttpStatus.NO_CONTENT)
-
 
         const likedCommentData = await request(httpServer)
             .get(`/comments/${createdCommentId}`)

@@ -53,18 +53,6 @@ export class CreateCommentUseCase implements ICommandHandler<CreateCommentComman
         creatingComment.blog = post.blogId as BlogEntity
         creatingComment.blogName = post.blogName
 
-
-        /* const creatingComment = new CommentDBModel(
-            command.content,
-            command.postId,
-            command.commentatorId,
-            commentator.login,
-            false,
-            post.title,
-            post.blogId,
-            post.blogName
-        ) */
-
         const createdComment = await this.commentsRepository.dataSourceSave(creatingComment)
         return new CommentViewModel({
             ...createdComment as CommentEntity,

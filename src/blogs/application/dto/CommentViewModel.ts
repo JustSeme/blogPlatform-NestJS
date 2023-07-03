@@ -19,7 +19,7 @@ export class CommentViewModel {
         this.content = rawComment.content
 
         this.commentatorInfo = {
-            userId: String(rawComment.commentator),
+            userId: String(rawComment.commentator.id),
             userLogin: rawComment.commentatorLogin
         }
         this.createdAt = rawComment.createdAt

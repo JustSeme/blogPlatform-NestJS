@@ -143,6 +143,7 @@ import { BlogsQueryTypeORMRepository } from "./Blogger/infrastructure/blogs/type
 import { BlogsTypeORMRepository } from "./Blogger/infrastructure/blogs/typeORM/blogs-typeORM-repository"
 import { CommentsTypeORMRepository } from "./blogs/infrastructure/comments/typeORM/comments-typeORM-repository"
 import { PostsQueryTypeORMRepository } from "./Blogger/infrastructure/posts/typeORM/posts-query-typeORM-repository"
+import { CommentsQueryTypeORMRepository } from "./blogs/infrastructure/comments/typeORM/comments-query-typeORM-repository"
 
 const authUseCases = [
   LogoutUseCase,
@@ -251,6 +252,7 @@ const typeORMRepositories = [
   BlogsTypeORMRepository,
   BlogsQueryTypeORMRepository,
   CommentsTypeORMRepository,
+  CommentsQueryTypeORMRepository,
   PostsQueryTypeORMRepository,
 ]
 

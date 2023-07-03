@@ -8,9 +8,6 @@ import {
 } from "typeorm"
 import { CommentEntitiesType } from "../CommentsTypes"
 import { CommentLikesInfo } from "../../../domain/comments/typeORM/comment-likes-info.entity"
-import {
-    CommentViewModel, LikesInfoViewType
-} from "../../../application/dto/CommentViewModel"
 
 @Injectable()
 export class CommentsTypeORMRepository {
@@ -67,29 +64,25 @@ export class CommentsTypeORMRepository {
         }
     }
 
-    async getCommentByIdWithLikesInfo(commentId: string, userId: string): Promise<CommentViewModel> {
+    async isCommentExists(commentId: string): Promise<boolean> {
         try {
-            const commentById = await this.commentsRepository
-                .createQueryBuilder('ce')
-                .where('ce.id = :commentId', { commentId })
-                .andWhere('ce.isBanned = false')
-                .loadRelationCountAndMap('ce.likesCount', 'ce.commentLikes', 'like', (like) => like.where({ 'likeStatus': 'Like' }))
-                .loadRelationCountAndMap('ce.dislikesCount', 'ce.commentLikes', 'dislike', (dislike) => dislike.where({ 'likeStatus': 'Dislike' }))
-                .getOne()
+            const commentById = await this.getCommentById(commentId)
+            return commentById ? true : false
+        } catch (err) {
+            console.error(err)
+            return false
+        }
+    }
 
-            const myStatus = await this.commentLikesInfoRepository
-                .createQueryBuilder('cli')
-                .select('cli.likeStatus')
-                .where('cli.userId = :userId', { userId })
-                .andWhere('cli.commentId = :commentId', { commentId })
-                .getOne()
-
-            const commentWithLikesInfo = {
-                ...commentById,
-                myStatus: myStatus.likeStatus
-            }
-
-            return new CommentViewModel(commentWithLikesInfo as CommentEntity & LikesInfoViewType)
+    async getLikeEntity(userId: string, commentId: string): Promise<CommentLikesInfo> {
+        try {
+            const likeEntity = await this.commentLikesInfoRepository.findOne({
+                where: {
+                    user: { id: userId },
+                    comment: { id: commentId }
+                }
+            })
+            return likeEntity
         } catch (err) {
             console.error(err)
             return null
