@@ -4,12 +4,12 @@ import { DataSource } from "typeorm"
 import {
     PostDBModel,
     PostDTO
-} from "../../domain/posts/PostsTypes"
+} from "../../../domain/posts/PostsTypes"
 import {
     ExtendedLikesInfoViewType, PostsViewModel
-} from "../../../blogs/application/dto/PostViewModel"
-import { PostInputModel } from "../../api/models/PostInputModel"
-import { PostEntity } from "../../domain/posts/typeORM/post.entity"
+} from "../../../../blogs/application/dto/PostViewModel"
+import { PostInputModel } from "../../../api/models/PostInputModel"
+import { PostEntity } from "../../../domain/posts/typeORM/post.entity"
 
 @Injectable()
 export class PostsSQLRepository {

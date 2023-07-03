@@ -22,7 +22,7 @@ export class BansUsersForBlogs {
 
     @ManyToOne(() => UserEntity, (user) => user.bansForUser)
     @JoinColumn({ name: 'userId' })
-    user: UserEntity
+    user: UserEntity | string
 
     @ManyToOne(() => BlogEntity, (blog) => blog.bansForBlog)
     @JoinColumn({ name: 'blogId' })

@@ -2,8 +2,8 @@ import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
 import { DevicesSQLRepository } from "../../../security/infrastructure/devices-sql-repository"
-import { PostsSQLRepository } from "../../../Blogger/infrastructure/posts/posts-sql-repository"
-import { CommentsSQLRepository } from "../../../blogs/infrastructure/comments/comments-sql-repository"
+import { PostsSQLRepository } from "../../../Blogger/infrastructure/posts/rawSQL/posts-sql-repository"
+import { CommentsSQLRepository } from "../../../blogs/infrastructure/comments/rawSQL/comments-sql-repository"
 import { UsersTypeORMRepository } from "../../infrastructure/typeORM/users-typeORM-repository"
 
 export class BanUserCommand {

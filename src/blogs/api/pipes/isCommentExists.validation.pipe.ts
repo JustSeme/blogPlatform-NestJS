@@ -2,7 +2,7 @@ import {
     Injectable, NotFoundException, PipeTransform
 } from "@nestjs/common"
 import { generateErrorsMessages } from "../../../general/helpers"
-import { CommentsSQLRepository } from "../../infrastructure/comments/comments-sql-repository"
+import { CommentsSQLRepository } from "../../infrastructure/comments/rawSQL/comments-sql-repository"
 
 @Injectable()
 export class IsCommentExistsPipe implements PipeTransform {

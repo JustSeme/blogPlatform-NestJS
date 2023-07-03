@@ -3,7 +3,7 @@ import {
 } from "@nestjs/cqrs"
 import { BanBlogInputModel } from "../../api/models/BanBlogInputModel"
 import { BlogsSQLRepository } from "../../../Blogger/infrastructure/blogs/rawSQL/blogs-sql-repository"
-import { PostsSQLRepository } from "../../../Blogger/infrastructure/posts/posts-sql-repository"
+import { PostsSQLRepository } from "../../../Blogger/infrastructure/posts/rawSQL/posts-sql-repository"
 
 export class BanBlogCommand {
     constructor(

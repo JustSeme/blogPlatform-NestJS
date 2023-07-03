@@ -3,7 +3,7 @@ import {
 } from "@nestjs/cqrs"
 import { ReadCommentsQueryParams } from "../../../api/models/ReadCommentsQuery"
 import { CommentsWithQueryOutputModel } from "../../dto/CommentViewModel"
-import { CommentsQuerySQLRepository } from "../../../infrastructure/comments/comments-query-sql-repository"
+import { CommentsQuerySQLRepository } from "../../../infrastructure/comments/rawSQL/comments-query-sql-repository"
 import { JwtService } from "../../../../general/adapters/jwt.adapter"
 
 export class GetCommentsForPostCommand {

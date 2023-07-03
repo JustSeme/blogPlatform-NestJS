@@ -25,9 +25,23 @@ export class BlogsQueryTypeORMRepository {
         }
     }
 
-    async findBanUserForBlog(blogId: string): Promise<BansUsersForBlogs> {
+    async findBanUserForBlogByBlogId(blogId: string): Promise<BansUsersForBlogs> {
         try {
             return this.bansUsersForBlogsRepository.findOneOrFail({ where: { blogId: blogId } })
+        } catch (err) {
+            console.error(err)
+            return null
+        }
+    }
+
+    async findBanUserForBlogByUserIdAndBlogId(userId: string, blogId: string): Promise<BansUsersForBlogs> {
+        try {
+            return this.bansUsersForBlogsRepository.findOneOrFail({
+                where: {
+                    user: userId,
+                    blogId: blogId
+                }
+            })
         } catch (err) {
             console.error(err)
             return null

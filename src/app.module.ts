@@ -31,9 +31,9 @@ import { EmailManager } from "./general/managers/emailManager"
 import { BcryptAdapter } from "./general/adapters/bcrypt.adapter"
 import { EmailAdapter } from "./general/adapters/email.adapter"
 import { BlogsQueryRepository } from "./Blogger/infrastructure/blogs/mongoose/blogs-query-repository"
-import { CommentsQueryRepository } from "./blogs/infrastructure/comments/comments-query-repository"
-import { PostsRepository } from "./Blogger/infrastructure/posts/posts-db-repository"
-import { CommentsRepository } from "./blogs/infrastructure/comments/comments-db-repository"
+import { CommentsQueryRepository } from "./blogs/infrastructure/comments/mongoose/comments-query-repository"
+import { PostsRepository } from "./Blogger/infrastructure/posts/mongoose/posts-db-repository"
+import { CommentsRepository } from "./blogs/infrastructure/comments/mongoose/comments-db-repository"
 import { DeviceRepository } from "./security/infrastructure/device-db-repository"
 import { IsBlogByIdExist } from "./general/decorators/isBlogExists.validation.decorator"
 import { IsEmailAlreadyInUse } from "./auth/api/decorators/IsEmailAlreadyInUse"
@@ -126,21 +126,23 @@ import { BlogsSQLRepository } from "./Blogger/infrastructure/blogs/rawSQL/blogs-
 import { BlogsQuerySQLRepository } from "./Blogger/infrastructure/blogs/rawSQL/blogs-query-sql-repository"
 import { BansUsersForBlogs } from "./Blogger/domain/blogs/bans-users-for-blogs.entity"
 import { PostEntity } from "./Blogger/domain/posts/typeORM/post.entity"
-import { PostsSQLRepository } from "./Blogger/infrastructure/posts/posts-sql-repository"
-import { PostsQuerySQLRepository } from "./Blogger/infrastructure/posts/posts-query-sql-repository"
+import { PostsSQLRepository } from "./Blogger/infrastructure/posts/rawSQL/posts-sql-repository"
+import { PostsQuerySQLRepository } from "./Blogger/infrastructure/posts/rawSQL/posts-query-sql-repository"
 import { UserBanInfo } from "./SuperAdmin/domain/typeORM/user-ban-info.entity"
 import { UserEmailConfirmation } from "./SuperAdmin/domain/typeORM/user-email-confirmation.entity"
 import { UserPasswordRecovery } from "./SuperAdmin/domain/typeORM/user-password-recovery.entity"
 import { CommentEntity } from "./blogs/domain/comments/typeORM/comment.entity"
 import { CommentLikesInfo } from "./blogs/domain/comments/typeORM/comment-likes-info.entity"
-import { CommentsSQLRepository } from "./blogs/infrastructure/comments/comments-sql-repository"
-import { CommentsQuerySQLRepository } from "./blogs/infrastructure/comments/comments-query-sql-repository"
+import { CommentsSQLRepository } from "./blogs/infrastructure/comments/rawSQL/comments-sql-repository"
+import { CommentsQuerySQLRepository } from "./blogs/infrastructure/comments/rawSQL/comments-query-sql-repository"
 import { PostLikesInfo } from "./Blogger/domain/posts/typeORM/post-likes-info"
 import { UsersTypeORMRepository } from "./SuperAdmin/infrastructure/typeORM/users-typeORM-repository"
 import { AuthTypeORMRepository } from "./auth/infrastructure/auth-typeORM-repository"
 import { UsersTypeORMQueryRepository } from "./SuperAdmin/infrastructure/typeORM/users-typeORM-query-repository"
 import { BlogsQueryTypeORMRepository } from "./Blogger/infrastructure/blogs/typeORM/blogs-query-typeORM-repository"
 import { BlogsTypeORMRepository } from "./Blogger/infrastructure/blogs/typeORM/blogs-typeORM-repository"
+import { CommentsTypeORMRepository } from "./blogs/infrastructure/comments/typeORM/comments-typeORM-repository"
+import { PostsQueryTypeORMRepository } from "./Blogger/infrastructure/posts/typeORM/posts-query-typeORM-repository"
 
 const authUseCases = [
   LogoutUseCase,
@@ -248,6 +250,8 @@ const typeORMRepositories = [
   AuthTypeORMRepository,
   BlogsTypeORMRepository,
   BlogsQueryTypeORMRepository,
+  CommentsTypeORMRepository,
+  PostsQueryTypeORMRepository,
 ]
 
 const decorators = [

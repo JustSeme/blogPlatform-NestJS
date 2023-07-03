@@ -1,14 +1,14 @@
-import { PostInputModel } from '../../api/models/PostInputModel'
+import { PostInputModel } from '../../../api/models/PostInputModel'
 import {
     Injectable, NotImplementedException
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose/dist'
-import { Post } from '../../domain/posts/mongoose/PostsSchema'
+import { Post } from '../../../domain/posts/mongoose/PostsSchema'
 import {
     ExtendedLikeObjectType, PostDTO, PostModelType
-} from '../../domain/posts/PostsTypes'
-import { HydratedPost } from './PostsTypes'
-import { ReadPostsQueryParams } from '../../../blogs/api/models/ReadPostsQuery'
+} from '../../../domain/posts/PostsTypes'
+import { HydratedPost } from '../PostsTypes'
+import { ReadPostsQueryParams } from '../../../../blogs/api/models/ReadPostsQuery'
 
 @Injectable()
 export class PostsRepository {

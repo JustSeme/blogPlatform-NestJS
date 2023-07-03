@@ -1,15 +1,15 @@
 import { Injectable } from "@nestjs/common"
 import { InjectDataSource } from "@nestjs/typeorm"
 import { DataSource } from "typeorm"
-import { ReadCommentsQueryParams } from "../../api/models/ReadCommentsQuery"
-import { CommentEntity } from "../../domain/comments/typeORM/comment.entity"
+import { ReadCommentsQueryParams } from "../../../api/models/ReadCommentsQuery"
+import { CommentEntity } from "../../../domain/comments/typeORM/comment.entity"
 import {
     CommentViewModel, CommentsWithQueryOutputModel, LikesInfoViewType
-} from "../../application/dto/CommentViewModel"
-import { LikeType } from "../../api/models/LikeInputModel"
+} from "../../../application/dto/CommentViewModel"
+import { LikeType } from "../../../api/models/LikeInputModel"
 import {
     CommentViewModelForBlogger, CommentsForBloggerWithQueryOutputModel
-} from "../../application/dto/CommentViewModelForBlogger"
+} from "../../../application/dto/CommentViewModelForBlogger"
 
 @Injectable()
 export class CommentsQuerySQLRepository {

@@ -1,11 +1,11 @@
 import { Injectable } from "@nestjs/common"
 import { InjectDataSource } from "@nestjs/typeorm"
 import { DataSource } from "typeorm"
-import { CommentDBModel } from "../../domain/comments/CommentTypes"
+import { CommentDBModel } from "../../../domain/comments/CommentTypes"
 import {
     CommentViewModel, LikesInfoViewType
-} from "../../application/dto/CommentViewModel"
-import { CommentEntity } from "../../domain/comments/typeORM/comment.entity"
+} from "../../../application/dto/CommentViewModel"
+import { CommentEntity } from "../../../domain/comments/typeORM/comment.entity"
 
 @Injectable()
 export class CommentsSQLRepository {

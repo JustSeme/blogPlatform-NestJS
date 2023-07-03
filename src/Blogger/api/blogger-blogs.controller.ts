@@ -32,7 +32,7 @@ import { DeletePostForBloggerCommand } from "../application/use-cases/posts/dele
 import { GetBlogsForBloggerCommand } from "../application/use-cases/blogs/get-blogs-for-blogger.use.case"
 import { ReadCommentsQueryParams } from "../../blogs/api/models/ReadCommentsQuery"
 import { CommentsForBloggerWithQueryOutputModel } from "../../blogs/application/dto/CommentViewModelForBlogger"
-import { CommentsQuerySQLRepository } from "../../blogs/infrastructure/comments/comments-query-sql-repository"
+import { CommentsQuerySQLRepository } from "../../blogs/infrastructure/comments/rawSQL/comments-query-sql-repository"
 
 @UseGuards(JwtAuthGuard)
 @Controller('blogger/blogs')

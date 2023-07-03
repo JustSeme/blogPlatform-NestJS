@@ -2,7 +2,7 @@ import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
 import { PostInputModel } from "../../../../Blogger/api/models/PostInputModel"
-import { PostsRepository } from "../../../../Blogger/infrastructure/posts/posts-db-repository"
+import { PostsRepository } from "../../../../Blogger/infrastructure/posts/mongoose/posts-db-repository"
 
 // Define the Command
 export class UpdatePostCommand {

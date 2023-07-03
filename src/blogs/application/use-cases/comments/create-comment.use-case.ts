@@ -1,14 +1,15 @@
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
-import { CommentDBModel } from "../../../domain/comments/CommentTypes"
 import { CommentViewModel } from "../../dto/CommentViewModel"
 import { ForbiddenException } from "@nestjs/common"
 import { generateErrorsMessages } from "../../../../general/helpers"
-import { CommentsSQLRepository } from "../../../infrastructure/comments/comments-sql-repository"
-import { PostsSQLRepository } from "../../../../Blogger/infrastructure/posts/posts-sql-repository"
-import { UsersSQLRepository } from "../../../../SuperAdmin/infrastructure/rawSQL/users-sql-repository"
-import { BansUsersForBlogs } from "../../../../Blogger/domain/blogs/bans-users-for-blogs.entity"
+import { BlogsQueryTypeORMRepository } from "../../../../Blogger/infrastructure/blogs/typeORM/blogs-query-typeORM-repository"
+import { CommentEntity } from "../../../domain/comments/typeORM/comment.entity"
+import { UsersTypeORMQueryRepository } from "../../../../SuperAdmin/infrastructure/typeORM/users-typeORM-query-repository"
+import { PostsQueryTypeORMRepository } from "../../../../Blogger/infrastructure/posts/typeORM/posts-query-typeORM-repository"
+import { CommentsTypeORMRepository } from "../../../infrastructure/comments/typeORM/comments-typeORM-repository"
+import { BlogEntity } from "../../../../Blogger/domain/blogs/blog.entity"
 
 // Command
 export class CreateCommentCommand {
@@ -22,29 +23,38 @@ export class CreateCommentCommand {
 @CommandHandler(CreateCommentCommand)
 export class CreateCommentUseCase implements ICommandHandler<CreateCommentCommand> {
     constructor(
-        private readonly commentsRepository: CommentsSQLRepository,
-        private readonly usersRepository: UsersSQLRepository,
-        private readonly postsRepository: PostsSQLRepository,
+        private readonly commentsRepository: CommentsTypeORMRepository,
+        private readonly usersQueryRepository: UsersTypeORMQueryRepository,
+        private readonly blogsQueryRepository: BlogsQueryTypeORMRepository,
+        private readonly postsQueryRepository: PostsQueryTypeORMRepository,
     ) { }
 
     async execute(command: CreateCommentCommand): Promise<CommentViewModel> {
-        const commentator = await this.usersRepository.findUserById(command.commentatorId)
-        const bansUserForBlogs = await this.usersRepository.findUserBlogBansInfo(command.commentatorId)
-        const post = await this.postsRepository.getPostById(command.postId)
+        const commentator = await this.usersQueryRepository.findUserData(command.commentatorId)
+        const post = await this.postsQueryRepository.getPostById(command.postId)
+
+        const banUserForBlog = await this.blogsQueryRepository.findBanUserForBlogByUserIdAndBlogId(command.commentatorId, post.blogId as string)
 
         if (!commentator) {
             return null
         }
 
-        if (bansUserForBlogs.length) {
-            bansUserForBlogs.some((ban: BansUsersForBlogs) => {
-                if (String(ban.blogId) === post.blogId) {
-                    throw new ForbiddenException(generateErrorsMessages(`You are banned for this blog by reason: ${ban.banReason}`, 'commentator'))
-                }
-            })
+        if (banUserForBlog) {
+            throw new ForbiddenException(generateErrorsMessages(`You are banned for this blog by reason: ${banUserForBlog.banReason}`, 'commentator'))
         }
 
-        const creatingComment = new CommentDBModel(
+        const creatingComment = new CommentEntity()
+        creatingComment.content = command.content
+        creatingComment.postId = post
+        creatingComment.commentatorId = commentator
+        creatingComment.commentatorLogin = commentator.login
+        creatingComment.createdAt = new Date()
+        creatingComment.postTitle = post.title
+        creatingComment.blogId = post.blogId as BlogEntity
+        creatingComment.blogName = post.blogName
+
+
+        /* const creatingComment = new CommentDBModel(
             command.content,
             command.postId,
             command.commentatorId,
@@ -53,8 +63,14 @@ export class CreateCommentUseCase implements ICommandHandler<CreateCommentComman
             post.title,
             post.blogId,
             post.blogName
-        )
+        ) */
 
-        return this.commentsRepository.createComment(creatingComment)
+        const createdComment = await this.commentsRepository.dataSourceSave(creatingComment)
+        return new CommentViewModel({
+            ...createdComment as CommentEntity,
+            likesCount: 0,
+            dislikesCount: 0,
+            myStatus: 'None',
+        })
     }
 }

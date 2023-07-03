@@ -2,7 +2,7 @@ import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
 import { LikeType } from "../../../api/models/LikeInputModel"
-import { CommentsSQLRepository } from "../../../infrastructure/comments/comments-sql-repository"
+import { CommentsSQLRepository } from "../../../infrastructure/comments/rawSQL/comments-sql-repository"
 
 export class UpdateLikeStatusForCommentCommand {
     constructor(

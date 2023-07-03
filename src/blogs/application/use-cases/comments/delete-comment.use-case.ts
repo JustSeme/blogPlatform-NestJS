@@ -3,7 +3,7 @@ import {
 } from '@nestjs/cqrs'
 import { ForbiddenException } from '@nestjs/common'
 import { generateErrorsMessages } from '../../../../general/helpers'
-import { CommentsSQLRepository } from '../../../infrastructure/comments/comments-sql-repository'
+import { CommentsSQLRepository } from '../../../infrastructure/comments/rawSQL/comments-sql-repository'
 
 // Command
 export class DeleteCommentCommand {

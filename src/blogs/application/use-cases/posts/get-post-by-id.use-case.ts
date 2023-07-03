@@ -3,7 +3,7 @@ import {
 } from "@nestjs/cqrs"
 import { PostsViewModel } from "../../dto/PostViewModel"
 import { NotFoundException } from '@nestjs/common'
-import { PostsSQLRepository } from "../../../../Blogger/infrastructure/posts/posts-sql-repository"
+import { PostsSQLRepository } from "../../../../Blogger/infrastructure/posts/rawSQL/posts-sql-repository"
 import { JwtService } from "../../../../general/adapters/jwt.adapter"
 
 export class GetPostByIdCommand {

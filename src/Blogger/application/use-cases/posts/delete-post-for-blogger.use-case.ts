@@ -2,7 +2,7 @@ import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
 import { ForbiddenException } from "@nestjs/common"
-import { PostsSQLRepository } from "../../../infrastructure/posts/posts-sql-repository"
+import { PostsSQLRepository } from "../../../infrastructure/posts/rawSQL/posts-sql-repository"
 import { BlogsQueryTypeORMRepository } from "../../../infrastructure/blogs/typeORM/blogs-query-typeORM-repository"
 
 export class DeletePostForBloggerCommand {

@@ -3,7 +3,7 @@ import {
 } from "@nestjs/cqrs"
 import { ReadPostsQueryParams } from "../../../api/models/ReadPostsQuery"
 import { PostsWithQueryOutputModel } from "../../../../Blogger/domain/posts/PostsTypes"
-import { PostsQuerySQLRepository } from "../../../../Blogger/infrastructure/posts/posts-query-sql-repository"
+import { PostsQuerySQLRepository } from "../../../../Blogger/infrastructure/posts/rawSQL/posts-query-sql-repository"
 import { JwtService } from "../../../../general/adapters/jwt.adapter"
 
 export class GetPostsCommand {

@@ -1,11 +1,11 @@
 import { Injectable } from "@nestjs/common"
-import { ReadPostsQueryParams } from "../../../blogs/api/models/ReadPostsQuery"
+import { ReadPostsQueryParams } from "../../../../blogs/api/models/ReadPostsQuery"
 import { InjectDataSource } from "@nestjs/typeorm"
 import { DataSource } from "typeorm"
-import { PostEntity } from "../../domain/posts/typeORM/post.entity"
+import { PostEntity } from "../../../domain/posts/typeORM/post.entity"
 import {
     ExtendedLikesInfoViewType, PostsViewModel
-} from "../../../blogs/application/dto/PostViewModel"
+} from "../../../../blogs/application/dto/PostViewModel"
 
 
 @Injectable()

@@ -259,7 +259,7 @@ export class UsersSQLRepository {
         }
     }
 
-    async findUserBlogBansInfo(userId: string): Promise<BansUsersForBlogs[]> {
+    async findUserBlogsBanInfo(userId: string): Promise<BansUsersForBlogs[]> {
         const queryString = `
             SELECT *
                 FROM public.bans_users_for_blogs

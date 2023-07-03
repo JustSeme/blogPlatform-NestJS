@@ -4,7 +4,7 @@ import {
 import { CommentViewModel } from "../../dto/CommentViewModel"
 import { NotFoundException } from "@nestjs/common"
 import { generateErrorsMessages } from "../../../../general/helpers"
-import { CommentsSQLRepository } from "../../../infrastructure/comments/comments-sql-repository"
+import { CommentsSQLRepository } from "../../../infrastructure/comments/rawSQL/comments-sql-repository"
 import { JwtService } from "../../../../general/adapters/jwt.adapter"
 
 export class GetCommentByIdCommand {

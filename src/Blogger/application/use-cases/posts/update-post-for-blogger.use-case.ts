@@ -4,7 +4,7 @@ import {
 import { ForbiddenException } from '@nestjs/common'
 import { PostInputModelWithoutBlogId } from "../../../api/models/PostInputModelWithoutBlogId"
 import { PostInputModel } from "../../../api/models/PostInputModel"
-import { PostsSQLRepository } from "../../../infrastructure/posts/posts-sql-repository"
+import { PostsSQLRepository } from "../../../infrastructure/posts/rawSQL/posts-sql-repository"
 import { BlogsQueryTypeORMRepository } from "../../../infrastructure/blogs/typeORM/blogs-query-typeORM-repository"
 
 // Command
