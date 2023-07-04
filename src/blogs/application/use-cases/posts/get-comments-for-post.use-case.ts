@@ -3,8 +3,8 @@ import {
 } from "@nestjs/cqrs"
 import { ReadCommentsQueryParams } from "../../../api/models/ReadCommentsQuery"
 import { CommentsWithQueryOutputModel } from "../../dto/CommentViewModel"
-import { CommentsQuerySQLRepository } from "../../../infrastructure/comments/rawSQL/comments-query-sql-repository"
 import { JwtService } from "../../../../general/adapters/jwt.adapter"
+import { CommentsQueryTypeORMRepository } from "../../../infrastructure/comments/typeORM/comments-query-typeORM-repository"
 
 export class GetCommentsForPostCommand {
     constructor(
@@ -17,7 +17,7 @@ export class GetCommentsForPostCommand {
 @CommandHandler(GetCommentsForPostCommand)
 export class GetCommentsForPostUseCase implements ICommandHandler<GetCommentsForPostCommand> {
     constructor(
-        private commentsQueryRepository: CommentsQuerySQLRepository,
+        private commentsQueryRepository: CommentsQueryTypeORMRepository,
         private jwtService: JwtService,
     ) { }
 

@@ -15,7 +15,7 @@ import {
 export class CommentsQuerySQLRepository {
     constructor(@InjectDataSource() private dataSource: DataSource) { }
 
-    async getCommentsForPost(queryParams: ReadCommentsQueryParams, postId: string, userId: string): Promise<CommentsWithQueryOutputModel> {
+    /* async getCommentsForPost(queryParams: ReadCommentsQueryParams, postId: string, userId: string): Promise<CommentsWithQueryOutputModel> {
         const {
             sortDirection = 'desc', sortBy = 'createdAt', pageNumber = 1, pageSize = 10
         } = queryParams
@@ -65,7 +65,7 @@ export class CommentsQuerySQLRepository {
             totalCount: +totalCount,
             items: displayedComments
         }
-    }
+    } */
 
     async getComments(queryParams: ReadCommentsQueryParams): Promise<CommentsWithQueryOutputModel> {
         const {
