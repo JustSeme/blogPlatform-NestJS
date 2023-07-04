@@ -2,8 +2,8 @@ import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
 import { PostsSQLRepository } from "../../../Blogger/infrastructure/posts/rawSQL/posts-sql-repository"
-import { CommentsSQLRepository } from "../../../blogs/infrastructure/comments/rawSQL/comments-sql-repository"
 import { UsersTypeORMRepository } from "../../infrastructure/typeORM/users-typeORM-repository"
+import { CommentsTypeORMRepository } from "../../../blogs/infrastructure/comments/typeORM/comments-typeORM-repository"
 
 export class UnbanUserCommand {
     constructor(
@@ -16,7 +16,7 @@ export class UnbanUserUseCase implements ICommandHandler<UnbanUserCommand> {
     constructor(
         private usersRepository: UsersTypeORMRepository,
         private postsRepository: PostsSQLRepository,
-        private commentsRepository: CommentsSQLRepository,
+        private commentsRepository: CommentsTypeORMRepository,
     ) { }
 
     async execute(command: UnbanUserCommand) {
@@ -33,8 +33,8 @@ export class UnbanUserUseCase implements ICommandHandler<UnbanUserCommand> {
         const isPostsUnhided = await this.postsRepository.unhideAllPostsForCurrentUser(userId)
         const isPostsLikesUnhided = await this.postsRepository.unHideAllLikeEntitiesForPostsByUserId(userId)
 
-        const isCommentsUnhided = await this.commentsRepository.unHideAllCommentsForCurrentUser(userId)
-        const isCommentLikesUnhided = await this.commentsRepository.unHideAllLikeEntitiesForCommentsByUserId(userId)
+        const isCommentsUnhided = await this.commentsRepository.unhideAllCommentsForCurrentUser(userId)
+        const isCommentLikesUnhided = await this.commentsRepository.unhideAllLikeEntitiesForCommentsByUserId(userId)
 
         const isAllEntitiesForUserHided = isPostsUnhided && isPostsLikesUnhided && isCommentsUnhided && isCommentLikesUnhided
 

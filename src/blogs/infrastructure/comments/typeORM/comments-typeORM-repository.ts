@@ -88,4 +88,42 @@ export class CommentsTypeORMRepository {
             return null
         }
     }
+
+    async hideAllCommentsForCurrentUser(userId: string): Promise<boolean> {
+        try {
+            await this.commentsRepository.update({ commentator: { id: userId } }, { isBanned: true })
+            return true
+        } catch (err) {
+            console.error(err)
+            return false
+        }
+    }
+
+    async unhideAllCommentsForCurrentUser(userId: string): Promise<boolean> {
+        try {
+            await this.commentsRepository.update({ commentator: { id: userId } }, { isBanned: false })
+            return true
+        } catch (err) {
+            console.error(err)
+            return false
+        }
+    }
+
+    async hideAllLikeEntitiesForCommentsByUserId(userId: string): Promise<boolean> {
+        try {
+            await this.commentLikesInfoRepository.update({ user: { id: userId } }, { isBanned: true })
+            return true
+        } catch (err) {
+            return false
+        }
+    }
+
+    async unhideAllLikeEntitiesForCommentsByUserId(userId: string): Promise<boolean> {
+        try {
+            await this.commentLikesInfoRepository.update({ user: { id: userId } }, { isBanned: false })
+            return true
+        } catch (err) {
+            return false
+        }
+    }
 }

@@ -176,7 +176,7 @@ export class CommentsSQLRepository {
         }
     }
 
-    async updateLikeStatus(userId: string, commentId: string, likeStatus: string): Promise<boolean> {
+    /* async updateLikeStatus(userId: string, commentId: string, likeStatus: string): Promise<boolean> {
         const queryString = `
         UPDATE public.comment_likes_info
             SET "likeStatus"=$3
@@ -293,5 +293,5 @@ export class CommentsSQLRepository {
             console.error(err)
             return false
         }
-    }
+    } */
 }
