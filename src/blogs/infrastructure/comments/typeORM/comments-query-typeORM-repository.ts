@@ -24,6 +24,7 @@ export class CommentsQueryTypeORMRepository {
                 .andWhere('ce.isBanned = false')
                 .loadRelationCountAndMap('ce.likesCount', 'ce.commentLikes', 'like', (like) => like.where({ 'likeStatus': 'Like' }))
                 .loadRelationCountAndMap('ce.dislikesCount', 'ce.commentLikes', 'dislike', (dislike) => dislike.where({ 'likeStatus': 'Dislike' }))
+                .leftJoinAndSelect('ce.commentator', 'commentator')
                 .getOne()
 
             const myStatus = await this.commentLikesInfoRepository
@@ -35,7 +36,7 @@ export class CommentsQueryTypeORMRepository {
 
             const commentWithLikesInfo = {
                 ...commentById,
-                myStatus: myStatus.likeStatus
+                myStatus: myStatus ? myStatus.likeStatus : 'None'
             }
 
             return new CommentViewModel(commentWithLikesInfo as CommentEntity & LikesInfoViewType)
