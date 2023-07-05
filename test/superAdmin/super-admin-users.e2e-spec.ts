@@ -175,9 +175,7 @@ describe('super-admin-users', () => {
         const response = await request(httpServer)
             .get(`/sa/users?sortDirection=ASC&sortBy=login`)
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
-        //.expect(HttpStatus.OK)
-        console.log(response.body);
-
+            .expect(HttpStatus.OK)
 
         expect(response.body.totalCount === 5).toBe(true)
 

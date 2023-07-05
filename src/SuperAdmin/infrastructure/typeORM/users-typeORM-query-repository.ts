@@ -7,6 +7,8 @@ import {
 } from "../../application/dto/UsersViewModel"
 import { UserBanInfo } from "../../domain/typeORM/user-ban-info.entity"
 import { ReadUsersQuery } from "../../api/models/ReadUsersQuery"
+import { ReadBannedUsersQueryParams } from "../../../Blogger/api/models/ReadBannedUsersQueryParams"
+import { BannedUsersOutputModel } from "../../../Blogger/application/dto/BannedUserViewModel"
 
 @Injectable()
 export class UsersTypeORMQueryRepository {
@@ -75,6 +77,60 @@ export class UsersTypeORMQueryRepository {
             ...user,
             ...user.banInfo,
             id: user.id
+        }))
+
+        return {
+            pagesCount: pagesCount,
+            page: +pageNumber,
+            pageSize: +pageSize,
+            totalCount: +totalCount,
+            items: displayedUsers
+        }
+    }
+
+    async findBannedUsersByBlogId(queryParams: ReadBannedUsersQueryParams, blogId: string): Promise<BannedUsersOutputModel> {
+        const {
+            sortDirection = 'DESC', sortBy = 'createdAt', pageNumber = 1, pageSize = 10, searchLoginTerm = ''
+        } = queryParams
+
+        const { loginTerm } = this.prepareTermsForUser('', searchLoginTerm)
+
+        const totalCountBuilder = this.usersRepository
+            .createQueryBuilder('ue')
+            .leftJoin('ue.bansForUser', 'bufb')
+            .where('(lower(ue.login) LIKE :loginTerm)', { loginTerm })
+            .andWhere({ 'bufb.blog': { id: blogId } })
+
+        const totalCount = await totalCountBuilder
+            .getCount()
+
+        const pagesCount = Math.ceil(totalCount / +pageSize)
+        const skipCount = (+pageNumber - 1) * +pageSize
+
+        let resultedUsers
+
+        try {
+            const builder = await this.usersRepository
+                .createQueryBuilder('ue')
+                .leftJoin('ue.bansForUser', 'bufb')
+                .leftJoinAndSelect('ue.banInfo', 'ubi')
+                .where('(lower(ue.login) LIKE :loginTerm)', { loginTerm })
+                .andWhere({ 'bufb.blog': { id: blogId } })
+                .orderBy(`ue.${sortBy}`, sortDirection)
+                .limit(pageSize)
+                .offset(skipCount)
+
+            resultedUsers = await builder.getMany()
+        } catch (err) {
+            console.error(err)
+            throw new Error('Something wrong with database...')
+        }
+
+
+        const displayedUsers = resultedUsers.map((user) => ({
+            id: user.id,
+            login: user.login,
+            banInfo: user.banInfo
         }))
 
         return {
