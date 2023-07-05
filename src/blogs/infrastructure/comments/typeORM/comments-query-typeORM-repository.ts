@@ -7,7 +7,6 @@ import {
 } from "../../../application/dto/CommentViewModel"
 import { CommentLikesInfo } from "../../../domain/comments/typeORM/comment-likes-info.entity"
 import { ReadCommentsQueryParams } from "../../../api/models/ReadCommentsQuery"
-import { writeInFile } from "../../../../general/helpers"
 
 @Injectable()
 export class CommentsQueryTypeORMRepository {
@@ -20,7 +19,7 @@ export class CommentsQueryTypeORMRepository {
 
     async getCommentsForPost(queryParams: ReadCommentsQueryParams, postId: string, userId: string): Promise<CommentsWithQueryOutputModel> {
         const {
-            sortDirection = 'desc', sortBy = 'createdAt', pageNumber = 1, pageSize = 10
+            sortDirection = 'DESC', sortBy = 'createdAt', pageNumber = 1, pageSize = 10
         } = queryParams
 
         const totalCount = await this.commentsRepository.countBy({
@@ -33,28 +32,48 @@ export class CommentsQueryTypeORMRepository {
         const builder = await this.commentsRepository.
             createQueryBuilder('ce')
             .where('ce.isBanned = false')
-            .select(['ce.id', 'ce.content', 'ce.createdAt', 'ce.isBanned', 'ce.commentatorLogin', 'ce.postTitle', 'ce.blogName', 'commentLikes.likeStatus'])
-            .loadRelationCountAndMap('ce.likesCount', 'ce.commentLikes', 'likeEntity', (likeEntity) => likeEntity
-                .where({ 'likeStatus': 'Like' })
-                .andWhere({ 'isBanned': false })
+            .addSelect(
+                (qb) => qb
+                    .select('count(*)')
+                    .from(CommentLikesInfo, 'cli')
+                    .where('cli.commentId = ce.id')
+                    .andWhere('cli.isBanned = false')
+                    .andWhere(`cli.likeStatus = 'Dislike'`), 'dislikesCount'
             )
-            .loadRelationCountAndMap('ce.dislikesCount', 'ce.commentLikes', 'likeEntity', (likeEntity) => likeEntity
-                .where({ 'likeStatus': 'Dislike' })
-                .andWhere({ 'isBanned': false })
+            .addSelect(
+                (qb) => qb
+                    .select('count(*)')
+                    .from(CommentLikesInfo, 'cli')
+                    .where('cli.commentId = ce.id')
+                    .andWhere('cli.isBanned = false')
+                    .andWhere(`cli.likeStatus = 'Like'`), 'likesCount'
             )
             .leftJoinAndSelect('ce.commentator', 'commentator')
-            .leftJoin('ce.commentLikes', 'commentLikes',)
-
-        const sql = builder.getSql()
-
-        await writeInFile('sql.txt', sql)
+            .addSelect(
+                (qb) => qb
+                    .select('cli.likeStatus as "myStatus"')
+                    .from(CommentLikesInfo, 'cli')
+                    .where('cli.userId = :userId', { userId })
+                    .andWhere('cli.commentId = ce.id', { userId })
+            )
+            .leftJoin('ce.post', 'p')
+            .where('p.id = :postId', { postId })
+            .orderBy(`ce.${sortBy}`, sortDirection)
+            .limit(pageSize)
+            .offset(skipCount)
 
         const resultedComments = await builder
-            .getMany()
+            .getRawMany()
 
-        console.log(resultedComments)
+        const displayedComments = this.mapCommentsForDisplay(resultedComments)
 
-        return null
+        return {
+            pagesCount: pagesCount,
+            page: pageNumber,
+            pageSize: pageSize,
+            totalCount: totalCount,
+            items: displayedComments
+        }
     }
 
     async getCommentByIdWithLikesInfo(commentId: string, userId: string): Promise<CommentViewModel> {
@@ -93,4 +112,20 @@ export class CommentsQueryTypeORMRepository {
         }
     }
 
+    private mapCommentsForDisplay(comments: any[]): Array<CommentViewModel> {
+        return comments.map((comment) => ({
+            id: comment.ce_ie,
+            content: comment.ce_content,
+            createdAt: comment.ce_createdAt,
+            commentatorInfo: {
+                userId: comment.commentator_id,
+                userLogin: comment.commentator_login
+            },
+            likesInfo: {
+                likesCount: +comment.likesCount,
+                dislikesCount: +comment.dislikesCount,
+                myStatus: comment.myStatus || 'None'
+            }
+        }))
+    }
 }

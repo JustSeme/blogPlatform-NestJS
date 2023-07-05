@@ -12,7 +12,7 @@ export class UsersQueryRepository {
 
     async findUsers(queryParams: ReadUsersQuery): Promise<UsersWithQueryOutputModel> {
         const {
-            sortDirection = 'desc', sortBy = 'createdAt', pageNumber = 1, pageSize = 10, searchLoginTerm = null, searchEmailTerm = null, banStatus = 'all'
+            sortDirection = 'DESC', sortBy = 'createdAt', pageNumber = 1, pageSize = 10, searchLoginTerm = null, searchEmailTerm = null, banStatus = 'all'
         } = queryParams
 
         const filterArray: any = []
@@ -42,7 +42,7 @@ export class UsersQueryRepository {
         const pagesCount = Math.ceil(totalCount / +pageSize)
 
         const skipCount = (+pageNumber - 1) * +pageSize
-        const sortDirectionNumber = sortDirection === 'asc' ? 1 : -1
+        const sortDirectionNumber = sortDirection === 'ASC' ? 1 : -1
 
         const resultedUsers = await this.UserModel.find(filterObject, { 'banInfo._id': 0 }).skip(skipCount).limit(+pageSize).sort({ [sortBy]: sortDirectionNumber }).lean()
 
@@ -57,7 +57,7 @@ export class UsersQueryRepository {
 
     async findBannedUsersByBlogId(queryParams: ReadBannedUsersQueryParams, blogId: string) {
         const {
-            sortDirection = 'desc', sortBy = 'createdAt', pageNumber = 1, pageSize = 10, searchLoginTerm = null
+            sortDirection = 'DESC', sortBy = 'createdAt', pageNumber = 1, pageSize = 10, searchLoginTerm = null
         } = queryParams
 
         const filterArray: any = [
@@ -77,7 +77,7 @@ export class UsersQueryRepository {
         const pagesCount = Math.ceil(totalCount / +pageSize)
 
         const skipCount = (+pageNumber - 1) * +pageSize
-        const sortDirectionNumber = sortDirection === 'asc' ? 1 : -1
+        const sortDirectionNumber = sortDirection === 'ASC' ? 1 : -1
 
         const resultedUsers = await this.UserModel.find(filterObject, { 'banInfo._id': 0 }).skip(skipCount).limit(+pageSize).sort({ [sortBy]: sortDirectionNumber }).lean()
 

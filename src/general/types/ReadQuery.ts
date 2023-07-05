@@ -2,7 +2,7 @@ export type ReadInputQuery = {
     pageNumber: number
     pageSize: number
     sortBy: string
-    sortDirection: 'asc' | 'desc'
+    sortDirection: 'ASC' | 'DESC'
 }
 
 export type ReadOutputQuery = {

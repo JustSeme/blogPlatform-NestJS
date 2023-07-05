@@ -30,7 +30,7 @@ export class CommentsRepository {
 
     async getComments(queryParams: ReadCommentsQueryParams, postId: string): Promise<any> {
         const {
-            sortDirection = 'desc', sortBy = 'createdAt', pageNumber = 1, pageSize = 10
+            sortDirection = 'DESC', sortBy = 'createdAt', pageNumber = 1, pageSize = 10
         } = queryParams
 
         const filter: any = {
@@ -43,7 +43,7 @@ export class CommentsRepository {
 
         const skipCount = (+pageNumber - 1) * +pageSize
 
-        const sortDirectionNumber = sortDirection === 'asc' ? 1 : -1
+        const sortDirectionNumber = sortDirection === 'ASC' ? 1 : -1
         const resultedComments = await this.CommentModel.find(filter, {
             _id: 0, postId: 0, __v: 0
         }).sort({ [sortBy]: sortDirectionNumber }).skip(skipCount).limit(+pageSize).lean()
@@ -149,7 +149,7 @@ export class CommentsRepository {
 
     async getAllCommentsByAllBlogIds(readCommentsQuery: ReadCommentsQueryParams, blogIds: string[]): Promise<ReadOutputQuery & { items: CommentDBModel[] }> {
         const {
-            sortDirection = 'desc', sortBy = 'createdAt', pageNumber = 1, pageSize = 10
+            sortDirection = 'DESC', sortBy = 'createdAt', pageNumber = 1, pageSize = 10
         } = readCommentsQuery
 
         const blogIdFilterObjects = blogIds.map((blogId: string) => ({ 'postInfo.blogId': blogId }))
@@ -164,7 +164,7 @@ export class CommentsRepository {
 
         const skipCount = (+pageNumber - 1) * +pageSize
 
-        const sortDirectionNumber = sortDirection === 'asc' ? 1 : -1
+        const sortDirectionNumber = sortDirection === 'ASC' ? 1 : -1
         const resultedComments = await this.CommentModel.find(filter, {
             _id: 0, 'postInfo._id': 0, 'commentatorInfo._id': 0, __v: 0
         }).sort({ [sortBy]: sortDirectionNumber }).skip(skipCount).limit(+pageSize).lean()
