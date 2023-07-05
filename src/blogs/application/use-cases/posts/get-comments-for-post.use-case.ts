@@ -4,7 +4,7 @@ import {
 import { ReadCommentsQueryParams } from "../../../api/models/ReadCommentsQuery"
 import { CommentsWithQueryOutputModel } from "../../dto/CommentViewModel"
 import { JwtService } from "../../../../general/adapters/jwt.adapter"
-import { CommentsQueryTypeORMRepository } from "../../../infrastructure/comments/typeORM/comments-query-typeORM-repository"
+import { CommentsQueryTypeORMRepository } from "../../../infrastructure/typeORM/comments-query-typeORM-repository"
 
 export class GetCommentsForPostCommand {
     constructor(

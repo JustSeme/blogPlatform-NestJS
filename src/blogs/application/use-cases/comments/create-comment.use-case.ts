@@ -8,7 +8,7 @@ import { BlogsQueryTypeORMRepository } from "../../../../Blogger/infrastructure/
 import { CommentEntity } from "../../../domain/comments/typeORM/comment.entity"
 import { UsersTypeORMQueryRepository } from "../../../../SuperAdmin/infrastructure/typeORM/users-typeORM-query-repository"
 import { PostsQueryTypeORMRepository } from "../../../../Blogger/infrastructure/posts/typeORM/posts-query-typeORM-repository"
-import { CommentsTypeORMRepository } from "../../../infrastructure/comments/typeORM/comments-typeORM-repository"
+import { CommentsTypeORMRepository } from "../../../infrastructure/typeORM/comments-typeORM-repository"
 
 // Command
 export class CreateCommentCommand {

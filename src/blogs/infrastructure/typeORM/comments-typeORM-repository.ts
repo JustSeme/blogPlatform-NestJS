@@ -2,12 +2,12 @@ import { Injectable } from "@nestjs/common"
 import {
     InjectDataSource, InjectRepository
 } from "@nestjs/typeorm"
-import { CommentEntity } from "../../../domain/comments/typeORM/comment.entity"
 import {
     DataSource, EntityManager, Repository
 } from "typeorm"
-import { CommentEntitiesType } from "../CommentsTypes"
-import { CommentLikesInfo } from "../../../domain/comments/typeORM/comment-likes-info.entity"
+import { CommentEntity } from "../../domain/comments/typeORM/comment.entity"
+import { CommentLikesInfo } from "../../domain/comments/typeORM/comment-likes-info.entity"
+import { CommentEntitiesType } from "../CommentTypes"
 
 @Injectable()
 export class CommentsTypeORMRepository {

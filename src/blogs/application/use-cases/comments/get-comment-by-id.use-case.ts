@@ -5,7 +5,7 @@ import { CommentViewModel } from "../../dto/CommentViewModel"
 import { NotFoundException } from "@nestjs/common"
 import { generateErrorsMessages } from "../../../../general/helpers"
 import { JwtService } from "../../../../general/adapters/jwt.adapter"
-import { CommentsQueryTypeORMRepository } from "../../../infrastructure/comments/typeORM/comments-query-typeORM-repository"
+import { CommentsQueryTypeORMRepository } from "../../../infrastructure/typeORM/comments-query-typeORM-repository"
 
 export class GetCommentByIdCommand {
     constructor(

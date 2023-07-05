@@ -3,7 +3,7 @@ import {
 } from "@nestjs/cqrs"
 import { PostsSQLRepository } from "../../../Blogger/infrastructure/posts/rawSQL/posts-sql-repository"
 import { UsersTypeORMRepository } from "../../infrastructure/typeORM/users-typeORM-repository"
-import { CommentsTypeORMRepository } from "../../../blogs/infrastructure/comments/typeORM/comments-typeORM-repository"
+import { CommentsTypeORMRepository } from "../../../blogs/infrastructure/typeORM/comments-typeORM-repository"
 
 export class UnbanUserCommand {
     constructor(

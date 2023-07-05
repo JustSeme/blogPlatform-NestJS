@@ -1,7 +1,7 @@
 import { InjectModel } from "@nestjs/mongoose"
-import { CommentViewModel } from "../../../application/dto/CommentViewModel"
-import { CommentModelType } from "../../../domain/comments/CommentTypes"
-import { Comment } from "../../../domain/comments/mongoose/Comments.schema"
+import { CommentViewModel } from "../../application/dto/CommentViewModel"
+import { CommentModelType } from "../../domain/comments/CommentTypes"
+import { Comment } from "../../domain/comments/mongoose/Comments.schema"
 
 export class CommentsQueryRepository {
     constructor(
