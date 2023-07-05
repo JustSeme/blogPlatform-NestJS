@@ -18,14 +18,13 @@ import { BanUserCommand } from '../application/use-cases/ban-user.use-case'
 import { UnbanUserCommand } from '../application/use-cases/unban-user.use-case'
 import { UsersService } from '../application/users.service'
 import { BanUserInputModel } from './models/BanUserInputModel'
-import { UsersQuerySQLRepository } from '../infrastructure/rawSQL/users-query-sql-repository'
 import { UsersTypeORMQueryRepository } from '../infrastructure/typeORM/users-typeORM-query-repository'
 
 @UseGuards(BasicAuthGuard)
 @Controller('sa/users')
 export class SuperAdminUsersController {
     constructor(
-        protected usersQueryRepository: UsersQuerySQLRepository,
+        protected usersQueryRepository: UsersTypeORMQueryRepository,
         protected usersTypeORMQueryRepository: UsersTypeORMQueryRepository,
         protected usersService: UsersService,
         private commandBus: CommandBus,
