@@ -7,6 +7,9 @@ import {
 } from "../../../application/dto/CommentViewModel"
 import { CommentLikesInfo } from "../../../domain/comments/typeORM/comment-likes-info.entity"
 import { ReadCommentsQueryParams } from "../../../api/models/ReadCommentsQuery"
+import {
+    CommentViewModelForBlogger, CommentsForBloggerWithQueryOutputModel
+} from "../../../application/dto/CommentViewModelForBlogger"
 
 @Injectable()
 export class CommentsQueryTypeORMRepository {
@@ -29,43 +32,116 @@ export class CommentsQueryTypeORMRepository {
         const pagesCount = Math.ceil(totalCount / +pageSize)
         const skipCount = (+pageNumber - 1) * +pageSize
 
-        const builder = await this.commentsRepository.
-            createQueryBuilder('ce')
-            .where('ce.isBanned = false')
-            .addSelect(
-                (qb) => qb
-                    .select('count(*)')
-                    .from(CommentLikesInfo, 'cli')
-                    .where('cli.commentId = ce.id')
-                    .andWhere('cli.isBanned = false')
-                    .andWhere(`cli.likeStatus = 'Dislike'`), 'dislikesCount'
-            )
-            .addSelect(
-                (qb) => qb
-                    .select('count(*)')
-                    .from(CommentLikesInfo, 'cli')
-                    .where('cli.commentId = ce.id')
-                    .andWhere('cli.isBanned = false')
-                    .andWhere(`cli.likeStatus = 'Like'`), 'likesCount'
-            )
-            .leftJoinAndSelect('ce.commentator', 'commentator')
-            .addSelect(
-                (qb) => qb
-                    .select('cli.likeStatus as "myStatus"')
-                    .from(CommentLikesInfo, 'cli')
-                    .where('cli.userId = :userId', { userId })
-                    .andWhere('cli.commentId = ce.id', { userId })
-            )
-            .leftJoin('ce.post', 'p')
-            .where('p.id = :postId', { postId })
-            .orderBy(`ce.${sortBy}`, sortDirection)
-            .limit(pageSize)
-            .offset(skipCount)
+        let resultedComments
+        try {
+            const builder = await this.commentsRepository.
+                createQueryBuilder('ce')
+                .where('ce.isBanned = false')
+                .addSelect(
+                    (qb) => qb
+                        .select('count(*)')
+                        .from(CommentLikesInfo, 'cli')
+                        .where('cli.commentId = ce.id')
+                        .andWhere('cli.isBanned = false')
+                        .andWhere(`cli.likeStatus = 'Dislike'`), 'dislikesCount'
+                )
+                .addSelect(
+                    (qb) => qb
+                        .select('count(*)')
+                        .from(CommentLikesInfo, 'cli')
+                        .where('cli.commentId = ce.id')
+                        .andWhere('cli.isBanned = false')
+                        .andWhere(`cli.likeStatus = 'Like'`), 'likesCount'
+                )
+                .leftJoinAndSelect('ce.commentator', 'commentator')
+                .addSelect(
+                    (qb) => qb
+                        .select('cli.likeStatus')
+                        .from(CommentLikesInfo, 'cli')
+                        .where('cli.userId = :userId', { userId })
+                        .andWhere('cli.commentId = ce.id'), 'myStatus'
+                )
+                .leftJoin('ce.post', 'p')
+                .where('p.id = :postId', { postId })
+                .orderBy(`ce.${sortBy}`, sortDirection)
+                .limit(pageSize)
+                .offset(skipCount)
 
-        const resultedComments = await builder
-            .getRawMany()
+            resultedComments = await builder
+                .getRawMany()
+        } catch (err) {
+            console.error(err)
+            throw new Error('Cant get all comments for post, something with DB')
+        }
 
         const displayedComments = this.mapCommentsForDisplay(resultedComments)
+
+        return {
+            pagesCount: pagesCount,
+            page: pageNumber,
+            pageSize: pageSize,
+            totalCount: totalCount,
+            items: displayedComments
+        }
+    }
+
+    async getAllCommentsForBlogger(readCommentsQuery: ReadCommentsQueryParams, bloggerId: string): Promise<CommentsForBloggerWithQueryOutputModel> {
+        const {
+            sortDirection = 'DESC', sortBy = 'createdAt', pageNumber = 1, pageSize = 10
+        } = readCommentsQuery
+
+        const totalCount = await this.commentsRepository.countBy({
+            isBanned: false,
+            blog: { user: { id: bloggerId } }
+        })
+        const pagesCount = Math.ceil(totalCount / +pageSize)
+        const skipCount = (+pageNumber - 1) * +pageSize
+
+        let resultedComments
+        try {
+            const builder = await this.commentsRepository.
+                createQueryBuilder('ce')
+                .where('ce.isBanned = false')
+                .addSelect(
+                    (qb) => qb
+                        .select('count(*)')
+                        .from(CommentLikesInfo, 'cli')
+                        .where('cli.commentId = ce.id')
+                        .andWhere('cli.isBanned = false')
+                        .andWhere(`cli.likeStatus = 'Dislike'`), 'dislikesCount'
+                )
+                .addSelect(
+                    (qb) => qb
+                        .select('count(*)')
+                        .from(CommentLikesInfo, 'cli')
+                        .where('cli.commentId = ce.id')
+                        .andWhere('cli.isBanned = false')
+                        .andWhere(`cli.likeStatus = 'Like'`), 'likesCount'
+                )
+                .leftJoinAndSelect('ce.commentator', 'commentator')
+                .addSelect(
+                    (qb) => qb
+                        .select('cli.likeStatus')
+                        .from(CommentLikesInfo, 'cli')
+                        .where('cli.userId = :bloggerId', { bloggerId })
+                        .andWhere('cli.commentId = ce.id'), 'myStatus'
+                )
+                .leftJoin('ce.blog', 'b')
+                .leftJoin('b.user', 'bu')
+                .leftJoinAndSelect('ce.post', 'p')
+                .where('bu.id = :bloggerId', { bloggerId })
+                .orderBy(`ce.${sortBy}`, sortDirection)
+                .limit(pageSize)
+                .offset(skipCount)
+
+            resultedComments = await builder
+                .getRawMany()
+        } catch (err) {
+            console.error(err)
+            throw new Error('Cant get all comments for blogger, something with DB')
+        }
+
+        const displayedComments = this.mapCommentsForBloggerDisplay(resultedComments)
 
         return {
             pagesCount: pagesCount,
@@ -125,6 +201,29 @@ export class CommentsQueryTypeORMRepository {
                 likesCount: +comment.likesCount,
                 dislikesCount: +comment.dislikesCount,
                 myStatus: comment.myStatus || 'None'
+            }
+        }))
+    }
+
+    private mapCommentsForBloggerDisplay(comments: any[]): Array<CommentViewModelForBlogger> {
+        return comments.map((comment) => ({
+            id: comment.ce_ie,
+            content: comment.ce_content,
+            createdAt: comment.ce_createdAt,
+            commentatorInfo: {
+                userId: comment.commentator_id,
+                userLogin: comment.commentator_login
+            },
+            likesInfo: {
+                likesCount: +comment.likesCount,
+                dislikesCount: +comment.dislikesCount,
+                myStatus: comment.myStatus || 'None'
+            },
+            postInfo: {
+                blogId: comment.p_blogId,
+                blogName: comment.p_blogName,
+                id: comment.p_id,
+                title: comment.p_title
             }
         }))
     }

@@ -9,7 +9,6 @@ import { CommentEntity } from "../../../domain/comments/typeORM/comment.entity"
 import { UsersTypeORMQueryRepository } from "../../../../SuperAdmin/infrastructure/typeORM/users-typeORM-query-repository"
 import { PostsQueryTypeORMRepository } from "../../../../Blogger/infrastructure/posts/typeORM/posts-query-typeORM-repository"
 import { CommentsTypeORMRepository } from "../../../infrastructure/comments/typeORM/comments-typeORM-repository"
-import { BlogEntity } from "../../../../Blogger/domain/blogs/blog.entity"
 
 // Command
 export class CreateCommentCommand {
@@ -32,6 +31,7 @@ export class CreateCommentUseCase implements ICommandHandler<CreateCommentComman
     async execute(command: CreateCommentCommand): Promise<CommentViewModel> {
         const commentator = await this.usersQueryRepository.findUserData(command.commentatorId)
         const post = await this.postsQueryRepository.getPostById(command.postId)
+        const blog = await this.blogsQueryRepository.findBlogById(post.blogId as string)
 
         const banUserForBlog = await this.blogsQueryRepository.findBanUserForBlogByUserIdAndBlogId(command.commentatorId, post.blogId as string)
 
@@ -50,7 +50,7 @@ export class CreateCommentUseCase implements ICommandHandler<CreateCommentComman
         creatingComment.commentatorLogin = commentator.login
         creatingComment.createdAt = new Date()
         creatingComment.postTitle = post.title
-        creatingComment.blog = post.blogId as BlogEntity
+        creatingComment.blog = blog
         creatingComment.blogName = post.blogName
 
         const createdComment = await this.commentsRepository.dataSourceSave(creatingComment)
