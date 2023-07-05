@@ -1,5 +1,9 @@
 import { ReadInputQuery } from "../../../general/types/ReadQuery"
 
-export type ReadBannedUsersQueryParams = ReadInputQuery & {
+export class ReadBannedUsersQueryParams extends ReadInputQuery {
+    constructor() {
+        super()
+    }
+
     searchLoginTerm: string
 }

@@ -1,6 +1,10 @@
 import { ReadInputQuery } from "../../../general/types/ReadQuery"
 
-export type ReadUsersQuery = ReadInputQuery & {
+export class ReadUsersQuery extends ReadInputQuery {
+    constructor() {
+        super()
+    }
+
     searchLoginTerm: string
     searchEmailTerm: string
     banStatus: string

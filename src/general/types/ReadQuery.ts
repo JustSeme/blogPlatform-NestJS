@@ -1,7 +1,10 @@
-export type ReadInputQuery = {
+import { SortDirectionToUpperCase } from "../decorators/toUpperCase.decorator"
+
+export class ReadInputQuery {
     pageNumber: number
     pageSize: number
     sortBy: string
+    @SortDirectionToUpperCase()
     sortDirection: 'ASC' | 'DESC'
 }
 

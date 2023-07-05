@@ -22,7 +22,6 @@ export class UsersTypeORMQueryRepository {
             sortDirection = 'DESC', sortBy = 'createdAt', pageNumber = 1, pageSize = 10, searchLoginTerm = '', searchEmailTerm = '', banStatus = 'all'
         } = queryParams
 
-
         const {
             emailTerm,
             loginTerm
@@ -46,27 +45,36 @@ export class UsersTypeORMQueryRepository {
         const pagesCount = Math.ceil(totalCount / +pageSize)
         const skipCount = (+pageNumber - 1) * +pageSize
 
-        const builder = await this.usersRepository
-            .createQueryBuilder('ue')
-            .leftJoinAndSelect('ue.banInfo', 'ubi')
-            .where('(lower(ue.login) LIKE :loginTerm OR lower(ue.email) LIKE :emailTerm)', {
-                loginTerm,
-                emailTerm
-            })
-            .orderBy(`ue.${sortBy}`, sortDirection)
-            .limit(pageSize)
-            .offset(skipCount)
+        let resultedUsers
 
-        if (banStatus !== 'all') {
-            const isBanned = banStatus === 'banned' ? true : false
-            builder.andWhere('ue.isBanned = :isBanned', { isBanned })
+        try {
+            const builder = await this.usersRepository
+                .createQueryBuilder('ue')
+                .leftJoinAndSelect('ue.banInfo', 'ubi')
+                .where('(lower(ue.login) LIKE :loginTerm OR lower(ue.email) LIKE :emailTerm)', {
+                    loginTerm,
+                    emailTerm
+                })
+                .orderBy(`ue.${sortBy}`, sortDirection)
+                .limit(pageSize)
+                .offset(skipCount)
+
+            if (banStatus !== 'all') {
+                const isBanned = banStatus === 'banned' ? true : false
+                builder.andWhere('ue.isBanned = :isBanned', { isBanned })
+            }
+
+            resultedUsers = await builder.getMany()
+        } catch (err) {
+            console.error(err)
+            throw new Error('Something wrong with database...')
         }
 
-        const resultedUsers = await builder.getMany()
 
         const displayedUsers = resultedUsers.map((user) => new UserViewModelType({
             ...user,
-            ...user.banInfo
+            ...user.banInfo,
+            id: user.id
         }))
 
         return {

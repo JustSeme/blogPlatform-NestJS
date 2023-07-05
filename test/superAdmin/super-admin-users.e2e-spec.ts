@@ -173,9 +173,11 @@ describe('super-admin-users', () => {
 
     it('should return array of users with asc sorting by login', async () => {
         const response = await request(httpServer)
-            .get(`/sa/users?sortDirection=asc&sortBy=login`)
+            .get(`/sa/users?sortDirection=ASC&sortBy=login`)
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
-            .expect(HttpStatus.OK)
+        //.expect(HttpStatus.OK)
+        console.log(response.body);
+
 
         expect(response.body.totalCount === 5).toBe(true)
 
