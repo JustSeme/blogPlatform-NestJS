@@ -2,7 +2,7 @@ import {
     CommandHandler,
     ICommand, ICommandHandler
 } from "@nestjs/cqrs"
-import { PostsRepository } from "../../../../Blogger/infrastructure/posts/mongoose/posts-db-repository"
+import { PostsSQLRepository } from "../../../../Blogger/infrastructure/posts/rawSQL/posts-sql-repository"
 
 // Command
 export class DeletePostsCommand implements ICommand {
@@ -12,7 +12,7 @@ export class DeletePostsCommand implements ICommand {
 // Command Handler
 @CommandHandler(DeletePostsCommand)
 export class DeletePostUseCase implements ICommandHandler<DeletePostsCommand> {
-    constructor(private readonly postsRepository: PostsRepository) { }
+    constructor(private readonly postsRepository: PostsSQLRepository) { }
 
 
     async execute(command: DeletePostsCommand) {

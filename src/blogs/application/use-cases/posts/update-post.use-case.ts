@@ -2,7 +2,7 @@ import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
 import { PostInputModel } from "../../../../Blogger/api/models/PostInputModel"
-import { PostsRepository } from "../../../../Blogger/infrastructure/posts/mongoose/posts-db-repository"
+import { PostsSQLRepository } from "../../../../Blogger/infrastructure/posts/rawSQL/posts-sql-repository"
 
 // Define the Command
 export class UpdatePostCommand {
@@ -12,7 +12,7 @@ export class UpdatePostCommand {
 // Define the CommandHandler
 @CommandHandler(UpdatePostCommand)
 export class UpdatePostUseCase implements ICommandHandler<UpdatePostCommand> {
-    constructor(private postsRepository: PostsRepository) { }
+    constructor(private postsRepository: PostsSQLRepository) { }
 
     async execute(command: UpdatePostCommand) {
         return this.postsRepository.updatePost(command.postId, command.postInputModel)

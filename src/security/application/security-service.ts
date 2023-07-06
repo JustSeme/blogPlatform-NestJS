@@ -1,11 +1,11 @@
 import { DeviceSessionsViewModel } from "./dto/DeviceSessionsViewModel"
-import { DeviceRepository } from "../infrastructure/device-db-repository"
 import { Injectable } from "@nestjs/common/decorators"
 import { DeviceAuthSessionDBModel } from "../domain/DeviceAuthSessionTypes"
+import { DevicesSQLRepository } from "../infrastructure/devices-sql-repository"
 
 @Injectable()
 export class SecurityService {
-    constructor(protected deviceRepository: DeviceRepository) { }
+    constructor(protected deviceRepository: DevicesSQLRepository) { }
 
     prepareDevicesForDisplay(devices: DeviceAuthSessionDBModel[]): DeviceSessionsViewModel[] {
         return devices.map(el => ({

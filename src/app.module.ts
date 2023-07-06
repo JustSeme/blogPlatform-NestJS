@@ -15,7 +15,6 @@ import { PassportModule } from "@nestjs/passport"
 import { AppController } from "./app.controller"
 import { BlogsController } from "./blogs/api/blogs-controller"
 import { BlogsService } from './blogs/application/blogs-service'
-import { BlogsRepository } from './Blogger/infrastructure/blogs/mongoose/blogs-db-repository'
 import { PostsController } from "./blogs/api/posts-controller"
 import { CommentsController } from "./blogs/api/comments-controller"
 import { AuthController } from "./auth/api/auth-controller"
@@ -30,11 +29,6 @@ import { SecurityService } from "./security/application/security-service"
 import { EmailManager } from "./general/managers/emailManager"
 import { BcryptAdapter } from "./general/adapters/bcrypt.adapter"
 import { EmailAdapter } from "./general/adapters/email.adapter"
-import { BlogsQueryRepository } from "./Blogger/infrastructure/blogs/mongoose/blogs-query-repository"
-import { CommentsQueryRepository } from "./blogs/infrastructure/mongoose/comments-query-repository"
-import { PostsRepository } from "./Blogger/infrastructure/posts/mongoose/posts-db-repository"
-import { CommentsRepository } from "./blogs/infrastructure/mongoose/comments-db-repository"
-import { DeviceRepository } from "./security/infrastructure/device-db-repository"
 import { IsBlogByIdExist } from "./general/decorators/isBlogExists.validation.decorator"
 import { IsEmailAlreadyInUse } from "./auth/api/decorators/IsEmailAlreadyInUse"
 import { IsLoginAlreadyInUse } from "./auth/api/decorators/IsLoginAlreadyInUse"
@@ -42,7 +36,6 @@ import { IsDeviceExistsPipe } from "./security/api/pipes/isDeviceExists.validati
 import {
   Attempt, AttemptsSchema
 } from "./security/domain/AttemptsSchema"
-import { AttemptsRepository } from "./security/infrastructure/attempts-db-repository"
 import { IpRestrictionGuard } from "./auth/api/guards/ip-restriction.guard"
 import { BlogsConfig } from "./configuration/blogs.config"
 import { AuthConfig } from "./configuration/auth.config"
@@ -89,8 +82,6 @@ import {
   Comment, CommentsSchema
 } from "./blogs/domain/comments/mongoose/Comments.schema"
 import { UsersService } from "./SuperAdmin/application/users.service"
-import { UsersRepository } from "./SuperAdmin/infrastructure/mongoose/users-db-repository"
-import { UsersQueryRepository } from "./SuperAdmin/infrastructure/mongoose/users-query-repository"
 import {
   User, UsersSchema
 } from "./SuperAdmin/domain/mongoose/UsersSchema"
@@ -215,8 +206,9 @@ const adapters = [
   EmailAdapter,
 ]
 
+// mongoose repositories
 const repositories = [
-  BlogsQueryRepository,
+  /* BlogsQueryRepository,
   CommentsQueryRepository,
   UsersQueryRepository,
   UsersRepository,
@@ -224,10 +216,10 @@ const repositories = [
   BlogsRepository,
   CommentsRepository,
   DeviceRepository,
-  AttemptsRepository,
-  AuthRepository,
+  AttemptsRepository, */
 ]
 
+// sql repositories
 const SQLrepositories = [
   UsersSQLRepository,
   UsersQuerySQLRepository,
@@ -239,6 +231,7 @@ const SQLrepositories = [
   PostsQuerySQLRepository,
   CommentsSQLRepository,
   CommentsQuerySQLRepository,
+  AuthRepository,
 ]
 
 const typeORMRepositories = [

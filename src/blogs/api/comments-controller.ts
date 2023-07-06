@@ -13,14 +13,12 @@ import { CommandBus } from "@nestjs/cqrs"
 import { DeleteCommentCommand } from "../application/use-cases/comments/delete-comment.use-case"
 import { UpdateCommentCommand } from "../application/use-cases/comments/update-comment.use-case"
 import { UpdateLikeStatusForCommentCommand } from "../application/use-cases/comments/update-like-status-for-comment.use-case"
-import { CommentsRepository } from "../infrastructure/mongoose/comments-db-repository"
 import { GetCommentByIdCommand } from "../application/use-cases/comments/get-comment-by-id.use-case"
 
 @Controller('comments')
 export class CommentsController {
     constructor(
         protected commentsService: CommentsService,
-        protected commentsRepository: CommentsRepository,
         protected commandBus: CommandBus,
     ) { }
 
