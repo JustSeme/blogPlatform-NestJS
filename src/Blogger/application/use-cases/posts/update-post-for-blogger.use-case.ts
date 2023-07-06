@@ -1,7 +1,9 @@
 import {
     CommandHandler, ICommand, ICommandHandler
 } from "@nestjs/cqrs"
-import { ForbiddenException } from '@nestjs/common'
+import {
+    BadRequestException, ForbiddenException
+} from '@nestjs/common'
 import { PostInputModelWithoutBlogId } from "../../../api/models/PostInputModelWithoutBlogId"
 import { PostInputModel } from "../../../api/models/PostInputModel"
 import { PostsSQLRepository } from "../../../infrastructure/posts/rawSQL/posts-sql-repository"
@@ -33,10 +35,14 @@ export class UpdatePostForBloggerUseCase implements ICommandHandler<UpdatePostFo
             creatorId,
         } = command
 
-        const blogById = await this.blogsQueryRepository.findBlogById(blogId)
+        const blogById = await this.blogsQueryRepository.findOnlyUnbannedBlogById(blogId)
+
+        if (!blogById) {
+            throw new BadRequestException('This blog is banned')
+        }
 
         if (blogById.user.id !== creatorId) {
-            throw new ForbiddenException('that is not your own')
+            throw new ForbiddenException('That is not your own')
         }
 
         const postInputModelWithBlogId: PostInputModel = {

@@ -2,6 +2,7 @@ import { Model } from "mongoose"
 import {
     Blog, BlogBanInfoType
 } from "./mongoose/BlogsSchema"
+import { BlogEntity } from "./typeORM/blog.entity"
 
 export type BlogOwnerInfoType = {
     userId: string,
@@ -55,12 +56,12 @@ export class BlogDBModel {
     public websiteUrl: string
     public isMembership: boolean
 
-    constructor(rawBlog: BlogSQLModel) {
+    constructor(rawBlog: BlogEntity) {
         this.id = rawBlog.id
         this.createdAt = rawBlog.createdAt
 
         this.blogOwnerInfo = {
-            userId: rawBlog.ownerId,
+            userId: rawBlog.user.id,
             userLogin: rawBlog.ownerLogin
         }
 

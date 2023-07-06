@@ -31,7 +31,7 @@ export class CreateCommentUseCase implements ICommandHandler<CreateCommentComman
     async execute(command: CreateCommentCommand): Promise<CommentViewModel> {
         const commentator = await this.usersQueryRepository.findUserData(command.commentatorId)
         const post = await this.postsQueryRepository.getPostById(command.postId)
-        const blog = await this.blogsQueryRepository.findBlogById(post.blogId as string)
+        const blog = await this.blogsQueryRepository.findOnlyUnbannedBlogById(post.blogId as string)
 
         const banUserForBlog = await this.blogsQueryRepository.findBanUserForBlogByUserIdAndBlogId(command.commentatorId, post.blogId as string)
 

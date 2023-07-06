@@ -2,7 +2,9 @@ import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
 import { BlogInputModel } from "../../../api/models/BlogInputModel"
-import { ForbiddenException } from "@nestjs/common"
+import {
+    BadRequestException, ForbiddenException
+} from "@nestjs/common"
 import { generateErrorsMessages } from "../../../../general/helpers"
 import { BlogsSQLRepository } from "../../../infrastructure/blogs/rawSQL/blogs-sql-repository"
 import { BlogsQueryTypeORMRepository } from "../../../infrastructure/blogs/typeORM/blogs-query-typeORM-repository"
@@ -24,7 +26,11 @@ export class UpdateBlogForBloggerUseCase implements ICommandHandler<UpdateBlogFo
     ) { }
 
     async execute(command: UpdateBlogForBloggerCommand): Promise<boolean> {
-        const blogById = await this.blogsQueryRepository.findBlogById(command.blogId)
+        const blogById = await this.blogsQueryRepository.findOnlyUnbannedBlogById(command.blogId)
+
+        if (!blogById) {
+            throw new BadRequestException('This blog is banned')
+        }
 
         if (blogById.user.id !== command.bloggerId) {
             throw new ForbiddenException(generateErrorsMessages('that is not your own', 'authorization header'))

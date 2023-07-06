@@ -27,7 +27,7 @@ export class UnbanUserForBlogUseCase implements ICommandHandler<UnbanUserForBlog
 
 
     async execute(command: UnbanUserForBlogCommand) {
-        const blogByBlogId = await this.blogsQueryRepository.findBlogById(command.banUserForBlogInputModel.blogId)
+        const blogByBlogId = await this.blogsQueryRepository.findOnlyUnbannedBlogById(command.banUserForBlogInputModel.blogId)
 
         if (blogByBlogId.user.id !== command.currentUserId) {
             throw new ForbiddenException(generateErrorsMessages('That is not your own', 'userId'))

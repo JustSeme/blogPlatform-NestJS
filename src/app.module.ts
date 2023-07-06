@@ -99,7 +99,6 @@ import { GetPostsUseCase } from "./blogs/application/use-cases/posts/get-posts.u
 import { GetPostByIdUseCase } from "./blogs/application/use-cases/posts/get-post-by-id.use-case"
 import { GetCommentsForPostUseCase } from "./blogs/application/use-cases/posts/get-comments-for-post.use-case"
 import { GetCommentByIdUseCase } from "./blogs/application/use-cases/comments/get-comment-by-id.use-case"
-import { GetBlogsForSuperAdminUseCase } from "./SuperAdmin/application/use-cases/get-blogs-for-super-admin.use-case"
 import { BanBlogUseCase } from "./SuperAdmin/application/use-cases/ban-blog.use-case"
 import { UnbanBlogUseCase } from "./SuperAdmin/application/use-cases/unban-blog.use-case"
 import { UpdateCommentUseCase } from "./blogs/application/use-cases/comments/update-comment.use-case"
@@ -180,7 +179,6 @@ const blogsUseCases = [
   GetPostByIdUseCase,
   GetCommentsForPostUseCase,
   GetCommentByIdUseCase,
-  GetBlogsForSuperAdminUseCase,
   BanBlogUseCase,
   UnbanBlogUseCase,
   UpdateCommentUseCase,

@@ -17,9 +17,9 @@ import { BindUserCommand } from '../application/use-cases/bind-user.use-case'
 import { BlogsWithQuerySuperAdminOutputModel } from '../application/dto/BlogSuperAdminViewModel'
 import { ReadBlogsQueryParams } from '../../blogs/api/models/ReadBlogsQuery'
 import { BanBlogInputModel } from './models/BanBlogInputModel'
-import { GetBlogsForSuperAdminCommand } from '../application/use-cases/get-blogs-for-super-admin.use-case'
 import { BanBlogCommand } from '../application/use-cases/ban-blog.use-case'
 import { UnbanBlogCommand } from '../application/use-cases/unban-blog.use-case'
+import { BlogsQueryTypeORMRepository } from '../../Blogger/infrastructure/blogs/typeORM/blogs-query-typeORM-repository'
 
 
 @UseGuards(BasicAuthGuard)
@@ -27,6 +27,7 @@ import { UnbanBlogCommand } from '../application/use-cases/unban-blog.use-case'
 export class SuperAdminBlogsController {
     constructor(
         private commandBus: CommandBus,
+        private blogsQueryRepository: BlogsQueryTypeORMRepository,
     ) { }
 
     @HttpCode(HttpStatus.NO_CONTENT)
@@ -44,9 +45,7 @@ export class SuperAdminBlogsController {
     async getBlogs(
         @Query() blogsQueryParams: ReadBlogsQueryParams,
     ): Promise<BlogsWithQuerySuperAdminOutputModel> {
-        return this.commandBus.execute(
-            new GetBlogsForSuperAdminCommand(blogsQueryParams)
-        )
+        return this.blogsQueryRepository.findBlogsForSuperAdmin(blogsQueryParams)
     }
 
     @HttpCode(HttpStatus.NO_CONTENT)

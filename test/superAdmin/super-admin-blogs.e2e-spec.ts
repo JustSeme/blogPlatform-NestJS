@@ -155,7 +155,7 @@ describe('super-admin-blogs', () => {
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
             .expect(HttpStatus.BAD_REQUEST)
 
-        expect(errorResponseData.body.errorsMessages[0].message).toEqual('blog is already bounded with any user')
+        expect(errorResponseData.body.errorsMessages[0].message).toEqual('Blog is already bounded with any user')
 
         const blogsData = await request(httpServer)
             .get('/sa/blogs')
@@ -280,7 +280,7 @@ describe('super-admin-blogs', () => {
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
             .expect(HttpStatus.NOT_FOUND)
 
-        expect(errorMessage.body.errorsMessages[0].message).toEqual('This blog is banned')
+        expect(errorMessage.body.errorsMessages[0].message).toEqual('Blog is not found, possible it is banned')
     })
 
     it('admin should unban blog and created post for this blog should display', async () => {

@@ -1,7 +1,9 @@
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
-import { ForbiddenException } from "@nestjs/common"
+import {
+    BadRequestException, ForbiddenException
+} from "@nestjs/common"
 import { BlogsQueryTypeORMRepository } from "../../../infrastructure/blogs/typeORM/blogs-query-typeORM-repository"
 import { BlogsTypeORMRepository } from "../../../infrastructure/blogs/typeORM/blogs-typeORM-repository"
 
@@ -21,7 +23,11 @@ export class DeleteBlogForBloggerUseCase implements ICommandHandler<DeleteBlogFo
     ) { }
 
     async execute(command: DeleteBlogForBloggerCommand) {
-        const deletingBlog = await this.blogsQueryRepository.findBlogById(command.blogId)
+        const deletingBlog = await this.blogsQueryRepository.findOnlyUnbannedBlogById(command.blogId)
+
+        if (!deletingBlog) {
+            throw new BadRequestException('This blog is banned')
+        }
 
         if (deletingBlog.user.id !== command.userId) {
             throw new ForbiddenException('this is not your own')

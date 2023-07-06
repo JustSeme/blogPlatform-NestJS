@@ -4,6 +4,8 @@ import { PostDTO } from "../../../../Blogger/domain/posts/PostsTypes"
 import { PostsViewModel } from "../../dto/PostViewModel"
 import { PostsSQLRepository } from "../../../../Blogger/infrastructure/posts/rawSQL/posts-sql-repository"
 import { BlogsQueryTypeORMRepository } from "../../../../Blogger/infrastructure/blogs/typeORM/blogs-query-typeORM-repository"
+import { BadRequestException } from "@nestjs/common"
+import { generateErrorsMessages } from "../../../../general/helpers"
 
 export class CreatePostCommand {
     constructor(
@@ -20,7 +22,11 @@ export class CreatePostUseCase implements ICommandHandler<CreatePostCommand> {
     async execute(command: CreatePostCommand): Promise<PostsViewModel> {
         const { body } = command
 
-        const blogById = await this.blogsQueryRepository.findBlogById(body.blogId)
+        const blogById = await this.blogsQueryRepository.findOnlyUnbannedBlogById(body.blogId)
+
+        if (!blogById) {
+            throw new BadRequestException(generateErrorsMessages('The blog you want to create a post for is banned', 'blogId'))
+        }
 
         const creatingPost: PostDTO = new PostDTO(
             body.title,

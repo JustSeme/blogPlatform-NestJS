@@ -28,9 +28,14 @@ export class BindUserUseCase implements ICommandHandler<BindUserCommand> {
             userId,
         } = command
 
-        const blogById = await this.blogsQueryRepository.findBlogById(blogId)
+        const blogById = await this.blogsQueryRepository.findOnlyUnbannedBlogById(blogId)
+
+        if (!blogById) {
+            throw new BadRequestException(generateErrorsMessages('The blog you want to link is banned', 'blogId'))
+        }
+
         if (blogById.user.id !== 'superAdmin') {
-            throw new BadRequestException(generateErrorsMessages('blog is already bounded with any user', 'blogId'))
+            throw new BadRequestException(generateErrorsMessages('Blog is already bounded with any user', 'blogId'))
         }
 
         const userById = await this.usersQueryRepository.findUserData(userId)

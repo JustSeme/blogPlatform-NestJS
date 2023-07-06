@@ -10,6 +10,7 @@ import {
     Controller, Get, Headers, NotFoundException, Param, Query
 } from "@nestjs/common"
 import { BlogsQueryTypeORMRepository } from "../../Blogger/infrastructure/blogs/typeORM/blogs-query-typeORM-repository"
+import { generateErrorsMessages } from "../../general/helpers"
 
 @Controller('blogs')
 export class BlogsController {
@@ -33,7 +34,11 @@ export class BlogsController {
     async getBlogById(
         @Param('blogId', IsBlogByIdExistPipe) blogId: string
     ): Promise<BlogViewModel> {
-        const findedBlogData = await this.blogsQueryRepository.findBlogById(blogId)
+        const findedBlogData = await this.blogsQueryRepository.findOnlyUnbannedBlogById(blogId)
+
+        if (!findedBlogData) {
+            throw new NotFoundException(generateErrorsMessages('Blog is not found, possible it is banned', 'blogId'))
+        }
 
         return new BlogViewModel(findedBlogData)
     }

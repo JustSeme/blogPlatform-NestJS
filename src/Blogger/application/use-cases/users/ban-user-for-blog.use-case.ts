@@ -1,5 +1,5 @@
 import {
-    CommandHandler, ICommandHandler
+    CommandHandler, ICommandHandler,
 } from "@nestjs/cqrs"
 import { BanUserForBlogInputModel } from "../../../api/models/BanUserForBlogInputModel"
 import { ForbiddenException } from "@nestjs/common"
@@ -8,6 +8,7 @@ import { BansUsersForBlogs } from "../../../domain/blogs/typeORM/bans-users-for-
 import { UsersTypeORMRepository } from "../../../../SuperAdmin/infrastructure/typeORM/users-typeORM-repository"
 import { BlogsQueryTypeORMRepository } from "../../../infrastructure/blogs/typeORM/blogs-query-typeORM-repository"
 import { BlogsTypeORMRepository } from "../../../infrastructure/blogs/typeORM/blogs-typeORM-repository"
+import { BadRequestException } from '@nestjs/common'
 
 export class BanUserForBlogCommand {
     constructor(
@@ -28,7 +29,11 @@ export class BanUserForBlogUseCase implements ICommandHandler<BanUserForBlogComm
 
 
     async execute(command: BanUserForBlogCommand) {
-        const blogByBlogId = await this.blogsQueryRepository.findBlogById(command.banUserForBlogInputModel.blogId)
+        const blogByBlogId = await this.blogsQueryRepository.findOnlyUnbannedBlogById(command.banUserForBlogInputModel.blogId)
+
+        if (!blogByBlogId) {
+            throw new BadRequestException('This blog is banned')
+        }
 
         if (blogByBlogId.user.id !== command.currentUserId) {
             throw new ForbiddenException(generateErrorsMessages('That is not your own', 'userId'))

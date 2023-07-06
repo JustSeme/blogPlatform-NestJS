@@ -3,7 +3,9 @@ import {
 } from "@nestjs/cqrs"
 import { PostDTO } from "../../../domain/posts/PostsTypes"
 import { PostsViewModel } from "../../../../blogs/application/dto/PostViewModel"
-import { ForbiddenException } from '@nestjs/common'
+import {
+    BadRequestException, ForbiddenException
+} from '@nestjs/common'
 import { PostInputModelWithoutBlogId } from "../../../api/models/PostInputModelWithoutBlogId"
 import { PostsSQLRepository } from "../../../infrastructure/posts/rawSQL/posts-sql-repository"
 import { BlogsQueryTypeORMRepository } from "../../../infrastructure/blogs/typeORM/blogs-query-typeORM-repository"
@@ -32,7 +34,11 @@ export class CreatePostForBloggerUseCase implements ICommandHandler<CreatePostFo
             creatorId
         } = command
 
-        const blogById = await this.blogsRepository.findBlogById(blogId)
+        const blogById = await this.blogsRepository.findOnlyUnbannedBlogById(blogId)
+
+        if (!blogById) {
+            throw new BadRequestException('This blog is banned')
+        }
 
         if (blogById.user.id !== creatorId) {
             throw new ForbiddenException('that is not your own')

@@ -8,6 +8,7 @@ import { BlogsWithQuerySuperAdminOutputModel } from "../../../../SuperAdmin/appl
 import {
     BlogDBModel, BlogSQLModel
 } from "../../../domain/blogs/BlogsTypes"
+import { BlogEntity } from "../../../domain/blogs/typeORM/blog.entity"
 
 @Injectable()
 export class BlogsQuerySQLRepository {
@@ -54,7 +55,7 @@ export class BlogsQuerySQLRepository {
         }
     }
 
-    /* async findBlogsForBlogger(queryParams: ReadBlogsQueryParams, creatorId: string): Promise<BlogsWithQueryOutputModel> {
+    async findBlogsForBlogger(queryParams: ReadBlogsQueryParams, creatorId: string): Promise<BlogsWithQueryOutputModel> {
         const {
             searchNameTerm = '',
             sortDirection = 'desc',
@@ -93,9 +94,9 @@ export class BlogsQuerySQLRepository {
             totalCount: +totalCount,
             items: displayedBlogs
         }
-    } */
+    }
 
-    async findBlogsForSuperAdmin(queryParams: ReadBlogsQueryParams, creatorId?: string | undefined): Promise<BlogsWithQuerySuperAdminOutputModel> {
+    async findBlogsForSuperAdmin(queryParams: ReadBlogsQueryParams): Promise<BlogsWithQuerySuperAdminOutputModel> {
         const {
             searchNameTerm = '',
             sortDirection = 'desc',
@@ -107,7 +108,7 @@ export class BlogsQuerySQLRepository {
         const queryCount = `
             SELECT count(*)
                 FROM public."blog_entity"
-                WHERE lower("name") LIKE lower($1) ${creatorId ? `AND "ownerId" = ${creatorId}` : ''}
+                WHERE lower("name") LIKE lower($1)
         `
 
         const totalCountData = await this.dataSource.query(queryCount, [`%${searchNameTerm}%`])
@@ -119,12 +120,12 @@ export class BlogsQuerySQLRepository {
         const query = `
             SELECT *
                 FROM public."blog_entity"
-                WHERE lower("name") LIKE lower($1) ${creatorId ? `AND "ownerId" = ${creatorId}` : ''}
+                WHERE lower("name") LIKE lower($1)
                 ORDER BY "${sortBy}" ${sortDirection}
                 LIMIT $2 OFFSET $3;
         `
 
-        const resultedBlogs: BlogSQLModel[] = await this.dataSource.query(query, [`%${searchNameTerm}%`, pageSize, skipCount])
+        const resultedBlogs: BlogEntity[] = await this.dataSource.query(query, [`%${searchNameTerm}%`, pageSize, skipCount])
         const displayedBlogs = resultedBlogs.map(blog => new BlogDBModel(blog))
 
         return {
@@ -135,5 +136,4 @@ export class BlogsQuerySQLRepository {
             items: displayedBlogs
         }
     }
-
 }

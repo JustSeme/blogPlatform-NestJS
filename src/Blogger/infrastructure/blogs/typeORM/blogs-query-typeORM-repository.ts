@@ -7,6 +7,8 @@ import { ReadBlogsQueryParams } from "../../../../blogs/api/models/ReadBlogsQuer
 import {
     BlogViewModel, BlogsWithQueryOutputModel
 } from "../../../../blogs/application/dto/BlogViewModel"
+import { BlogsWithQuerySuperAdminOutputModel } from "../../../../SuperAdmin/application/dto/BlogSuperAdminViewModel"
+import { BlogDBModel } from "../../../domain/blogs/BlogsTypes"
 
 @Injectable()
 export class BlogsQueryTypeORMRepository {
@@ -117,12 +119,78 @@ export class BlogsQueryTypeORMRepository {
         }
     }
 
+    async findBlogsForSuperAdmin(queryParams: ReadBlogsQueryParams): Promise<BlogsWithQuerySuperAdminOutputModel> {
+        const {
+            searchNameTerm = '',
+            sortDirection = 'DESC',
+            sortBy = 'createdAt',
+            pageNumber = 1,
+            pageSize = 10
+        } = queryParams
+
+        const nameTerm = `%${searchNameTerm.toLocaleLowerCase()}%`
+
+        const totalCount = await this.blogsRepository
+            .createQueryBuilder('be')
+            .where('lower(be.name) LIKE :nameTerm', { nameTerm })
+            .getCount()
+
+        const pagesCount = Math.ceil(totalCount / +pageSize)
+        const skipCount = (+pageNumber - 1) * +pageSize
+
+        let resultedBlogs
+
+        try {
+            resultedBlogs = await this.blogsRepository
+                .createQueryBuilder('be')
+                .leftJoinAndSelect('be.user', 'bu')
+                .where('lower(be.name) LIKE :nameTerm', { nameTerm })
+                .orderBy(`be.${sortBy}`, sortDirection)
+                .limit(pageSize)
+                .offset(skipCount)
+                .getMany()
+
+        } catch (err) {
+            console.error(err)
+            throw new Error('Something wrong with database...')
+        }
+
+        const displayedBlogs = resultedBlogs.map(blog => new BlogDBModel(blog))
+
+        return {
+            pagesCount: pagesCount,
+            page: +pageNumber,
+            pageSize: +pageSize,
+            totalCount: +totalCount,
+            items: displayedBlogs
+        }
+    }
+
     async findBlogById(blogId: string): Promise<BlogEntity> {
         try {
-            return this.blogsRepository.findOne({
+            const findedBlog = await this.blogsRepository.findOne({
                 where: { id: blogId },
                 relations: ['user']
             })
+
+            return findedBlog ? findedBlog : null
+        } catch (err) {
+            console.error(err)
+            return null
+        }
+    }
+
+    async findOnlyUnbannedBlogById(blogId: string): Promise<BlogEntity> {
+        try {
+            const findedBlog = await this.blogsRepository.findOne({
+                where: {
+                    id: blogId,
+                    isBanned: false
+                },
+                relations: ['user']
+            })
+
+            return findedBlog ? findedBlog : null
         } catch (err) {
             console.error(err)
             return null

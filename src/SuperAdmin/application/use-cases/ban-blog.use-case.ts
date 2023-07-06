@@ -41,7 +41,7 @@ export class BanBlogUseCase implements ICommandHandler<BanBlogCommand> {
             blogByBlogId.banDate = new Date()
             blogByBlogId.isBanned = true
 
-            savedBlog = await this.blogsRepository.dataSourceSave(blogByBlogId)
+            savedBlog = await this.blogsRepository.queryRunnerSave(blogByBlogId, queryRunner.manager)
 
             isHided = await this.postsRepository.hidePostsByBlogId(command.blogId)
 

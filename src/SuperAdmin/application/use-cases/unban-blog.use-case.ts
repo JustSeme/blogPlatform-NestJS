@@ -41,7 +41,7 @@ export class UnbanBlogUseCase implements ICommandHandler<UnbanBlogCommand> {
             blogByBlogId.banDate = null
             blogByBlogId.isBanned = false
 
-            savedBlog = await this.blogsRepository.dataSourceSave(blogByBlogId)
+            savedBlog = await this.blogsRepository.queryRunnerSave(blogByBlogId, queryRunner.manager)
 
             isUnhided = await this.postsRepository.unHidePostsByBlogId(command.blogId)
 
@@ -53,7 +53,6 @@ export class UnbanBlogUseCase implements ICommandHandler<UnbanBlogCommand> {
         } finally {
             await queryRunner.release()
         }
-
 
         return savedBlog && isUnhided
     }
