@@ -1,7 +1,7 @@
 import {
     Prop, Schema, SchemaFactory
 } from "@nestjs/mongoose"
-import { AttemptDTO } from "./AttemptsType"
+import { AttemptDTO } from "../AttemptsType"
 
 @Schema()
 export class Attempt {

@@ -3,7 +3,7 @@ import {
 } from "@nestjs/cqrs"
 import { ForbiddenException } from "@nestjs/common"
 import { generateErrorsMessages } from "../../../general/helpers"
-import { DevicesSQLRepository } from "../../infrastructure/devices-sql-repository"
+import { DevicesSQLRepository } from "../../infrastructure/rawSQL/devices-sql-repository"
 
 export class DeleteDeviceCommand {
     constructor(

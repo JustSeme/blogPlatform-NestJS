@@ -4,8 +4,8 @@ import {
 import { InjectModel } from "@nestjs/mongoose"
 import {
     CommentDBModel, CommentModelType, LikeObjectType
-} from "../../domain/comments/CommentTypes"
-import { Comment } from "../../domain/comments/mongoose/Comments.schema"
+} from "../../domain/CommentTypes"
+import { Comment } from "../../domain/mongoose/Comments.schema"
 import { ReadCommentsQueryParams } from "../../api/models/ReadCommentsQuery"
 import { ReadOutputQuery } from "../../../general/types/ReadQuery"
 import { HydratedComment } from "../CommentTypes"

@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common"
 import { InjectDataSource } from "@nestjs/typeorm"
 import { DataSource } from "typeorm"
 import { ReadCommentsQueryParams } from "../../api/models/ReadCommentsQuery"
-import { CommentEntity } from "../../domain/comments/typeORM/comment.entity"
+import { CommentEntity } from "../../domain/typeORM/comment.entity"
 import {
     CommentViewModel, CommentsWithQueryOutputModel, LikesInfoViewType
 } from "../../application/dto/CommentViewModel"

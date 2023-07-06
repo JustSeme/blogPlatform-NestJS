@@ -7,9 +7,9 @@ import {
 } from '@nestjs/cqrs'
 import { UnauthorizedException } from '@nestjs/common'
 import { generateErrorsMessages } from '../../../general/helpers'
-import { DeviceAuthSessionDBModel } from '../../../security/domain/DeviceAuthSessionTypes'
-import { DevicesSQLRepository } from '../../../security/infrastructure/devices-sql-repository'
 import { UsersTypeORMQueryRepository } from '../../../SuperAdmin/infrastructure/typeORM/users-typeORM-query-repository'
+import { AuthSession } from '../../../security/domain/typeORM/auth-session.entity'
+import { DevicesTypeORMRepository } from '../../../security/infrastructure/typeORM/devices-typeORM-repository'
 
 export class LoginCommand {
     constructor(
@@ -28,7 +28,7 @@ export class LoginUseCase implements ICommandHandler<LoginCommand> {
 
     constructor(
         private jwtService: JwtService,
-        private deviceRepository: DevicesSQLRepository,
+        private deviceRepository: DevicesTypeORMRepository,
         private usersQueryRepository: UsersTypeORMQueryRepository,
         private readonly authConfig: AuthConfig,
     ) {
@@ -43,20 +43,27 @@ export class LoginUseCase implements ICommandHandler<LoginCommand> {
             deviceName
         } = command
 
-        const user = await this.usersQueryRepository.findUserById(userId)
+        const user = await this.usersQueryRepository.findUserData(userId)
 
-        if (!user || user.banInfo.isBanned) {
-            throw new UnauthorizedException(generateErrorsMessages(`You are banned by banReason: ${user.banInfo.banReason}`, 'userId'))
+        if (!user || user.isBanned) {
+            throw new UnauthorizedException(generateErrorsMessages(`You are banned`, 'userId'))
         }
 
         const accessToken = await this.jwtService.createAccessToken(this.tokensSettings.ACCESS_TOKEN_EXPIRE_TIME, userId)
         const refreshToken = await this.jwtService.createRefreshToken(this.tokensSettings.REFRESH_TOKEN_EXPIRE_TIME, deviceId, userId)
         const result = await jwt.decode(refreshToken) as JwtPayload
 
-        const newSession = new DeviceAuthSessionDBModel(result.iat, result.exp, userId, userIp, deviceId, deviceName)
+        /* const newSession = new DeviceAuthSessionDBModel(result.iat, result.exp, userId, userIp, deviceId, deviceName) */
+        const newSession = new AuthSession()
+        newSession.issuedAt = result.iat
+        newSession.expireDate = result.exp
+        newSession.user = user
+        newSession.userIp = userIp
+        newSession.deviceId = deviceId
+        newSession.deviceName = deviceName
 
-        const isAdded = await this.deviceRepository.addSession(newSession)
-        if (!isAdded) {
+        const savedDevice = await this.deviceRepository.dataSourceSave(newSession)
+        if (!savedDevice) {
             return null
         }
 

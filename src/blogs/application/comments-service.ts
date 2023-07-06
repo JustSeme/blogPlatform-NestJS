@@ -3,7 +3,7 @@ import { LikeType } from "../api/models/LikeInputModel"
 import { Injectable } from "@nestjs/common"
 import {
     CommentDBModel, LikeObjectType
-} from "../domain/comments/CommentTypes"
+} from "../domain/CommentTypes"
 import { JwtService } from "../../general/adapters/jwt.adapter"
 import { CommentViewModelForBlogger } from './dto/CommentViewModelForBlogger'
 

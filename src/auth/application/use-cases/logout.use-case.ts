@@ -2,7 +2,7 @@ import { JwtService } from "../../../general/adapters/jwt.adapter"
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
-import { DevicesSQLRepository } from "../../../security/infrastructure/devices-sql-repository"
+import { DevicesSQLRepository } from "../../../security/infrastructure/rawSQL/devices-sql-repository"
 
 export class LogoutCommand {
     constructor(public readonly usedToken: string) { }

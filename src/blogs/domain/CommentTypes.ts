@@ -1,7 +1,7 @@
 import { Model } from 'mongoose'
 import { v4 as uuidv4 } from 'uuid'
 import { Comment } from './mongoose/Comments.schema'
-import { PostInfoType } from '../../application/dto/PostInfoType'
+import { PostInfoType } from '../application/dto/PostInfoType'
 
 export class CommentDBModel {
     public id: string

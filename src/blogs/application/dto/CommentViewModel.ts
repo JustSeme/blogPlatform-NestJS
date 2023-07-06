@@ -1,5 +1,5 @@
 import { LikeType } from "../../api/models/LikeInputModel"
-import { CommentEntity } from "../../domain/comments/typeORM/comment.entity"
+import { CommentEntity } from "../../domain/typeORM/comment.entity"
 
 export type LikesInfoViewType = {
     likesCount: number,

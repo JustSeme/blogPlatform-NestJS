@@ -6,7 +6,7 @@ import {
 import { BansUsersForBlogs } from "./bans-users-for-blogs.entity"
 import { UserEntity } from "../../../../SuperAdmin/domain/typeORM/user.entity"
 import { PostEntity } from "../../posts/typeORM/post.entity"
-import { CommentEntity } from "../../../../blogs/domain/comments/typeORM/comment.entity"
+import { CommentEntity } from "../../../../blogs/domain/typeORM/comment.entity"
 
 @Entity()
 export class BlogEntity {

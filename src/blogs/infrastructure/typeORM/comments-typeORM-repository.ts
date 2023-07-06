@@ -5,8 +5,8 @@ import {
 import {
     DataSource, EntityManager, Repository
 } from "typeorm"
-import { CommentEntity } from "../../domain/comments/typeORM/comment.entity"
-import { CommentLikesInfo } from "../../domain/comments/typeORM/comment-likes-info.entity"
+import { CommentEntity } from "../../domain/typeORM/comment.entity"
+import { CommentLikesInfo } from "../../domain/typeORM/comment-likes-info.entity"
 import { CommentEntitiesType } from "../CommentTypes"
 
 @Injectable()

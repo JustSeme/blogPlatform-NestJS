@@ -1,7 +1,7 @@
 import {
     Injectable, CanActivate, ExecutionContext, HttpException, HttpStatus
 } from '@nestjs/common'
-import { AttemptsSQLRepository } from '../../../security/infrastructure/attempts-sql-repository'
+import { AttemptsSQLRepository } from '../../../security/infrastructure/rawSQL/attempts-sql-repository'
 
 
 const rateLimitValidation = async (clientIp: string, requestedUrl: string, attemptsRepository: AttemptsSQLRepository) => {

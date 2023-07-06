@@ -1,6 +1,6 @@
 import { InjectModel } from "@nestjs/mongoose"
-import { Attempt } from "../domain/AttemptsSchema"
-import { AttemptModelType } from "../domain/AttemptsType"
+import { Attempt } from "../../domain/mongoose/AttemptsSchema"
+import { AttemptModelType } from "../../domain/AttemptsType"
 
 export class AttemptsRepository {
     constructor(@InjectModel(Attempt.name) private AttemptModel: AttemptModelType) { }

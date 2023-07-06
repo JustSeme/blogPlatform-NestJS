@@ -1,10 +1,10 @@
 import {
     Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn
 } from "typeorm"
-import { UserEntity } from "../../../../SuperAdmin/domain/typeORM/user.entity"
+import { UserEntity } from "../../../SuperAdmin/domain/typeORM/user.entity"
 import { CommentLikesInfo } from "./comment-likes-info.entity"
-import { PostEntity } from "../../../../Blogger/domain/posts/typeORM/post.entity"
-import { BlogEntity } from "../../../../Blogger/domain/blogs/typeORM/blog.entity"
+import { PostEntity } from "../../../Blogger/domain/posts/typeORM/post.entity"
+import { BlogEntity } from "../../../Blogger/domain/blogs/typeORM/blog.entity"
 
 @Entity()
 export class CommentEntity {

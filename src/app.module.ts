@@ -35,7 +35,7 @@ import { IsLoginAlreadyInUse } from "./auth/api/decorators/IsLoginAlreadyInUse"
 import { IsDeviceExistsPipe } from "./security/api/pipes/isDeviceExists.validation.pipe"
 import {
   Attempt, AttemptsSchema
-} from "./security/domain/AttemptsSchema"
+} from "./security/domain/mongoose/AttemptsSchema"
 import { IpRestrictionGuard } from "./auth/api/guards/ip-restriction.guard"
 import { BlogsConfig } from "./configuration/blogs.config"
 import { AuthConfig } from "./configuration/auth.config"
@@ -80,7 +80,7 @@ import { DeleteDeviceUseCase } from "./security/application/use-cases/delete-dev
 import { GetActiveDevicesUseCase } from "./security/application/use-cases/get-active-devices-for-user.use-case"
 import {
   Comment, CommentsSchema
-} from "./blogs/domain/comments/mongoose/Comments.schema"
+} from "./blogs/domain/mongoose/Comments.schema"
 import { UsersService } from "./SuperAdmin/application/users.service"
 import {
   User, UsersSchema
@@ -102,14 +102,14 @@ import { AuthRepository } from "./auth/infrastructure/auth-sql-repository"
 import { TypeOrmModule } from "@nestjs/typeorm"
 import { UsersSQLRepository } from "./SuperAdmin/infrastructure/rawSQL/users-sql-repository"
 import { UsersQuerySQLRepository } from "./SuperAdmin/infrastructure/rawSQL/users-query-sql-repository"
-import { DevicesSQLRepository } from "./security/infrastructure/devices-sql-repository"
-import { AttemptsSQLRepository } from "./security/infrastructure/attempts-sql-repository"
+import { DevicesSQLRepository } from "./security/infrastructure/rawSQL/devices-sql-repository"
+import { AttemptsSQLRepository } from "./security/infrastructure/rawSQL/attempts-sql-repository"
 import { UserEntity } from "./SuperAdmin/domain/typeORM/user.entity"
-import { AuthSession } from "./security/domain/auth-session.entity"
-import { AttemptEntity } from "./security/domain/attempt.entity"
+import { AuthSession } from "./security/domain/typeORM/auth-session.entity"
+import { AttemptEntity } from "./security/domain/typeORM/attempt.entity"
 import {
   DeviceAuthSession, DeviceAuthSessionsSchema
-} from "./security/domain/DeviceAuthSessionSchema"
+} from "./security/domain/mongoose/DeviceAuthSessionSchema"
 import { BlogsSQLRepository } from "./Blogger/infrastructure/blogs/rawSQL/blogs-sql-repository"
 import { BlogsQuerySQLRepository } from "./Blogger/infrastructure/blogs/rawSQL/blogs-query-sql-repository"
 import { BansUsersForBlogs } from "./Blogger/domain/blogs/typeORM/bans-users-for-blogs.entity"
@@ -119,8 +119,8 @@ import { PostsQuerySQLRepository } from "./Blogger/infrastructure/posts/rawSQL/p
 import { UserBanInfo } from "./SuperAdmin/domain/typeORM/user-ban-info.entity"
 import { UserEmailConfirmation } from "./SuperAdmin/domain/typeORM/user-email-confirmation.entity"
 import { UserPasswordRecovery } from "./SuperAdmin/domain/typeORM/user-password-recovery.entity"
-import { CommentEntity } from "./blogs/domain/comments/typeORM/comment.entity"
-import { CommentLikesInfo } from "./blogs/domain/comments/typeORM/comment-likes-info.entity"
+import { CommentEntity } from "./blogs/domain/typeORM/comment.entity"
+import { CommentLikesInfo } from "./blogs/domain/typeORM/comment-likes-info.entity"
 import { CommentsSQLRepository } from "./blogs/infrastructure/rawSQL/comments-sql-repository"
 import { CommentsQuerySQLRepository } from "./blogs/infrastructure/rawSQL/comments-query-sql-repository"
 import { PostLikesInfo } from "./Blogger/domain/posts/typeORM/post-likes-info"
@@ -133,6 +133,7 @@ import { CommentsTypeORMRepository } from "./blogs/infrastructure/typeORM/commen
 import { PostsQueryTypeORMRepository } from "./Blogger/infrastructure/posts/typeORM/posts-query-typeORM-repository"
 import { CommentsQueryTypeORMRepository } from "./blogs/infrastructure/typeORM/comments-query-typeORM-repository"
 import { BlogEntity } from "./Blogger/domain/blogs/typeORM/blog.entity"
+import { DevicesTypeORMRepository } from "./security/infrastructure/typeORM/devices-typeORM-repository"
 
 const authUseCases = [
   LogoutUseCase,
@@ -243,6 +244,7 @@ const typeORMRepositories = [
   CommentsTypeORMRepository,
   CommentsQueryTypeORMRepository,
   PostsQueryTypeORMRepository,
+  DevicesTypeORMRepository,
 ]
 
 const decorators = [

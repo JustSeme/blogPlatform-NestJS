@@ -3,7 +3,7 @@ import {
 } from "@nestjs/cqrs"
 import { LikeType } from "../../../api/models/LikeInputModel"
 import { CommentsTypeORMRepository } from "../../../infrastructure/typeORM/comments-typeORM-repository"
-import { CommentLikesInfo } from "../../../domain/comments/typeORM/comment-likes-info.entity"
+import { CommentLikesInfo } from "../../../domain/typeORM/comment-likes-info.entity"
 import { UsersTypeORMQueryRepository } from "../../../../SuperAdmin/infrastructure/typeORM/users-typeORM-query-repository"
 
 export class UpdateLikeStatusForCommentCommand {

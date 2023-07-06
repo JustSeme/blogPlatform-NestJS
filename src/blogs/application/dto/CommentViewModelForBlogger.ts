@@ -1,7 +1,7 @@
 import { ReadOutputQuery } from "../../../general/types/ReadQuery"
 import { LikeType } from "../../api/models/LikeInputModel"
-import { CommentatorInfoType } from "../../domain/comments/CommentTypes"
-import { CommentEntity } from "../../domain/comments/typeORM/comment.entity"
+import { CommentatorInfoType } from "../../domain/CommentTypes"
+import { CommentEntity } from "../../domain/typeORM/comment.entity"
 import { LikesInfoViewType } from "./CommentViewModel"
 import { PostInfoType } from "./PostInfoType"
 

@@ -1,7 +1,7 @@
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
-import { DevicesSQLRepository } from "../../infrastructure/devices-sql-repository"
+import { DevicesSQLRepository } from "../../infrastructure/rawSQL/devices-sql-repository"
 
 export class RemoveAllSessionsExcludeCurrentCommand {
     constructor(

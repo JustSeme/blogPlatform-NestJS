@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-import { DeviceAuthSession } from '../domain/DeviceAuthSessionSchema'
+import { DeviceAuthSession } from '../../domain/mongoose/DeviceAuthSessionSchema'
 import {
     DeviceAuthSessionDBModel, DeviceAuthSessionModelType
-} from '../domain/DeviceAuthSessionTypes'
+} from '../../domain/DeviceAuthSessionTypes'
 
 @Injectable()
 export class DeviceRepository {

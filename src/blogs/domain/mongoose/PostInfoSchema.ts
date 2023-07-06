@@ -1,7 +1,7 @@
 import {
     Prop, Schema, SchemaFactory
 } from "@nestjs/mongoose"
-import { PostInfoType } from "../../../application/dto/PostInfoType"
+import { PostInfoType } from "../../application/dto/PostInfoType"
 
 @Schema()
 export class PostInfo {

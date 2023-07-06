@@ -1,11 +1,11 @@
 import { Injectable } from "@nestjs/common"
 import { InjectRepository } from "@nestjs/typeorm"
-import { CommentEntity } from "../../domain/comments/typeORM/comment.entity"
+import { CommentEntity } from "../../domain/typeORM/comment.entity"
 import { Repository } from "typeorm"
 import {
     CommentViewModel, CommentsWithQueryOutputModel, LikesInfoViewType
 } from "../../application/dto/CommentViewModel"
-import { CommentLikesInfo } from "../../domain/comments/typeORM/comment-likes-info.entity"
+import { CommentLikesInfo } from "../../domain/typeORM/comment-likes-info.entity"
 import { ReadCommentsQueryParams } from "../../api/models/ReadCommentsQuery"
 import {
     CommentViewModelForBlogger, CommentsForBloggerWithQueryOutputModel

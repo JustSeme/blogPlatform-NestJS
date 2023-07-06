@@ -4,7 +4,7 @@ import {
     Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn
 } from "typeorm"
 import { UserEntity } from "../../../../SuperAdmin/domain/typeORM/user.entity"
-import { CommentEntity } from "../../../../blogs/domain/comments/typeORM/comment.entity"
+import { CommentEntity } from "../../../../blogs/domain/typeORM/comment.entity"
 import { PostLikesInfo } from "./post-likes-info"
 import { BlogEntity } from "../../blogs/typeORM/blog.entity"
 

@@ -2,7 +2,7 @@ import {
     Injectable, NotFoundException, PipeTransform
 } from "@nestjs/common"
 import { generateErrorsMessages } from "../../../general/helpers"
-import { DevicesSQLRepository } from "../../infrastructure/devices-sql-repository"
+import { DevicesSQLRepository } from "../../infrastructure/rawSQL/devices-sql-repository"
 
 @Injectable()
 export class IsDeviceExistsPipe implements PipeTransform {

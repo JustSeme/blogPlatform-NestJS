@@ -8,7 +8,7 @@ import {
 import {
     LikesInfo, LikesInfoSchema
 } from "./LikesInfoSchema"
-import { PostInfoType } from "../../../application/dto/PostInfoType"
+import { PostInfoType } from "../../application/dto/PostInfoType"
 import { PostInfoSchema } from "./PostInfoSchema"
 
 @Schema()

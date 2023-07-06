@@ -5,7 +5,7 @@ import { DeviceSessionsViewModel } from '../dto/DeviceSessionsViewModel'
 import { generateErrorsMessages } from '../../../general/helpers'
 import { NotFoundException } from '@nestjs/common'
 import { SecurityService } from '../security-service'
-import { DevicesSQLRepository } from '../../infrastructure/devices-sql-repository'
+import { DevicesSQLRepository } from '../../infrastructure/rawSQL/devices-sql-repository'
 
 export class GetActiveDevicesCommand {
     constructor(public readonly userId: string) { }

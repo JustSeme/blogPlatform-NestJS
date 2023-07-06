@@ -7,7 +7,7 @@ import {
 import {
     DeviceInfo, DeviceInfoSchema
 } from "./DeviceInfoSchema"
-import { DeviceAuthSessionDBModel } from "./DeviceAuthSessionTypes"
+import { DeviceAuthSessionDBModel } from "../DeviceAuthSessionTypes"
 
 @Schema()
 export class DeviceAuthSession {

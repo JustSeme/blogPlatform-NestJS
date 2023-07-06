@@ -1,7 +1,7 @@
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import { Injectable } from '@nestjs/common/decorators'
 import { AuthConfig } from '../../configuration/auth.config'
-import { DevicesSQLRepository } from '../../security/infrastructure/devices-sql-repository'
+import { DevicesSQLRepository } from '../../security/infrastructure/rawSQL/devices-sql-repository'
 
 
 @Injectable()

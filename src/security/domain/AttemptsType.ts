@@ -1,5 +1,5 @@
 import { Model } from "mongoose"
-import { Attempt } from "./AttemptsSchema"
+import { Attempt } from "./mongoose/AttemptsSchema"
 
 export class AttemptDTO {
     constructor(

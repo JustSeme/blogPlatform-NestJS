@@ -3,7 +3,7 @@ import { InjectDataSource } from "@nestjs/typeorm"
 import { DataSource } from "typeorm"
 import {
     DeviceAuthSessionDBModel, DeviceAuthSessionSQLModel
-} from "../domain/DeviceAuthSessionTypes"
+} from "../../domain/DeviceAuthSessionTypes"
 
 @Injectable()
 export class DevicesSQLRepository {

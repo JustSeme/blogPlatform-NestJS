@@ -4,7 +4,7 @@ import {
     Controller,
     Delete, Get, HttpCode, Param, UseGuards
 } from "@nestjs/common"
-import { CurrentDeviceId } from "../current-deviceId.param.decorator"
+import { CurrentDeviceId } from "./decorators/current-deviceId.param.decorator"
 import { IsDeviceExistsPipe } from "./pipes/isDeviceExists.validation.pipe"
 import { RefreshAuthGuard } from "./guards/refresh-auth.guard"
 import { JwtService } from "../../general/adapters/jwt.adapter"
