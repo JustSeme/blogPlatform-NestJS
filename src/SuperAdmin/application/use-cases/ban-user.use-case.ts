@@ -33,12 +33,29 @@ export class BanUserUseCase implements ICommandHandler<BanUserCommand> {
 
         const queryRunner = this.dataSource.createQueryRunner()
 
+        await queryRunner.connect()
 
+        await queryRunner.startTransaction()
 
-        const isBanned = await this.usersRepository.banUserById(userId, banReason)
+        try {
+            const isBanned = await this.usersRepository.banUserById(userId, banReason)
 
-        const isEntitiesHided = await this.hideUserEntities(userId)
-        return isEntitiesHided && isBanned
+            const isEntitiesHided = await this.hideUserEntities(userId)
+
+            if (!isEntitiesHided) {
+                throw new Error('Something wrong with hiding all entities, transacion is not completed')
+            }
+
+            await queryRunner.commitTransaction()
+
+            return isEntitiesHided && isBanned
+        } catch (err) {
+            console.error(err)
+            await queryRunner.rollbackTransaction()
+            return false
+        } finally {
+            await queryRunner.release()
+        }
     }
 
     async hideUserEntities(userId: string) {
