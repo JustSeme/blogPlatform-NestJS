@@ -148,7 +148,7 @@ export class BlogsSQLRepository {
         }
     }
 
-    /* async deleteBlog(id: string): Promise<boolean> {
+    async deleteBlog(id: string): Promise<boolean> {
         const queryString = `
             DELETE FROM public."blog_entity"
                 WHERE id=$1;
@@ -162,5 +162,5 @@ export class BlogsSQLRepository {
             console.error(err)
             return false
         }
-    } */
+    }
 }

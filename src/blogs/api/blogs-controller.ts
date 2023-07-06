@@ -9,15 +9,13 @@ import { GetPostsForBlogCommand } from "../application/use-cases/blogs/get-posts
 import {
     Controller, Get, Headers, NotFoundException, Param, Query
 } from "@nestjs/common"
-import { BlogsQuerySQLRepository } from "../../Blogger/infrastructure/blogs/rawSQL/blogs-query-sql-repository"
 import { BlogsQueryTypeORMRepository } from "../../Blogger/infrastructure/blogs/typeORM/blogs-query-typeORM-repository"
 
 @Controller('blogs')
 export class BlogsController {
     constructor(
         protected commandBus: CommandBus,
-        protected blogsQueryRepository: BlogsQuerySQLRepository,
-        protected blogsQueryTypeORMRepository: BlogsQueryTypeORMRepository,
+        protected blogsQueryRepository: BlogsQueryTypeORMRepository,
     ) { }
 
     @Get()
@@ -35,7 +33,7 @@ export class BlogsController {
     async getBlogById(
         @Param('blogId', IsBlogByIdExistPipe) blogId: string
     ): Promise<BlogViewModel> {
-        const findedBlogData = await this.blogsQueryTypeORMRepository.findBlogById(blogId)
+        const findedBlogData = await this.blogsQueryRepository.findBlogById(blogId)
 
         return new BlogViewModel(findedBlogData)
     }

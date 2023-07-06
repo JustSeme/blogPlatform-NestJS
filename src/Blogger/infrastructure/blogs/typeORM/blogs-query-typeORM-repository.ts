@@ -3,6 +3,10 @@ import { InjectRepository } from "@nestjs/typeorm"
 import { Repository } from "typeorm"
 import { BansUsersForBlogs } from "../../../domain/blogs/typeORM/bans-users-for-blogs.entity"
 import { BlogEntity } from "../../../domain/blogs/typeORM/blog.entity"
+import { ReadBlogsQueryParams } from "../../../../blogs/api/models/ReadBlogsQuery"
+import {
+    BlogViewModel, BlogsWithQueryOutputModel
+} from "../../../../blogs/application/dto/BlogViewModel"
 
 @Injectable()
 export class BlogsQueryTypeORMRepository {
@@ -12,6 +16,46 @@ export class BlogsQueryTypeORMRepository {
         @InjectRepository(BansUsersForBlogs)
         private bansUsersForBlogsRepository: Repository<BansUsersForBlogs>,
     ) { }
+
+    async findBlogs(queryParams: ReadBlogsQueryParams): Promise<BlogsWithQueryOutputModel> {
+        const {
+            searchNameTerm = '',
+            sortDirection = 'DESC',
+            sortBy = 'createdAt',
+            pageNumber = 1,
+            pageSize = 10
+        } = queryParams
+
+        const nameTerm = `%${searchNameTerm.toLocaleLowerCase()}%`
+
+        const totalCount = await this.blogsRepository
+            .createQueryBuilder('be')
+            .where('lower(be.name) LIKE :nameTerm', { nameTerm })
+            .andWhere('be.isBanned = false')
+            .getCount()
+
+        const pagesCount = Math.ceil(totalCount / +pageSize)
+        const skipCount = (+pageNumber - 1) * +pageSize
+
+        const resultedBlogs = await this.blogsRepository
+            .createQueryBuilder('be')
+            .where('lower(be.name) LIKE :nameTerm', { nameTerm })
+            .andWhere('be.isBanned = false')
+            .orderBy(`be.${sortBy}`, sortDirection)
+            .limit(pageSize)
+            .offset(skipCount)
+            .getMany()
+
+        const displayedBlogs = resultedBlogs.map(blog => new BlogViewModel(blog))
+
+        return {
+            pagesCount: pagesCount,
+            page: +pageNumber,
+            pageSize: +pageSize,
+            totalCount: +totalCount,
+            items: displayedBlogs
+        }
+    }
 
     async findBlogById(blogId: string): Promise<BlogEntity> {
         try {
