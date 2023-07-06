@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common"
 import { InjectRepository } from "@nestjs/typeorm"
-import { BlogEntity } from "../../../domain/blogs/blog.entity"
 import { Repository } from "typeorm"
-import { BansUsersForBlogs } from "../../../domain/blogs/bans-users-for-blogs.entity"
+import { BansUsersForBlogs } from "../../../domain/blogs/typeORM/bans-users-for-blogs.entity"
+import { BlogEntity } from "../../../domain/blogs/typeORM/blog.entity"
 
 @Injectable()
 export class BlogsQueryTypeORMRepository {
@@ -45,6 +45,17 @@ export class BlogsQueryTypeORMRepository {
         } catch (err) {
             console.error(err)
             return null
+        }
+    }
+
+    async isBlogExists(blogId: string): Promise<boolean> {
+        try {
+            const blogByBlogId = await this.blogsRepository.find({ where: { id: blogId } })
+
+            return blogByBlogId ? true : false
+        } catch (err) {
+            console.error(err)
+            return false
         }
     }
 }

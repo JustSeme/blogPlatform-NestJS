@@ -1,7 +1,7 @@
 import {
     Prop, Schema, SchemaFactory
 } from "@nestjs/mongoose"
-import { BlogDTO } from "./BlogsTypes"
+import { BlogDTO } from "../BlogsTypes"
 import {
     BlogOwnerInfo, BlogOwnerInfoSchema
 } from "./BlogOwnerInfoSchema"

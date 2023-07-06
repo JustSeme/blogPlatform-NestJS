@@ -5,6 +5,7 @@ import {
 } from '../../../domain/blogs/BlogsTypes'
 import { BlogInputModel } from '../../../api/models/BlogInputModel'
 import { BlogViewModel } from '../../../../blogs/application/dto/BlogViewModel'
+import { BlogEntity } from '../../../domain/blogs/typeORM/blog.entity'
 
 @Injectable()
 export class BlogsSQLRepository {
@@ -58,7 +59,7 @@ export class BlogsSQLRepository {
         }
     }
 
-    /* async findBlogById(blogId: string): Promise<BlogEntity> {
+    async findBlogById(blogId: string): Promise<BlogEntity> {
         const queryString = `
             SELECT *
                 FROM public."blog_entity"
@@ -77,7 +78,7 @@ export class BlogsSQLRepository {
             console.error(err)
             return null
         }
-    } */
+    }
 
     async isBlogExists(blogId: string): Promise<boolean> {
         const queryString = `

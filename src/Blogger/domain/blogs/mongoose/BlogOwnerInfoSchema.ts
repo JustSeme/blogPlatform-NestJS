@@ -1,7 +1,7 @@
 import {
     Prop, Schema, SchemaFactory
 } from "@nestjs/mongoose"
-import { BlogOwnerInfoType } from "./BlogsTypes"
+import { BlogOwnerInfoType } from "../BlogsTypes"
 
 @Schema()
 export class BlogOwnerInfo {

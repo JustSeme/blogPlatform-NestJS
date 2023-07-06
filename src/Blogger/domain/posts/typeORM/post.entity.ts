@@ -4,9 +4,9 @@ import {
     Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn
 } from "typeorm"
 import { UserEntity } from "../../../../SuperAdmin/domain/typeORM/user.entity"
-import { BlogEntity } from "../../blogs/blog.entity"
 import { CommentEntity } from "../../../../blogs/domain/comments/typeORM/comment.entity"
 import { PostLikesInfo } from "./post-likes-info"
+import { BlogEntity } from "../../blogs/typeORM/blog.entity"
 
 @Entity()
 export class PostEntity {

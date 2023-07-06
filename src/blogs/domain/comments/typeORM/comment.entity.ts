@@ -4,7 +4,7 @@ import {
 import { UserEntity } from "../../../../SuperAdmin/domain/typeORM/user.entity"
 import { CommentLikesInfo } from "./comment-likes-info.entity"
 import { PostEntity } from "../../../../Blogger/domain/posts/typeORM/post.entity"
-import { BlogEntity } from "../../../../Blogger/domain/blogs/blog.entity"
+import { BlogEntity } from "../../../../Blogger/domain/blogs/typeORM/blog.entity"
 
 @Entity()
 export class CommentEntity {

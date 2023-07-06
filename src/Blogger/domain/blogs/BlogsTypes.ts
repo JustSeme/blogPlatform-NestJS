@@ -1,7 +1,7 @@
 import { Model } from "mongoose"
 import {
     Blog, BlogBanInfoType
-} from "./BlogsSchema"
+} from "./mongoose/BlogsSchema"
 
 export type BlogOwnerInfoType = {
     userId: string,

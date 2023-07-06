@@ -10,7 +10,7 @@ import { UserBanInfo } from "../../domain/typeORM/user-ban-info.entity"
 import { UserPasswordRecovery } from "../../domain/typeORM/user-password-recovery.entity"
 import { UserEmailConfirmation } from "../../domain/typeORM/user-email-confirmation.entity"
 import { UserEntitiesType } from "../UsersTypes"
-import { BansUsersForBlogs } from "../../../Blogger/domain/blogs/bans-users-for-blogs.entity"
+import { BansUsersForBlogs } from "../../../Blogger/domain/blogs/typeORM/bans-users-for-blogs.entity"
 
 @Injectable()
 export class UsersTypeORMRepository {

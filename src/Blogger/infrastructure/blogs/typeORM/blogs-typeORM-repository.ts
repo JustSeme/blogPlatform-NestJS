@@ -2,13 +2,13 @@ import { Injectable } from "@nestjs/common"
 import {
     InjectDataSource, InjectRepository
 } from "@nestjs/typeorm"
-import { BlogEntity } from "../../../domain/blogs/blog.entity"
 import {
     DataSource,
     EntityManager, Repository
 } from "typeorm"
 import { BlogsEntitiesType } from "../BlogsTypes"
-import { BansUsersForBlogs } from "../../../domain/blogs/bans-users-for-blogs.entity"
+import { BansUsersForBlogs } from "../../../domain/blogs/typeORM/bans-users-for-blogs.entity"
+import { BlogEntity } from "../../../domain/blogs/typeORM/blog.entity"
 
 @Injectable()
 export class BlogsTypeORMRepository {

@@ -4,8 +4,7 @@ import {
     Entity, OneToMany, OneToOne, PrimaryGeneratedColumn
 } from "typeorm"
 import { AuthSession } from "../../../security/domain/auth-session.entity"
-import { BlogEntity } from "../../../Blogger/domain/blogs/blog.entity"
-import { BansUsersForBlogs } from "../../../Blogger/domain/blogs/bans-users-for-blogs.entity"
+import { BansUsersForBlogs } from "../../../Blogger/domain/blogs/typeORM/bans-users-for-blogs.entity"
 import { PostEntity } from "../../../Blogger/domain/posts/typeORM/post.entity"
 import { UserBanInfo } from "./user-ban-info.entity"
 import { UserEmailConfirmation } from "./user-email-confirmation.entity"
@@ -13,6 +12,7 @@ import { UserPasswordRecovery } from "./user-password-recovery.entity"
 import { CommentEntity } from "../../../blogs/domain/comments/typeORM/comment.entity"
 import { CommentLikesInfo } from "../../../blogs/domain/comments/typeORM/comment-likes-info.entity"
 import { PostLikesInfo } from "../../../Blogger/domain/posts/typeORM/post-likes-info"
+import { BlogEntity } from "../../../Blogger/domain/blogs/typeORM/blog.entity"
 
 @Entity()
 export class UserEntity {

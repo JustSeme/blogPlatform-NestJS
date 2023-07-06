@@ -3,10 +3,10 @@ import {
     CreateDateColumn,
     Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn
 } from "typeorm"
-import { UserEntity } from "../../../SuperAdmin/domain/typeORM/user.entity"
 import { BansUsersForBlogs } from "./bans-users-for-blogs.entity"
-import { PostEntity } from "../posts/typeORM/post.entity"
-import { CommentEntity } from "../../../blogs/domain/comments/typeORM/comment.entity"
+import { UserEntity } from "../../../../SuperAdmin/domain/typeORM/user.entity"
+import { PostEntity } from "../../posts/typeORM/post.entity"
+import { CommentEntity } from "../../../../blogs/domain/comments/typeORM/comment.entity"
 
 @Entity()
 export class BlogEntity {

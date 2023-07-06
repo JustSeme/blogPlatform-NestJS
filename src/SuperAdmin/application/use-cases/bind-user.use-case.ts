@@ -3,9 +3,9 @@ import {
 } from "@nestjs/cqrs"
 import { generateErrorsMessages } from "../../../general/helpers"
 import { BadRequestException } from '@nestjs/common'
-import { UsersQuerySQLRepository } from "../../infrastructure/rawSQL/users-query-sql-repository"
-import { BlogsSQLRepository } from "../../../Blogger/infrastructure/blogs/rawSQL/blogs-sql-repository"
 import { BlogsQueryTypeORMRepository } from "../../../Blogger/infrastructure/blogs/typeORM/blogs-query-typeORM-repository"
+import { BlogsTypeORMRepository } from "../../../Blogger/infrastructure/blogs/typeORM/blogs-typeORM-repository"
+import { UsersTypeORMQueryRepository } from "../../infrastructure/typeORM/users-typeORM-query-repository"
 
 export class BindUserCommand {
     constructor(
@@ -17,9 +17,9 @@ export class BindUserCommand {
 @CommandHandler(BindUserCommand)
 export class BindUserUseCase implements ICommandHandler<BindUserCommand> {
     constructor(
-        private blogsRepository: BlogsSQLRepository,
+        private blogsRepository: BlogsTypeORMRepository,
         private blogsQueryRepository: BlogsQueryTypeORMRepository,
-        private usersQueryRepository: UsersQuerySQLRepository,
+        private usersQueryRepository: UsersTypeORMQueryRepository,
     ) { }
 
     async execute(command: BindUserCommand) {
@@ -33,8 +33,11 @@ export class BindUserUseCase implements ICommandHandler<BindUserCommand> {
             throw new BadRequestException(generateErrorsMessages('blog is already bounded with any user', 'blogId'))
         }
 
-        const userById = await this.usersQueryRepository.findUserById(userId)
+        const userById = await this.usersQueryRepository.findUserData(userId)
 
-        await this.blogsRepository.bindBlogWithUser(blogId, userId, userById.login)
+        blogById.ownerLogin = userById.login
+        blogById.user = userById
+
+        await this.blogsRepository.dataSourceSave(blogById)
     }
 }

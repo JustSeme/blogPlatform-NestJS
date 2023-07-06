@@ -8,7 +8,7 @@ import { UserEntity } from "../../domain/typeORM/user.entity"
 import { UserBanInfo } from "../../domain/typeORM/user-ban-info.entity"
 import { ReadBannedUsersQueryParams } from "../../../Blogger/api/models/ReadBannedUsersQueryParams"
 import { UsersBloggerViewModel } from "../../application/dto/UsersBloggerViewModel"
-import { BansUsersForBlogs } from "../../../Blogger/domain/blogs/bans-users-for-blogs.entity"
+import { BansUsersForBlogs } from "../../../Blogger/domain/blogs/typeORM/bans-users-for-blogs.entity"
 
 @Injectable()
 export class UsersQuerySQLRepository {

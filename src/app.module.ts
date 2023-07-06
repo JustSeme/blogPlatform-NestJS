@@ -7,7 +7,7 @@ import { Module } from "@nestjs/common"
 import { MongooseModule } from "@nestjs/mongoose"
 import {
   Blog, BlogSchema
-} from "./Blogger/domain/blogs/BlogsSchema"
+} from "./Blogger/domain/blogs/mongoose/BlogsSchema"
 import {
   Post, PostSchema
 } from "./Blogger/domain/posts/mongoose/PostsSchema"
@@ -121,10 +121,9 @@ import { AttemptEntity } from "./security/domain/attempt.entity"
 import {
   DeviceAuthSession, DeviceAuthSessionsSchema
 } from "./security/domain/DeviceAuthSessionSchema"
-import { BlogEntity } from "./Blogger/domain/blogs/blog.entity"
 import { BlogsSQLRepository } from "./Blogger/infrastructure/blogs/rawSQL/blogs-sql-repository"
 import { BlogsQuerySQLRepository } from "./Blogger/infrastructure/blogs/rawSQL/blogs-query-sql-repository"
-import { BansUsersForBlogs } from "./Blogger/domain/blogs/bans-users-for-blogs.entity"
+import { BansUsersForBlogs } from "./Blogger/domain/blogs/typeORM/bans-users-for-blogs.entity"
 import { PostEntity } from "./Blogger/domain/posts/typeORM/post.entity"
 import { PostsSQLRepository } from "./Blogger/infrastructure/posts/rawSQL/posts-sql-repository"
 import { PostsQuerySQLRepository } from "./Blogger/infrastructure/posts/rawSQL/posts-query-sql-repository"
@@ -144,6 +143,7 @@ import { BlogsTypeORMRepository } from "./Blogger/infrastructure/blogs/typeORM/b
 import { CommentsTypeORMRepository } from "./blogs/infrastructure/typeORM/comments-typeORM-repository"
 import { PostsQueryTypeORMRepository } from "./Blogger/infrastructure/posts/typeORM/posts-query-typeORM-repository"
 import { CommentsQueryTypeORMRepository } from "./blogs/infrastructure/typeORM/comments-query-typeORM-repository"
+import { BlogEntity } from "./Blogger/domain/blogs/typeORM/blog.entity"
 
 const authUseCases = [
   LogoutUseCase,

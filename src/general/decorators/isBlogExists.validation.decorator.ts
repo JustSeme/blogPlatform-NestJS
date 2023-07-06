@@ -2,17 +2,17 @@ import { Injectable } from '@nestjs/common'
 import {
     ValidatorConstraint, ValidatorConstraintInterface
 } from 'class-validator'
-import { BlogsSQLRepository } from '../../Blogger/infrastructure/blogs/rawSQL/blogs-sql-repository'
+import { BlogsQueryTypeORMRepository } from '../../Blogger/infrastructure/blogs/typeORM/blogs-query-typeORM-repository'
 
 @ValidatorConstraint({
     name: 'IsBlogByIdExist', async: true
 })
 @Injectable()
 export class IsBlogByIdExist implements ValidatorConstraintInterface {
-    constructor(private blogsRepository: BlogsSQLRepository) { }
+    constructor(private blogsQueryRepository: BlogsQueryTypeORMRepository) { }
 
     async validate(blogId: string) {
-        if (!(await this.blogsRepository.isBlogExists(blogId))) {
+        if (!(await this.blogsQueryRepository.isBlogExists(blogId))) {
             return false
         }
         return true

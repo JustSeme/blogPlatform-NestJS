@@ -3,7 +3,7 @@ import {
     CreateDateColumn,
     Entity, ManyToOne, PrimaryGeneratedColumn
 } from "typeorm"
-import { UserEntity } from "../../../SuperAdmin/domain/typeORM/user.entity"
+import { UserEntity } from "../../../../SuperAdmin/domain/typeORM/user.entity"
 import { BlogEntity } from "./blog.entity"
 
 @Entity()

@@ -3,7 +3,7 @@ import { Injectable } from "@nestjs/common"
 import { InjectModel } from "@nestjs/mongoose"
 import {
     Blog, BlogBanInfoType
-} from "../../../domain/blogs/BlogsSchema"
+} from "../../../domain/blogs/mongoose/BlogsSchema"
 import {
     BlogDTO, BlogModelType
 } from "../../../domain/blogs/BlogsTypes"
