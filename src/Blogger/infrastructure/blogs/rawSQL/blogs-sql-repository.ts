@@ -114,21 +114,6 @@ export class BlogsSQLRepository {
         }
     }
 
-    async findAllBlogIdsByCreatorId(creatorId: string): Promise<string[]> {
-        const queryString = `
-            SELECT id
-                FROM public."blog_entity"
-                WHERE "ownerId"=$1 AND "isBanned"=false
-        `
-
-        try {
-            return this.dataSource.query(queryString, [creatorId])
-        } catch (err) {
-            console.error(err)
-            return null
-        }
-    }
-
     async banBlog(blogId: string): Promise<boolean> {
         const queryString = `
             UPDATE public."blog_entity"
@@ -163,7 +148,7 @@ export class BlogsSQLRepository {
         }
     }
 
-    async deleteBlog(id: string): Promise<boolean> {
+    /* async deleteBlog(id: string): Promise<boolean> {
         const queryString = `
             DELETE FROM public."blog_entity"
                 WHERE id=$1;
@@ -177,5 +162,5 @@ export class BlogsSQLRepository {
             console.error(err)
             return false
         }
-    }
+    } */
 }

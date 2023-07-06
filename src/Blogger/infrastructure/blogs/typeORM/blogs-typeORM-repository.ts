@@ -42,4 +42,14 @@ export class BlogsTypeORMRepository {
             return false
         }
     }
+
+    async deleteBlog(id: string): Promise<boolean> {
+        try {
+            await this.blogsRepository.delete({ id: id })
+            return true
+        } catch (err) {
+            console.error(err)
+            return false
+        }
+    }
 }
