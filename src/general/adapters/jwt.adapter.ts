@@ -1,7 +1,7 @@
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import { Injectable } from '@nestjs/common/decorators'
 import { AuthConfig } from '../../configuration/auth.config'
-import { DevicesSQLRepository } from '../../security/infrastructure/rawSQL/devices-sql-repository'
+import { DevicesTypeORMRepository } from '../../security/infrastructure/typeORM/devices-typeORM-repository'
 
 
 @Injectable()
@@ -13,7 +13,7 @@ export class JwtService {
     }
 
     constructor(
-        protected deviceRepository: DevicesSQLRepository,
+        protected deviceRepository: DevicesTypeORMRepository,
         private readonly authConfig: AuthConfig
     ) {
         this.jwtSecret = this.authConfig.getJwtSecret()
@@ -73,9 +73,14 @@ export class JwtService {
         const newAccessToken = await this.createAccessToken(this.tokensSettings.ACCESS_TOKEN_EXPIRE_TIME, result.userId)
         const resultOfCreatedToken = jwt.decode(newRefreshToken) as JwtPayload
 
-        const isUpdated = await this.deviceRepository.updateSession(result.deviceId, resultOfCreatedToken.iat, resultOfCreatedToken.exp)
+        const deviceById = await this.deviceRepository.getDeviceData(result.deviceId)
 
-        if (!isUpdated) {
+        deviceById.issuedAt = resultOfCreatedToken.iat
+        deviceById.expireDate = resultOfCreatedToken.exp
+
+        const savedDevice = await this.deviceRepository.dataSourceSave(deviceById)
+
+        if (!savedDevice) {
             return null
         }
 

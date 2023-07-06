@@ -3,7 +3,7 @@ import {
 } from "@nestjs/cqrs"
 import { ForbiddenException } from "@nestjs/common"
 import { generateErrorsMessages } from "../../../general/helpers"
-import { DevicesSQLRepository } from "../../infrastructure/rawSQL/devices-sql-repository"
+import { DevicesTypeORMRepository } from "../../infrastructure/typeORM/devices-typeORM-repository"
 
 export class DeleteDeviceCommand {
     constructor(
@@ -15,7 +15,7 @@ export class DeleteDeviceCommand {
 @CommandHandler(DeleteDeviceCommand)
 export class DeleteDeviceUseCase implements ICommandHandler<DeleteDeviceCommand> {
     constructor(
-        private readonly deviceRepository: DevicesSQLRepository
+        private readonly deviceRepository: DevicesTypeORMRepository
     ) { }
 
     async execute(command: DeleteDeviceCommand): Promise<void> {

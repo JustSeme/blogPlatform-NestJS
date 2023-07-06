@@ -1,6 +1,6 @@
 import {
     Column,
-    Entity, ManyToOne, PrimaryGeneratedColumn
+    Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn
 } from "typeorm"
 import { UserEntity } from "../../../SuperAdmin/domain/typeORM/user.entity"
 
@@ -17,6 +17,7 @@ export class AuthSession {
         (user) => user.authSessions,
         { onDelete: 'CASCADE' }
     )
+    @JoinColumn({ name: 'user' })
     user: UserEntity
 
     @Column({ nullable: false })

@@ -1,7 +1,7 @@
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
-import { DevicesSQLRepository } from "../../infrastructure/rawSQL/devices-sql-repository"
+import { DevicesTypeORMRepository } from "../../infrastructure/typeORM/devices-typeORM-repository"
 
 export class RemoveAllSessionsExcludeCurrentCommand {
     constructor(
@@ -13,7 +13,7 @@ export class RemoveAllSessionsExcludeCurrentCommand {
 @CommandHandler(RemoveAllSessionsExcludeCurrentCommand)
 export class RemoveAllSessionsExcludeCurrentUseCase implements ICommandHandler<RemoveAllSessionsExcludeCurrentCommand> {
     constructor(
-        private readonly deviceRepository: DevicesSQLRepository
+        private readonly deviceRepository: DevicesTypeORMRepository
     ) { }
 
     async execute(command: RemoveAllSessionsExcludeCurrentCommand): Promise<void> {

@@ -2,7 +2,7 @@ import { JwtService } from "../../../general/adapters/jwt.adapter"
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
-import { DevicesSQLRepository } from "../../../security/infrastructure/rawSQL/devices-sql-repository"
+import { DevicesTypeORMRepository } from "../../../security/infrastructure/typeORM/devices-typeORM-repository"
 
 export class LogoutCommand {
     constructor(public readonly usedToken: string) { }
@@ -12,7 +12,7 @@ export class LogoutCommand {
 export class LogoutUseCase implements ICommandHandler<LogoutCommand>{
     constructor(
         private jwtService: JwtService,
-        private deviceRepository: DevicesSQLRepository
+        private deviceRepository: DevicesTypeORMRepository
     ) { }
 
     async execute(command: LogoutCommand) {
