@@ -5,6 +5,8 @@ import { BanBlogInputModel } from "../../api/models/BanBlogInputModel"
 import { PostsSQLRepository } from "../../../Blogger/infrastructure/posts/rawSQL/posts-sql-repository"
 import { BlogsTypeORMRepository } from "../../../Blogger/infrastructure/blogs/typeORM/blogs-typeORM-repository"
 import { BlogsQueryTypeORMRepository } from "../../../Blogger/infrastructure/blogs/typeORM/blogs-query-typeORM-repository"
+import { InjectDataSource } from "@nestjs/typeorm"
+import { DataSource } from "typeorm"
 
 export class BanBlogCommand {
     constructor(
@@ -19,18 +21,40 @@ export class BanBlogUseCase implements ICommandHandler<BanBlogCommand> {
         private blogsRepository: BlogsTypeORMRepository,
         private blogsQueryRepository: BlogsQueryTypeORMRepository,
         private postsRepository: PostsSQLRepository,
+        @InjectDataSource() private dataSource: DataSource,
     ) { }
 
 
     async execute(command: BanBlogCommand): Promise<boolean> {
-        const blogByBlogId = await this.blogsQueryRepository.findBlogById(command.blogId)
 
-        blogByBlogId.banDate = new Date()
-        blogByBlogId.isBanned = true
+        const queryRunner = this.dataSource.createQueryRunner()
 
-        const savedBlog = await this.blogsRepository.dataSourceSave(blogByBlogId)
+        await queryRunner.connect()
 
-        const isHided = await this.postsRepository.hidePostsByBlogId(command.blogId)
+        await queryRunner.startTransaction()
+
+        let savedBlog, isHided
+
+        try {
+            const blogByBlogId = await this.blogsQueryRepository.findBlogById(command.blogId)
+
+            blogByBlogId.banDate = new Date()
+            blogByBlogId.isBanned = true
+
+            savedBlog = await this.blogsRepository.dataSourceSave(blogByBlogId)
+
+            isHided = await this.postsRepository.hidePostsByBlogId(command.blogId)
+
+            await queryRunner.commitTransaction()
+        } catch (err) {
+            console.error(err)
+            await queryRunner.rollbackTransaction()
+            throw new Error('Something wrong with database, rollback ban blog transaction')
+        } finally {
+            await queryRunner.release()
+        }
+
+
         return savedBlog && isHided
     }
 }

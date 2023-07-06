@@ -5,6 +5,8 @@ import { BanBlogInputModel } from "../../api/models/BanBlogInputModel"
 import { PostsSQLRepository } from "../../../Blogger/infrastructure/posts/rawSQL/posts-sql-repository"
 import { BlogsQueryTypeORMRepository } from "../../../Blogger/infrastructure/blogs/typeORM/blogs-query-typeORM-repository"
 import { BlogsTypeORMRepository } from "../../../Blogger/infrastructure/blogs/typeORM/blogs-typeORM-repository"
+import { InjectDataSource } from "@nestjs/typeorm"
+import { DataSource } from "typeorm"
 
 export class UnbanBlogCommand {
     constructor(
@@ -18,19 +20,41 @@ export class UnbanBlogUseCase implements ICommandHandler<UnbanBlogCommand> {
     constructor(
         private blogsQueryRepository: BlogsQueryTypeORMRepository,
         private blogsRepository: BlogsTypeORMRepository,
-        private postsRepository: PostsSQLRepository
+        private postsRepository: PostsSQLRepository,
+        @InjectDataSource() private dataSource: DataSource,
     ) { }
 
 
     async execute(command: UnbanBlogCommand): Promise<boolean> {
-        const blogByBlogId = await this.blogsQueryRepository.findBlogById(command.blogId)
 
-        blogByBlogId.banDate = null
-        blogByBlogId.isBanned = false
+        const queryRunner = this.dataSource.createQueryRunner()
 
-        const savedBlog = await this.blogsRepository.dataSourceSave(blogByBlogId)
+        await queryRunner.connect()
 
-        const isUnhided = await this.postsRepository.unHidePostsByBlogId(command.blogId)
+        await queryRunner.startTransaction()
+
+        let savedBlog, isUnhided
+
+        try {
+            const blogByBlogId = await this.blogsQueryRepository.findBlogById(command.blogId)
+
+            blogByBlogId.banDate = null
+            blogByBlogId.isBanned = false
+
+            savedBlog = await this.blogsRepository.dataSourceSave(blogByBlogId)
+
+            isUnhided = await this.postsRepository.unHidePostsByBlogId(command.blogId)
+
+            await queryRunner.commitTransaction()
+        } catch (err) {
+            console.error(err)
+            await queryRunner.rollbackTransaction()
+            throw new Error('Something wrong with database, rollback unban blog transaction')
+        } finally {
+            await queryRunner.release()
+        }
+
+
         return savedBlog && isUnhided
     }
 }
