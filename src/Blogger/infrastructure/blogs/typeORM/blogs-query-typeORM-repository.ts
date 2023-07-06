@@ -37,14 +37,74 @@ export class BlogsQueryTypeORMRepository {
         const pagesCount = Math.ceil(totalCount / +pageSize)
         const skipCount = (+pageNumber - 1) * +pageSize
 
-        const resultedBlogs = await this.blogsRepository
+        let resultedBlogs
+
+        try {
+            resultedBlogs = await this.blogsRepository
+                .createQueryBuilder('be')
+                .where('lower(be.name) LIKE :nameTerm', { nameTerm })
+                .andWhere('be.isBanned = false')
+                .orderBy(`be.${sortBy}`, sortDirection)
+                .limit(pageSize)
+                .offset(skipCount)
+                .getMany()
+
+        } catch (err) {
+            console.error(err)
+            throw new Error('Something wrong with database...')
+        }
+
+        const displayedBlogs = resultedBlogs.map(blog => new BlogViewModel(blog))
+
+        return {
+            pagesCount: pagesCount,
+            page: +pageNumber,
+            pageSize: +pageSize,
+            totalCount: +totalCount,
+            items: displayedBlogs
+        }
+    }
+
+    async findBlogsForBlogger(queryParams: ReadBlogsQueryParams, creatorId: string): Promise<BlogsWithQueryOutputModel> {
+        const {
+            searchNameTerm = '',
+            sortDirection = 'DESC',
+            sortBy = 'createdAt',
+            pageNumber = 1,
+            pageSize = 10
+        } = queryParams
+
+        const nameTerm = `%${searchNameTerm.toLocaleLowerCase()}%`
+
+        const totalCount = await this.blogsRepository
             .createQueryBuilder('be')
+            .leftJoin('be.user', 'bu')
             .where('lower(be.name) LIKE :nameTerm', { nameTerm })
             .andWhere('be.isBanned = false')
-            .orderBy(`be.${sortBy}`, sortDirection)
-            .limit(pageSize)
-            .offset(skipCount)
-            .getMany()
+            .andWhere('bu.id = :creatorId', { creatorId })
+            .getCount()
+
+        const pagesCount = Math.ceil(totalCount / +pageSize)
+        const skipCount = (+pageNumber - 1) * +pageSize
+
+        let resultedBlogs
+
+        try {
+            resultedBlogs = await this.blogsRepository
+                .createQueryBuilder('be')
+                .leftJoin('be.user', 'bu')
+                .where('lower(be.name) LIKE :nameTerm', { nameTerm })
+                .andWhere('be.isBanned = false')
+                .andWhere('bu.id = :creatorId', { creatorId })
+                .orderBy(`be.${sortBy}`, sortDirection)
+                .limit(pageSize)
+                .offset(skipCount)
+                .getMany()
+
+        } catch (err) {
+            console.error(err)
+            throw new Error('Something wrong with database...')
+        }
 
         const displayedBlogs = resultedBlogs.map(blog => new BlogViewModel(blog))
 
@@ -94,7 +154,7 @@ export class BlogsQueryTypeORMRepository {
 
     async isBlogExists(blogId: string): Promise<boolean> {
         try {
-            const blogByBlogId = await this.blogsRepository.find({ where: { id: blogId } })
+            const blogByBlogId = await this.blogsRepository.findOne({ where: { id: blogId } })
 
             return blogByBlogId ? true : false
         } catch (err) {

@@ -10,6 +10,7 @@ import {
     HttpCode,
     HttpStatus,
     Delete,
+    NotFoundException,
 } from "@nestjs/common"
 import { ReadBlogsQueryParams } from "../../blogs/api/models/ReadBlogsQuery"
 import { JwtAuthGuard } from "../../general/guards/jwt-auth.guard"
@@ -29,17 +30,18 @@ import { PostInputModelWithoutBlogId } from "./models/PostInputModelWithoutBlogI
 import { UpdatePostForBloggerCommand } from "../application/use-cases/posts/update-post-for-blogger.use-case"
 import { IsPostExistsPipe } from "../../blogs/api/pipes/isPostExists.validation.pipe"
 import { DeletePostForBloggerCommand } from "../application/use-cases/posts/delete-post-for-blogger.use-case"
-import { GetBlogsForBloggerCommand } from "../application/use-cases/blogs/get-blogs-for-blogger.use.case"
 import { ReadCommentsQueryParams } from "../../blogs/api/models/ReadCommentsQuery"
 import { CommentsForBloggerWithQueryOutputModel } from "../../blogs/application/dto/CommentViewModelForBlogger"
 import { CommentsQueryTypeORMRepository } from "../../blogs/infrastructure/typeORM/comments-query-typeORM-repository"
+import { BlogsQueryTypeORMRepository } from "../infrastructure/blogs/typeORM/blogs-query-typeORM-repository"
 
 @UseGuards(JwtAuthGuard)
 @Controller('blogger/blogs')
 export class BloggerBlogsController {
     constructor(
         private commandBus: CommandBus,
-        private commentsQueryRepository: CommentsQueryTypeORMRepository
+        private commentsQueryRepository: CommentsQueryTypeORMRepository,
+        private blogsQueryRepository: BlogsQueryTypeORMRepository,
     ) { }
 
     @Post('')
@@ -59,9 +61,14 @@ export class BloggerBlogsController {
         @Query() blogsQueryParams: ReadBlogsQueryParams,
         @CurrentUserId() userId: string,
     ): Promise<BlogsWithQueryOutputModel> {
-        return this.commandBus.execute(
-            new GetBlogsForBloggerCommand(blogsQueryParams, userId)
-        )
+        const findedBlogsQueryData = await this.blogsQueryRepository.findBlogsForBlogger(blogsQueryParams, userId)
+        findedBlogsQueryData.items = findedBlogsQueryData.items.map(blog => new BlogViewModel(blog))
+
+        if (!findedBlogsQueryData.items.length) {
+            throw new NotFoundException('No one blogs is founded')
+        }
+
+        return findedBlogsQueryData
     }
 
     @HttpCode(HttpStatus.NO_CONTENT)

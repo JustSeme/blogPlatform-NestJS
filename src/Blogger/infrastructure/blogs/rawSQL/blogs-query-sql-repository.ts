@@ -54,7 +54,7 @@ export class BlogsQuerySQLRepository {
         }
     }
 
-    async findBlogsForBlogger(queryParams: ReadBlogsQueryParams, creatorId: string): Promise<BlogsWithQueryOutputModel> {
+    /* async findBlogsForBlogger(queryParams: ReadBlogsQueryParams, creatorId: string): Promise<BlogsWithQueryOutputModel> {
         const {
             searchNameTerm = '',
             sortDirection = 'desc',
@@ -93,7 +93,7 @@ export class BlogsQuerySQLRepository {
             totalCount: +totalCount,
             items: displayedBlogs
         }
-    }
+    } */
 
     async findBlogsForSuperAdmin(queryParams: ReadBlogsQueryParams, creatorId?: string | undefined): Promise<BlogsWithQuerySuperAdminOutputModel> {
         const {
