@@ -21,6 +21,7 @@ export class AttemptsTypeORMRepository {
 
             return attemptsCount ? attemptsCount : null
         } catch (err) {
+            console.log(err, 'get')
             console.error(err)
             throw new Error('Something wrong with database, try again')
         }
@@ -33,9 +34,10 @@ export class AttemptsTypeORMRepository {
             newAttempt.requestedUrl = requestedUrl
             newAttempt.requestDate = requestDate
 
-            const createdAttempt = await this.attemptsRepository.create(newAttempt)
+            const createdAttempt = await this.attemptsRepository.save(newAttempt)
             return createdAttempt ? true : false
         } catch (err) {
+            console.log(err, 'insert')
             console.error(err)
             return false
         }
@@ -45,13 +47,14 @@ export class AttemptsTypeORMRepository {
         try {
             const deleteResult = await this.attemptsRepository
                 .createQueryBuilder('a')
-                .where('a.clientIp = :clientIp', { clientIp })
-                .andWhere('a.requestedUrl = :requestedUrl', { requestedUrl })
+                .where('clientIp = :clientIp', { clientIp })
+                .andWhere('requestedUrl = :requestedUrl', { requestedUrl })
                 .delete()
                 .execute()
 
             return deleteResult ? true : false
         } catch (err) {
+            console.log(err, 'delete')
             console.error(err)
             return false
         }
