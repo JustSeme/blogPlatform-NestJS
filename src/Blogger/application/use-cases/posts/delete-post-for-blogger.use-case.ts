@@ -4,8 +4,8 @@ import {
 import {
     BadRequestException, ForbiddenException
 } from "@nestjs/common"
-import { PostsSQLRepository } from "../../../infrastructure/posts/rawSQL/posts-sql-repository"
 import { BlogsQueryTypeORMRepository } from "../../../infrastructure/blogs/typeORM/blogs-query-typeORM-repository"
+import { PostsTypeORMRepository } from "../../../infrastructure/posts/typeORM/posts-typeORM-repository"
 
 export class DeletePostForBloggerCommand {
     constructor(
@@ -20,7 +20,7 @@ export class DeletePostForBloggerCommand {
 export class DeletePostForBloggerUseCase implements ICommandHandler<DeletePostForBloggerCommand> {
     constructor(
         private blogsQueryRepository: BlogsQueryTypeORMRepository,
-        private postsRepository: PostsSQLRepository,
+        private postsRepository: PostsTypeORMRepository,
     ) { }
 
     async execute(command: DeletePostForBloggerCommand) {

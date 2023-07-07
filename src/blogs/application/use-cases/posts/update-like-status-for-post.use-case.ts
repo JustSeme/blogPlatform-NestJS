@@ -3,7 +3,8 @@ import {
 } from "@nestjs/cqrs"
 import { LikeType } from "../../../api/models/LikeInputModel"
 import { UsersQuerySQLRepository } from "../../../../SuperAdmin/infrastructure/rawSQL/users-query-sql-repository"
-import { PostsSQLRepository } from "../../../../Blogger/infrastructure/posts/rawSQL/posts-sql-repository"
+import { PostsQueryTypeORMRepository } from "../../../../Blogger/infrastructure/posts/typeORM/posts-query-typeORM-repository"
+import { PostsTypeORMRepository } from "../../../../Blogger/infrastructure/posts/typeORM/posts-typeORM-repository"
 
 export class UpdateLikeStatusForPostCommand {
     constructor(
@@ -16,7 +17,8 @@ export class UpdateLikeStatusForPostCommand {
 @CommandHandler(UpdateLikeStatusForPostCommand)
 export class UpdateLikeStatusForPostUseCase implements ICommandHandler<UpdateLikeStatusForPostCommand> {
     constructor(
-        private postsRepository: PostsSQLRepository,
+        private postsRepository: PostsTypeORMRepository,
+        private postsQueryRepository: PostsQueryTypeORMRepository,
         private usersQueryRepository: UsersQuerySQLRepository,
     ) { }
 
@@ -27,7 +29,7 @@ export class UpdateLikeStatusForPostUseCase implements ICommandHandler<UpdateLik
             status,
         } = command
 
-        const updatablePost = await this.postsRepository.getPostById(postId)
+        const updatablePost = await this.postsQueryRepository.getPostById(postId)
         if (!updatablePost) {
             return false
         }

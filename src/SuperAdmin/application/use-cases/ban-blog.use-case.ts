@@ -2,11 +2,11 @@ import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
 import { BanBlogInputModel } from "../../api/models/BanBlogInputModel"
-import { PostsSQLRepository } from "../../../Blogger/infrastructure/posts/rawSQL/posts-sql-repository"
 import { BlogsTypeORMRepository } from "../../../Blogger/infrastructure/blogs/typeORM/blogs-typeORM-repository"
 import { BlogsQueryTypeORMRepository } from "../../../Blogger/infrastructure/blogs/typeORM/blogs-query-typeORM-repository"
 import { InjectDataSource } from "@nestjs/typeorm"
 import { DataSource } from "typeorm"
+import { PostsTypeORMRepository } from "../../../Blogger/infrastructure/posts/typeORM/posts-typeORM-repository"
 
 export class BanBlogCommand {
     constructor(
@@ -20,7 +20,7 @@ export class BanBlogUseCase implements ICommandHandler<BanBlogCommand> {
     constructor(
         private blogsRepository: BlogsTypeORMRepository,
         private blogsQueryRepository: BlogsQueryTypeORMRepository,
-        private postsRepository: PostsSQLRepository,
+        private postsRepository: PostsTypeORMRepository,
         @InjectDataSource() private dataSource: DataSource,
     ) { }
 
