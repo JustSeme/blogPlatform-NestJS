@@ -5,9 +5,9 @@ import {
     BadRequestException, ForbiddenException
 } from '@nestjs/common'
 import { PostInputModelWithoutBlogId } from "../../../api/models/PostInputModelWithoutBlogId"
-import { PostInputModel } from "../../../api/models/PostInputModel"
-import { PostsSQLRepository } from "../../../infrastructure/posts/rawSQL/posts-sql-repository"
 import { BlogsQueryTypeORMRepository } from "../../../infrastructure/blogs/typeORM/blogs-query-typeORM-repository"
+import { PostsQueryTypeORMRepository } from "../../../infrastructure/posts/typeORM/posts-query-typeORM-repository"
+import { PostsTypeORMRepository } from "../../../infrastructure/posts/typeORM/posts-typeORM-repository"
 
 // Command
 export class UpdatePostForBloggerCommand implements ICommand {
@@ -24,7 +24,8 @@ export class UpdatePostForBloggerCommand implements ICommand {
 export class UpdatePostForBloggerUseCase implements ICommandHandler<UpdatePostForBloggerCommand> {
     constructor(
         private readonly blogsQueryRepository: BlogsQueryTypeORMRepository,
-        private readonly postsRepository: PostsSQLRepository,
+        private readonly postsQueryRepository: PostsQueryTypeORMRepository,
+        private readonly postsRepository: PostsTypeORMRepository,
     ) { }
 
     async execute(command: UpdatePostForBloggerCommand): Promise<boolean> {
@@ -45,10 +46,15 @@ export class UpdatePostForBloggerUseCase implements ICommandHandler<UpdatePostFo
             throw new ForbiddenException('That is not your own')
         }
 
-        const postInputModelWithBlogId: PostInputModel = {
-            ...postInputModel, blogId
-        }
+        const postById = await this.postsQueryRepository.getPostById(postId)
 
-        return this.postsRepository.updatePost(postId, postInputModelWithBlogId)
+        postById.blog = blogById
+        postById.title = postInputModel.title
+        postById.shortDescription = postInputModel.shortDescription
+        postById.content = postInputModel.content
+
+        const savedPost = this.postsRepository.dataSourceSave(postById)
+
+        return savedPost ? true : false
     }
 }

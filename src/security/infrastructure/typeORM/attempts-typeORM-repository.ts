@@ -21,7 +21,6 @@ export class AttemptsTypeORMRepository {
 
             return attemptsCount ? attemptsCount : null
         } catch (err) {
-            console.log(err, 'get')
             console.error(err)
             throw new Error('Something wrong with database, try again')
         }
@@ -37,7 +36,6 @@ export class AttemptsTypeORMRepository {
             const createdAttempt = await this.attemptsRepository.save(newAttempt)
             return createdAttempt ? true : false
         } catch (err) {
-            console.log(err, 'insert')
             console.error(err)
             return false
         }
@@ -54,7 +52,6 @@ export class AttemptsTypeORMRepository {
 
             return deleteResult ? true : false
         } catch (err) {
-            console.log(err, 'delete')
             console.error(err)
             return false
         }

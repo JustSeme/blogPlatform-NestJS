@@ -24,13 +24,23 @@ export class BlogsTypeORMRepository {
         entity: BlogsEntitiesType,
         queryRunnerManager: EntityManager
     ): Promise<BlogsEntitiesType> {
-        return queryRunnerManager.save(entity)
+        try {
+            return queryRunnerManager.save(entity)
+        } catch (err) {
+            console.error(err)
+            return null
+        }
     }
 
     async dataSourceSave(
         entity: BlogsEntitiesType
     ): Promise<BlogsEntitiesType> {
-        return this.dataSource.manager.save(entity)
+        try {
+            return this.dataSource.manager.save(entity)
+        } catch (err) {
+            console.error(err)
+            return null
+        }
     }
 
     async removeBanUserForBlog(banEntity: BansUsersForBlogs): Promise<boolean> {

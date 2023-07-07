@@ -23,13 +23,23 @@ export class UsersTypeORMRepository {
         entity: UserEntitiesType,
         queryRunnerManager: EntityManager
     ): Promise<UserEntitiesType> {
-        return queryRunnerManager.save(entity)
+        try {
+            return queryRunnerManager.save(entity)
+        } catch (err) {
+            console.error(err)
+            return null
+        }
     }
 
     async dataSourceSave(
         entity: UserEntitiesType
     ): Promise<UserEntitiesType> {
-        return this.dataSource.manager.save(entity)
+        try {
+            return this.dataSource.manager.save(entity)
+        } catch (err) {
+            console.error(err)
+            return null
+        }
     }
 
     async findUserData(userId: string): Promise<UserEntity> {

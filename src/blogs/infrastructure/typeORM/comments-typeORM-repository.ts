@@ -23,13 +23,23 @@ export class CommentsTypeORMRepository {
         entity: CommentEntitiesType,
         queryRunnerManager: EntityManager
     ): Promise<CommentEntitiesType> {
-        return queryRunnerManager.save(entity)
+        try {
+            return queryRunnerManager.save(entity)
+        } catch (err) {
+            console.error(err)
+            return null
+        }
     }
 
     async dataSourceSave(
         entity: CommentEntitiesType
     ): Promise<CommentEntitiesType> {
-        return this.dataSource.manager.save(entity)
+        try {
+            return this.dataSource.manager.save(entity)
+        } catch (err) {
+            console.error(err)
+            return null
+        }
     }
 
     async deleteCommentLikesInfo(commentId: string): Promise<boolean> {

@@ -21,13 +21,23 @@ export class DevicesTypeORMRepository {
         entity: AuthSession,
         queryRunnerManager: EntityManager
     ): Promise<AuthSession> {
-        return queryRunnerManager.save(entity)
+        try {
+            return queryRunnerManager.save(entity)
+        } catch (err) {
+            console.error(err)
+            return null
+        }
     }
 
     async dataSourceSave(
         entity: AuthSession
     ): Promise<AuthSession> {
-        return this.dataSource.manager.save(entity)
+        try {
+            return this.dataSource.manager.save(entity)
+        } catch (err) {
+            console.error(err)
+            return null
+        }
     }
 
     async removeSession(deviceId: string): Promise<boolean> {

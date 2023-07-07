@@ -2,7 +2,8 @@ import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
 import { PostInputModel } from "../../../../Blogger/api/models/PostInputModel"
-import { PostsSQLRepository } from "../../../../Blogger/infrastructure/posts/rawSQL/posts-sql-repository"
+import { PostsQueryTypeORMRepository } from "../../../../Blogger/infrastructure/posts/typeORM/posts-query-typeORM-repository"
+import { PostsTypeORMRepository } from "../../../../Blogger/infrastructure/posts/typeORM/posts-typeORM-repository"
 
 // Define the Command
 export class UpdatePostCommand {
@@ -12,9 +13,18 @@ export class UpdatePostCommand {
 // Define the CommandHandler
 @CommandHandler(UpdatePostCommand)
 export class UpdatePostUseCase implements ICommandHandler<UpdatePostCommand> {
-    constructor(private postsRepository: PostsSQLRepository) { }
+    constructor(
+        private postsQueryRepository: PostsQueryTypeORMRepository,
+        private postsRepository: PostsTypeORMRepository
+    ) { }
 
     async execute(command: UpdatePostCommand) {
-        return this.postsRepository.updatePost(command.postId, command.postInputModel)
+        const postById = await this.postsQueryRepository.getPostById(command.postId)
+
+        postById.title = command.postInputModel.title
+        postById.shortDescription = command.postInputModel.shortDescription
+        postById.content = command.postInputModel.content
+
+        return this.postsRepository.dataSourceSave(postById)
     }
 }
