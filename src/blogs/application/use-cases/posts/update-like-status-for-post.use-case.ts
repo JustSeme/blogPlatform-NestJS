@@ -2,9 +2,10 @@ import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
 import { LikeType } from "../../../api/models/LikeInputModel"
-import { UsersQuerySQLRepository } from "../../../../SuperAdmin/infrastructure/rawSQL/users-query-sql-repository"
 import { PostsQueryTypeORMRepository } from "../../../../Blogger/infrastructure/posts/typeORM/posts-query-typeORM-repository"
 import { PostsTypeORMRepository } from "../../../../Blogger/infrastructure/posts/typeORM/posts-typeORM-repository"
+import { PostLikesInfo } from "../../../../Blogger/domain/posts/typeORM/post-likes-info"
+import { UsersTypeORMQueryRepository } from "../../../../SuperAdmin/infrastructure/typeORM/users-typeORM-query-repository"
 
 export class UpdateLikeStatusForPostCommand {
     constructor(
@@ -19,7 +20,7 @@ export class UpdateLikeStatusForPostUseCase implements ICommandHandler<UpdateLik
     constructor(
         private postsRepository: PostsTypeORMRepository,
         private postsQueryRepository: PostsQueryTypeORMRepository,
-        private usersQueryRepository: UsersQuerySQLRepository,
+        private usersQueryRepository: UsersTypeORMQueryRepository,
     ) { }
 
     async execute(command: UpdateLikeStatusForPostCommand) {
@@ -34,19 +35,37 @@ export class UpdateLikeStatusForPostUseCase implements ICommandHandler<UpdateLik
             return false
         }
 
-        const likedUser = await this.usersQueryRepository.findUserById(userId)
+        const likedUser = await this.usersQueryRepository.findUserData(userId)
 
         const isLikeEntityExists = await this.postsRepository.isLikeEntityExists(userId, postId)
+
+        const likedPost = await this.postsQueryRepository.getPostById(postId)
 
         if (isLikeEntityExists) {
             return this.postsRepository.updateLikeStatus(userId, postId, status)
         } else {
             if (status === 'Like') {
-                return this.postsRepository.createLike(userId, postId, likedUser.login)
+                const creatingLikeEntity = new PostLikesInfo()
+                creatingLikeEntity.user = likedUser
+                creatingLikeEntity.post = likedPost
+                creatingLikeEntity.ownerLogin = likedUser.login
+                creatingLikeEntity.likeStatus = 'Like'
+
+                const createdLike = this.postsRepository.dataSourceSave(creatingLikeEntity)
+
+                return createdLike ? true : false
             }
 
             if (status === 'Dislike') {
-                return this.postsRepository.createDislike(userId, postId, likedUser.login)
+                const creatingDislikeEntity = new PostLikesInfo()
+                creatingDislikeEntity.user = likedUser
+                creatingDislikeEntity.post = likedPost
+                creatingDislikeEntity.ownerLogin = likedUser.login
+                creatingDislikeEntity.likeStatus = 'Dislike'
+
+                const createdDislike = this.postsRepository.dataSourceSave(creatingDislikeEntity)
+
+                return createdDislike ? true : false
             }
         }
     }

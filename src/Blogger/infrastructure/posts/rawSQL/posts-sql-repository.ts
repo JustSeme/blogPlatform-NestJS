@@ -270,7 +270,7 @@ export class PostsSQLRepository {
         }
     }
 
-    /* async isLikeEntityExists(userId: string, postId: string) {
+    async isLikeEntityExists(userId: string, postId: string) {
         const queryString = `
         SELECT id
             FROM public."post_likes_info"
@@ -285,7 +285,7 @@ export class PostsSQLRepository {
             console.error(err)
             return false
         }
-    } */
+    }
 
     async updateLikeStatus(userId: string, postId: string, likeStatus: string): Promise<boolean> {
         const queryString = `

@@ -134,4 +134,18 @@ export class PostsTypeORMRepository {
             return false
         }
     }
+
+    async updateLikeStatus(userId: string, postId: string, likeStatus: string): Promise<boolean> {
+        try {
+            const updateResult = await this.postLikesInfoRepository.update({
+                user: { id: userId },
+                post: { id: postId }
+            }, { likeStatus })
+
+            return updateResult ? true : false
+        } catch (err) {
+            console.error(err)
+            return false
+        }
+    }
 }
