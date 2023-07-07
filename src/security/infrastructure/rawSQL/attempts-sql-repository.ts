@@ -6,7 +6,7 @@ import { DataSource } from "typeorm"
 export class AttemptsSQLRepository {
     constructor(@InjectDataSource() private dataSource: DataSource) { }
 
-    async getAttemptsCount(clientIp: string, requestedUrl: string, lastAttemptDate: Date): Promise<number> {
+    /* async getAttemptsCount(clientIp: string, requestedUrl: string, lastAttemptDate: Date): Promise<number> {
         const queryString = `
             SELECT count(*)
                 FROM public."attempt_entity"
@@ -16,7 +16,7 @@ export class AttemptsSQLRepository {
         const data = await this.dataSource.query(queryString, [clientIp, requestedUrl, lastAttemptDate])
 
         return Number(data[0].count)
-    }
+    } */
 
     async insertAttempt(clientIp: string, requestedUrl: string, requestDate: Date): Promise<boolean> {
         const queryString = `

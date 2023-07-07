@@ -1,31 +1,11 @@
 import {
     Injectable, CanActivate, ExecutionContext, HttpException, HttpStatus
 } from '@nestjs/common'
-import { AttemptsSQLRepository } from '../../../security/infrastructure/rawSQL/attempts-sql-repository'
-
-
-const rateLimitValidation = async (clientIp: string, requestedUrl: string, attemptsRepository: AttemptsSQLRepository) => {
-    const interval = 10 * 1000
-    const currentDate = new Date()
-    const lastAttemptDate = new Date(currentDate.getTime() - interval)
-
-    const attemptsCount = await attemptsRepository.getAttemptsCount(clientIp, requestedUrl, lastAttemptDate)
-
-    await attemptsRepository.insertAttempt(clientIp, requestedUrl, currentDate)
-
-    if (attemptsCount >= (5 + 1000)) {
-        return false
-    }
-
-    setTimeout(async () => {
-        await attemptsRepository.removeAttempts(clientIp, requestedUrl)
-    }, 10000)
-    return true
-}
+import { AttemptsTypeORMRepository } from '../../../security/infrastructure/typeORM/attempts-typeORM-repository'
 
 @Injectable()
 export class IpRestrictionGuard implements CanActivate {
-    constructor(private attemptsRepository: AttemptsSQLRepository) { }
+    constructor(private attemptsRepository: AttemptsTypeORMRepository) { }
 
     async canActivate(
         context: ExecutionContext,
@@ -34,9 +14,28 @@ export class IpRestrictionGuard implements CanActivate {
         const clientIp = request.ip
         const requestedUrl = request.url
 
-        if (!(await rateLimitValidation(clientIp, requestedUrl, this.attemptsRepository))) {
+        if (!(await this.rateLimitValidation(clientIp, requestedUrl))) {
             throw new HttpException('Too many requests', HttpStatus.TOO_MANY_REQUESTS)
         }
+        return true
+    }
+
+    async rateLimitValidation(clientIp: string, requestedUrl: string) {
+        const interval = 10 * 1000
+        const currentDate = new Date()
+        const lastAttemptDate = new Date(currentDate.getTime() - interval)
+
+        const attemptsCount = await this.attemptsRepository.getAttemptsCount(clientIp, requestedUrl, lastAttemptDate)
+
+        await this.attemptsRepository.insertAttempt(clientIp, requestedUrl, currentDate)
+
+        if (attemptsCount >= (5 + 1000)) {
+            return false
+        }
+
+        setTimeout(async () => {
+            await this.attemptsRepository.removeAttempts(clientIp, requestedUrl)
+        }, 10000)
         return true
     }
 }

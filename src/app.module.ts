@@ -134,6 +134,7 @@ import { PostsQueryTypeORMRepository } from "./Blogger/infrastructure/posts/type
 import { CommentsQueryTypeORMRepository } from "./blogs/infrastructure/typeORM/comments-query-typeORM-repository"
 import { BlogEntity } from "./Blogger/domain/blogs/typeORM/blog.entity"
 import { DevicesTypeORMRepository } from "./security/infrastructure/typeORM/devices-typeORM-repository"
+import { AttemptsTypeORMRepository } from "./security/infrastructure/typeORM/attempts-typeORM-repository"
 
 const authUseCases = [
   LogoutUseCase,
@@ -245,6 +246,7 @@ const typeORMRepositories = [
   CommentsQueryTypeORMRepository,
   PostsQueryTypeORMRepository,
   DevicesTypeORMRepository,
+  AttemptsTypeORMRepository,
 ]
 
 const decorators = [
