@@ -1,11 +1,11 @@
 import { ICommandHandler } from "@nestjs/cqrs"
 import { PostInputModel } from "../../../../Blogger/api/models/PostInputModel"
-import { PostDTO } from "../../../../Blogger/domain/posts/PostsTypes"
 import { PostsViewModel } from "../../dto/PostViewModel"
-import { PostsSQLRepository } from "../../../../Blogger/infrastructure/posts/rawSQL/posts-sql-repository"
 import { BlogsQueryTypeORMRepository } from "../../../../Blogger/infrastructure/blogs/typeORM/blogs-query-typeORM-repository"
 import { BadRequestException } from "@nestjs/common"
 import { generateErrorsMessages } from "../../../../general/helpers"
+import { PostEntity } from "../../../../Blogger/domain/posts/typeORM/post.entity"
+import { PostsTypeORMRepository } from "../../../../Blogger/infrastructure/posts/typeORM/posts-typeORM-repository"
 
 export class CreatePostCommand {
     constructor(
@@ -16,7 +16,7 @@ export class CreatePostCommand {
 export class CreatePostUseCase implements ICommandHandler<CreatePostCommand> {
     constructor(
         private readonly blogsQueryRepository: BlogsQueryTypeORMRepository,
-        private readonly postsRepository: PostsSQLRepository,
+        private readonly postsRepository: PostsTypeORMRepository,
     ) { }
 
     async execute(command: CreatePostCommand): Promise<PostsViewModel> {
@@ -28,17 +28,26 @@ export class CreatePostUseCase implements ICommandHandler<CreatePostCommand> {
             throw new BadRequestException(generateErrorsMessages('The blog you want to create a post for is banned', 'blogId'))
         }
 
-        const creatingPost: PostDTO = new PostDTO(
-            body.title,
-            body.shortDescription,
-            body.content,
-            blogById.id,
-            blogById?.name ? blogById?.name : 'not found',
-            blogById.user.id,
-            blogById.ownerLogin,
-            false
-        )
+        const creatingPost = new PostEntity()
 
-        return this.postsRepository.createPost(creatingPost)
+        creatingPost.title = body.title
+        creatingPost.shortDescription = body.shortDescription
+        creatingPost.content = body.content
+        creatingPost.title = body.title
+        creatingPost.blog = blogById
+        creatingPost.blogName = blogById.name
+        creatingPost.owner = blogById.user
+        creatingPost.ownerLogin = blogById.ownerLogin
+        creatingPost.createdAt = new Date()
+
+        const savedPost = await this.postsRepository.dataSourceSave(creatingPost)
+
+        return new PostsViewModel({
+            ...savedPost as PostEntity,
+            likesCount: 0,
+            dislikesCount: 0,
+            myStatus: 'None',
+            newestLikes: []
+        })
     }
 }

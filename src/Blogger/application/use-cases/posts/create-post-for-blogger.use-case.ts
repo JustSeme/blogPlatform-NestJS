@@ -1,14 +1,14 @@
 import {
     CommandHandler, ICommand, ICommandHandler
 } from "@nestjs/cqrs"
-import { PostDTO } from "../../../domain/posts/PostsTypes"
 import { PostsViewModel } from "../../../../blogs/application/dto/PostViewModel"
 import {
     BadRequestException, ForbiddenException
 } from '@nestjs/common'
 import { PostInputModelWithoutBlogId } from "../../../api/models/PostInputModelWithoutBlogId"
-import { PostsSQLRepository } from "../../../infrastructure/posts/rawSQL/posts-sql-repository"
 import { BlogsQueryTypeORMRepository } from "../../../infrastructure/blogs/typeORM/blogs-query-typeORM-repository"
+import { PostEntity } from "../../../domain/posts/typeORM/post.entity"
+import { PostsTypeORMRepository } from "../../../infrastructure/posts/typeORM/posts-typeORM-repository"
 
 // Command
 export class CreatePostForBloggerCommand implements ICommand {
@@ -24,7 +24,7 @@ export class CreatePostForBloggerCommand implements ICommand {
 export class CreatePostForBloggerUseCase implements ICommandHandler<CreatePostForBloggerCommand> {
     constructor(
         private readonly blogsRepository: BlogsQueryTypeORMRepository,
-        private readonly postsRepository: PostsSQLRepository,
+        private readonly postsRepository: PostsTypeORMRepository,
     ) { }
 
     async execute(command: CreatePostForBloggerCommand): Promise<PostsViewModel> {
@@ -44,17 +44,26 @@ export class CreatePostForBloggerUseCase implements ICommandHandler<CreatePostFo
             throw new ForbiddenException('that is not your own')
         }
 
-        const createdPost = new PostDTO(
-            postInputModel.title,
-            postInputModel.shortDescription,
-            postInputModel.content,
-            blogId,
-            blogById.name,
-            blogById.user.id as string,
-            blogById.ownerLogin,
-            false
-        )
+        const creatingPost = new PostEntity()
 
-        return this.postsRepository.createPost(createdPost)
+        creatingPost.title = postInputModel.title
+        creatingPost.shortDescription = postInputModel.shortDescription
+        creatingPost.content = postInputModel.content
+        creatingPost.title = postInputModel.title
+        creatingPost.blog = blogById
+        creatingPost.blogName = blogById.name
+        creatingPost.owner = blogById.user
+        creatingPost.ownerLogin = blogById.ownerLogin
+        creatingPost.createdAt = new Date()
+
+        const savedPost = await this.postsRepository.dataSourceSave(creatingPost)
+
+        return new PostsViewModel({
+            ...savedPost as PostEntity,
+            likesCount: 0,
+            dislikesCount: 0,
+            myStatus: 'None',
+            newestLikes: []
+        })
     }
 }

@@ -29,7 +29,7 @@ export class CommentEntity {
     @OneToMany(() => CommentLikesInfo, (likesInfo) => likesInfo.comment)
     commentLikes: CommentLikesInfo[]
 
-    @ManyToOne(() => PostEntity, (post) => post.comment)
+    @ManyToOne(() => PostEntity, (post) => post.comments)
     post: PostEntity
 
     @Column()
