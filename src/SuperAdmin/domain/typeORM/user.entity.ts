@@ -55,7 +55,7 @@ export class UserEntity {
     @OneToMany(() => BansUsersForBlogs, (ban) => ban.user)
     bansForUser: BansUsersForBlogs[]
 
-    @OneToMany(() => PostEntity, (post) => post.ownerId)
+    @OneToMany(() => PostEntity, (post) => post.owner)
     userPosts: PostEntity[]
 
     @OneToMany(() => CommentEntity, (comment) => comment.commentator)
@@ -64,6 +64,6 @@ export class UserEntity {
     @OneToMany(() => CommentLikesInfo, (likesInfo) => likesInfo.user)
     commentsLikeEntities: CommentLikesInfo[]
 
-    @OneToMany(() => PostLikesInfo, (like) => like.userId)
+    @OneToMany(() => PostLikesInfo, (like) => like.user)
     postLikeEntities: PostLikesInfo
 }

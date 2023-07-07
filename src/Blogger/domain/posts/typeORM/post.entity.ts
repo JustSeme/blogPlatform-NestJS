@@ -1,7 +1,7 @@
 import {
     Column,
     CreateDateColumn,
-    Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn
+    Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn
 } from "typeorm"
 import { UserEntity } from "../../../../SuperAdmin/domain/typeORM/user.entity"
 import { CommentEntity } from "../../../../blogs/domain/typeORM/comment.entity"
@@ -26,8 +26,7 @@ export class PostEntity {
     createdAt: Date
 
     @ManyToOne(() => BlogEntity, (blog) => blog.blogPosts)
-    @JoinColumn({ name: 'blogId' })
-    blogId: BlogEntity | string
+    blog: BlogEntity | string
 
     @Column()
     blogName: string
@@ -36,8 +35,7 @@ export class PostEntity {
     isBanned: boolean
 
     @ManyToOne(() => UserEntity, (user) => user.userPosts)
-    @JoinColumn({ name: 'ownerId' })
-    ownerId: UserEntity | string
+    owner: UserEntity | string
 
     @Column()
     ownerLogin: string
@@ -45,6 +43,6 @@ export class PostEntity {
     @OneToMany(() => CommentEntity, (comment) => comment.post)
     comment: CommentEntity
 
-    @OneToMany(() => PostLikesInfo, (likesInfo) => likesInfo.postId)
+    @OneToMany(() => PostLikesInfo, (likesInfo) => likesInfo.post)
     postLikeEntities: PostLikesInfo
 }

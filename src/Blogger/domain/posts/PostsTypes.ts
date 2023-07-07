@@ -56,14 +56,14 @@ export class PostDBModel {
         }
 
         this.postOwnerInfo = {
-            userId: rawPost.ownerId as string,
+            userId: rawPost.owner as string,
             userLogin: rawPost.ownerLogin
         }
 
         this.title = rawPost.title
         this.shortDescription = rawPost.shortDescription
         this.content = rawPost.content
-        this.blogId = rawPost.blogId as string
+        this.blogId = rawPost.blog as string
         this.blogName = rawPost.blogName
         this.isBanned = rawPost.isBanned
     }

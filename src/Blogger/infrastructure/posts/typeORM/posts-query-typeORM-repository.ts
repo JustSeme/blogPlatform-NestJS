@@ -18,4 +18,15 @@ export class PostsQueryTypeORMRepository {
             return null
         }
     }
+
+    async isPostExists(postId: string): Promise<boolean> {
+        try {
+            const postById = await this.getPostById(postId)
+
+            return postById ? true : false
+        } catch (err) {
+            console.error(err)
+            return false
+        }
+    }
 }

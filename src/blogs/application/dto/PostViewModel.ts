@@ -23,7 +23,7 @@ export class PostsViewModel {
         this.title = rawPost.title
         this.shortDescription = rawPost.shortDescription
         this.content = rawPost.content
-        this.blogId = rawPost.blogId as string
+        this.blogId = rawPost.blog as string
         this.blogName = rawPost.blogName
         this.createdAt = rawPost.createdAt
         this.extendedLikesInfo = {

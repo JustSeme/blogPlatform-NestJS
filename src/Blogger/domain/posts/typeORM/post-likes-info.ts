@@ -13,7 +13,7 @@ export class PostLikesInfo {
 
     @ManyToOne(() => UserEntity, (user) => user.postLikeEntities)
     @JoinColumn({ name: 'userId' })
-    userId: UserEntity
+    user: UserEntity
 
     @CreateDateColumn({ type: 'timestamptz' })
     createdAt: Date
@@ -29,5 +29,5 @@ export class PostLikesInfo {
 
     @ManyToOne(() => PostEntity, (post) => post.postLikeEntities)
     @JoinColumn({ name: 'postId' })
-    postId: PostEntity
+    post: PostEntity
 }
