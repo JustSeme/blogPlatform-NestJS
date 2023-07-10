@@ -104,4 +104,13 @@ export class AuthQueryTypeORMRepository {
             return null
         }
     }
+
+    async findUserEmailConfirmationDataByUserId(userId: string): Promise<UserEmailConfirmation> {
+        try {
+            return this.userEmailConfirmationRepository.findOne({ where: { user: { id: userId } } })
+        } catch (err) {
+            console.error(err)
+            return null
+        }
+    }
 }

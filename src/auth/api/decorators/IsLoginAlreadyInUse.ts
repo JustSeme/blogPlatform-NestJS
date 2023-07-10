@@ -2,17 +2,17 @@ import { Injectable } from '@nestjs/common'
 import {
     ValidatorConstraint, ValidatorConstraintInterface
 } from 'class-validator'
-import { AuthRepository } from '../../infrastructure/rawSQL/auth-sql-repository'
+import { AuthQueryTypeORMRepository } from '../../infrastructure/typeORM/auth-query-typeORM-repository'
 
 @ValidatorConstraint({
     name: 'IsLoginAlreadyExists', async: true
 })
 @Injectable()
 export class IsLoginAlreadyInUse implements ValidatorConstraintInterface {
-    constructor(private authRepository: AuthRepository) { }
+    constructor(private authQueryRepository: AuthQueryTypeORMRepository) { }
 
     async validate(login: string) {
-        const findedUser = await this.authRepository.findUserByLogin(login)
+        const findedUser = await this.authQueryRepository.findUserByLogin(login)
         if (findedUser) {
             return false
         }

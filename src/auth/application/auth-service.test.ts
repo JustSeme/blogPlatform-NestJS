@@ -13,14 +13,14 @@ import {
 } from './use-cases/confirm-email.use-case'
 import { AppModule } from '../../app.module'
 import { AppService } from '../../app.service'
-import { AuthRepository } from '../infrastructure/rawSQL/auth-sql-repository'
+import { AuthQueryTypeORMRepository } from '../infrastructure/typeORM/auth-query-typeORM-repository'
 
 describe('integration tests for auth use cases', () => {
     let registrationUserUseCase: RegistrationUserUseCase
     let confirmEmailUseCase: ConfirmEmailUseCase
     let bcryptAdapter: BcryptAdapter
     let emailManager: EmailManager
-    let authRepository: AuthRepository
+    let authQueryRepository: AuthQueryTypeORMRepository
     let appService: AppService
 
 
@@ -45,7 +45,7 @@ describe('integration tests for auth use cases', () => {
         confirmEmailUseCase = moduleRef.get<ConfirmEmailUseCase>(ConfirmEmailUseCase)
         bcryptAdapter = moduleRef.get<BcryptAdapter>(BcryptAdapter)
         emailManager = moduleRef.get<EmailManager>(EmailManager)
-        authRepository = moduleRef.get<AuthRepository>(AuthRepository)
+        authQueryRepository = moduleRef.get<AuthQueryTypeORMRepository>(AuthQueryTypeORMRepository)
         appService = moduleRef.get<AppService>(AppService)
 
         await appService.deleteTestingData()
@@ -65,12 +65,13 @@ describe('integration tests for auth use cases', () => {
 
             expect(result).toBe(true)
 
-            const user = await authRepository.findUserWithEmailConfirmationByEmail(command.email)
+            const user = await authQueryRepository.findUserByEmail(command.email)
+            const emailConfirmtaionData = await authQueryRepository.findUserEmailConfirmationDataByUserId(user.id)
 
             expect(user.login).toEqual(command.login)
             expect(user.email).toEqual(command.email)
 
-            const userConfirmationCode = user.emailConfirmationCode
+            const userConfirmationCode = emailConfirmtaionData.emailConfirmationCode
 
             expect(bcryptAdapter.generatePasswordHash).toHaveBeenCalledWith(command.password, 10)
 

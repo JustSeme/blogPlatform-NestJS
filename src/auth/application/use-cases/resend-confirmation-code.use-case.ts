@@ -3,8 +3,9 @@ import { EmailManager } from "../../../general/managers/emailManager"
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs/dist"
-import { AuthRepository } from '../../infrastructure/rawSQL/auth-sql-repository'
 import { add } from 'date-fns'
+import { AuthTypeORMRepository } from '../../infrastructure/typeORM/auth-typeORM-repository'
+import { AuthQueryTypeORMRepository } from '../../infrastructure/typeORM/auth-query-typeORM-repository'
 
 export class ResendConfirmationCodeCommand {
     constructor(public email: string) { }
@@ -13,13 +14,16 @@ export class ResendConfirmationCodeCommand {
 @CommandHandler(ResendConfirmationCodeCommand)
 export class ResendConfirmationCodeUseCase implements ICommandHandler<ResendConfirmationCodeCommand> {
     constructor(
-        private authRepository: AuthRepository,
+        private authRepository: AuthTypeORMRepository,
+        private authQueryRepository: AuthQueryTypeORMRepository,
         private emailManager: EmailManager
     ) { }
 
     async execute(command: ResendConfirmationCodeCommand) {
-        const user = await this.authRepository.findUserByEmail(command.email)
+        const user = await this.authQueryRepository.findUserByEmail(command.email)
         if (!user || user.isConfirmed) return false
+
+        const emailConfirmationData = await this.authQueryRepository.findUserEmailConfirmationDataByUserId(user.id)
 
         const newConfirmationCode = uuidv4()
 
@@ -28,11 +32,14 @@ export class ResendConfirmationCodeUseCase implements ICommandHandler<ResendConf
             minutes: 3
         })
 
-        await this.authRepository.updateEmailConfirmationInfo(user.id, newConfirmationCode, expirationDate)
+        emailConfirmationData.emailConfirmationCode = newConfirmationCode
+        emailConfirmationData.emailExpirationDate = expirationDate
+
+        const savedEmailConfirmationData = await this.authRepository.dataSourceSave(emailConfirmationData)
 
         try {
             await this.emailManager.sendConfirmationCode(command.email, user.login, newConfirmationCode)
-            return true
+            return savedEmailConfirmationData ? true : false
         } catch (error) {
             console.error(error)
             return false
