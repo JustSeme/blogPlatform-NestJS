@@ -13,7 +13,7 @@ import {
 } from './use-cases/confirm-email.use-case'
 import { AppModule } from '../../app.module'
 import { AppService } from '../../app.service'
-import { AuthRepository } from '../infrastructure/auth-sql-repository'
+import { AuthRepository } from '../infrastructure/rawSQL/auth-sql-repository'
 
 describe('integration tests for auth use cases', () => {
     let registrationUserUseCase: RegistrationUserUseCase

@@ -98,7 +98,7 @@ import { BanUserForBlogUseCase } from "./Blogger/application/use-cases/users/ban
 import { GetAllBannedUsersForBlogUseCase } from "./Blogger/application/use-cases/users/get-all-banned-users-for-blog.use-case"
 import { BloggerService } from "./Blogger/application/blogger.service"
 import { UnbanUserForBlogUseCase } from "./Blogger/application/use-cases/users/unban-user-for-blog.use-case"
-import { AuthRepository } from "./auth/infrastructure/auth-sql-repository"
+import { AuthRepository } from "./auth/infrastructure/rawSQL/auth-sql-repository"
 import { TypeOrmModule } from "@nestjs/typeorm"
 import { UsersSQLRepository } from "./SuperAdmin/infrastructure/rawSQL/users-sql-repository"
 import { UsersQuerySQLRepository } from "./SuperAdmin/infrastructure/rawSQL/users-query-sql-repository"
@@ -125,7 +125,7 @@ import { CommentsSQLRepository } from "./blogs/infrastructure/rawSQL/comments-sq
 import { CommentsQuerySQLRepository } from "./blogs/infrastructure/rawSQL/comments-query-sql-repository"
 import { PostLikesInfo } from "./Blogger/domain/posts/typeORM/post-likes-info"
 import { UsersTypeORMRepository } from "./SuperAdmin/infrastructure/typeORM/users-typeORM-repository"
-import { AuthTypeORMRepository } from "./auth/infrastructure/auth-typeORM-repository"
+import { AuthTypeORMRepository } from "./auth/infrastructure/typeORM/auth-typeORM-repository"
 import { UsersTypeORMQueryRepository } from "./SuperAdmin/infrastructure/typeORM/users-typeORM-query-repository"
 import { BlogsQueryTypeORMRepository } from "./Blogger/infrastructure/blogs/typeORM/blogs-query-typeORM-repository"
 import { BlogsTypeORMRepository } from "./Blogger/infrastructure/blogs/typeORM/blogs-typeORM-repository"
@@ -136,6 +136,7 @@ import { BlogEntity } from "./Blogger/domain/blogs/typeORM/blog.entity"
 import { DevicesTypeORMRepository } from "./security/infrastructure/typeORM/devices-typeORM-repository"
 import { AttemptsTypeORMRepository } from "./security/infrastructure/typeORM/attempts-typeORM-repository"
 import { PostsTypeORMRepository } from "./Blogger/infrastructure/posts/typeORM/posts-typeORM-repository"
+import { AuthQueryTypeORMRepository } from "./auth/infrastructure/typeORM/auth-query-typeORM-repository"
 
 const authUseCases = [
   LogoutUseCase,
@@ -241,6 +242,7 @@ const typeORMRepositories = [
   UsersTypeORMRepository,
   UsersTypeORMQueryRepository,
   AuthTypeORMRepository,
+  AuthQueryTypeORMRepository,
   BlogsTypeORMRepository,
   BlogsQueryTypeORMRepository,
   CommentsTypeORMRepository,
@@ -248,7 +250,7 @@ const typeORMRepositories = [
   PostsQueryTypeORMRepository,
   DevicesTypeORMRepository,
   AttemptsTypeORMRepository,
-  PostsTypeORMRepository
+  PostsTypeORMRepository,
 ]
 
 const decorators = [

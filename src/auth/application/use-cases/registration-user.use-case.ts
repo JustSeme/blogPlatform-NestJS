@@ -5,7 +5,6 @@ import {
 } from "@nestjs/cqrs"
 import { FieldError } from "../../../general/types/ErrorMessagesOutputModel"
 import { BadRequestException } from '@nestjs/common'
-import { AuthRepository } from "../../infrastructure/auth-sql-repository"
 import { UsersTypeORMRepository } from "../../../SuperAdmin/infrastructure/typeORM/users-typeORM-repository"
 import { UserPasswordRecovery } from "../../../SuperAdmin/domain/typeORM/user-password-recovery.entity"
 import { UserEmailConfirmation } from "../../../SuperAdmin/domain/typeORM/user-email-confirmation.entity"
@@ -15,6 +14,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { InjectDataSource } from "@nestjs/typeorm"
 import { add } from 'date-fns'
 import { DataSource } from "typeorm"
+import { AuthQueryTypeORMRepository } from "../../infrastructure/typeORM/auth-query-typeORM-repository"
 
 export class RegistrationUserCommand {
     constructor(public login: string, public password: string, public email: string) { }
@@ -24,9 +24,9 @@ export class RegistrationUserCommand {
 export class RegistrationUserUseCase implements ICommandHandler<RegistrationUserCommand> {
     constructor(
         private bcryptAdapter: BcryptAdapter,
-        private authRepository: AuthRepository,
         private usersRepository: UsersTypeORMRepository,
         private emailManager: EmailManager,
+        private authQueryRepository: AuthQueryTypeORMRepository,
         @InjectDataSource() private dataSource: DataSource
     ) { }
 
@@ -89,8 +89,8 @@ export class RegistrationUserUseCase implements ICommandHandler<RegistrationUser
     }
 
     async isEmailOrLoginAlreadyUsed(login: string, email: string) {
-        const isUserByLoginExists = await this.authRepository.isUserByLoginExists(login)
-        const isUserByEmailExists = await this.authRepository.isUserByEmailExists(email)
+        const isUserByLoginExists = await this.authQueryRepository.isUserByLoginExists(login)
+        const isUserByEmailExists = await this.authQueryRepository.isUserByEmailExists(email)
 
         if (isUserByLoginExists || isUserByEmailExists) {
             const errorsMessages: FieldError[] = []

@@ -2,7 +2,7 @@ import { BcryptAdapter } from "../../../general/adapters/bcrypt.adapter"
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs/dist"
-import { AuthRepository } from "../../../auth/infrastructure/auth-sql-repository"
+import { AuthRepository } from "../../../auth/infrastructure/rawSQL/auth-sql-repository"
 import { FieldError } from "../../../general/types/ErrorMessagesOutputModel"
 import { BadRequestException } from "@nestjs/common"
 import { UsersTypeORMRepository } from "../../infrastructure/typeORM/users-typeORM-repository"
@@ -14,6 +14,7 @@ import { add } from 'date-fns'
 import { UserEmailConfirmation } from "../../domain/typeORM/user-email-confirmation.entity"
 import { v4 as uuidv4 } from 'uuid'
 import { UserPasswordRecovery } from "../../domain/typeORM/user-password-recovery.entity"
+import { AuthQueryTypeORMRepository } from "../../../auth/infrastructure/typeORM/auth-query-typeORM-repository"
 
 export class CreateUserCommand {
     constructor(public login: string, public password: string, public email: string) { }
@@ -25,6 +26,7 @@ export class CreateUserUseCase implements ICommandHandler<CreateUserCommand> {
         private bcryptAdapter: BcryptAdapter,
         private usersRepository: UsersTypeORMRepository,
         private authRepository: AuthRepository,
+        private authQueryRepository: AuthQueryTypeORMRepository,
         @InjectDataSource() private dataSource: DataSource,
     ) { }
 
@@ -85,8 +87,8 @@ export class CreateUserUseCase implements ICommandHandler<CreateUserCommand> {
     }
 
     async isEmailOrLoginAlreadyUsed(login: string, email: string) {
-        const isUserByLoginExists = await this.authRepository.isUserByLoginExists(login)
-        const isUserByEmailExists = await this.authRepository.isUserByEmailExists(email)
+        const isUserByLoginExists = await this.authQueryRepository.isUserByLoginExists(login)
+        const isUserByEmailExists = await this.authQueryRepository.isUserByEmailExists(email)
 
         if (isUserByLoginExists || isUserByEmailExists) {
             const errorsMessages: FieldError[] = []

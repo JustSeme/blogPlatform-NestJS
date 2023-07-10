@@ -2,12 +2,12 @@ import { Injectable } from "@nestjs/common"
 import {
     InjectDataSource, InjectRepository
 } from "@nestjs/typeorm"
-import { UserEntity } from "../../SuperAdmin/domain/typeORM/user.entity"
+import { UserEntity } from "../../../SuperAdmin/domain/typeORM/user.entity"
 import {
     DataSource, EntityManager, Repository
 } from "typeorm"
-import { UserPasswordRecovery } from "../../SuperAdmin/domain/typeORM/user-password-recovery.entity"
-import { UserEntitiesType } from "../../SuperAdmin/infrastructure/UsersTypes"
+import { UserPasswordRecovery } from "../../../SuperAdmin/domain/typeORM/user-password-recovery.entity"
+import { UserEntitiesType } from "../../../SuperAdmin/infrastructure/UsersTypes"
 
 @Injectable()
 export class AuthTypeORMRepository {

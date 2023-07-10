@@ -5,7 +5,7 @@ import { PassportStrategy } from '@nestjs/passport'
 import { Strategy } from 'passport-local'
 import { BcryptAdapter } from "../../../general/adapters/bcrypt.adapter"
 import { UserEntity } from "../../../SuperAdmin/domain/typeORM/user.entity"
-import { AuthTypeORMRepository } from "../../infrastructure/auth-typeORM-repository"
+import { AuthTypeORMRepository } from "../../infrastructure/typeORM/auth-typeORM-repository"
 import { UsersTypeORMRepository } from "../../../SuperAdmin/infrastructure/typeORM/users-typeORM-repository"
 
 @Injectable()

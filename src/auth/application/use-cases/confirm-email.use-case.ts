@@ -4,7 +4,7 @@ import {
 import { BadRequestException } from "@nestjs/common"
 import { generateErrorsMessages } from "../../../general/helpers"
 import { EmailConfirmationType } from "../../../SuperAdmin/domain/UsersTypes"
-import { AuthRepository } from "../../infrastructure/auth-sql-repository"
+import { AuthRepository } from "../../infrastructure/rawSQL/auth-sql-repository"
 
 export class ConfirmEmailCommand {
     constructor(public readonly code: string) { }

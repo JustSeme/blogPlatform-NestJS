@@ -5,7 +5,7 @@ import {
 } from "@nestjs/cqrs"
 import { generateErrorsMessages } from "../../../general/helpers"
 import { BadRequestException } from '@nestjs/common'
-import { AuthTypeORMRepository } from "../../infrastructure/auth-typeORM-repository"
+import { AuthTypeORMRepository } from "../../infrastructure/typeORM/auth-typeORM-repository"
 import { InjectDataSource } from "@nestjs/typeorm"
 import { DataSource } from "typeorm"
 

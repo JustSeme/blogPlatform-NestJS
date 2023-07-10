@@ -3,7 +3,7 @@ import { EmailManager } from "../../../general/managers/emailManager"
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs/dist"
-import { AuthRepository } from '../../infrastructure/auth-sql-repository'
+import { AuthRepository } from '../../infrastructure/rawSQL/auth-sql-repository'
 
 export class ResendConfirmationCodeCommand {
     constructor(public email: string) { }

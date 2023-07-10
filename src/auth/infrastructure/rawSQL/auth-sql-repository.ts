@@ -1,11 +1,11 @@
 import { InjectDataSource } from '@nestjs/typeorm'
 import { Injectable } from "@nestjs/common"
 import { DataSource } from 'typeorm'
-import { EmailConfirmationType } from '../../SuperAdmin/domain/UsersTypes'
+import { EmailConfirmationType } from '../../../SuperAdmin/domain/UsersTypes'
 import { add } from 'date-fns'
-import { UserPasswordRecovery } from '../../SuperAdmin/domain/typeORM/user-password-recovery.entity'
-import { UserEntity } from '../../SuperAdmin/domain/typeORM/user.entity'
-import { UserEmailConfirmation } from '../../SuperAdmin/domain/typeORM/user-email-confirmation.entity'
+import { UserPasswordRecovery } from '../../../SuperAdmin/domain/typeORM/user-password-recovery.entity'
+import { UserEntity } from '../../../SuperAdmin/domain/typeORM/user.entity'
+import { UserEmailConfirmation } from '../../../SuperAdmin/domain/typeORM/user-email-confirmation.entity'
 
 
 @Injectable()
@@ -29,7 +29,7 @@ export class AuthRepository {
         return findedUserData[0]
     }
 
-    async isUserByLoginExists(userLogin: string): Promise<boolean> {
+    /* async isUserByLoginExists(userLogin: string): Promise<boolean> {
         const queryString = `
             SELECT id
                 FROM public."user_entity"
@@ -51,7 +51,7 @@ export class AuthRepository {
         const userIdsByEmail = await this.dataSource.query(queryString, [userEmail])
 
         return userIdsByEmail[0] ? true : false
-    }
+    } */
 
     async findUserEmailConfirmationDataByCode(code: string): Promise<EmailConfirmationType> {
         const queryString = `
