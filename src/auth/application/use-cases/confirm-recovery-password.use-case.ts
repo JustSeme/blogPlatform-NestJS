@@ -5,7 +5,9 @@ import {
 } from "@nestjs/cqrs"
 import { generateErrorsMessages } from "../../../general/helpers"
 import { BadRequestException } from '@nestjs/common'
-import { AuthRepository } from "../../infrastructure/auth-sql-repository"
+import { AuthTypeORMRepository } from "../../infrastructure/auth-typeORM-repository"
+import { InjectDataSource } from "@nestjs/typeorm"
+import { DataSource } from "typeorm"
 
 export class ConfirmRecoveryPasswordCommand implements ICommand {
     constructor(public readonly recoveryCode: string, public readonly newPassword: string) { }
@@ -15,7 +17,8 @@ export class ConfirmRecoveryPasswordCommand implements ICommand {
 export class ConfirmRecoveryPasswordUseCase implements ICommandHandler<ConfirmRecoveryPasswordCommand> {
     constructor(
         private bcryptAdapter: BcryptAdapter,
-        private authRepository: AuthRepository,
+        private authRepository: AuthTypeORMRepository,
+        @InjectDataSource() private dataSource: DataSource,
     ) {
     }
 
@@ -25,14 +28,40 @@ export class ConfirmRecoveryPasswordUseCase implements ICommandHandler<ConfirmRe
             recoveryCode
         } = command
 
-        const user = await this.authRepository.findUserDataWithPasswordRecovery(recoveryCode)
+        const queryRunner = this.dataSource.createQueryRunner()
 
-        if (!user || user.passwordRecoveryExpirationDate < new Date()) {
-            throw new BadRequestException(generateErrorsMessages('recoveryCode is incorrect', 'recoveryCode'))
+
+        try {
+            const userPasswordRecoveryData = await this.authRepository.findUserPasswordRecoveryData(recoveryCode)
+
+            if (!userPasswordRecoveryData || userPasswordRecoveryData.passwordRecoveryExpirationDate < new Date()) {
+                throw new BadRequestException(generateErrorsMessages('recoveryCode is incorrect', 'recoveryCode'))
+            }
+
+            userPasswordRecoveryData.passwordRecoveryConfirmationCode = null
+            userPasswordRecoveryData.passwordRecoveryExpirationDate = null
+
+            const savedPasswordRecoveryData = await this.authRepository.queryRunnerSave(userPasswordRecoveryData, queryRunner.manager)
+
+            const newPasswordHash = await this.bcryptAdapter.generatePasswordHash(newPassword, 10)
+
+            const userData = await this.authRepository.findUserData(String(userPasswordRecoveryData.user))
+
+            userData.passwordHash = newPasswordHash
+
+            const savedUserData = await this.authRepository.queryRunnerSave(userData, queryRunner.manager)
+
+            await queryRunner.commitTransaction()
+
+            return savedPasswordRecoveryData && savedUserData
+        } catch (err) {
+            console.error(err)
+
+            await queryRunner.rollbackTransaction()
+
+            return false
+        } finally {
+            await queryRunner.release()
         }
-
-        const newPasswordHash = await this.bcryptAdapter.generatePasswordHash(newPassword, 10)
-
-        return this.authRepository.updateUserPassword(user.id, newPasswordHash)
     }
 }

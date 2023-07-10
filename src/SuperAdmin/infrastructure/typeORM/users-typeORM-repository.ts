@@ -82,7 +82,6 @@ export class UsersTypeORMRepository {
 
     async deleteUser(userId: string): Promise<boolean> {
         try {
-            //TODO Сделать каскадное удаление связанныех таблиц. В нынешнем варианте в связанных таблицах зануляется внешний ключ на user_entity
             await this.usersRepository.delete({ id: userId })
             return true
         } catch (err) {

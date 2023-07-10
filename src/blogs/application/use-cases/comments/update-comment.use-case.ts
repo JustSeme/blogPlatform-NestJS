@@ -21,6 +21,7 @@ export class UpdateCommentUseCase implements ICommandHandler<UpdateCommentComman
 
     async execute(command: UpdateCommentCommand) {
         const commentByCommentId = await this.commentsRepository.getCommentById(command.commentId)
+
         if (commentByCommentId.commentator.id !== command.userId) {
             throw new ForbiddenException(generateErrorsMessages('That is not your own', 'commentId'))
         }

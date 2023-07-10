@@ -1,6 +1,6 @@
 import {
     Column,
-    Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn
+    Entity, OneToOne, PrimaryGeneratedColumn
 } from "typeorm"
 import { UserEntity } from "./user.entity"
 
@@ -10,7 +10,6 @@ export class UserPasswordRecovery {
     id: string
 
     @OneToOne(() => UserEntity, (user) => user.emailConfirmation, { onDelete: "CASCADE" })
-    @JoinColumn({ name: 'userId' })
     user: UserEntity
 
     @Column({ default: null })
