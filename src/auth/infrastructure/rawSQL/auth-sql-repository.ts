@@ -2,7 +2,6 @@ import { InjectDataSource } from '@nestjs/typeorm'
 import { Injectable } from "@nestjs/common"
 import { DataSource } from 'typeorm'
 import { EmailConfirmationType } from '../../../SuperAdmin/domain/UsersTypes'
-import { add } from 'date-fns'
 import { UserPasswordRecovery } from '../../../SuperAdmin/domain/typeORM/user-password-recovery.entity'
 import { UserEntity } from '../../../SuperAdmin/domain/typeORM/user.entity'
 import { UserEmailConfirmation } from '../../../SuperAdmin/domain/typeORM/user-email-confirmation.entity'
@@ -29,7 +28,7 @@ export class AuthRepository {
         return findedUserData[0]
     }
 
-    /* async isUserByLoginExists(userLogin: string): Promise<boolean> {
+    async isUserByLoginExists(userLogin: string): Promise<boolean> {
         const queryString = `
             SELECT id
                 FROM public."user_entity"
@@ -51,7 +50,7 @@ export class AuthRepository {
         const userIdsByEmail = await this.dataSource.query(queryString, [userEmail])
 
         return userIdsByEmail[0] ? true : false
-    } */
+    }
 
     async findUserEmailConfirmationDataByCode(code: string): Promise<EmailConfirmationType> {
         const queryString = `
@@ -161,32 +160,22 @@ export class AuthRepository {
         return user[0]
     }
 
-    async updateEmailConfirmationInfo(userId: string, newConfirmationCode: string) {
+    async updateEmailConfirmationInfo(userId: string, newConfirmationCode: string, expirationDate: Date) {
         const queryString = `
             UPDATE public."user_email_confirmation"
                 SET "emailConfirmationCode"=$2, "emailExpirationDate"=$3
                 WHERE "userId" = $1;
         `
 
-        const expirationDate = add(new Date(), {
-            hours: 1,
-            minutes: 3
-        })
-
         await this.dataSource.query(queryString, [userId, newConfirmationCode, expirationDate])
     }
 
-    async updatePasswordConfirmationInfo(userId: string, passwordRecoveryCode: string) {
+    async updatePasswordConfirmationInfo(userId: string, passwordRecoveryCode: string, expirationDate: Date) {
         const queryString = `
             UPDATE public."user_password_recovery"
                 SET "passwordRecoveryConfirmationCode"=$2, "passwordRecoveryExpirationDate"=$3
                 WHERE "userId" = $1;
         `
-
-        const expirationDate = add(new Date(), {
-            hours: 1,
-            minutes: 3
-        })
 
         try {
             await this.dataSource.query(queryString, [userId, passwordRecoveryCode, expirationDate])

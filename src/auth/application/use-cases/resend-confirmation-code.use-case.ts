@@ -4,6 +4,7 @@ import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs/dist"
 import { AuthRepository } from '../../infrastructure/rawSQL/auth-sql-repository'
+import { add } from 'date-fns'
 
 export class ResendConfirmationCodeCommand {
     constructor(public email: string) { }
@@ -22,7 +23,12 @@ export class ResendConfirmationCodeUseCase implements ICommandHandler<ResendConf
 
         const newConfirmationCode = uuidv4()
 
-        await this.authRepository.updateEmailConfirmationInfo(user.id, newConfirmationCode)
+        const expirationDate = add(new Date(), {
+            hours: 1,
+            minutes: 3
+        })
+
+        await this.authRepository.updateEmailConfirmationInfo(user.id, newConfirmationCode, expirationDate)
 
         try {
             await this.emailManager.sendConfirmationCode(command.email, user.login, newConfirmationCode)

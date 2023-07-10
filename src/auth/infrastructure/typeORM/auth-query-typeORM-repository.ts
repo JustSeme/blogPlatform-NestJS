@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm"
 import { UserEntity } from "../../../SuperAdmin/domain/typeORM/user.entity"
 import { Repository } from "typeorm"
 import { UserPasswordRecovery } from "../../../SuperAdmin/domain/typeORM/user-password-recovery.entity"
+import { UserEmailConfirmation } from "../../../SuperAdmin/domain/typeORM/user-email-confirmation.entity"
 
 @Injectable()
 export class AuthQueryTypeORMRepository {
@@ -10,7 +11,9 @@ export class AuthQueryTypeORMRepository {
         @InjectRepository(UserEntity)
         private usersRepository: Repository<UserEntity>,
         @InjectRepository(UserPasswordRecovery)
-        private usersPasswordRecoveryRepository: Repository<UserPasswordRecovery>,
+        private userPasswordRecoveryRepository: Repository<UserPasswordRecovery>,
+        @InjectRepository(UserEmailConfirmation)
+        private userEmailConfirmationRepository: Repository<UserEmailConfirmation>,
     ) { }
 
     async isUserByLoginExists(userLogin: string): Promise<boolean> {
@@ -32,6 +35,73 @@ export class AuthQueryTypeORMRepository {
         } catch (err) {
             console.error(err)
             return false
+        }
+    }
+
+    async findUserByLogin(login: string): Promise<UserEntity> {
+        try {
+            return this.usersRepository.findOne({ where: { login } })
+        } catch (err) {
+            console.error(err)
+            return null
+        }
+    }
+
+    async findUserByEmail(email: string): Promise<UserEntity> {
+        try {
+            return this.usersRepository.findOne({ where: { email } })
+        } catch (err) {
+            console.error(err)
+            return null
+        }
+    }
+
+    async findUserByLoginOrEmail(loginOrEmail: string): Promise<UserEntity> {
+        return this.usersRepository
+            .createQueryBuilder('u')
+            .where('u.login = :loginOrEmail', { loginOrEmail })
+            .orWhere('u.email = :loginOrEmail', { loginOrEmail })
+            .getOne()
+    }
+
+    async findUserPasswordRecoveryDataByRecoveryCode(recoveryCode: string): Promise<UserPasswordRecovery> {
+        try {
+            const passwwordRecoveryData = await this.userPasswordRecoveryRepository
+                .createQueryBuilder('upr')
+                .where('upr.passwordRecoveryConfirmationCode = :recoveryCode', { recoveryCode })
+                .getOne()
+
+            return passwwordRecoveryData
+        } catch (err) {
+            console.error(err)
+            return null
+        }
+    }
+
+    async findUserPasswordRecoveryDataByUserId(userId: string): Promise<UserPasswordRecovery> {
+        try {
+            return this.userPasswordRecoveryRepository.findOne({ where: { user: { id: userId } } })
+        } catch (err) {
+            console.error(err)
+            return null
+        }
+    }
+
+    async findUserData(userId: string): Promise<UserEntity> {
+        try {
+            return this.usersRepository.findOne({ where: { id: userId } })
+        } catch (err) {
+            console.error(err)
+            return null
+        }
+    }
+
+    async findUserEmailConfirmationDataByCode(code: string): Promise<UserEmailConfirmation> {
+        try {
+            return this.userEmailConfirmationRepository.findOne({ where: { emailConfirmationCode: code } })
+        } catch (err) {
+            console.error(err)
+            return null
         }
     }
 }

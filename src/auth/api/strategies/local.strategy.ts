@@ -5,14 +5,12 @@ import { PassportStrategy } from '@nestjs/passport'
 import { Strategy } from 'passport-local'
 import { BcryptAdapter } from "../../../general/adapters/bcrypt.adapter"
 import { UserEntity } from "../../../SuperAdmin/domain/typeORM/user.entity"
-import { AuthTypeORMRepository } from "../../infrastructure/typeORM/auth-typeORM-repository"
-import { UsersTypeORMRepository } from "../../../SuperAdmin/infrastructure/typeORM/users-typeORM-repository"
+import { AuthQueryTypeORMRepository } from "../../infrastructure/typeORM/auth-query-typeORM-repository"
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
     constructor(
-        private authRepository: AuthTypeORMRepository,
-        private usersRepository: UsersTypeORMRepository,
+        private authQueryRepository: AuthQueryTypeORMRepository,
         private bcryptAdapter: BcryptAdapter,
     ) {
         super({ usernameField: 'loginOrEmail' })
@@ -27,7 +25,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     }
 
     private async checkCredentials(loginOrEmail: string, password: string) {
-        const user = await this.authRepository.findUserByLoginOrEmail(loginOrEmail)
+        const user = await this.authQueryRepository.findUserByLoginOrEmail(loginOrEmail)
         if (!user) return false
         if (!user.isConfirmed) return false
 
