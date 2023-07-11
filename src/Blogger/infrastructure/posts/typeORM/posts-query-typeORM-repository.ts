@@ -1,7 +1,11 @@
 import { Injectable } from "@nestjs/common"
-import { InjectRepository } from "@nestjs/typeorm"
+import {
+    InjectDataSource, InjectRepository
+} from "@nestjs/typeorm"
 import { PostEntity } from "../../../domain/posts/typeORM/post.entity"
-import { Repository } from "typeorm"
+import {
+    DataSource, Repository
+} from "typeorm"
 import { ReadPostsQueryParams } from "../../../../blogs/api/models/ReadPostsQuery"
 import { PostsViewModel } from "../../../../blogs/application/dto/PostViewModel"
 import { PostLikesInfo } from "../../../domain/posts/typeORM/post-likes-info"
@@ -10,12 +14,21 @@ import { PostLikesInfo } from "../../../domain/posts/typeORM/post-likes-info"
 export class PostsQueryTypeORMRepository {
     constructor(
         @InjectRepository(PostEntity)
-        private postsRepostiory: Repository<PostEntity>
+        private postsRepostiory: Repository<PostEntity>,
+        @InjectDataSource() private dataSource: DataSource
     ) { }
 
     async getPostById(postId: string): Promise<PostEntity> {
         try {
-            return this.postsRepostiory.findOneOrFail({ where: { id: postId } })
+            const queryString = `
+            SELECT *
+                FROM public."post_entity"
+                WHERE id = $1 AND "isBanned" = false
+            `
+
+            const findedPost = await this.dataSource.query(queryString, [postId])
+
+            return findedPost[0]
         } catch (err) {
             console.error(err)
             return null
@@ -75,7 +88,7 @@ export class PostsQueryTypeORMRepository {
 
     async isPostExists(postId: string): Promise<boolean> {
         try {
-            const postById = await this.getPostById(postId)
+            const postById = await this.postsRepostiory.findOne({ where: { id: postId } })
 
             return postById ? true : false
         } catch (err) {

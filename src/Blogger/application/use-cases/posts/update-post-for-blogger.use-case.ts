@@ -53,7 +53,7 @@ export class UpdatePostForBloggerUseCase implements ICommandHandler<UpdatePostFo
         postById.shortDescription = postInputModel.shortDescription
         postById.content = postInputModel.content
 
-        const savedPost = this.postsRepository.dataSourceSave(postById)
+        const savedPost = await this.postsRepository.dataSourceSave(postById)
 
         return savedPost ? true : false
     }

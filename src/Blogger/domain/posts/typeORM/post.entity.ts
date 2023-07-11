@@ -26,7 +26,7 @@ export class PostEntity {
     createdAt: Date
 
     @ManyToOne(() => BlogEntity, (blog) => blog.blogPosts)
-    @JoinColumn()
+    @JoinColumn({ name: 'blog' })
     blog: BlogEntity
 
     @Column()
