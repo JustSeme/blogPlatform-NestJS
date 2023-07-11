@@ -25,7 +25,7 @@ export class BlogEntity {
     @CreateDateColumn({ type: 'timestamptz' })
     createdAt: Date
 
-    @Column({ default: true })
+    @Column({ default: false })
     isMembership: boolean
 
     @Column()

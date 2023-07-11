@@ -51,7 +51,6 @@ import { CreateUserUseCase } from "./SuperAdmin/application/use-cases/create-use
 import { RegistrationUserUseCase } from "./auth/application/use-cases/registration-user.use-case"
 import { DeleteUserUseCase } from "./SuperAdmin/application/use-cases/delete-user.use-case"
 import { CqrsModule } from "@nestjs/cqrs"
-import { CreateBlogUseCase } from "./blogs/application/use-cases/blogs/create-blog.use-case"
 import { UpdateBlogUseCase } from "./blogs/application/use-cases/blogs/update-blog.use-case"
 import { DeleteBlogUseCase } from "./blogs/application/use-cases/blogs/delete-blog.use-case"
 import { DeletePostUseCase } from "./blogs/application/use-cases/posts/delete-post.use-case"
@@ -153,7 +152,6 @@ const authUseCases = [
 const blogsUseCases = [
   DeleteBlogUseCase,
   DeleteBlogForBloggerUseCase,
-  CreateBlogUseCase,
   CreateBlogForBloggerUseCase,
   UpdateBlogUseCase,
   UpdateBlogForBloggerUseCase,
@@ -223,7 +221,7 @@ const repositories = [
   AttemptsRepository, */
 ]
 
-// sql repositories
+// rawSql repositories
 const SQLrepositories = [
   UsersSQLRepository,
   UsersQuerySQLRepository,

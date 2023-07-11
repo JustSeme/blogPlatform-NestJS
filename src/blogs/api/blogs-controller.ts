@@ -5,18 +5,21 @@ import { IsBlogByIdExistPipe } from "./pipes/isBlogExists.validation.pipe"
 import { PostsWithQueryOutputModel } from "../../Blogger/domain/posts/PostsTypes"
 import { ReadPostsQueryParams } from "./models/ReadPostsQuery"
 import { CommandBus } from "@nestjs/cqrs"
-import { GetPostsForBlogCommand } from "../application/use-cases/blogs/get-posts-for-blog.use-case"
 import {
     Controller, Get, Headers, NotFoundException, Param, Query
 } from "@nestjs/common"
 import { BlogsQueryTypeORMRepository } from "../../Blogger/infrastructure/blogs/typeORM/blogs-query-typeORM-repository"
 import { generateErrorsMessages } from "../../general/helpers"
+import { PostsQueryTypeORMRepository } from "../../Blogger/infrastructure/posts/typeORM/posts-query-typeORM-repository"
+import { JwtService } from "../../general/adapters/jwt.adapter"
 
 @Controller('blogs')
 export class BlogsController {
     constructor(
         protected commandBus: CommandBus,
         protected blogsQueryRepository: BlogsQueryTypeORMRepository,
+        protected postsQueryRepository: PostsQueryTypeORMRepository,
+        protected jwtService: JwtService
     ) { }
 
     @Get()
@@ -49,8 +52,10 @@ export class BlogsController {
         @Param('blogId', IsBlogByIdExistPipe) blogId: string,
         @Headers('Authorization') authorizationHeader: string,
     ): Promise<PostsWithQueryOutputModel> {
-        return this.commandBus.execute(
-            new GetPostsForBlogCommand(queryParams, blogId, authorizationHeader)
-        )
+        const accessToken = authorizationHeader ? authorizationHeader.split(' ')[1] : null
+
+        const userId = await this.jwtService.getCorrectUserIdByAccessToken(accessToken)
+
+        return this.postsQueryRepository.findPostsForBlog(queryParams, blogId, userId)
     }
 }

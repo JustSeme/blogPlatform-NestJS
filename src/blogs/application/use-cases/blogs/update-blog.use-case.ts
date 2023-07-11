@@ -2,7 +2,8 @@ import {
     CommandHandler, ICommand, ICommandHandler
 } from "@nestjs/cqrs"
 import { BlogInputModel } from "../../../../Blogger/api/models/BlogInputModel"
-import { BlogsSQLRepository } from "../../../../Blogger/infrastructure/blogs/rawSQL/blogs-sql-repository"
+import { BlogsQueryTypeORMRepository } from "../../../../Blogger/infrastructure/blogs/typeORM/blogs-query-typeORM-repository"
+import { BlogsTypeORMRepository } from "../../../../Blogger/infrastructure/blogs/typeORM/blogs-typeORM-repository"
 
 // Command
 export class UpdateBlogCommand implements ICommand {
@@ -14,7 +15,8 @@ export class UpdateBlogCommand implements ICommand {
 @CommandHandler(UpdateBlogCommand)
 export class UpdateBlogUseCase implements ICommandHandler {
     constructor(
-        private readonly blogsRepository: BlogsSQLRepository
+        private readonly blogsRepository: BlogsTypeORMRepository,
+        private readonly blogsQueryRepository: BlogsQueryTypeORMRepository,
     ) { }
 
 
@@ -22,6 +24,15 @@ export class UpdateBlogUseCase implements ICommandHandler {
         const {
             id, body
         } = command
-        return await this.blogsRepository.updateBlog(id, body)
+
+        const blogById = await this.blogsQueryRepository.findBlogById(id)
+
+        blogById.name = body.name
+        blogById.description = body.description
+        blogById.websiteUrl = body.websiteUrl
+
+        const updatedBlog = await this.blogsRepository.dataSourceSave(blogById)
+
+        return updatedBlog ? true : false
     }
 }

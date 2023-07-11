@@ -1,4 +1,5 @@
 import { BlogDBModel } from "../../../Blogger/domain/blogs/BlogsTypes"
+import { BlogEntity } from "../../../Blogger/domain/blogs/typeORM/blog.entity"
 
 export class BlogViewModel {
     public id: string
@@ -9,7 +10,7 @@ export class BlogViewModel {
     public isMembership: boolean
 
     constructor(
-        rawBlog: BlogDBModel | BlogViewModel
+        rawBlog: BlogDBModel | BlogViewModel | BlogEntity
     ) {
         this.id = rawBlog.id
         this.createdAt = rawBlog.createdAt

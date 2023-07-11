@@ -6,8 +6,8 @@ import {
     BadRequestException, ForbiddenException
 } from "@nestjs/common"
 import { generateErrorsMessages } from "../../../../general/helpers"
-import { BlogsSQLRepository } from "../../../infrastructure/blogs/rawSQL/blogs-sql-repository"
 import { BlogsQueryTypeORMRepository } from "../../../infrastructure/blogs/typeORM/blogs-query-typeORM-repository"
+import { BlogsTypeORMRepository } from "../../../infrastructure/blogs/typeORM/blogs-typeORM-repository"
 
 export class UpdateBlogForBloggerCommand {
     constructor(
@@ -21,7 +21,7 @@ export class UpdateBlogForBloggerCommand {
 @CommandHandler(UpdateBlogForBloggerCommand)
 export class UpdateBlogForBloggerUseCase implements ICommandHandler<UpdateBlogForBloggerCommand> {
     constructor(
-        private readonly blogsRepository: BlogsSQLRepository,
+        private readonly blogsRepository: BlogsTypeORMRepository,
         private readonly blogsQueryRepository: BlogsQueryTypeORMRepository,
     ) { }
 
@@ -36,7 +36,12 @@ export class UpdateBlogForBloggerUseCase implements ICommandHandler<UpdateBlogFo
             throw new ForbiddenException(generateErrorsMessages('that is not your own', 'authorization header'))
         }
 
-        await this.blogsRepository.updateBlog(command.blogId, command.blogInputModel)
-        return true
+        blogById.name = command.blogInputModel.name
+        blogById.description = command.blogInputModel.description
+        blogById.websiteUrl = command.blogInputModel.websiteUrl
+
+        const updatedBlog = await this.blogsRepository.dataSourceSave(blogById)
+
+        return updatedBlog ? true : false
     }
 }
