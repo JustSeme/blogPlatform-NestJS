@@ -9,9 +9,7 @@ import { InjectDataSource } from "@nestjs/typeorm"
 import { DataSource } from "typeorm"
 import { UserEntity } from "../../domain/typeORM/user.entity"
 import { UserBanInfo } from "../../domain/typeORM/user-ban-info.entity"
-import { add } from 'date-fns'
 import { UserEmailConfirmation } from "../../domain/typeORM/user-email-confirmation.entity"
-import { v4 as uuidv4 } from 'uuid'
 import { UserPasswordRecovery } from "../../domain/typeORM/user-password-recovery.entity"
 import { AuthQueryTypeORMRepository } from "../../../auth/infrastructure/typeORM/auth-query-typeORM-repository"
 
@@ -57,25 +55,20 @@ export class CreateUserUseCase implements ICommandHandler<CreateUserCommand> {
             await this.usersRepository.queryRunnerSave(userBanInfoData, queryRunnerManager)
 
             const userEmailConfirmationData = new UserEmailConfirmation()
-            userEmailConfirmationData.emailConfirmationCode = uuidv4()
-            userEmailConfirmationData.emailExpirationDate = add(new Date(), {
-                hours: 1,
-                minutes: 3
-            })
-            userEmailConfirmationData.user = userEntityData
+            userEmailConfirmationData.emailConfirmationCode = null
+            userEmailConfirmationData.emailExpirationDate = null
+            userEmailConfirmationData.user = savedUser as UserEntity
 
             await this.usersRepository.queryRunnerSave(userEmailConfirmationData, queryRunnerManager)
 
             const userPasswordRecoveryData = new UserPasswordRecovery()
-            userPasswordRecoveryData.user = userEntityData
+            userPasswordRecoveryData.user = savedUser as UserEntity
 
             await this.usersRepository.queryRunnerSave(userPasswordRecoveryData, queryRunnerManager)
 
             await queryRunner.commitTransaction()
             return savedUser.id
         } catch (err) {
-            console.log('error')
-
             console.error(err)
 
             await queryRunner.rollbackTransaction()

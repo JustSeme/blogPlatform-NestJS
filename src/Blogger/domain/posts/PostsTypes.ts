@@ -63,7 +63,7 @@ export class PostDBModel {
         this.title = rawPost.title
         this.shortDescription = rawPost.shortDescription
         this.content = rawPost.content
-        this.blogId = rawPost.blog as string
+        this.blogId = rawPost.blog.id
         this.blogName = rawPost.blogName
         this.isBanned = rawPost.isBanned
     }

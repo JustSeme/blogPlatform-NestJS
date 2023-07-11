@@ -98,7 +98,6 @@ export class PostsQueryTypeORMRepository {
 
         console.log(resultedPosts)
 
-
         //const displayedPosts = resultedPosts.map(post => new PostsViewModel(post))
 
         return {

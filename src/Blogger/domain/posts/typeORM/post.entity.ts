@@ -1,7 +1,7 @@
 import {
     Column,
     CreateDateColumn,
-    Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn
+    Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn
 } from "typeorm"
 import { UserEntity } from "../../../../SuperAdmin/domain/typeORM/user.entity"
 import { CommentEntity } from "../../../../blogs/domain/typeORM/comment.entity"
@@ -26,7 +26,8 @@ export class PostEntity {
     createdAt: Date
 
     @ManyToOne(() => BlogEntity, (blog) => blog.blogPosts)
-    blog: BlogEntity | string
+    @JoinColumn()
+    blog: BlogEntity
 
     @Column()
     blogName: string
