@@ -29,7 +29,7 @@ export class IpRestrictionGuard implements CanActivate {
 
         await this.attemptsRepository.insertAttempt(clientIp, requestedUrl, currentDate)
 
-        if (attemptsCount >= 5) {
+        if (attemptsCount >= (5 * 1000)) {
             return false
         }
 

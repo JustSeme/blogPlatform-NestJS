@@ -5,6 +5,6 @@ import {
 export const CurrentUserId = createParamDecorator(
     (data: unknown, context: ExecutionContext): string => {
         const request = context.switchToHttp().getRequest()
-        if (!request.user?.userId) throw new Error('AuthGuard must be used')
+        if (!request.user?.userId) return null
         return request.user.userId
     })
