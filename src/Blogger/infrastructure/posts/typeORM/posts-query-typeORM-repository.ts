@@ -53,7 +53,7 @@ export class PostsQueryTypeORMRepository {
         const resultedPosts = await this.postsRepostiory
             .createQueryBuilder('pe')
             .where('pe.isBanned = false')
-            .andWhere('pe.blog = :blog', { blog: { id: blogId } })
+            .andWhere('pe.blog = :blog', { blog: blogId })
             .addSelect(
                 (qb) => qb
                     .select('count(*)')
@@ -85,7 +85,7 @@ export class PostsQueryTypeORMRepository {
                             .select('pli.createdAt, pli.userId, pli.ownerLogin')
                             .from(PostLikesInfo, 'pli')
                             .where('pli.isBanned = false')
-                            .andWhere('pli.likeStatus = "Like"')
+                            .andWhere(`pli.likeStatus = 'Like'`)
                             .andWhere('pli.postId = pe.id')
                             .orderBy(`pli.createdAt`, 'DESC')
                             .limit(3)
@@ -96,16 +96,32 @@ export class PostsQueryTypeORMRepository {
             .offset(skipCount)
             .getRawMany()
 
-        console.log(resultedPosts)
-
-        //const displayedPosts = resultedPosts.map(post => new PostsViewModel(post))
+        const displayedPosts = this.mappingPosts(resultedPosts)
 
         return {
             pagesCount: pagesCount,
             page: +pageNumber,
             pageSize: +pageSize,
             totalCount: +totalCount,
-            items: resultedPosts
+            items: displayedPosts
         }
+    }
+
+    mappingPosts(rawPosts: any[]): PostsViewModel[] {
+        return rawPosts.map((post) => ({
+            id: post.pe_id,
+            title: post.pe_title,
+            shortDescription: post.pe_shortDescription,
+            content: post.pe_content,
+            blogId: post.pe_blogId,
+            blogName: post.pe_blogName,
+            createdAt: post.pe_createdAt,
+            extendedLikesInfo: {
+                likesCount: +post.likesCount,
+                dislikesCount: +post.dislikesCount,
+                myStatus: post.myStatus || 'None',
+                newestLikes: post.newestLikes || []
+            }
+        }))
     }
 }
