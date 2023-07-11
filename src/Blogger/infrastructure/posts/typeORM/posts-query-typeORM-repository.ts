@@ -22,6 +22,57 @@ export class PostsQueryTypeORMRepository {
         }
     }
 
+    async getPostByIdWithLikesInfo(postId: string, userId: string): Promise<PostsViewModel> {
+        try {
+            const findedPostData = await this.postsRepostiory
+                .createQueryBuilder('pe')
+                .where('pe.id = :postId', { postId })
+                .addSelect(
+                    (qb) => qb
+                        .select('count(*)')
+                        .from(PostLikesInfo, 'pli')
+                        .where('pli.postId = pe.id')
+                        .andWhere('pli.isBanned = false')
+                        .andWhere(`pli.likeStatus = 'Dislike'`), 'dislikesCount'
+                )
+                .addSelect(
+                    (qb) => qb
+                        .select('count(*)')
+                        .from(PostLikesInfo, 'pli')
+                        .where('pli.postId = pe.id')
+                        .andWhere('pli.isBanned = false')
+                        .andWhere(`pli.likeStatus = 'Like'`), 'likesCount'
+                )
+                .addSelect(
+                    (qb) => qb
+                        .select('pli.likeStatus')
+                        .from(PostLikesInfo, 'pli')
+                        .where('pli.userId = :userId', { userId })
+                        .andWhere('pli.postId = pe.id'), 'myStatus'
+                )
+                .addSelect(
+                    (qb) => qb
+                        .select(`jsonb_agg(json_build_object('addedAt', agg."createdAt", 'userId', agg."userId", 'login', agg."ownerLogin" ))`)
+                        .from((qb) => {
+                            return qb
+                                .select('pli.createdAt, pli.userId, pli.ownerLogin')
+                                .from(PostLikesInfo, 'pli')
+                                .where('pli.isBanned = false')
+                                .andWhere(`pli.likeStatus = 'Like'`)
+                                .andWhere('pli.postId = pe.id')
+                                .orderBy(`pli.createdAt`, 'DESC')
+                                .limit(3)
+                        }, 'agg'), 'newestLikes'
+                )
+                .getRawMany()
+
+            return this.mappingPosts(findedPostData)[0]
+        } catch (err) {
+            console.error(err)
+            return null
+        }
+    }
+
     async isPostExists(postId: string): Promise<boolean> {
         try {
             const postById = await this.getPostById(postId)

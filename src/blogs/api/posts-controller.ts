@@ -1,5 +1,5 @@
 import {
-    Controller, Get, Post, Put, Param, Query, Body, HttpStatus, HttpCode, UseGuards, NotImplementedException
+    Controller, Get, Post, Put, Param, Query, Body, HttpStatus, HttpCode, UseGuards, NotImplementedException, NotFoundException
 } from '@nestjs/common'
 import { ReadCommentsQueryParams } from "./models/ReadCommentsQuery"
 import { CommentsWithQueryOutputModel } from "../application/dto/CommentViewModel"
@@ -15,17 +15,17 @@ import { PostsWithQueryOutputModel } from '../../Blogger/domain/posts/PostsTypes
 import { CommandBus } from '@nestjs/cqrs'
 import { UpdateLikeStatusForPostCommand } from '../application/use-cases/posts/update-like-status-for-post.use-case'
 import { CreateCommentCommand } from '../application/use-cases/comments/create-comment.use-case'
-import { GetPostByIdCommand } from '../application/use-cases/posts/get-post-by-id.use-case'
-import { GetCommentsForPostCommand } from '../application/use-cases/posts/get-comments-for-post.use-case'
 import { JwtService } from '../../general/adapters/jwt.adapter'
 import { PostsQueryTypeORMRepository } from '../../Blogger/infrastructure/posts/typeORM/posts-query-typeORM-repository'
 import { JwtGetUserId } from '../../general/guards/jwt-get-userId.guard'
+import { CommentsQueryTypeORMRepository } from '../infrastructure/typeORM/comments-query-typeORM-repository'
 
 @Controller('posts')
 export class PostsController {
     constructor(
         protected commandBus: CommandBus,
         protected postsQueryRepository: PostsQueryTypeORMRepository,
+        protected commentsQueryRepository: CommentsQueryTypeORMRepository,
         protected jwtService: JwtService,
     ) { }
 
@@ -44,9 +44,14 @@ export class PostsController {
         @Param('postId', IsPostExistsPipe) postId: string,
         @CurrentUserId() userId: string | null,
     ): Promise<PostsViewModel> {
-        return this.commandBus.execute(
-            new GetPostByIdCommand(postId, authorizationHeader)
-        )
+
+        const findedPost = await this.postsQueryRepository.getPostByIdWithLikesInfo(postId, userId)
+
+        if (!findedPost) {
+            throw new NotFoundException('blog by this post is banned')
+        }
+
+        return findedPost
     }
 
     @Get(':postId/comments')
@@ -56,9 +61,7 @@ export class PostsController {
         @Query() commentsQueryParams: ReadCommentsQueryParams,
         @CurrentUserId() userId: string | null,
     ): Promise<CommentsWithQueryOutputModel> {
-        return this.commandBus.execute(
-            new GetCommentsForPostCommand(postId, commentsQueryParams, authorizationHeader)
-        )
+        return this.commentsQueryRepository.getCommentsForPost(commentsQueryParams, postId, userId)
     }
 
     @UseGuards(JwtAuthGuard)

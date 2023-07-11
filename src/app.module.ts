@@ -85,8 +85,6 @@ import {
   User, UsersSchema
 } from "./SuperAdmin/domain/mongoose/UsersSchema"
 import { GetPostsForBlogUseCase } from "./blogs/application/use-cases/blogs/get-posts-for-blog.use-case"
-import { GetPostByIdUseCase } from "./blogs/application/use-cases/posts/get-post-by-id.use-case"
-import { GetCommentsForPostUseCase } from "./blogs/application/use-cases/posts/get-comments-for-post.use-case"
 import { GetCommentByIdUseCase } from "./blogs/application/use-cases/comments/get-comment-by-id.use-case"
 import { BanBlogUseCase } from "./SuperAdmin/application/use-cases/ban-blog.use-case"
 import { UnbanBlogUseCase } from "./SuperAdmin/application/use-cases/unban-blog.use-case"
@@ -168,8 +166,6 @@ const blogsUseCases = [
   BanUserUseCase,
   UnbanUserUseCase,
   GetPostsForBlogUseCase,
-  GetPostByIdUseCase,
-  GetCommentsForPostUseCase,
   GetCommentByIdUseCase,
   BanBlogUseCase,
   UnbanBlogUseCase,
