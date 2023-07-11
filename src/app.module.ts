@@ -84,7 +84,6 @@ import { UsersService } from "./SuperAdmin/application/users.service"
 import {
   User, UsersSchema
 } from "./SuperAdmin/domain/mongoose/UsersSchema"
-import { GetPostsForBlogUseCase } from "./blogs/application/use-cases/blogs/get-posts-for-blog.use-case"
 import { GetCommentByIdUseCase } from "./blogs/application/use-cases/comments/get-comment-by-id.use-case"
 import { BanBlogUseCase } from "./SuperAdmin/application/use-cases/ban-blog.use-case"
 import { UnbanBlogUseCase } from "./SuperAdmin/application/use-cases/unban-blog.use-case"
@@ -165,7 +164,6 @@ const blogsUseCases = [
   BindUserUseCase,
   BanUserUseCase,
   UnbanUserUseCase,
-  GetPostsForBlogUseCase,
   GetCommentByIdUseCase,
   BanBlogUseCase,
   UnbanBlogUseCase,
@@ -218,7 +216,7 @@ const repositories = [
 
 // rawSql repositories
 const SQLrepositories = [
-  UsersSQLRepository,
+  /* UsersSQLRepository,
   UsersQuerySQLRepository,
   DevicesSQLRepository,
   AttemptsSQLRepository,
@@ -228,7 +226,7 @@ const SQLrepositories = [
   PostsQuerySQLRepository,
   CommentsSQLRepository,
   CommentsQuerySQLRepository,
-  AuthRepository,
+  AuthRepository, */
 ]
 
 const typeORMRepositories = [
