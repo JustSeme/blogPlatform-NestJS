@@ -85,7 +85,6 @@ import {
   User, UsersSchema
 } from "./SuperAdmin/domain/mongoose/UsersSchema"
 import { GetPostsForBlogUseCase } from "./blogs/application/use-cases/blogs/get-posts-for-blog.use-case"
-import { GetPostsUseCase } from "./blogs/application/use-cases/posts/get-posts.use-case"
 import { GetPostByIdUseCase } from "./blogs/application/use-cases/posts/get-post-by-id.use-case"
 import { GetCommentsForPostUseCase } from "./blogs/application/use-cases/posts/get-comments-for-post.use-case"
 import { GetCommentByIdUseCase } from "./blogs/application/use-cases/comments/get-comment-by-id.use-case"
@@ -136,6 +135,7 @@ import { DevicesTypeORMRepository } from "./security/infrastructure/typeORM/devi
 import { AttemptsTypeORMRepository } from "./security/infrastructure/typeORM/attempts-typeORM-repository"
 import { PostsTypeORMRepository } from "./Blogger/infrastructure/posts/typeORM/posts-typeORM-repository"
 import { AuthQueryTypeORMRepository } from "./auth/infrastructure/typeORM/auth-query-typeORM-repository"
+import { JwtGetUserId } from "./general/guards/jwt-get-userId.guard"
 
 const authUseCases = [
   LogoutUseCase,
@@ -168,7 +168,6 @@ const blogsUseCases = [
   BanUserUseCase,
   UnbanUserUseCase,
   GetPostsForBlogUseCase,
-  GetPostsUseCase,
   GetPostByIdUseCase,
   GetCommentsForPostUseCase,
   GetCommentByIdUseCase,
@@ -263,6 +262,7 @@ const decorators = [
 const guards = [
   IpRestrictionGuard,
   JwtAuthGuard,
+  JwtGetUserId,
 ]
 
 const configs = [

@@ -1,6 +1,6 @@
 import {
     Body,
-    Controller, Delete, Get, Headers, HttpCode, HttpStatus, NotImplementedException, Param, Put, UseGuards
+    Controller, Delete, Get, HttpCode, HttpStatus, NotImplementedException, Param, Put, UseGuards
 } from "@nestjs/common"
 import { CommentsService } from "../application/comments-service"
 import { CommentInputModel } from "./models/CommentInputModel"
@@ -13,23 +13,22 @@ import { CommandBus } from "@nestjs/cqrs"
 import { DeleteCommentCommand } from "../application/use-cases/comments/delete-comment.use-case"
 import { UpdateCommentCommand } from "../application/use-cases/comments/update-comment.use-case"
 import { UpdateLikeStatusForCommentCommand } from "../application/use-cases/comments/update-like-status-for-comment.use-case"
-import { GetCommentByIdCommand } from "../application/use-cases/comments/get-comment-by-id.use-case"
+import { CommentsQueryTypeORMRepository } from "../infrastructure/typeORM/comments-query-typeORM-repository"
 
 @Controller('comments')
 export class CommentsController {
     constructor(
         protected commentsService: CommentsService,
         protected commandBus: CommandBus,
+        protected commentsQueryRepository: CommentsQueryTypeORMRepository,
     ) { }
 
     @Get(':commentId')
     async getComment(
         @Param('commentId', IsCommentExistsPipe) commentId: string,
-        @Headers('Authorization') authorizationHeader: string,
+        @CurrentUserId() userId: string | null,
     ): Promise<CommentViewModel> {
-        return this.commandBus.execute(
-            new GetCommentByIdCommand(commentId, authorizationHeader)
-        )
+        return this.commentsQueryRepository.getCommentByIdWithLikesInfo(commentId, userId)
     }
 
     @UseGuards(JwtAuthGuard)

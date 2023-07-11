@@ -12,7 +12,7 @@ import {
 export class PostsQuerySQLRepository {
     constructor(@InjectDataSource() private dataSource: DataSource) { }
 
-    async findPosts(queryParams: ReadPostsQueryParams, userId: string) {
+    /* async findPosts(queryParams: ReadPostsQueryParams, userId: string) {
         const {
             sortDirection = 'desc',
             sortBy = 'createdAt',
@@ -76,7 +76,7 @@ export class PostsQuerySQLRepository {
             totalCount: +totalCount,
             items: displayedPosts
         }
-    }
+    } */
 
     async findPostsForBlog(queryParams: ReadPostsQueryParams, blogId: string, userId: string) {
         const {

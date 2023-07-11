@@ -6,12 +6,14 @@ import { PostsWithQueryOutputModel } from "../../Blogger/domain/posts/PostsTypes
 import { ReadPostsQueryParams } from "./models/ReadPostsQuery"
 import { CommandBus } from "@nestjs/cqrs"
 import {
-    Controller, Get, Headers, NotFoundException, Param, Query
+    Controller, Get, NotFoundException, Param, Query, UseGuards
 } from "@nestjs/common"
 import { BlogsQueryTypeORMRepository } from "../../Blogger/infrastructure/blogs/typeORM/blogs-query-typeORM-repository"
 import { generateErrorsMessages } from "../../general/helpers"
 import { PostsQueryTypeORMRepository } from "../../Blogger/infrastructure/posts/typeORM/posts-query-typeORM-repository"
 import { JwtService } from "../../general/adapters/jwt.adapter"
+import { JwtGetUserId } from "../../general/guards/jwt-get-userId.guard"
+import { CurrentUserId } from "../../general/decorators/current-userId.param.decorator"
 
 @Controller('blogs')
 export class BlogsController {
@@ -47,15 +49,12 @@ export class BlogsController {
     }
 
     @Get(':blogId/posts')
+    @UseGuards(JwtGetUserId)
     async getPostsForBlog(
         @Query() queryParams: ReadPostsQueryParams,
         @Param('blogId', IsBlogByIdExistPipe) blogId: string,
-        @Headers('Authorization') authorizationHeader: string,
+        @CurrentUserId() userId: string | null
     ): Promise<PostsWithQueryOutputModel> {
-        const accessToken = authorizationHeader ? authorizationHeader.split(' ')[1] : null
-
-        const userId = await this.jwtService.getCorrectUserIdByAccessToken(accessToken)
-
         return this.postsQueryRepository.findPostsForBlog(queryParams, blogId, userId)
     }
 }
