@@ -533,7 +533,7 @@ describe('super-admin-users', () => {
             .expect(HttpStatus.UNAUTHORIZED)
 
         expect(errorsMessages.body.errorsMessages[0].field).toEqual('userId')
-        expect(errorsMessages.body.errorsMessages[0].message).toEqual(`You are banned by banReason: ${BanUserInputModel.banReason}`)
+        expect(errorsMessages.body.errorsMessages[0].message).toEqual(`You are banned`)
     })
 
     it('should unban the last created user and display unbanned banInfo', async () => {

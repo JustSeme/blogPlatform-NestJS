@@ -51,9 +51,6 @@ export class BanBlogUseCase implements ICommandHandler<BanBlogCommand> {
 
             hidedPost = await this.postsRepository.queryRunnerSave(postByBlogId, queryRunner.manager)
 
-            console.log(hidedPost)
-
-
             await queryRunner.commitTransaction()
         } catch (err) {
             console.error(err)

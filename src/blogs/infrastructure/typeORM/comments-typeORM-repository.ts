@@ -101,8 +101,9 @@ export class CommentsTypeORMRepository {
 
     async hideAllCommentsForCurrentUser(userId: string): Promise<boolean> {
         try {
-            await this.commentsRepository.update({ commentator: { id: userId } }, { isBanned: true })
-            return true
+            const updateResult = await this.commentsRepository.update({ commentator: { id: userId } }, { isBanned: true })
+
+            return updateResult ? true : false
         } catch (err) {
             console.error(err)
             return false

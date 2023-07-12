@@ -157,7 +157,7 @@ export class CommentsQueryTypeORMRepository {
             const commentById = await this.commentsRepository
                 .createQueryBuilder('ce')
                 .where('ce.id = :commentId', { commentId })
-                .andWhere('ce.isBanned = false')
+                .andWhere('ce."isBanned" = false')
                 .loadRelationCountAndMap('ce.likesCount', 'ce.commentLikes', 'like', (like) => like
                     .where({ 'likeStatus': 'Like' })
                     .andWhere({ 'isBanned': false })
@@ -175,6 +175,10 @@ export class CommentsQueryTypeORMRepository {
                 .where('cli.userId = :userId', { userId })
                 .andWhere('cli.commentId = :commentId', { commentId })
                 .getOne()
+
+            if (!commentById) {
+                return null
+            }
 
             const commentWithLikesInfo = {
                 ...commentById,

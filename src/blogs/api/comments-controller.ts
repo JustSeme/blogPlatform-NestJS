@@ -1,6 +1,6 @@
 import {
     Body,
-    Controller, Delete, Get, HttpCode, HttpStatus, NotImplementedException, Param, Put, UseGuards
+    Controller, Delete, Get, HttpCode, HttpStatus, NotFoundException, NotImplementedException, Param, Put, UseGuards
 } from "@nestjs/common"
 import { CommentsService } from "../application/comments-service"
 import { CommentInputModel } from "./models/CommentInputModel"
@@ -14,6 +14,7 @@ import { DeleteCommentCommand } from "../application/use-cases/comments/delete-c
 import { UpdateCommentCommand } from "../application/use-cases/comments/update-comment.use-case"
 import { UpdateLikeStatusForCommentCommand } from "../application/use-cases/comments/update-like-status-for-comment.use-case"
 import { CommentsQueryTypeORMRepository } from "../infrastructure/typeORM/comments-query-typeORM-repository"
+import { generateErrorsMessages } from "../../general/helpers"
 
 @Controller('comments')
 export class CommentsController {
@@ -28,7 +29,13 @@ export class CommentsController {
         @Param('commentId', IsCommentExistsPipe) commentId: string,
         @CurrentUserId() userId: string | null,
     ): Promise<CommentViewModel> {
-        return this.commentsQueryRepository.getCommentByIdWithLikesInfo(commentId, userId)
+        const commentById = await this.commentsQueryRepository.getCommentByIdWithLikesInfo(commentId, userId)
+
+        if (!commentById) {
+            throw new NotFoundException(generateErrorsMessages('This comment is not found, possible it is banned', 'isBanned'))
+        }
+
+        return commentById
     }
 
     @UseGuards(JwtAuthGuard)
