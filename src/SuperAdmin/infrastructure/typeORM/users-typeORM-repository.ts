@@ -8,6 +8,8 @@ import {
 } from "typeorm"
 import { UserBanInfo } from "../../domain/typeORM/user-ban-info.entity"
 import { UserEntitiesType } from "../UsersTypes"
+import { UserPasswordRecovery } from "../../domain/typeORM/user-password-recovery.entity"
+import { UserEmailConfirmation } from "../../domain/typeORM/user-email-confirmation.entity"
 
 @Injectable()
 export class UsersTypeORMRepository {
@@ -51,34 +53,33 @@ export class UsersTypeORMRepository {
         }
     }
 
-    /* async findUserDataWithPasswordRecovery(userId: string): Promise<UserEntity & UserPasswordRecovery> {
+    async findUserDataWithPasswordRecovery(userId: string): Promise<UserEntity & UserPasswordRecovery> {
         try {
-            const findedUserData = await this.findUserData(userId)
-            const findedPasswordRecoveryData = await this.usersPasswordRecoveriesRepository.findOneBy({ userId })
+            const findedUserData = await this.usersRepository.findOne({
+                where: { id: userId },
+                relations: { passwordRecovery: true }
+            })
 
-            return {
-                ...findedUserData, ...findedPasswordRecoveryData
-            }
+            return { ...findedUserData as UserEntity & UserPasswordRecovery }
         } catch (err) {
             console.error(err)
             return null
         }
-
     }
 
     async findUserDataWithEmailConfirmation(userId: string): Promise<UserEntity & UserEmailConfirmation> {
         try {
-            const findedUserData = await this.findUserData(userId)
-            const findedEmailConfirmationData = await this.usersEmailConfirmationsRepository.findOneBy({ userId })
+            const findedUserData = await this.usersRepository.findOne({
+                where: { id: userId },
+                relations: { emailConfirmation: true }
+            })
 
-            return {
-                ...findedUserData, ...findedEmailConfirmationData
-            }
+            return { ...findedUserData as UserEntity & UserEmailConfirmation }
         } catch (err) {
             console.error(err)
             return null
         }
-    } */
+    }
 
     async deleteUser(userId: string): Promise<boolean> {
         try {

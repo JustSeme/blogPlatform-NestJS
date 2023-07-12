@@ -9,10 +9,11 @@ import { Test } from '@nestjs/testing';
 import { AppModule } from '../src/app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { createApp } from '../src/createApp';
+import { UsersTypeORMRepository } from '../src/SuperAdmin/infrastructure/typeORM/users-typeORM-repository';
 
 describe('e2e-auth', () => {
     let httpServer;
-    let usersRepository: UsersSQLRepository
+    let usersRepository: UsersTypeORMRepository
 
     beforeAll(async () => {
         const moduleFixture = await Test.createTestingModule({
@@ -28,7 +29,7 @@ describe('e2e-auth', () => {
         // @ts-ignore jest.spyOn adds this functionallity
         console.error.mockImplementation(() => null);
 
-        usersRepository = await app.resolve(UsersSQLRepository)
+        usersRepository = await app.resolve(UsersTypeORMRepository)
 
         await request(httpServer)
             .delete('/testing/all-data')
