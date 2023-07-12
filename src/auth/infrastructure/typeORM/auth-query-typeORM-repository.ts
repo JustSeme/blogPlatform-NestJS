@@ -103,6 +103,10 @@ export class AuthQueryTypeORMRepository {
                 relations: { user: true }
             })
 
+            if (!userData) {
+                return null
+            }
+
             return userData as UserEmailConfirmation & UserEntity
         } catch (err) {
             console.error(err)

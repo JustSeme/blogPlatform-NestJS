@@ -102,9 +102,13 @@ export class AuthController {
     @Post('registration-confirmation')
     @HttpCode(HttpStatus.NO_CONTENT)
     async registrationConfirm(@Body('code') code: string) {
-        await this.commandBus.execute(
+        const result = await this.commandBus.execute(
             new ConfirmEmailCommand(code)
         )
+
+        if (!result) {
+            throw new BadRequestException(generateErrorsMessages('The confirmation code is incorrect, expired or already been applied', 'code'))
+        }
     }
 
     @UseGuards(IpRestrictionGuard)
