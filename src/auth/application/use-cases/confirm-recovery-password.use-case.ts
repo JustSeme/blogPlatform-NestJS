@@ -3,8 +3,6 @@ import {
     CommandHandler,
     ICommand, ICommandHandler
 } from "@nestjs/cqrs"
-import { generateErrorsMessages } from "../../../general/helpers"
-import { BadRequestException } from '@nestjs/common'
 import { AuthTypeORMRepository } from "../../infrastructure/typeORM/auth-typeORM-repository"
 import { InjectDataSource } from "@nestjs/typeorm"
 import { DataSource } from "typeorm"
@@ -32,12 +30,15 @@ export class ConfirmRecoveryPasswordUseCase implements ICommandHandler<ConfirmRe
 
         const queryRunner = this.dataSource.createQueryRunner()
 
+        await queryRunner.connect()
+
+        await queryRunner.startTransaction()
 
         try {
             const userPasswordRecoveryData = await this.authQueryRepository.findUserPasswordRecoveryDataByRecoveryCode(recoveryCode)
 
             if (!userPasswordRecoveryData || userPasswordRecoveryData.passwordRecoveryExpirationDate < new Date()) {
-                throw new BadRequestException(generateErrorsMessages('recoveryCode is incorrect', 'recoveryCode'))
+                return false
             }
 
             userPasswordRecoveryData.passwordRecoveryConfirmationCode = null
@@ -47,7 +48,7 @@ export class ConfirmRecoveryPasswordUseCase implements ICommandHandler<ConfirmRe
 
             const newPasswordHash = await this.bcryptAdapter.generatePasswordHash(newPassword, 10)
 
-            const userData = await this.authQueryRepository.findUserData(String(userPasswordRecoveryData.user))
+            const userData = await this.authQueryRepository.findUserData(userPasswordRecoveryData.user.id)
 
             userData.passwordHash = newPasswordHash
 

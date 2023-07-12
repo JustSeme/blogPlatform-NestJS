@@ -67,9 +67,10 @@ export class AuthQueryTypeORMRepository {
     async findUserPasswordRecoveryDataByRecoveryCode(recoveryCode: string): Promise<UserPasswordRecovery> {
         try {
             const passwwordRecoveryData = await this.userPasswordRecoveryRepository
-                .createQueryBuilder('upr')
-                .where('upr.passwordRecoveryConfirmationCode = :recoveryCode', { recoveryCode })
-                .getOne()
+                .findOne({
+                    where: { passwordRecoveryConfirmationCode: recoveryCode },
+                    relations: { user: true }
+                })
 
             return passwwordRecoveryData
         } catch (err) {

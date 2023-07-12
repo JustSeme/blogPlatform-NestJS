@@ -145,7 +145,7 @@ export class AuthController {
             new ConfirmRecoveryPasswordCommand(newPasswordInputModel.recoveryCode, newPasswordInputModel.newPassword)
         )
         if (!isConfirmed) {
-            throw new NotImplementedException()
+            throw new BadRequestException(generateErrorsMessages('recoveryCode is incorrect', 'recoveryCode'))
         }
     }
 
