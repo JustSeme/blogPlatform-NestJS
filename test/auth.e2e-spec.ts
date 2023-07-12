@@ -4,7 +4,6 @@ import { LoginInputDTO } from '../src/auth/api/models/LoginInputDTO'
 import { NewPasswordInputModel } from '../src/auth/api/models/NewPasswordInputModel';
 import { UserInputModel } from '../src/SuperAdmin/api/models/UserInputModel';
 import { funcSleep } from '../src/general/helpers';
-import { UsersSQLRepository } from '../src/SuperAdmin/infrastructure/rawSQL/users-sql-repository';
 import { Test } from '@nestjs/testing';
 import { AppModule } from '../src/app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
@@ -28,6 +27,8 @@ describe('e2e-auth', () => {
         jest.spyOn(console, 'error')
         // @ts-ignore jest.spyOn adds this functionallity
         console.error.mockImplementation(() => null);
+
+        httpServer = app.getHttpServer()
 
         usersRepository = await app.resolve(UsersTypeORMRepository)
 
@@ -78,7 +79,7 @@ describe('e2e-auth', () => {
 
     it('resend confirmation code, should change confirmation code from usersRepository', async () => {
         let user = await usersRepository.findUserDataWithEmailConfirmation(createdUserId)
-        const confirmationCode = user?.emailConfirmationCode
+        const confirmationCode = user.emailConfirmation.emailConfirmationCode
 
         await request(httpServer)
             .post('/auth/registration-email-resending')
@@ -86,7 +87,7 @@ describe('e2e-auth', () => {
             .expect(HttpStatus.NO_CONTENT)
 
         user = await usersRepository.findUserDataWithEmailConfirmation(createdUserId)
-        const newConfirmationCode = user?.emailConfirmationCode
+        const newConfirmationCode = user.emailConfirmation.emailConfirmationCode
 
         expect(confirmationCode === newConfirmationCode).toBe(false)
     })
@@ -102,7 +103,7 @@ describe('e2e-auth', () => {
     let confirmationCode
     it('should confirm email, using confirmationCode from usersRepository', async () => {
         const user = await usersRepository.findUserDataWithEmailConfirmation(createdUserId)
-        confirmationCode = user.emailConfirmationCode
+        confirmationCode = user.emailConfirmation.emailConfirmationCode
 
         await request(httpServer)
             .post('/auth/registration-confirmation')
@@ -112,15 +113,15 @@ describe('e2e-auth', () => {
 
     it('resend confirmation code, shouldn\'t change confirmation code from usersRepository if user is already confirmed', async () => {
         let user = await usersRepository.findUserDataWithEmailConfirmation(createdUserId)
-        const confirmationCode = user.emailConfirmationCode
+        const confirmationCode = user.emailConfirmation.emailConfirmationCode
 
         await request(httpServer)
             .post('/auth/registration-email-resending')
-            .send({ email: user?.email })
+            .send({ email: user.email })
             .expect(HttpStatus.BAD_REQUEST)
 
         user = await usersRepository.findUserDataWithEmailConfirmation(createdUserId)
-        const newConfirmationCode = user.emailConfirmationCode
+        const newConfirmationCode = user.emailConfirmation.emailConfirmationCode
         expect(confirmationCode === newConfirmationCode).toBe(true)
     })
 

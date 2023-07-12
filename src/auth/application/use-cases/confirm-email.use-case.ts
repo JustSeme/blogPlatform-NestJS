@@ -6,6 +6,8 @@ import { generateErrorsMessages } from "../../../general/helpers"
 import { AuthTypeORMRepository } from "../../infrastructure/typeORM/auth-typeORM-repository"
 import { UserEmailConfirmation } from "../../../SuperAdmin/domain/typeORM/user-email-confirmation.entity"
 import { AuthQueryTypeORMRepository } from "../../infrastructure/typeORM/auth-query-typeORM-repository"
+import { InjectDataSource } from "@nestjs/typeorm"
+import { DataSource } from "typeorm"
 
 export class ConfirmEmailCommand {
     constructor(public readonly code: string) { }
@@ -15,21 +17,47 @@ export class ConfirmEmailCommand {
 export class ConfirmEmailUseCase implements ICommandHandler<ConfirmEmailCommand> {
     constructor(
         private authRepository: AuthTypeORMRepository,
-        private authQueryRepository: AuthQueryTypeORMRepository
+        private authQueryRepository: AuthQueryTypeORMRepository,
+        @InjectDataSource() private dataSource: DataSource,
     ) { }
 
     async execute(command: ConfirmEmailCommand) {
-        const userEmailConfirmationData = await this.authQueryRepository.findUserEmailConfirmationDataByCode(command.code)
+        const queryRunner = this.dataSource.createQueryRunner()
 
-        if (!this.isUserCanBeConfirmed(userEmailConfirmationData, command.code) || !userEmailConfirmationData) {
-            throw new BadRequestException(generateErrorsMessages('The confirmation code is incorrect, expired or already been applied', 'code'))
+        await queryRunner.connect()
+
+        await queryRunner.startTransaction()
+
+        let savedUserEmailConfirmtaionData, savedUser
+
+        try {
+            const userEmailConfirmationData = await this.authQueryRepository.findUserEmailConfirmationDataByCode(command.code)
+
+            if (!this.isUserCanBeConfirmed(userEmailConfirmationData, command.code)) {
+                throw new BadRequestException(generateErrorsMessages('The confirmation code is incorrect, expired or already been applied', 'code'))
+            }
+
+            userEmailConfirmationData.isEmailConfirmed = true
+
+            savedUserEmailConfirmtaionData = await this.authRepository.queryRunnerSave(userEmailConfirmationData, queryRunner.manager)
+
+            const user = await this.authQueryRepository.findUserData(userEmailConfirmationData.user.id)
+
+            savedUser = await this.authRepository.queryRunnerSave(user, queryRunner.manager)
+
+            await queryRunner.commitTransaction()
+        } catch (err) {
+            console.error(err)
+
+            await queryRunner.rollbackTransaction()
+
+            return false
+        } finally {
+            await queryRunner.release()
         }
 
-        userEmailConfirmationData.isEmailConfirmed = true
 
-        const savedUserEmailConfirmtaionData = await this.authRepository.dataSourceSave(userEmailConfirmationData)
-
-        return savedUserEmailConfirmtaionData ? true : false
+        return savedUserEmailConfirmtaionData && savedUser
     }
 
     isUserCanBeConfirmed(emailConfirmation: UserEmailConfirmation, recievedConfirmationCode: string) {

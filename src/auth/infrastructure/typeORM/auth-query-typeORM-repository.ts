@@ -96,9 +96,14 @@ export class AuthQueryTypeORMRepository {
         }
     }
 
-    async findUserEmailConfirmationDataByCode(code: string): Promise<UserEmailConfirmation> {
+    async findUserEmailConfirmationDataByCode(code: string): Promise<UserEmailConfirmation & UserEntity> {
         try {
-            return this.userEmailConfirmationRepository.findOne({ where: { emailConfirmationCode: code } })
+            const userData = await this.userEmailConfirmationRepository.findOne({
+                where: { emailConfirmationCode: code },
+                relations: { user: true }
+            })
+
+            return userData as UserEmailConfirmation & UserEntity
         } catch (err) {
             console.error(err)
             return null

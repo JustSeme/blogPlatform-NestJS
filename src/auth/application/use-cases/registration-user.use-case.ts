@@ -49,7 +49,7 @@ export class RegistrationUserUseCase implements ICommandHandler<RegistrationUser
             userEntityData.login = command.login
             userEntityData.email = command.email
             userEntityData.passwordHash = passwordHash
-            userEntityData.isConfirmed = true
+            userEntityData.isConfirmed = false
 
             await this.usersRepository.queryRunnerSave(userEntityData, queryRunnerManager)
 
