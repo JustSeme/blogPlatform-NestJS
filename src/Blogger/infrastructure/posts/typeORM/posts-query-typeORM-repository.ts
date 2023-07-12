@@ -42,6 +42,7 @@ export class PostsQueryTypeORMRepository {
             const findedPostData = await this.postsRepostiory
                 .createQueryBuilder('pe')
                 .where('pe.id = :postId', { postId })
+                .andWhere('pe.isBanned = false')
                 .addSelect(
                     (qb) => qb
                         .select('count(*)')
@@ -250,6 +251,17 @@ export class PostsQueryTypeORMRepository {
             pageSize: +pageSize,
             totalCount: +totalCount,
             items: displayedPosts
+        }
+    }
+
+    async getPostByBlogId(blogId: string): Promise<PostEntity> {
+        try {
+            const findedPost = await this.postsRepostiory.findOne({ where: { blog: { id: blogId } } })
+
+            return findedPost
+        } catch (err) {
+            console.error(err)
+            return null
         }
     }
 

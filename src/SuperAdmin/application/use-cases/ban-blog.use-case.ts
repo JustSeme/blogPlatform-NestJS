@@ -7,6 +7,7 @@ import { BlogsQueryTypeORMRepository } from "../../../Blogger/infrastructure/blo
 import { InjectDataSource } from "@nestjs/typeorm"
 import { DataSource } from "typeorm"
 import { PostsTypeORMRepository } from "../../../Blogger/infrastructure/posts/typeORM/posts-typeORM-repository"
+import { PostsQueryTypeORMRepository } from "../../../Blogger/infrastructure/posts/typeORM/posts-query-typeORM-repository"
 
 export class BanBlogCommand {
     constructor(
@@ -21,6 +22,7 @@ export class BanBlogUseCase implements ICommandHandler<BanBlogCommand> {
         private blogsRepository: BlogsTypeORMRepository,
         private blogsQueryRepository: BlogsQueryTypeORMRepository,
         private postsRepository: PostsTypeORMRepository,
+        private postsQueryRepository: PostsQueryTypeORMRepository,
         @InjectDataSource() private dataSource: DataSource,
     ) { }
 
@@ -33,7 +35,7 @@ export class BanBlogUseCase implements ICommandHandler<BanBlogCommand> {
 
         await queryRunner.startTransaction()
 
-        let savedBlog, isHided
+        let savedBlog, hidedPost
 
         try {
             const blogByBlogId = await this.blogsQueryRepository.findBlogById(command.blogId)
@@ -43,7 +45,14 @@ export class BanBlogUseCase implements ICommandHandler<BanBlogCommand> {
 
             savedBlog = await this.blogsRepository.queryRunnerSave(blogByBlogId, queryRunner.manager)
 
-            isHided = await this.postsRepository.hidePostsByBlogId(command.blogId)
+            const postByBlogId = await this.postsQueryRepository.getPostByBlogId(command.blogId)
+
+            postByBlogId.isBanned = true
+
+            hidedPost = await this.postsRepository.queryRunnerSave(postByBlogId, queryRunner.manager)
+
+            console.log(hidedPost)
+
 
             await queryRunner.commitTransaction()
         } catch (err) {
@@ -55,6 +64,6 @@ export class BanBlogUseCase implements ICommandHandler<BanBlogCommand> {
         }
 
 
-        return savedBlog && isHided
+        return savedBlog && hidedPost
     }
 }
