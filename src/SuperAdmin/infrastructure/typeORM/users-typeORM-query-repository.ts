@@ -97,9 +97,9 @@ export class UsersTypeORMQueryRepository {
 
         const totalCountBuilder = this.usersRepository
             .createQueryBuilder('ue')
-            .leftJoin('ue.bansForUser', 'bufb')
-            .where('(lower(ue.login) LIKE :loginTerm)', { loginTerm })
-            .andWhere({ 'bufb.blog': { id: blogId } })
+            .leftJoinAndSelect('ue.bansForUser', 'bufb')
+            .where('lower(ue.login) LIKE :loginTerm', { loginTerm })
+            .andWhere('"bufb"."blogId" = :blogId', { blogId })
 
         const totalCount = await totalCountBuilder
             .getCount()
@@ -112,10 +112,9 @@ export class UsersTypeORMQueryRepository {
         try {
             const builder = await this.usersRepository
                 .createQueryBuilder('ue')
-                .leftJoin('ue.bansForUser', 'bufb')
-                .leftJoinAndSelect('ue.banInfo', 'ubi')
+                .leftJoinAndSelect('ue.bansForUser', 'bufb')
                 .where('(lower(ue.login) LIKE :loginTerm)', { loginTerm })
-                .andWhere({ 'bufb.blog': { id: blogId } })
+                .andWhere('"bufb"."blogId" = :blogId', { blogId })
                 .orderBy(`ue.${sortBy}`, sortDirection)
                 .limit(pageSize)
                 .offset(skipCount)
@@ -126,11 +125,14 @@ export class UsersTypeORMQueryRepository {
             throw new Error('Something wrong with database...')
         }
 
-
         const displayedUsers = resultedUsers.map((user) => ({
             id: user.id,
             login: user.login,
-            banInfo: user.banInfo
+            banInfo: {
+                isBanned: user.bansForUser[0].isBanned,
+                banDate: user.bansForUser[0].banDate,
+                banReason: user.bansForUser[0].banReason,
+            }
         }))
 
         return {

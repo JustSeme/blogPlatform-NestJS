@@ -20,15 +20,17 @@ export class PostsQueryTypeORMRepository {
 
     async getPostById(postId: string): Promise<PostEntity> {
         try {
-            const queryString = `
-            SELECT *
-                FROM public."post_entity"
-                WHERE id = $1 AND "isBanned" = false
-            `
 
-            const findedPost = await this.dataSource.query(queryString, [postId])
+            const findedPost = await this.postsRepostiory
+                .findOne({
+                    where: {
+                        id: postId,
+                        isBanned: false
+                    },
+                    relations: { blog: true }
+                })
 
-            return findedPost[0]
+            return findedPost
         } catch (err) {
             console.error(err)
             return null

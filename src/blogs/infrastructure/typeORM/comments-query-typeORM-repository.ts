@@ -78,9 +78,9 @@ export class CommentsQueryTypeORMRepository {
 
         return {
             pagesCount: pagesCount,
-            page: pageNumber,
+            page: +pageNumber,
             pageSize: pageSize,
-            totalCount: totalCount,
+            totalCount: +totalCount,
             items: displayedComments
         }
     }
@@ -145,9 +145,9 @@ export class CommentsQueryTypeORMRepository {
 
         return {
             pagesCount: pagesCount,
-            page: pageNumber,
+            page: +pageNumber,
             pageSize: pageSize,
-            totalCount: totalCount,
+            totalCount: +totalCount,
             items: displayedComments
         }
     }
