@@ -46,8 +46,8 @@ export class LoginUseCase implements ICommandHandler<LoginCommand> {
             throw new UnauthorizedException(generateErrorsMessages(`You are banned`, 'userId'))
         }
 
-        const accessToken = await this.jwtService.createAccessToken(this.tokensSettings.ACCESS_TOKEN_EXPIRE_TIME, user.id)
-        const refreshToken = await this.jwtService.createRefreshToken(this.tokensSettings.REFRESH_TOKEN_EXPIRE_TIME, deviceId, user.id)
+        const accessToken = await this.jwtService.createAccessToken(user.id)
+        const refreshToken = await this.jwtService.createRefreshToken(deviceId, user.id)
         const result = await jwt.decode(refreshToken) as JwtPayload
 
         const newSession = new AuthSession()

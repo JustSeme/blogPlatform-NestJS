@@ -20,14 +20,14 @@ export class JwtService {
         this.tokensSettings = this.authConfig.getTokensSettings()
     }
 
-    async createAccessToken(expiresTime: string | number, userId: string) {
-        return jwt.sign({ userId }, this.jwtSecret, { expiresIn: expiresTime })
+    async createAccessToken(userId: string) {
+        return jwt.sign({ userId }, this.jwtSecret, { expiresIn: this.tokensSettings.ACCESS_TOKEN_EXPIRE_TIME })
     }
 
-    async createRefreshToken(expiresTime: string | number, deviceId: string, userId: string) {
+    async createRefreshToken(deviceId: string, userId: string) {
         return jwt.sign({
             deviceId, userId
-        }, this.jwtSecret, { expiresIn: expiresTime })
+        }, this.jwtSecret, { expiresIn: this.tokensSettings.REFRESH_TOKEN_EXPIRE_TIME })
     }
 
     async getUserIdByToken(token: string) {
@@ -69,8 +69,8 @@ export class JwtService {
             return null
         }
 
-        const newRefreshToken = await this.createRefreshToken(this.tokensSettings.REFRESH_TOKEN_EXPIRE_TIME, result.deviceId, result.userId)
-        const newAccessToken = await this.createAccessToken(this.tokensSettings.ACCESS_TOKEN_EXPIRE_TIME, result.userId)
+        const newRefreshToken = await this.createRefreshToken(result.deviceId, result.userId)
+        const newAccessToken = await this.createAccessToken(result.userId)
         const resultOfCreatedToken = jwt.decode(newRefreshToken) as JwtPayload
 
         const deviceById = await this.deviceRepository.getDeviceData(result.deviceId)
