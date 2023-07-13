@@ -204,7 +204,9 @@ export class UsersTypeORMQueryRepository {
 
     async findUserData(userId: string): Promise<UserEntity> {
         try {
-            return this.usersRepository.findOneBy({ id: userId })
+            const userData = await this.usersRepository.findOneBy({ id: userId })
+
+            return userData
         } catch (err) {
             console.error(err)
             return null

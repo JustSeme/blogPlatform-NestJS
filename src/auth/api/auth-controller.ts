@@ -41,7 +41,7 @@ export class AuthController {
         const deviceName = req.headers["user-agent"] ? req.headers["user-agent"] : 'undefined'
 
         const pairOfTokens = await this.commandBus.execute(
-            new LoginCommand(req.user.id, req.ip, deviceName)
+            new LoginCommand(req.user, req.ip, deviceName)
         )
 
         res.cookie('refreshToken', pairOfTokens.refreshToken, {

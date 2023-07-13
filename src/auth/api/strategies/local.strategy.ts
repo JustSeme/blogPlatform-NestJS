@@ -29,7 +29,6 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
         if (!user) return false
         if (!user.isConfirmed) return false
 
-
         const isConfirmed = await this.bcryptAdapter.comparePassword(password, user.passwordHash)
         if (isConfirmed) {
             return user
