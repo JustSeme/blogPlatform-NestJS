@@ -80,7 +80,10 @@ export class DevicesTypeORMRepository {
 
     async getDeviceById(deviceId: string): Promise<DeviceAuthSessionDBModel> {
         try {
-            const deviceById = await this.authSessionsRepository.findOne({ where: { deviceId } })
+            const deviceById = await this.authSessionsRepository.findOne({
+                where: { deviceId },
+                relations: { user: true }
+            })
 
             if (!deviceById) {
                 return null
@@ -88,7 +91,7 @@ export class DevicesTypeORMRepository {
 
             return new DeviceAuthSessionDBModel(deviceById.issuedAt,
                 deviceById.expireDate,
-                String(deviceById.user),
+                deviceById.user.id,
                 deviceById.userIp,
                 deviceById.deviceId,
                 deviceById.deviceName)
