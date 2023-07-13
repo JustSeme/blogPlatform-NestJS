@@ -42,9 +42,6 @@ export class LoginUseCase implements ICommandHandler<LoginCommand> {
             deviceName
         } = command
 
-        console.log(user)
-
-
         if (!user || user.isBanned) {
             throw new UnauthorizedException(generateErrorsMessages(`You are banned`, 'userId'))
         }
