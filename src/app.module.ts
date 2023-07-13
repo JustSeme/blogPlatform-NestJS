@@ -84,7 +84,6 @@ import { UsersService } from "./SuperAdmin/application/users.service"
 import {
   User, UsersSchema
 } from "./SuperAdmin/domain/mongoose/UsersSchema"
-import { GetCommentByIdUseCase } from "./blogs/application/use-cases/comments/get-comment-by-id.use-case"
 import { BanBlogUseCase } from "./SuperAdmin/application/use-cases/ban-blog.use-case"
 import { UnbanBlogUseCase } from "./SuperAdmin/application/use-cases/unban-blog.use-case"
 import { UpdateCommentUseCase } from "./blogs/application/use-cases/comments/update-comment.use-case"
@@ -153,7 +152,6 @@ const blogsUseCases = [
   BindUserUseCase,
   BanUserUseCase,
   UnbanUserUseCase,
-  GetCommentByIdUseCase,
   BanBlogUseCase,
   UnbanBlogUseCase,
   UpdateCommentUseCase,

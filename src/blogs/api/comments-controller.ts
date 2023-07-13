@@ -15,6 +15,7 @@ import { UpdateCommentCommand } from "../application/use-cases/comments/update-c
 import { UpdateLikeStatusForCommentCommand } from "../application/use-cases/comments/update-like-status-for-comment.use-case"
 import { CommentsQueryTypeORMRepository } from "../infrastructure/typeORM/comments-query-typeORM-repository"
 import { generateErrorsMessages } from "../../general/helpers"
+import { JwtGetUserId } from "../../general/guards/jwt-get-userId.guard"
 
 @Controller('comments')
 export class CommentsController {
@@ -25,6 +26,7 @@ export class CommentsController {
     ) { }
 
     @Get(':commentId')
+    @UseGuards(JwtGetUserId)
     async getComment(
         @Param('commentId', IsCommentExistsPipe) commentId: string,
         @CurrentUserId() userId: string | null,

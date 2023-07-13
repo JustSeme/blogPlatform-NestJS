@@ -40,9 +40,11 @@ export class UpdateLikeStatusForCommentUseCase implements ICommandHandler<Update
             return savedEntity ? true : false
         } else {
             const likeEntity = new CommentLikesInfo()
+
             likeEntity.user = commentator
             likeEntity.comment = comment
             likeEntity.createdAt = new Date()
+
             likeEntity.likeStatus = command.status
 
             const savedEntity = await this.commentsRepository.dataSourceSave(likeEntity)
