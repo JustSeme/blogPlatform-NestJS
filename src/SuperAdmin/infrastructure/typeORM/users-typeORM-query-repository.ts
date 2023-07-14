@@ -113,7 +113,7 @@ export class UsersTypeORMQueryRepository {
             const builder = await this.usersRepository
                 .createQueryBuilder('ue')
                 .leftJoinAndSelect('ue.bansForUser', 'bufb')
-                .where('(lower(ue.login) LIKE :loginTerm)', { loginTerm })
+                .where('lower(ue.login) LIKE :loginTerm', { loginTerm })
                 .andWhere('"bufb"."blogId" = :blogId', { blogId })
                 .orderBy(`ue.${sortBy}`, sortDirection)
                 .limit(pageSize)
@@ -122,7 +122,7 @@ export class UsersTypeORMQueryRepository {
             resultedUsers = await builder.getMany()
         } catch (err) {
             console.error(err)
-            throw new Error('Something wrong with database...')
+            throw new Error(err)
         }
 
         const displayedUsers = resultedUsers.map((user) => ({

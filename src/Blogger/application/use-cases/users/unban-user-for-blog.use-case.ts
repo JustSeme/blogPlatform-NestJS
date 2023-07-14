@@ -33,7 +33,7 @@ export class UnbanUserForBlogUseCase implements ICommandHandler<UnbanUserForBlog
             throw new ForbiddenException(generateErrorsMessages('That is not your own', 'userId'))
         }
 
-        const existingUserBanForBlog = await this.blogsQueryRepository.findBanUserForBlogByBlogId(command.banUserForBlogInputModel.blogId)
+        const existingUserBanForBlog = await this.blogsQueryRepository.findBanUserForBlogByBlogId(command.banUserForBlogInputModel.blogId, command.unbannedUserId)
 
         if (!existingUserBanForBlog) {
             throw new NotFoundException(generateErrorsMessages('Ban for this user by blogId does not exists', 'blogId'))

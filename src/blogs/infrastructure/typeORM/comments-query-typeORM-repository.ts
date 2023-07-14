@@ -146,7 +146,7 @@ export class CommentsQueryTypeORMRepository {
         return {
             pagesCount: pagesCount,
             page: +pageNumber,
-            pageSize: pageSize,
+            pageSize: +pageSize,
             totalCount: +totalCount,
             items: displayedComments
         }
