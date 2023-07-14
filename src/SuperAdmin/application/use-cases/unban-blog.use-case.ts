@@ -7,7 +7,6 @@ import { BlogsTypeORMRepository } from "../../../Blogger/infrastructure/blogs/ty
 import { InjectDataSource } from "@nestjs/typeorm"
 import { DataSource } from "typeorm"
 import { PostsTypeORMRepository } from "../../../Blogger/infrastructure/posts/typeORM/posts-typeORM-repository"
-import { PostsQueryTypeORMRepository } from "../../../Blogger/infrastructure/posts/typeORM/posts-query-typeORM-repository"
 
 export class UnbanBlogCommand {
     constructor(
@@ -22,7 +21,6 @@ export class UnbanBlogUseCase implements ICommandHandler<UnbanBlogCommand> {
         private blogsQueryRepository: BlogsQueryTypeORMRepository,
         private blogsRepository: BlogsTypeORMRepository,
         private postsRepository: PostsTypeORMRepository,
-        private postsQueryRepository: PostsQueryTypeORMRepository,
         @InjectDataSource() private dataSource: DataSource,
     ) { }
 
@@ -35,7 +33,7 @@ export class UnbanBlogUseCase implements ICommandHandler<UnbanBlogCommand> {
 
         await queryRunner.startTransaction()
 
-        let savedBlog, savedPost
+        let savedBlog, isPostsUnhided
 
         try {
             const blogByBlogId = await this.blogsQueryRepository.findBlogById(command.blogId)
@@ -45,21 +43,21 @@ export class UnbanBlogUseCase implements ICommandHandler<UnbanBlogCommand> {
 
             savedBlog = await this.blogsRepository.queryRunnerSave(blogByBlogId, queryRunner.manager)
 
-            const postByBlogId = await this.postsQueryRepository.getPostByBlogId(command.blogId)
+            isPostsUnhided = await this.postsRepository.unHidePostsForBlog(command.blogId)
 
-            postByBlogId.isBanned = false
-
-            savedPost = await this.postsRepository.queryRunnerSave(postByBlogId, queryRunner.manager)
+            if (!savedBlog && isPostsUnhided) {
+                throw new Error('Blog is not saved or posts is not unHided, rollback transaction')
+            }
 
             await queryRunner.commitTransaction()
         } catch (err) {
             console.error(err)
             await queryRunner.rollbackTransaction()
-            throw new Error('Something wrong with database, rollback unban blog transaction')
+            throw new Error(err)
         } finally {
             await queryRunner.release()
         }
 
-        return savedBlog && savedPost
+        return savedBlog && isPostsUnhided
     }
 }

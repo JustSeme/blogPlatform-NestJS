@@ -54,6 +54,28 @@ export class PostsTypeORMRepository {
         }
     }
 
+    async hidePostsForBlog(blogId: string): Promise<boolean> {
+        try {
+            const updateResult = await this.postsRepository.update({ blog: { id: blogId } }, { isBanned: true })
+
+            return updateResult ? true : false
+        } catch (err) {
+            console.error(err)
+            return false
+        }
+    }
+
+    async unHidePostsForBlog(blogId: string): Promise<boolean> {
+        try {
+            const updateResult = await this.postsRepository.update({ blog: { id: blogId } }, { isBanned: false })
+
+            return updateResult ? true : false
+        } catch (err) {
+            console.error(err)
+            return false
+        }
+    }
+
     async hideAllLikeEntitiesForPostsByUserId(userId: string): Promise<boolean> {
         try {
             const updateResult = await this.postLikesInfoRepository

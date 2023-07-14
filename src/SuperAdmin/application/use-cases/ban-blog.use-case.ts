@@ -35,7 +35,7 @@ export class BanBlogUseCase implements ICommandHandler<BanBlogCommand> {
 
         await queryRunner.startTransaction()
 
-        let savedBlog, hidedPost
+        let savedBlog, isPostsHided
 
         try {
             const blogByBlogId = await this.blogsQueryRepository.findBlogById(command.blogId)
@@ -45,22 +45,21 @@ export class BanBlogUseCase implements ICommandHandler<BanBlogCommand> {
 
             savedBlog = await this.blogsRepository.queryRunnerSave(blogByBlogId, queryRunner.manager)
 
-            const postByBlogId = await this.postsQueryRepository.getPostByBlogId(command.blogId)
+            isPostsHided = await this.postsRepository.hidePostsForBlog(command.blogId)
 
-            postByBlogId.isBanned = true
-
-            hidedPost = await this.postsRepository.queryRunnerSave(postByBlogId, queryRunner.manager)
+            if (!savedBlog && isPostsHided) {
+                throw new Error('Blog is not saved or posts is not hided, rollback transaction')
+            }
 
             await queryRunner.commitTransaction()
         } catch (err) {
             console.error(err)
             await queryRunner.rollbackTransaction()
             throw new Error(err)
-            //throw new Error('Something wrong with database, rollback ban blog transaction')
         } finally {
             await queryRunner.release()
         }
 
-        return savedBlog && hidedPost
+        return savedBlog && isPostsHided
     }
 }
