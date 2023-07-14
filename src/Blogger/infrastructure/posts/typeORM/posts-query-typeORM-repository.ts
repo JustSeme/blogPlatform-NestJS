@@ -1,11 +1,7 @@
 import { Injectable } from "@nestjs/common"
-import {
-    InjectDataSource, InjectRepository
-} from "@nestjs/typeorm"
+import { InjectRepository } from "@nestjs/typeorm"
 import { PostEntity } from "../../../domain/posts/typeORM/post.entity"
-import {
-    DataSource, Repository
-} from "typeorm"
+import { Repository } from "typeorm"
 import { ReadPostsQueryParams } from "../../../../blogs/api/models/ReadPostsQuery"
 import { PostsViewModel } from "../../../../blogs/application/dto/PostViewModel"
 import { PostLikesInfo } from "../../../domain/posts/typeORM/post-likes-info"
@@ -15,7 +11,6 @@ export class PostsQueryTypeORMRepository {
     constructor(
         @InjectRepository(PostEntity)
         private postsRepostiory: Repository<PostEntity>,
-        @InjectDataSource() private dataSource: DataSource
     ) { }
 
     async getPostById(postId: string): Promise<PostEntity> {
@@ -43,6 +38,7 @@ export class PostsQueryTypeORMRepository {
                 .createQueryBuilder('pe')
                 .where('pe.id = :postId', { postId })
                 .andWhere('pe.isBanned = false')
+                .leftJoinAndSelect('pe.blog', 'be')
                 .addSelect(
                     (qb) => qb
                         .select('count(*)')
@@ -271,7 +267,7 @@ export class PostsQueryTypeORMRepository {
             title: post.pe_title,
             shortDescription: post.pe_shortDescription,
             content: post.pe_content,
-            blogId: post.pe_blogId,
+            blogId: post.be_id,
             blogName: post.pe_blogName,
             createdAt: post.pe_createdAt,
             extendedLikesInfo: {

@@ -75,7 +75,6 @@ export class CommentsRepository {
         const editableComment = await this.CommentModel.findOne({ id: commentId })
         if (!editableComment) return false
 
-        // TODO Почитать про $pull mongoose
         const likeIndex = editableComment.likesInfo.likes.findIndex((like) => like.userId === userId)
         const dislikeIndex = editableComment.likesInfo.dislikes.findIndex((dislike) => dislike.userId === userId)
 
