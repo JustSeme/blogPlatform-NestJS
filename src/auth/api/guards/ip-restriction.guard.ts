@@ -6,10 +6,11 @@ import { AuthConfig } from '../../../configuration/auth.config'
 
 @Injectable()
 export class IpRestrictionGuard implements CanActivate {
+    private readonly ALLOWED_ATTEMPTS_COUNT: number
+
     constructor(
         private attemptsRepository: AttemptsTypeORMRepository,
         private authConfig: AuthConfig,
-        private readonly ALLOWED_ATTEMPTS_COUNT: number
     ) {
         this.ALLOWED_ATTEMPTS_COUNT = this.authConfig.getNumber('ALLOWED_ATTEMPTS_COUNT', 5)
     }
