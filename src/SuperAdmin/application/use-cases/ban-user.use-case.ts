@@ -70,8 +70,9 @@ export class BanUserUseCase implements ICommandHandler<BanUserCommand> {
 
             return isSessionsDeleted && isPostsHided && isPostsLikesHided && isCommentsHided && isCommentLikesHided
         } catch (err) {
-            console.error(err)
-            return false
+            throw new Error(err)
+            //console.error(err)
+            //return false
         }
     }
 }

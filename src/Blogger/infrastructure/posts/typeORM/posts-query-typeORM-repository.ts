@@ -114,6 +114,7 @@ export class PostsQueryTypeORMRepository {
             const resultedPosts = await this.postsRepostiory
                 .createQueryBuilder('pe')
                 .where('pe.isBanned = false')
+                .leftJoinAndSelect('pe.blog', 'be')
                 .addSelect(
                     (qb) => qb
                         .select('count(*)')
@@ -193,6 +194,7 @@ export class PostsQueryTypeORMRepository {
                 .createQueryBuilder('pe')
                 .where('pe.isBanned = false')
                 .andWhere('pe.blog = :blog', { blog: blogId })
+                .leftJoinAndSelect('pe.blog', 'be')
                 .addSelect(
                     (qb) => qb
                         .select('count(*)')
