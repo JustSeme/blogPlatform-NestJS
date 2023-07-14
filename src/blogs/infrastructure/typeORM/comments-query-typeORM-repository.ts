@@ -211,7 +211,7 @@ export class CommentsQueryTypeORMRepository {
 
     private mapCommentsForBloggerDisplay(comments: any[]): Array<CommentViewModelForBlogger> {
         return comments.map((comment) => ({
-            id: comment.ce_ie,
+            id: comment.ce_id,
             content: comment.ce_content,
             createdAt: comment.ce_createdAt,
             commentatorInfo: {
