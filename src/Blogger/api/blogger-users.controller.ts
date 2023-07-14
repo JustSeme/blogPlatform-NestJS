@@ -29,11 +29,14 @@ export class BloggerUsersController {
         @CurrentUserId() userId: string,
     ) {
         let result
+        //TODO подрефаторить в один use case
         if (banInputModel.isBanned) {
+            console.log(banInputModel.blogId, 'controller model ban')
             result = await this.commandBus.execute(
                 new BanUserForBlogCommand(bannedUserId, banInputModel, userId)
             )
         } else {
+            console.log(banInputModel.blogId, 'controller model unban')
             result = await this.commandBus.execute(
                 new UnbanUserForBlogCommand(bannedUserId, banInputModel, userId)
             )

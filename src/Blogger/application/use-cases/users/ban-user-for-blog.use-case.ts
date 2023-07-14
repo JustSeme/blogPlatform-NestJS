@@ -2,15 +2,18 @@ import {
     CommandHandler, ICommandHandler,
 } from "@nestjs/cqrs"
 import { BanUserForBlogInputModel } from "../../../api/models/BanUserForBlogInputModel"
-import { ForbiddenException } from "@nestjs/common"
+import {
+    ForbiddenException, NotFoundException
+} from "@nestjs/common"
 import { generateErrorsMessages } from "../../../../general/helpers"
 import { BansUsersForBlogs } from "../../../domain/blogs/typeORM/bans-users-for-blogs.entity"
 import { UsersTypeORMRepository } from "../../../../SuperAdmin/infrastructure/typeORM/users-typeORM-repository"
 import { BlogsQueryTypeORMRepository } from "../../../infrastructure/blogs/typeORM/blogs-query-typeORM-repository"
 import { BlogsTypeORMRepository } from "../../../infrastructure/blogs/typeORM/blogs-typeORM-repository"
-import { BadRequestException } from '@nestjs/common'
 import { UserEntity } from "../../../../SuperAdmin/domain/typeORM/user.entity"
 import { BlogEntity } from "../../../domain/blogs/typeORM/blog.entity"
+import { Repository } from "typeorm"
+import { InjectRepository } from "@nestjs/typeorm"
 
 export class BanUserForBlogCommand {
     constructor(
@@ -27,6 +30,7 @@ export class BanUserForBlogUseCase implements ICommandHandler<BanUserForBlogComm
         private usersRepository: UsersTypeORMRepository,
         private blogsQueryRepository: BlogsQueryTypeORMRepository,
         private blogsRepository: BlogsTypeORMRepository,
+        @InjectRepository(BansUsersForBlogs) private bU: Repository<BansUsersForBlogs>
     ) { }
 
 
@@ -34,7 +38,7 @@ export class BanUserForBlogUseCase implements ICommandHandler<BanUserForBlogComm
         const blogByBlogId = await this.blogsQueryRepository.findOnlyUnbannedBlogById(command.banUserForBlogInputModel.blogId)
 
         if (!blogByBlogId) {
-            throw new BadRequestException('This blog is banned')
+            throw new NotFoundException('This blog is banned')
         }
 
         if (blogByBlogId.user.id !== command.currentUserId) {
@@ -42,6 +46,8 @@ export class BanUserForBlogUseCase implements ICommandHandler<BanUserForBlogComm
         }
 
         const findedUserData = await this.usersRepository.findUserData(command.bannedUserId)
+
+        console.log(command.banUserForBlogInputModel.blogId, command.bannedUserId, 'ban')
 
         const existingUserBanForBlog = await this.blogsQueryRepository.findBanUserForBlogByBlogId(command.banUserForBlogInputModel.blogId, command.bannedUserId)
 

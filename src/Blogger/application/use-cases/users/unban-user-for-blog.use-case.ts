@@ -8,6 +8,9 @@ import {
 } from "@nestjs/common"
 import { BlogsQueryTypeORMRepository } from "../../../infrastructure/blogs/typeORM/blogs-query-typeORM-repository"
 import { BlogsTypeORMRepository } from "../../../infrastructure/blogs/typeORM/blogs-typeORM-repository"
+import { InjectRepository } from "@nestjs/typeorm"
+import { BansUsersForBlogs } from "../../../domain/blogs/typeORM/bans-users-for-blogs.entity"
+import { Repository } from "typeorm"
 
 export class UnbanUserForBlogCommand {
     constructor(
@@ -22,7 +25,8 @@ export class UnbanUserForBlogCommand {
 export class UnbanUserForBlogUseCase implements ICommandHandler<UnbanUserForBlogCommand> {
     constructor(
         private blogsRepository: BlogsTypeORMRepository,
-        private blogsQueryRepository: BlogsQueryTypeORMRepository
+        private blogsQueryRepository: BlogsQueryTypeORMRepository,
+        @InjectRepository(BansUsersForBlogs) private bU: Repository<BansUsersForBlogs>
     ) { }
 
 
@@ -32,6 +36,8 @@ export class UnbanUserForBlogUseCase implements ICommandHandler<UnbanUserForBlog
         if (blogByBlogId.user.id !== command.currentUserId) {
             throw new ForbiddenException(generateErrorsMessages('That is not your own', 'userId'))
         }
+
+        console.log(command.banUserForBlogInputModel.blogId, command.unbannedUserId, 'unban')
 
         const existingUserBanForBlog = await this.blogsQueryRepository.findBanUserForBlogByBlogId(command.banUserForBlogInputModel.blogId, command.unbannedUserId)
 

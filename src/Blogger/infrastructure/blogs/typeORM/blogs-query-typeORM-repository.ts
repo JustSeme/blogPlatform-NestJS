@@ -187,7 +187,7 @@ export class BlogsQueryTypeORMRepository {
                     id: blogId,
                     isBanned: false
                 },
-                relations: ['user']
+                relations: { user: true }
             })
 
             return findedBlog ? findedBlog : null
@@ -199,12 +199,7 @@ export class BlogsQueryTypeORMRepository {
 
     async findBanUserForBlogByBlogId(blogId: string, userId: string): Promise<BansUsersForBlogs> {
         try {
-            return this.bansUsersForBlogsRepository.findOne({
-                where: {
-                    blog: { id: blogId },
-                    user: { id: userId }
-                }
-            })
+            return this.bansUsersForBlogsRepository.findOne({ where: { user: { id: userId } } })
         } catch (err) {
             console.error(err)
             return null
