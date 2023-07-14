@@ -246,7 +246,7 @@ export class UsersSQLRepository {
     async unbanUserForCurrentBlog(userId: string, blogId: string): Promise<boolean> {
         const queryString = `
             DELETE FROM public.bans_users_for_blogs
-                WHERE "userId"=$1 AND "blogId"=$2;        
+                WHERE "userId"=$1 AND "blogId"=$2;
         `
 
         try {

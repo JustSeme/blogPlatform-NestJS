@@ -1,12 +1,10 @@
 import request from 'supertest';
 import { HttpStatus } from '@nestjs/common';
-import { NestExpressApplication } from "@nestjs/platform-express"
 import { UserInputModel } from '../../src/SuperAdmin/api/models/UserInputModel';
 import { BlogInputModel } from '../../src/Blogger/api/models/BlogInputModel';
 import { initAppAndGetHttpServer } from '../test-utils';
 
 describe('blogger-blogs', () => {
-    let app: NestExpressApplication;
     let httpServer;
 
     beforeAll(async () => {
