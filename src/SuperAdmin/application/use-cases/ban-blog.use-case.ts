@@ -55,11 +55,11 @@ export class BanBlogUseCase implements ICommandHandler<BanBlogCommand> {
         } catch (err) {
             console.error(err)
             await queryRunner.rollbackTransaction()
-            throw new Error('Something wrong with database, rollback ban blog transaction')
+            throw new Error(err)
+            //throw new Error('Something wrong with database, rollback ban blog transaction')
         } finally {
             await queryRunner.release()
         }
-
 
         return savedBlog && hidedPost
     }
