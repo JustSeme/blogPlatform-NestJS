@@ -1,9 +1,11 @@
 import { ConfigService } from "@nestjs/config"
 
 export class BaseConfig {
-    constructor(protected appConfigService: ConfigService) { }
+    constructor(
+        protected appConfigService: ConfigService
+    ) { }
 
-    protected getNumber(key: string, defaultValue?: number) {
+    getNumber(key: string, defaultValue?: number) {
         const value = this.appConfigService.get(key)
         const parsedValue = Number(value)
 
@@ -17,7 +19,7 @@ export class BaseConfig {
         return parsedValue
     }
 
-    protected getString(key: string, defaultValue?: string) {
+    getString(key: string, defaultValue?: string) {
         const value = this.appConfigService.get(key)
 
         if (!value) {

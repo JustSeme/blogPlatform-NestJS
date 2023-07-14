@@ -8,7 +8,8 @@ export const getConfiguration = () => ({
     ENV: process.env.NODE_ENV ?? 'development',
     PORT: parseInt(process.env.PORT, 10) ?? 3000,
     JWT_SECRET: process.env.JWT_SECRET,
-    mongoURI: process.env.mongoURI
+    mongoURI: process.env.mongoURI,
+    ALLOWED_ATTEMPTS_COUNT: process.env.ALLOWED_ATTEMPTS_COUNT
 })
 
 export type ConfigType = ReturnType<typeof getConfiguration>

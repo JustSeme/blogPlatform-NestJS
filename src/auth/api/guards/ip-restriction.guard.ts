@@ -2,10 +2,17 @@ import {
     Injectable, CanActivate, ExecutionContext, HttpException, HttpStatus
 } from '@nestjs/common'
 import { AttemptsTypeORMRepository } from '../../../security/infrastructure/typeORM/attempts-typeORM-repository'
+import { AuthConfig } from '../../../configuration/auth.config'
 
 @Injectable()
 export class IpRestrictionGuard implements CanActivate {
-    constructor(private attemptsRepository: AttemptsTypeORMRepository) { }
+    constructor(
+        private attemptsRepository: AttemptsTypeORMRepository,
+        private authConfig: AuthConfig,
+        private readonly ALLOWED_ATTEMPTS_COUNT: number
+    ) {
+        this.ALLOWED_ATTEMPTS_COUNT = this.authConfig.getNumber('ALLOWED_ATTEMPTS_COUNT', 5)
+    }
 
     async canActivate(
         context: ExecutionContext,
@@ -29,7 +36,7 @@ export class IpRestrictionGuard implements CanActivate {
 
         await this.attemptsRepository.insertAttempt(clientIp, requestedUrl, currentDate)
 
-        if (attemptsCount >= 5) {
+        if (attemptsCount >= this.ALLOWED_ATTEMPTS_COUNT) {
             return false
         }
 
