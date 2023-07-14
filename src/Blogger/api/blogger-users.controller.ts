@@ -1,6 +1,6 @@
 import {
     Body,
-    Controller, Get, HttpCode, HttpStatus, Param, Put, Query, UseGuards
+    Controller, Get, HttpCode, HttpStatus, NotImplementedException, Param, Put, Query, UseGuards
 } from "@nestjs/common"
 import { CommandBus } from "@nestjs/cqrs"
 import { JwtAuthGuard } from "../../general/guards/jwt-auth.guard"
@@ -28,14 +28,19 @@ export class BloggerUsersController {
         @Body() banInputModel: BanUserForBlogInputModel,
         @CurrentUserId() userId: string,
     ) {
+        let result
         if (banInputModel.isBanned) {
-            await this.commandBus.execute(
+            result = await this.commandBus.execute(
                 new BanUserForBlogCommand(bannedUserId, banInputModel, userId)
             )
         } else {
-            await this.commandBus.execute(
+            result = await this.commandBus.execute(
                 new UnbanUserForBlogCommand(bannedUserId, banInputModel, userId)
             )
+        }
+
+        if (!result) {
+            throw new NotImplementedException('Put on ban user for blog is not implemented')
         }
     }
 

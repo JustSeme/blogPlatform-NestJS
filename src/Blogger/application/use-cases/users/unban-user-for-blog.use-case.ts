@@ -39,6 +39,8 @@ export class UnbanUserForBlogUseCase implements ICommandHandler<UnbanUserForBlog
             throw new NotFoundException(generateErrorsMessages('Ban for this user by blogId does not exists', 'blogId'))
         }
 
-        await this.blogsRepository.removeBanUserForBlog(existingUserBanForBlog)
+        const removeResult = await this.blogsRepository.removeBanUserForBlog(existingUserBanForBlog)
+
+        return removeResult ? true : false
     }
 }

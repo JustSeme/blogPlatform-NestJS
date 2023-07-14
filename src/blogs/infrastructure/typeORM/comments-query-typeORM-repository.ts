@@ -138,7 +138,7 @@ export class CommentsQueryTypeORMRepository {
                 .getRawMany()
         } catch (err) {
             console.error(err)
-            throw new Error('Cant get all comments for blogger, something with DB')
+            throw new Error(err)
         }
 
         const displayedComments = this.mapCommentsForBloggerDisplay(resultedComments)
@@ -224,7 +224,7 @@ export class CommentsQueryTypeORMRepository {
                 myStatus: comment.myStatus || 'None'
             },
             postInfo: {
-                blogId: comment.p_blogId,
+                blogId: comment.p_blog,
                 blogName: comment.p_blogName,
                 id: comment.p_id,
                 title: comment.p_title

@@ -48,6 +48,10 @@ export class BanUserForBlogUseCase implements ICommandHandler<BanUserForBlogComm
         banUserForBlog.isBanned = true
         banUserForBlog.banDate = new Date()
 
-        await this.blogsRepository.dataSourceSave(banUserForBlog)
+        const savedBan = await this.blogsRepository.dataSourceSave(banUserForBlog)
+
+        console.log(savedBan)
+
+        return savedBan ? true : false
     }
 }
