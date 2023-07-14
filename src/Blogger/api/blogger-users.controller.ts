@@ -10,7 +10,6 @@ import { IsBlogByIdExistPipe } from "../../blogs/api/pipes/isBlogExists.validati
 import { ReadBannedUsersQueryParams } from "./models/ReadBannedUsersQueryParams"
 import { BannedUsersOutputModel } from "../application/dto/BannedUserViewModel"
 import { GetAllBannedUsersForBlogCommand } from "../application/use-cases/users/get-all-banned-users-for-blog.use-case"
-import { UnbanUserForBlogCommand } from "../application/use-cases/users/unban-user-for-blog.use-case"
 import { IsUserExistPipe } from "../../SuperAdmin/api/pipes/isUserExists.validation.pipe"
 import { CurrentUserId } from "../../general/decorators/current-userId.param.decorator"
 
@@ -28,19 +27,9 @@ export class BloggerUsersController {
         @Body() banInputModel: BanUserForBlogInputModel,
         @CurrentUserId() userId: string,
     ) {
-        let result
-        //TODO подрефаторить в один use case
-        if (banInputModel.isBanned) {
-            console.log(banInputModel.blogId, 'controller model ban')
-            result = await this.commandBus.execute(
-                new BanUserForBlogCommand(bannedUserId, banInputModel, userId)
-            )
-        } else {
-            console.log(banInputModel.blogId, 'controller model unban')
-            result = await this.commandBus.execute(
-                new UnbanUserForBlogCommand(bannedUserId, banInputModel, userId)
-            )
-        }
+        const result = await this.commandBus.execute(
+            new BanUserForBlogCommand(bannedUserId, banInputModel, userId)
+        )
 
         if (!result) {
             throw new NotImplementedException('Put on ban user for blog is not implemented')

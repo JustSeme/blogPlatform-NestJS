@@ -138,6 +138,6 @@ describe('blogger-ban-user-for-blog', () => {
             .set('Authorization', `Bearer ${bloggerAccessToken}`)
             .expect(HttpStatus.OK)
 
-        expect(bannedUsersForBlogData.body.items.length).toEqual(0)
+        expect(bannedUsersForBlogData.body.items[0].banInfo.isBanned).toEqual(false)
     })
 })

@@ -91,7 +91,6 @@ import { BloggerUsersController } from "./Blogger/api/blogger-users.controller"
 import { BanUserForBlogUseCase } from "./Blogger/application/use-cases/users/ban-user-for-blog.use-case"
 import { GetAllBannedUsersForBlogUseCase } from "./Blogger/application/use-cases/users/get-all-banned-users-for-blog.use-case"
 import { BloggerService } from "./Blogger/application/blogger.service"
-import { UnbanUserForBlogUseCase } from "./Blogger/application/use-cases/users/unban-user-for-blog.use-case"
 import { TypeOrmModule } from "@nestjs/typeorm"
 import { UserEntity } from "./SuperAdmin/domain/typeORM/user.entity"
 import { AuthSession } from "./security/domain/typeORM/auth-session.entity"
@@ -157,7 +156,6 @@ const blogsUseCases = [
   UpdateCommentUseCase,
   BanUserForBlogUseCase,
   GetAllBannedUsersForBlogUseCase,
-  UnbanUserForBlogUseCase,
 ]
 
 const securityUseCases = [

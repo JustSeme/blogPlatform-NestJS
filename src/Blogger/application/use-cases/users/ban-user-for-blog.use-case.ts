@@ -12,8 +12,6 @@ import { BlogsQueryTypeORMRepository } from "../../../infrastructure/blogs/typeO
 import { BlogsTypeORMRepository } from "../../../infrastructure/blogs/typeORM/blogs-typeORM-repository"
 import { UserEntity } from "../../../../SuperAdmin/domain/typeORM/user.entity"
 import { BlogEntity } from "../../../domain/blogs/typeORM/blog.entity"
-import { Repository } from "typeorm"
-import { InjectRepository } from "@nestjs/typeorm"
 
 export class BanUserForBlogCommand {
     constructor(
@@ -30,7 +28,6 @@ export class BanUserForBlogUseCase implements ICommandHandler<BanUserForBlogComm
         private usersRepository: UsersTypeORMRepository,
         private blogsQueryRepository: BlogsQueryTypeORMRepository,
         private blogsRepository: BlogsTypeORMRepository,
-        @InjectRepository(BansUsersForBlogs) private bU: Repository<BansUsersForBlogs>
     ) { }
 
 
@@ -47,16 +44,27 @@ export class BanUserForBlogUseCase implements ICommandHandler<BanUserForBlogComm
 
         const findedUserData = await this.usersRepository.findUserData(command.bannedUserId)
 
-        console.log(command.banUserForBlogInputModel.blogId, command.bannedUserId, 'ban')
-
         const existingUserBanForBlog = await this.blogsQueryRepository.findBanUserForBlogByBlogId(command.banUserForBlogInputModel.blogId, command.bannedUserId)
 
         let banUserForBlog
 
         if (existingUserBanForBlog) {
-            banUserForBlog = this.editExistingBanForBlog(existingUserBanForBlog, command.banUserForBlogInputModel.banReason)
+            banUserForBlog = this.editExistingBanForBlog(
+                existingUserBanForBlog,
+                command.banUserForBlogInputModel.banReason,
+                command.banUserForBlogInputModel.isBanned
+            )
         } else {
-            banUserForBlog = this.createBanUserForBlog(findedUserData, blogByBlogId, command.banUserForBlogInputModel.banReason)
+            if (!command.banUserForBlogInputModel.isBanned) {
+                return true
+            }
+
+            banUserForBlog = this.createBanUserForBlog(
+                findedUserData,
+                blogByBlogId,
+                command.banUserForBlogInputModel.banReason,
+                command.banUserForBlogInputModel.isBanned
+            )
         }
 
         const savedBan = await this.blogsRepository.dataSourceSave(banUserForBlog)
@@ -64,21 +72,22 @@ export class BanUserForBlogUseCase implements ICommandHandler<BanUserForBlogComm
         return savedBan ? true : false
     }
 
-    editExistingBanForBlog(banForBlog: BansUsersForBlogs, banReason: string): BansUsersForBlogs {
+    editExistingBanForBlog(banForBlog: BansUsersForBlogs, banReason: string, isBanned: boolean): BansUsersForBlogs {
         banForBlog.banReason = banReason
-        banForBlog.isBanned = true
+        banForBlog.isBanned = isBanned
         banForBlog.banDate = new Date()
 
         return banForBlog
     }
 
-    createBanUserForBlog(user: UserEntity, blog: BlogEntity, banReason: string): BansUsersForBlogs {
+    createBanUserForBlog(user: UserEntity, blog: BlogEntity, banReason: string, isBanned: boolean): BansUsersForBlogs {
         const banUserForBlog = new BansUsersForBlogs()
 
         banUserForBlog.user = user
-        banUserForBlog.banReason = banReason
         banUserForBlog.blog = blog
-        banUserForBlog.isBanned = true
+
+        banUserForBlog.banReason = banReason
+        banUserForBlog.isBanned = isBanned
         banUserForBlog.banDate = new Date()
 
         return banUserForBlog
