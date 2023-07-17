@@ -1,5 +1,5 @@
-import { BansUsersForBlogs } from "../../../Blogger/domain/blogs/typeORM/bans-users-for-blogs.entity"
-import { UserEntity } from "../../domain/typeORM/user.entity"
+import { BansUsersForBlogs } from "../../../../Blogger/domain/blogs/typeORM/bans-users-for-blogs.entity"
+import { UserEntity } from "../../../domain/typeORM/user.entity"
 import { BanInfoDBType } from "./UsersViewModel"
 
 export class UsersBloggerViewModel {

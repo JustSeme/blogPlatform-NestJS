@@ -1,7 +1,7 @@
 import {
     IsBoolean, Length
 } from "class-validator"
-import { TrimIfString } from "../../../general/decorators/trimIfString.decorator"
+import { TrimIfString } from "../../../../general/decorators/trimIfString.decorator"
 
 export class BanUserInputModel {
     @IsBoolean()

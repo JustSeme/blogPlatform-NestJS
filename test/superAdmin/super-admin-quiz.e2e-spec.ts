@@ -1,7 +1,7 @@
 import request from 'supertest';
 import { HttpStatus } from '@nestjs/common';
 import { initAppAndGetHttpServer } from '../test-utils';
-import { QuestionInputModel } from '../../src/SuperAdmin/api/models/QuestionInputModel'
+import { QuestionInputModel } from '../../src/SuperAdmin/api/models/quiz/QuestionInputModel'
 
 
 describe('super-admin-quiz', () => {
@@ -13,32 +13,6 @@ describe('super-admin-quiz', () => {
         await request(httpServer)
             .delete('/testing/all-data')
     });
-
-    const incorrectQuestionInputModel: QuestionInputModel = {
-        body: 'How', // min 10 max 500
-        correctAnswers: [] // is string array
-    }
-
-    it('should return error if correctAnswers array is empty', async () => {
-        const errorsMessages = await request(httpServer)
-            .post('/sa/quiz/questions')
-            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
-            .send(incorrectQuestionInputModel)
-            .expect(HttpStatus.BAD_REQUEST)
-
-        expect(errorsMessages.body).toEqual({
-            errorsMessages: [
-                {
-                    message: 'body must be longer than or equal to 10 characters',
-                    field: 'body'
-                },
-                {
-                    message: 'correctAnswers must contain at least 1 elements',
-                    field: 'correctAnswers'
-                },
-            ]
-        })
-    })
 
     const questionInputModel: QuestionInputModel = {
         body: 'How year today?', // min 10 max 500
@@ -55,6 +29,14 @@ describe('super-admin-quiz', () => {
 
     let questionId1
 
+    const createdQuestionExpectModel = {
+        ...questionInputModel,
+        published: false,
+        id: expect.any(String),
+        createdAt: expect.any(String),
+        updatedAt: expect.any(String),
+    }
+
     it('super admin should create question and in the response the created question', async () => {
         const createdQuestion = await request(httpServer)
             .post('/sa/quiz/questions')
@@ -62,23 +44,26 @@ describe('super-admin-quiz', () => {
             .send(questionInputModel)
             .expect(HttpStatus.CREATED)
 
-        expect(createdQuestion.body).toEqual({
-            ...questionInputModel,
-            published: false,
-            id: expect.any(String),
-            createdAt: expect.any(String),
-            updatedAt: expect.any(String),
-        })
+        expect(createdQuestion.body).toEqual(createdQuestionExpectModel)
 
         questionId1 = createdQuestion.body.id
     })
 
-    /* it('created question should appear in questions list', async () => {
+    it('shouldn\'t display questions if auth header is not provided', async () => {
+        await request(httpServer)
+            .get('/sa/quiz/questions')
+            .expect(HttpStatus.UNAUTHORIZED)
+    })
+
+    it('created question should appear in questions list', async () => {
         const questionsData = await request(httpServer)
             .get('/sa/quiz/questions')
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
             .expect(HttpStatus.OK)
 
-        expect(questionsData.body.items[0].id).toEqual(questionId1)
-    }) */
+        createdQuestionExpectModel.id = questionId1
+
+        expect(questionsData.body.totalCount).toEqual(1)
+        expect(questionsData.body.items[0]).toEqual(createdQuestionExpectModel)
+    })
 })

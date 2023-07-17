@@ -3,7 +3,7 @@ import {
 } from "@nestjs/cqrs/dist"
 import { InjectDataSource } from "@nestjs/typeorm"
 import { DataSource } from "typeorm"
-import { QuestionInputModel } from "../../../api/models/QuestionInputModel"
+import { QuestionInputModel } from "../../../api/models/quiz/QuestionInputModel"
 import { QuizRepository } from "../../../infrastructure/typeORM/quiz-typeORM-repository"
 import { Question } from "../../../domain/typeORM/question.entity"
 

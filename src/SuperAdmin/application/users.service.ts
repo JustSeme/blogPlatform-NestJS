@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common"
-import { UserViewModelType } from "./dto/UsersViewModel"
+import { UserViewModelType } from "./dto/users/UsersViewModel"
 import { UserDTO } from "../domain/UsersTypes"
 
 @Injectable()

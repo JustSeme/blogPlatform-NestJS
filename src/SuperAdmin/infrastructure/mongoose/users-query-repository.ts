@@ -2,8 +2,8 @@ import { Injectable } from "@nestjs/common"
 import { InjectModel } from "@nestjs/mongoose/dist"
 import { User } from "../../domain/mongoose/UsersSchema"
 import { UserModelType } from "../../domain/UsersTypes"
-import { ReadUsersQuery } from "../../api/models/ReadUsersQuery"
-import { UsersWithQueryOutputModel } from "../../application/dto/UsersViewModel"
+import { ReadUsersQuery } from "../../api/models/users/ReadUsersQuery"
+import { UsersWithQueryOutputModel } from "../../application/dto/users/UsersViewModel"
 import { ReadBannedUsersQueryParams } from "../../../Blogger/api/models/ReadBannedUsersQueryParams"
 
 @Injectable()

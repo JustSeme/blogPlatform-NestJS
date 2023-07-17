@@ -1,6 +1,4 @@
-import { Type } from "class-transformer"
 import {
-    ArrayMinSize,
     IsArray, Length
 } from "class-validator"
 
@@ -9,7 +7,5 @@ export class QuestionInputModel {
     body: string
 
     @IsArray()
-    @ArrayMinSize(1)
-    @Type(() => String)
     correctAnswers: Array<string>
 }

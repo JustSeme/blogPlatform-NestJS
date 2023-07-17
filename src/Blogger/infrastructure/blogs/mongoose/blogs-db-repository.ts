@@ -8,7 +8,7 @@ import {
     BlogDTO, BlogModelType
 } from "../../../domain/blogs/BlogsTypes"
 import { BlogDocument } from "../BlogsTypes"
-import { BanBlogInputModel } from "../../../../SuperAdmin/api/models/BanBlogInputModel"
+import { BanBlogInputModel } from "../../../../SuperAdmin/api/models/blogs/BanBlogInputModel"
 
 @Injectable()
 export class BlogsRepository {

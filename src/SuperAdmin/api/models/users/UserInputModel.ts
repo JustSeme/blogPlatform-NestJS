@@ -1,9 +1,9 @@
 import {
     Length, IsEmail, Matches, Validate
 } from "class-validator"
-import { TrimIfString } from "../../../general/decorators/trimIfString.decorator"
-import { IsEmailAlreadyInUse } from "../../../auth/api/decorators/IsEmailAlreadyInUse"
-import { IsLoginAlreadyInUse } from "../../../auth/api/decorators/IsLoginAlreadyInUse"
+import { TrimIfString } from "../../../../general/decorators/trimIfString.decorator"
+import { IsEmailAlreadyInUse } from "../../../../auth/api/decorators/IsEmailAlreadyInUse"
+import { IsLoginAlreadyInUse } from "../../../../auth/api/decorators/IsLoginAlreadyInUse"
 
 export class UserInputModel {
     @TrimIfString()

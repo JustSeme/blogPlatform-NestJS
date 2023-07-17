@@ -1,7 +1,7 @@
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
-import { BanBlogInputModel } from "../../../api/models/BanBlogInputModel"
+import { BanBlogInputModel } from "../../../api/models/blogs/BanBlogInputModel"
 import { BlogsQueryTypeORMRepository } from "../../../../Blogger/infrastructure/blogs/typeORM/blogs-query-typeORM-repository"
 import { BlogsTypeORMRepository } from "../../../../Blogger/infrastructure/blogs/typeORM/blogs-typeORM-repository"
 import { InjectDataSource } from "@nestjs/typeorm"

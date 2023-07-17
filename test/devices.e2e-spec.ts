@@ -1,7 +1,7 @@
 import request from 'supertest';
 import { HttpStatus } from '@nestjs/common';
-import { UserInputModel } from '../src/SuperAdmin/api/models/UserInputModel';
 import { initAppAndGetHttpServer } from './test-utils';
+import { UserInputModel } from '../src/SuperAdmin/api/models/users/UserInputModel';
 
 describe('e2e-devices', () => {
     let httpServer;

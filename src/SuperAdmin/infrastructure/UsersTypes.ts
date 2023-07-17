@@ -3,7 +3,7 @@ import { User } from "../domain/mongoose/UsersSchema"
 import {
     EmailConfirmationType, PasswordConfirmationType
 } from "../domain/UsersTypes"
-import { BanInfoDBType } from "../application/dto/UsersViewModel"
+import { BanInfoDBType } from "../application/dto/users/UsersViewModel"
 import { UserEntity } from "../domain/typeORM/user.entity"
 import { UserEmailConfirmation } from "../domain/typeORM/user-email-confirmation.entity"
 import { UserPasswordRecovery } from "../domain/typeORM/user-password-recovery.entity"

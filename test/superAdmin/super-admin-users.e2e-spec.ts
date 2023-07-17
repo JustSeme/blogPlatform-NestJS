@@ -1,12 +1,12 @@
 import request from 'supertest';
 import { HttpStatus } from '@nestjs/common';
-import { UserInputModel } from '../../src/SuperAdmin/api/models/UserInputModel';
-import { BanUserInputModel } from '../../src/SuperAdmin/api/models/BanUserInputModel'
 import { LoginInputDTO } from '../../src/auth/api/models/LoginInputDTO'
 import { CommentInputModel } from '../../src/blogs/api/models/CommentInputModel';
 import { BlogInputModel } from '../../src/Blogger/api/models/BlogInputModel';
 import { PostInputModelWithoutBlogId } from '../../src/Blogger/api/models/PostInputModelWithoutBlogId';
 import { initAppAndGetHttpServer } from '../test-utils';
+import { UserInputModel } from '../../src/SuperAdmin/api/models/users/UserInputModel';
+import { BanUserInputModel } from '../../src/SuperAdmin/api/models/users/BanUserInputModel';
 
 const generateEmail = (str: string) => `${str}@mail.ru`
 

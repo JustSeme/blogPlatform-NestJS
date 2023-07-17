@@ -1,4 +1,5 @@
-import { Question } from "../../domain/typeORM/question.entity"
+import { OutputData } from "../../../../general/types/OutputData"
+import { Question } from "../../../domain/typeORM/question.entity"
 
 export class QuestionViewModel {
     id: string
@@ -16,5 +17,6 @@ export class QuestionViewModel {
         this.createdAt = rawQuestion.createdAt
         this.updatedAt = rawQuestion.updatedAt
     }
-
 }
+
+export type QuestionsWithQueryOutputModel = OutputData<QuestionViewModel>

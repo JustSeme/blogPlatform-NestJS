@@ -1,11 +1,11 @@
 import request from 'supertest';
 import { HttpStatus } from '@nestjs/common';
-import { UserInputModel } from '../../src/SuperAdmin/api/models/UserInputModel';
 import { BlogInputModel } from '../../src/Blogger/api/models/BlogInputModel';
 import { PostInputModelWithoutBlogId } from '../../src/Blogger/api/models/PostInputModelWithoutBlogId';
 import { CommentInputModel } from '../../src/blogs/api/models/CommentInputModel';
 import { BanUserForBlogInputModel } from '../../src/Blogger/api/models/BanUserForBlogInputModel'
 import { initAppAndGetHttpServer } from '../test-utils';
+import { UserInputModel } from '../../src/SuperAdmin/api/models/users/UserInputModel';
 
 describe('blogger-posts-comments', () => {
     let httpServer;

@@ -3,7 +3,7 @@ import { Model } from 'mongoose'
 import { v4 as uuidv4 } from 'uuid'
 import { User } from './mongoose/UsersSchema'
 import { HydratedUser } from '../infrastructure/UsersTypes'
-import { BanInfoDBType } from '../application/dto/UsersViewModel'
+import { BanInfoDBType } from '../application/dto/users/UsersViewModel'
 import { BanUserForBlogInfoType } from '../../Blogger/infrastructure/blogs/BanUserForBlogInfoType'
 
 export class UserDTO {

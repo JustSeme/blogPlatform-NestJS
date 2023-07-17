@@ -4,7 +4,7 @@ import {
     BlogViewModel, BlogsWithQueryOutputModel
 } from "../../../../blogs/application/dto/BlogViewModel"
 import { ReadBlogsQueryParams } from "../../../../blogs/api/models/ReadBlogsQuery"
-import { BlogsWithQuerySuperAdminOutputModel } from "../../../../SuperAdmin/application/dto/BlogSuperAdminViewModel"
+import { BlogsWithQuerySuperAdminOutputModel } from "../../../../SuperAdmin/application/dto/blogs/BlogSuperAdminViewModel"
 import {
     BlogDBModel, BlogSQLModel
 } from "../../../domain/blogs/BlogsTypes"

@@ -11,8 +11,8 @@ import {
     Schema, Prop, SchemaFactory
 } from "@nestjs/mongoose"
 import { BanInfoSchema } from "./BanInfoSchema"
-import { BanInfoDBType } from "../../application/dto/UsersViewModel"
-import { BanUserInputModel } from "../../api/models/BanUserInputModel"
+import { BanInfoDBType } from "../../application/dto/users/UsersViewModel"
+import { BanUserInputModel } from "../../api/models/users/BanUserInputModel"
 import { BanUserForBlogInfoType } from "../../../Blogger/infrastructure/blogs/BanUserForBlogInfoType"
 import { BansForBlogSchema } from "./BansForBlogSchema"
 

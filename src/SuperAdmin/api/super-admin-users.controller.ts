@@ -5,19 +5,19 @@ import {
 import { BasicAuthGuard } from '../../general/guards/basic-auth.guard'
 import { CommandBus } from '@nestjs/cqrs'
 import { DeleteUserCommand } from '../application/use-cases/users/delete-user.use-case'
-import { UserInputModel } from './models/UserInputModel'
+import { UserInputModel } from './models/users/UserInputModel'
 import {
     UserViewModelType, UsersWithQueryOutputModel
-} from '../application/dto/UsersViewModel'
+} from '../application/dto/users/UsersViewModel'
 import { ErrorMessagesOutputModel } from '../../general/types/ErrorMessagesOutputModel'
 import { CreateUserCommand } from '../application/use-cases/users/create-user.use-case'
-import { ReadUsersQuery } from './models/ReadUsersQuery'
+import { ReadUsersQuery } from './models/users/ReadUsersQuery'
 import { IsUserExistOrThrow400Pipe } from './pipes/isUserExistsOrThrow400.validation.pipe'
 import { IsUserExistPipe } from './pipes/isUserExists.validation.pipe'
 import { BanUserCommand } from '../application/use-cases/users/ban-user.use-case'
 import { UnbanUserCommand } from '../application/use-cases/users/unban-user.use-case'
 import { UsersService } from '../application/users.service'
-import { BanUserInputModel } from './models/BanUserInputModel'
+import { BanUserInputModel } from './models/users/BanUserInputModel'
 import { UsersTypeORMQueryRepository } from '../infrastructure/typeORM/users-typeORM-query-repository'
 
 @UseGuards(BasicAuthGuard)

@@ -2,7 +2,7 @@ import {
     BadRequestException,
     Body, Controller, Get, HttpCode, HttpStatus, NotImplementedException, Post, Request, Response, UnauthorizedException, UseGuards
 } from "@nestjs/common"
-import { UserInputModel } from "../../SuperAdmin/api/models/UserInputModel"
+import { UserInputModel } from "../../SuperAdmin/api/models/users/UserInputModel"
 import { NewPasswordInputModel } from "./models/NewPasswordInputModel"
 import { MeOutputModel } from "../application/dto/MeViewModel"
 import { LocalAuthGuard } from "./guards/local-auth.guard"

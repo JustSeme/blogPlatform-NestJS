@@ -2,13 +2,13 @@ import request from 'supertest';
 import { HttpStatus } from '@nestjs/common';
 import { LoginInputDTO } from '../src/auth/api/models/LoginInputDTO'
 import { NewPasswordInputModel } from '../src/auth/api/models/NewPasswordInputModel';
-import { UserInputModel } from '../src/SuperAdmin/api/models/UserInputModel';
 import { Test } from '@nestjs/testing';
 import { AppModule } from '../src/app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { createApp } from '../src/createApp';
 import { UsersTypeORMRepository } from '../src/SuperAdmin/infrastructure/typeORM/users-typeORM-repository';
 import { funcSleep } from '../src/general/helpers/helpers';
+import { UserInputModel } from '../src/SuperAdmin/api/models/users/UserInputModel';
 
 describe('e2e-auth', () => {
     let httpServer;

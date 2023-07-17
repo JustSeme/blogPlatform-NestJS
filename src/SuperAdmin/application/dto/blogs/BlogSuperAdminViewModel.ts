@@ -1,4 +1,4 @@
-import { BlogDBModel } from "../../../Blogger/domain/blogs/BlogsTypes"
+import { BlogDBModel } from "../../../../Blogger/domain/blogs/BlogsTypes"
 
 export type BlogsWithQuerySuperAdminOutputModel = {
     pagesCount: number

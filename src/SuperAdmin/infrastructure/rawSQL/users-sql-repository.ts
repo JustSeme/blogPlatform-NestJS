@@ -2,7 +2,7 @@ import { InjectDataSource } from '@nestjs/typeorm'
 import { Injectable } from "@nestjs/common"
 import { DataSource } from 'typeorm'
 import { UserDTO } from '../../domain/UsersTypes'
-import { UserViewModelType } from '../../application/dto/UsersViewModel'
+import { UserViewModelType } from '../../application/dto/users/UsersViewModel'
 import { BanUserForBlogInfoType } from '../../../Blogger/infrastructure/blogs/BanUserForBlogInfoType'
 import { UserEntity } from '../../domain/typeORM/user.entity'
 import { UserEmailConfirmation } from '../../domain/typeORM/user-email-confirmation.entity'

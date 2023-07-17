@@ -1,8 +1,8 @@
 import request from 'supertest';
 import { HttpStatus } from '@nestjs/common';
-import { UserInputModel } from '../../src/SuperAdmin/api/models/UserInputModel';
 import { BlogInputModel } from '../../src/Blogger/api/models/BlogInputModel';
 import { initAppAndGetHttpServer } from '../test-utils';
+import { UserInputModel } from '../../src/SuperAdmin/api/models/users/UserInputModel';
 
 describe('blogger-blogs', () => {
     let httpServer;

@@ -7,7 +7,7 @@ import { ReadBlogsQueryParams } from "../../../../blogs/api/models/ReadBlogsQuer
 import {
     BlogViewModel, BlogsWithQueryOutputModel
 } from "../../../../blogs/application/dto/BlogViewModel"
-import { BlogsWithQuerySuperAdminOutputModel } from "../../../../SuperAdmin/application/dto/BlogSuperAdminViewModel"
+import { BlogsWithQuerySuperAdminOutputModel } from "../../../../SuperAdmin/application/dto/blogs/BlogSuperAdminViewModel"
 import { BlogDBModel } from "../../../domain/blogs/BlogsTypes"
 
 @Injectable()
