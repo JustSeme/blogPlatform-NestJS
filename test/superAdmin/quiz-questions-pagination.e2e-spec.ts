@@ -3,7 +3,7 @@ import { HttpStatus } from '@nestjs/common';
 import { QuestionInputModel } from "../../src/SuperAdmin/api/models/quiz/QuestionInputModel";
 import { initAppAndGetHttpServer } from "../test-utils";
 
-describe('super-admin-questions-pagination', () => {
+describe('quiz-questions-pagination', () => {
     let httpServer;
 
     beforeAll(async () => {
@@ -232,6 +232,7 @@ describe('super-admin-questions-pagination', () => {
 
         const expectData = [...questionsExpectData].splice(0, 2).map(question => {
             question.published = true
+            question.updatedAt = expect.any(String)
             return question
         })
 

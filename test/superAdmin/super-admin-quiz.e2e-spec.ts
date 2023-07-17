@@ -139,6 +139,8 @@ describe('super-admin-quiz', () => {
         createdQuestionExpectModel.body = updateQuestionInputModel.body
         createdQuestionExpectModel.correctAnswers = updateQuestionInputModel.correctAnswers
 
+        expect(questionsData.body.items[0].correctAnswers).toEqual(updateQuestionInputModel.correctAnswers)
+
         expect(questionsData.body.items[0]).toEqual(createdQuestionExpectModel)
     })
 

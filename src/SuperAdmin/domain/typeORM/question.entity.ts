@@ -12,7 +12,7 @@ export class Question {
     @Column()
     body: string
 
-    @Column('simple-array')
+    @Column('varchar', { array: true })
     answers: string[]
 
     @Column({ default: false })

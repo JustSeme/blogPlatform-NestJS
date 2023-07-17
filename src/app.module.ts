@@ -120,7 +120,7 @@ import { AttemptsTypeORMRepository } from "./security/infrastructure/typeORM/att
 import { PostsTypeORMRepository } from "./Blogger/infrastructure/posts/typeORM/posts-typeORM-repository"
 import { AuthQueryTypeORMRepository } from "./auth/infrastructure/typeORM/auth-query-typeORM-repository"
 import { JwtGetUserId } from "./general/guards/jwt-get-userId.guard"
-import { SuperAdminQuizController } from "./SuperAdmin/api/supr-admin-quiz.controller"
+import { SuperAdminQuizController } from "./SuperAdmin/api/super-admin-quiz.controller"
 import { QuizQueryRepository } from "./SuperAdmin/infrastructure/typeORM/quiz-typeORM-query-repository"
 import { QuizRepository } from "./SuperAdmin/infrastructure/typeORM/quiz-typeORM-repository"
 import { Question } from "./SuperAdmin/domain/typeORM/question.entity"

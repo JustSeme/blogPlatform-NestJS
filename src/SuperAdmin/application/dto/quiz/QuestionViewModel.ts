@@ -12,7 +12,7 @@ export class QuestionViewModel {
     constructor(rawQuestion: Question) {
         this.id = rawQuestion.id
         this.body = rawQuestion.body
-        this.correctAnswers = rawQuestion.answers
+        this.correctAnswers = [...rawQuestion.answers]
         this.published = rawQuestion.isPublished
         this.createdAt = rawQuestion.createdAt
         this.updatedAt = rawQuestion.updatedAt

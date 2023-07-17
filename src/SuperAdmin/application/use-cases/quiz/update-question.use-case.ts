@@ -4,6 +4,7 @@ import {
 import { QuestionInputModel } from "../../../api/models/quiz/QuestionInputModel"
 import { QuizRepository } from "../../../infrastructure/typeORM/quiz-typeORM-repository"
 import { QuizQueryRepository } from "../../../infrastructure/typeORM/quiz-typeORM-query-repository"
+import { log } from "console"
 
 export class UpdateQuestionCommand {
     constructor(
@@ -32,9 +33,12 @@ export class UpdateQuestionUseCase implements ICommandHandler<UpdateQuestionComm
         }
 
         questionById.body = questionUpdateModel.body
-        questionById.answers = questionUpdateModel.correctAnswers
+        questionById.answers = [...questionUpdateModel.correctAnswers]
 
         const savedQuestion = await this.quizRepository.dataSourceSave(questionById)
+
+        console.log(savedQuestion, 'save')
+        log((await this.quizQueryRepository.getQuestionById(questionId)), 'get after update in UC')
 
         return savedQuestion ? true : false
     }
