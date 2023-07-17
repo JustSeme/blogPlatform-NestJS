@@ -1,6 +1,7 @@
 import {
     Column,
-    Entity, OneToMany, PrimaryGeneratedColumn
+    CreateDateColumn,
+    Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn
 } from "typeorm"
 import { Answer } from "./answer.entity"
 
@@ -17,4 +18,10 @@ export class Question {
 
     @Column({ default: false })
     isPublished: boolean
+
+    @CreateDateColumn()
+    createdAt: Date
+
+    @UpdateDateColumn()
+    updatedAt: Date
 } 
