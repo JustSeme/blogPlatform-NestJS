@@ -75,6 +75,7 @@ describe('super-admin-quiz', () => {
     it('shouldn\'t update early created question if it is not found, should display correct info', async () => {
         await request(httpServer)
             .put(`/sa/quiz/questions/incorrect`)
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
             .send(updateQuestionInputModel)
             .expect(HttpStatus.NOT_FOUND)
 
@@ -121,7 +122,7 @@ describe('super-admin-quiz', () => {
     })
 
     it('should update early created question and should display correct info', async () => {
-        await request(httpServer)
+        const res = await request(httpServer)
             .put(`/sa/quiz/questions/${questionId1}`)
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
             .send(updateQuestionInputModel)

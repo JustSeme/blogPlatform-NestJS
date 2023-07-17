@@ -1,4 +1,5 @@
 import {
+    BadRequestException,
     Body,
     Controller, Get, HttpCode, HttpStatus, NotImplementedException, Param, Post, Put, Query, UseGuards
 } from "@nestjs/common"
@@ -11,6 +12,9 @@ import { CreateQuestionCommand } from "../application/use-cases/quiz/create-ques
 import { QuizQueryRepository } from "../infrastructure/typeORM/quiz-typeORM-query-repository"
 import { BasicAuthGuard } from "../../general/guards/basic-auth.guard"
 import { ReadQuestionsQuery } from "./models/quiz/ReadQuestionsQuery"
+import { generateErrorsMessages } from "../../general/helpers/helpers"
+import { IsQuestionExists } from "./pipes/isQuestionExists.validation.pipe"
+import { UpdateQuestionCommand } from "../application/use-cases/quiz/update-question.use-case"
 
 @UseGuards(BasicAuthGuard)
 @Controller('sa/quiz')
@@ -34,7 +38,7 @@ export class SuperAdminQuizController {
             throw new NotImplementedException('Question is not saved')
         }
 
-        const questionById = await this.quizQueryRepository.getQuestionById(createdQuestionId)
+        const questionById = await this.quizQueryRepository.findQuestionById(createdQuestionId)
         return questionById
     }
 
@@ -46,10 +50,18 @@ export class SuperAdminQuizController {
         return questions
     }
 
+    @HttpCode(HttpStatus.NO_CONTENT)
     @Put('questions/:questionId')
     async updateQuestion(
-        @Param('questionId') questionId,
+        @Body() questionUpdateModel: QuestionInputModel,
+        @Param('questionId', IsQuestionExists) questionId,
     ) {
-        await this.commandBus
+        const isUpdated = await this.commandBus.execute(
+            new UpdateQuestionCommand(questionUpdateModel, questionId)
+        )
+
+        if (!isUpdated) {
+            throw new BadRequestException(generateErrorsMessages(`You can't set empty correctAnswers array - this question is published`, 'correctAnswers'))
+        }
     }
 }

@@ -23,7 +23,7 @@ export class QuizQueryRepository {
 
         const totalCountBuilder = this.questionsRepository
             .createQueryBuilder('q')
-            .andWhere('lower(q.body) LIKE :bodySearchTerm', { preparedBodySearchTerm })
+            .andWhere('lower(q.body) LIKE :preparedBodySearchTerm', { preparedBodySearchTerm })
 
         const isPublished = publishedStatus === 'published'
 
@@ -42,13 +42,13 @@ export class QuizQueryRepository {
         try {
             const builder = await this.questionsRepository
                 .createQueryBuilder('q')
-                .where('lower(q.body) LIKE :bodySearchTerm', { preparedBodySearchTerm })
+                .where('lower(q.body) LIKE :preparedBodySearchTerm', { preparedBodySearchTerm })
                 .orderBy(`q.${sortBy}`, sortDirection)
                 .limit(pageSize)
                 .offset(skipCount)
 
             if (isPublished) {
-                builder.andWhere('ue.isPublished = :isPublished', { isPublished })
+                builder.andWhere('ue.isPublished = :preparedBodySearchTerm', { isPublished })
             }
 
             resultedQuestions = await builder.getMany()
@@ -68,9 +68,9 @@ export class QuizQueryRepository {
         }
     }
 
-    async getQuestionById(questionId: string): Promise<QuestionViewModel> {
+    async findQuestionById(questionId: string): Promise<QuestionViewModel> {
         try {
-            const findedQuestion = await this.questionsRepository.findOne({ where: { id: questionId } })
+            const findedQuestion = await this.getQuestionById(questionId)
 
             return new QuestionViewModel(findedQuestion)
         } catch (err) {
@@ -81,11 +81,23 @@ export class QuizQueryRepository {
 
     async isQuestionExists(questionId: string): Promise<boolean> {
         try {
-            const questionById = await this.questionsRepository.findOne({ where: { id: questionId } })
+            const questionById = await this.getQuestionById(questionId)
+
             return questionById ? true : false
         } catch (error) {
             console.error(error)
             return false
+        }
+    }
+
+    async getQuestionById(questionId: string): Promise<Question> {
+        try {
+            const questionById = await this.questionsRepository.findOne({ where: { id: questionId } })
+
+            return questionById
+        } catch (err) {
+            console.error(err)
+            return null
         }
     }
 
