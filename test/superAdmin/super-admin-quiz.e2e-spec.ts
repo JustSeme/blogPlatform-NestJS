@@ -35,7 +35,7 @@ describe('super-admin-quiz', () => {
         published: false,
         id: expect.any(String),
         createdAt: expect.any(String),
-        updatedAt: expect.any(String),
+        updatedAt: null,
     }
 
     it('super admin should create question and in the response the created question', async () => {
@@ -135,6 +135,7 @@ describe('super-admin-quiz', () => {
             .expect(HttpStatus.OK)
 
         createdQuestionExpectModel.id = questionId1
+        createdQuestionExpectModel.updatedAt = expect.any(String)
         createdQuestionExpectModel.body = updateQuestionInputModel.body
         createdQuestionExpectModel.correctAnswers = updateQuestionInputModel.correctAnswers
 

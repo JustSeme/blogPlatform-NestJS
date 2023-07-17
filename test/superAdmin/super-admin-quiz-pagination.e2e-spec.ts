@@ -73,7 +73,7 @@ describe('super-admin-questions-pagination', () => {
         id: expect.any(String),
         published: false,
         createdAt: expect.any(String),
-        updatedAt: expect.any(String),
+        updatedAt: null,
     }
 
     const questionsExpectData = [{

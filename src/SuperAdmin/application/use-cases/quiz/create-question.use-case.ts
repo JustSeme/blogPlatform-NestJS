@@ -23,7 +23,7 @@ export class CreateQuestionUseCase implements ICommandHandler<CreateQuestionComm
         const creatingQuestion = new Question()
         creatingQuestion.body = questionInputModel.body
         creatingQuestion.answers = questionInputModel.correctAnswers
-        creatingQuestion.updatedAt = new Date()
+        creatingQuestion.updatedAt = null
 
         const savedQuestion = await this.quizRepository.dataSourceSave(creatingQuestion)
 
