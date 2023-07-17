@@ -1,7 +1,7 @@
 import {
     Injectable, NotFoundException, PipeTransform
 } from "@nestjs/common"
-import { generateErrorsMessages } from "../../../general/helpers"
+import { generateErrorsMessages } from "../../../general/helpers/helpers"
 import { PostsQueryTypeORMRepository } from "../../../Blogger/infrastructure/posts/typeORM/posts-query-typeORM-repository"
 
 @Injectable()

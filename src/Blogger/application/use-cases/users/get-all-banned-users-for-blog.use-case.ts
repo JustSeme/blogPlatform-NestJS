@@ -6,7 +6,7 @@ import { BannedUsersOutputModel } from "../../dto/BannedUserViewModel"
 import {
     BadRequestException, ForbiddenException
 } from "@nestjs/common"
-import { generateErrorsMessages } from "../../../../general/helpers"
+import { generateErrorsMessages } from "../../../../general/helpers/helpers"
 import { BlogsQueryTypeORMRepository } from "../../../infrastructure/blogs/typeORM/blogs-query-typeORM-repository"
 import { UsersTypeORMQueryRepository } from "../../../../SuperAdmin/infrastructure/typeORM/users-typeORM-query-repository"
 

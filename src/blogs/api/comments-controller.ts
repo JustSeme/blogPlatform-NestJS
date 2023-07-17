@@ -14,7 +14,7 @@ import { DeleteCommentCommand } from "../application/use-cases/comments/delete-c
 import { UpdateCommentCommand } from "../application/use-cases/comments/update-comment.use-case"
 import { UpdateLikeStatusForCommentCommand } from "../application/use-cases/comments/update-like-status-for-comment.use-case"
 import { CommentsQueryTypeORMRepository } from "../infrastructure/typeORM/comments-query-typeORM-repository"
-import { generateErrorsMessages } from "../../general/helpers"
+import { generateErrorsMessages } from "../../general/helpers/helpers"
 import { JwtGetUserId } from "../../general/guards/jwt-get-userId.guard"
 
 @Controller('comments')

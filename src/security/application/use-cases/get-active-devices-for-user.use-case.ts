@@ -2,7 +2,7 @@ import {
     CommandHandler, ICommandHandler
 } from '@nestjs/cqrs'
 import { DeviceSessionsViewModel } from '../dto/DeviceSessionsViewModel'
-import { generateErrorsMessages } from '../../../general/helpers'
+import { generateErrorsMessages } from '../../../general/helpers/helpers'
 import { NotFoundException } from '@nestjs/common'
 import { SecurityService } from '../security-service'
 import { DevicesTypeORMRepository } from '../../infrastructure/typeORM/devices-typeORM-repository'

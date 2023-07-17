@@ -5,7 +5,7 @@ import { BlogInputModel } from "../../../api/models/BlogInputModel"
 import {
     BadRequestException, ForbiddenException
 } from "@nestjs/common"
-import { generateErrorsMessages } from "../../../../general/helpers"
+import { generateErrorsMessages } from "../../../../general/helpers/helpers"
 import { BlogsQueryTypeORMRepository } from "../../../infrastructure/blogs/typeORM/blogs-query-typeORM-repository"
 import { BlogsTypeORMRepository } from "../../../infrastructure/blogs/typeORM/blogs-typeORM-repository"
 

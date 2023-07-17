@@ -3,7 +3,7 @@ import {
 } from "@nestjs/cqrs"
 import { CommentViewModel } from "../../dto/CommentViewModel"
 import { ForbiddenException } from "@nestjs/common"
-import { generateErrorsMessages } from "../../../../general/helpers"
+import { generateErrorsMessages } from "../../../../general/helpers/helpers"
 import { BlogsQueryTypeORMRepository } from "../../../../Blogger/infrastructure/blogs/typeORM/blogs-query-typeORM-repository"
 import { CommentEntity } from "../../../domain/typeORM/comment.entity"
 import { UsersTypeORMQueryRepository } from "../../../../SuperAdmin/infrastructure/typeORM/users-typeORM-query-repository"

@@ -1,7 +1,7 @@
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
-import { generateErrorsMessages } from "../../../../general/helpers"
+import { generateErrorsMessages } from "../../../../general/helpers/helpers"
 import { ForbiddenException } from '@nestjs/common'
 import { CommentsTypeORMRepository } from "../../../infrastructure/typeORM/comments-typeORM-repository"
 

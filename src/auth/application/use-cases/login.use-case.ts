@@ -6,7 +6,7 @@ import {
     CommandHandler, ICommandHandler
 } from '@nestjs/cqrs'
 import { UnauthorizedException } from '@nestjs/common'
-import { generateErrorsMessages } from '../../../general/helpers'
+import { generateErrorsMessages } from '../../../general/helpers/helpers'
 import { AuthSession } from '../../../security/domain/typeORM/auth-session.entity'
 import { DevicesTypeORMRepository } from '../../../security/infrastructure/typeORM/devices-typeORM-repository'
 import { UserEntity } from '../../../SuperAdmin/domain/typeORM/user.entity'

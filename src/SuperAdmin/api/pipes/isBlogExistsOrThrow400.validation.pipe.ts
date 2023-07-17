@@ -2,7 +2,7 @@ import {
     BadRequestException,
     Injectable, PipeTransform
 } from "@nestjs/common"
-import { generateErrorsMessages } from "../../../general/helpers"
+import { generateErrorsMessages } from "../../../general/helpers/helpers"
 import { BlogsQueryTypeORMRepository } from "../../../Blogger/infrastructure/blogs/typeORM/blogs-query-typeORM-repository"
 
 @Injectable()

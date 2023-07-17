@@ -3,7 +3,7 @@ import { PostInputModel } from "../../../../Blogger/api/models/PostInputModel"
 import { PostsViewModel } from "../../dto/PostViewModel"
 import { BlogsQueryTypeORMRepository } from "../../../../Blogger/infrastructure/blogs/typeORM/blogs-query-typeORM-repository"
 import { BadRequestException } from "@nestjs/common"
-import { generateErrorsMessages } from "../../../../general/helpers"
+import { generateErrorsMessages } from "../../../../general/helpers/helpers"
 import { PostEntity } from "../../../../Blogger/domain/posts/typeORM/post.entity"
 import { PostsTypeORMRepository } from "../../../../Blogger/infrastructure/posts/typeORM/posts-typeORM-repository"
 

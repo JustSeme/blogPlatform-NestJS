@@ -1,17 +1,17 @@
 import {
+    NotFoundException, ForbiddenException
+} from "@nestjs/common"
+import {
     CommandHandler, ICommandHandler,
 } from "@nestjs/cqrs"
 import { BanUserForBlogInputModel } from "../../../api/models/BanUserForBlogInputModel"
-import {
-    ForbiddenException, NotFoundException
-} from "@nestjs/common"
-import { generateErrorsMessages } from "../../../../general/helpers"
 import { BansUsersForBlogs } from "../../../domain/blogs/typeORM/bans-users-for-blogs.entity"
 import { UsersTypeORMRepository } from "../../../../SuperAdmin/infrastructure/typeORM/users-typeORM-repository"
 import { BlogsQueryTypeORMRepository } from "../../../infrastructure/blogs/typeORM/blogs-query-typeORM-repository"
 import { BlogsTypeORMRepository } from "../../../infrastructure/blogs/typeORM/blogs-typeORM-repository"
 import { UserEntity } from "../../../../SuperAdmin/domain/typeORM/user.entity"
 import { BlogEntity } from "../../../domain/blogs/typeORM/blog.entity"
+import { generateErrorsMessages } from "../../../../general/helpers/helpers"
 
 export class BanUserForBlogCommand {
     constructor(
@@ -34,8 +34,9 @@ export class BanUserForBlogUseCase implements ICommandHandler<BanUserForBlogComm
     async execute(command: BanUserForBlogCommand) {
         const blogByBlogId = await this.blogsQueryRepository.findOnlyUnbannedBlogById(command.banUserForBlogInputModel.blogId)
 
+        //TODO добавить обработку CustomResponse в controller
         if (!blogByBlogId) {
-            throw new NotFoundException('This blog is banned')
+            throw new NotFoundException(generateErrorsMessages('This blog is banned', 'isBanned'))
         }
 
         if (blogByBlogId.user.id !== command.currentUserId) {
@@ -49,6 +50,7 @@ export class BanUserForBlogUseCase implements ICommandHandler<BanUserForBlogComm
         let banUserForBlog
 
         if (existingUserBanForBlog) {
+            // edit banDate, banReason, isBanned and return the same ban
             banUserForBlog = this.editExistingBanForBlog(
                 existingUserBanForBlog,
                 command.banUserForBlogInputModel.banReason,
@@ -56,9 +58,11 @@ export class BanUserForBlogUseCase implements ICommandHandler<BanUserForBlogComm
             )
         } else {
             if (!command.banUserForBlogInputModel.isBanned) {
+                // return if command want to unban user and this user is not banned
                 return true
             }
 
+            // create new ban entity 
             banUserForBlog = this.createBanUserForBlog(
                 findedUserData,
                 blogByBlogId,

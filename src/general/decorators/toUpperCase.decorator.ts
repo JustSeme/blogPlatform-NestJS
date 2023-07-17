@@ -1,6 +1,6 @@
 import { BadRequestException } from "@nestjs/common"
 import { Transform } from "class-transformer"
-import { generateErrorsMessages } from "../helpers"
+import { generateErrorsMessages } from "../helpers/helpers"
 
 export function SortDirectionToUpperCase() {
     return Transform(({ value }) => {

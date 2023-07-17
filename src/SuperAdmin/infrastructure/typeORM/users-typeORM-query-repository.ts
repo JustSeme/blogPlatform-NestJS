@@ -101,6 +101,8 @@ export class UsersTypeORMQueryRepository {
             .where('lower(ue.login) LIKE :loginTerm', { loginTerm })
             .andWhere('"bufb"."blogId" = :blogId', { blogId })
 
+
+        //TODO тут добавить andWhere чтобы проверять что в bufb.isBanned
         const totalCount = await totalCountBuilder
             .getCount()
 

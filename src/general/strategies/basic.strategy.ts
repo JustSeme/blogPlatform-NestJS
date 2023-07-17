@@ -3,7 +3,7 @@ import {
 } from "@nestjs/common"
 import { PassportStrategy } from "@nestjs/passport"
 import { BasicStrategy as Strategy } from 'passport-http'
-import { generateErrorsMessages } from "../helpers"
+import { generateErrorsMessages } from "../helpers/helpers"
 import { BlogsConfig } from "../../configuration/blogs.config"
 
 @Injectable()

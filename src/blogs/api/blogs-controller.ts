@@ -9,7 +9,7 @@ import {
     Controller, Get, NotFoundException, Param, Query, UseGuards
 } from "@nestjs/common"
 import { BlogsQueryTypeORMRepository } from "../../Blogger/infrastructure/blogs/typeORM/blogs-query-typeORM-repository"
-import { generateErrorsMessages } from "../../general/helpers"
+import { generateErrorsMessages } from "../../general/helpers/helpers"
 import { PostsQueryTypeORMRepository } from "../../Blogger/infrastructure/posts/typeORM/posts-query-typeORM-repository"
 import { JwtService } from "../../general/adapters/jwt.adapter"
 import { JwtGetUserId } from "../../general/guards/jwt-get-userId.guard"
