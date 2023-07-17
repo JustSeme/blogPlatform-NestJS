@@ -1,17 +1,17 @@
-import { BcryptAdapter } from "../../../general/adapters/bcrypt.adapter"
+import { BcryptAdapter } from "../../../../general/adapters/bcrypt.adapter"
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs/dist"
-import { FieldError } from "../../../general/types/ErrorMessagesOutputModel"
+import { FieldError } from "../../../../general/types/ErrorMessagesOutputModel"
 import { BadRequestException } from "@nestjs/common"
-import { UsersTypeORMRepository } from "../../infrastructure/typeORM/users-typeORM-repository"
+import { UsersTypeORMRepository } from "../../../infrastructure/typeORM/users-typeORM-repository"
 import { InjectDataSource } from "@nestjs/typeorm"
 import { DataSource } from "typeorm"
-import { UserEntity } from "../../domain/typeORM/user.entity"
-import { UserBanInfo } from "../../domain/typeORM/user-ban-info.entity"
-import { UserEmailConfirmation } from "../../domain/typeORM/user-email-confirmation.entity"
-import { UserPasswordRecovery } from "../../domain/typeORM/user-password-recovery.entity"
-import { AuthQueryTypeORMRepository } from "../../../auth/infrastructure/typeORM/auth-query-typeORM-repository"
+import { UserEntity } from "../../../domain/typeORM/user.entity"
+import { UserBanInfo } from "../../../domain/typeORM/user-ban-info.entity"
+import { UserEmailConfirmation } from "../../../domain/typeORM/user-email-confirmation.entity"
+import { UserPasswordRecovery } from "../../../domain/typeORM/user-password-recovery.entity"
+import { AuthQueryTypeORMRepository } from "../../../../auth/infrastructure/typeORM/auth-query-typeORM-repository"
 
 export class CreateUserCommand {
     constructor(public login: string, public password: string, public email: string) { }

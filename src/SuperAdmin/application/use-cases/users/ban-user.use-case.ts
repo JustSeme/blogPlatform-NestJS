@@ -1,12 +1,12 @@
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
-import { UsersTypeORMRepository } from "../../infrastructure/typeORM/users-typeORM-repository"
-import { CommentsTypeORMRepository } from "../../../blogs/infrastructure/typeORM/comments-typeORM-repository"
-import { DevicesTypeORMRepository } from "../../../security/infrastructure/typeORM/devices-typeORM-repository"
+import { UsersTypeORMRepository } from "../../../infrastructure/typeORM/users-typeORM-repository"
+import { CommentsTypeORMRepository } from "../../../../blogs/infrastructure/typeORM/comments-typeORM-repository"
+import { DevicesTypeORMRepository } from "../../../../security/infrastructure/typeORM/devices-typeORM-repository"
 import { InjectDataSource } from "@nestjs/typeorm"
 import { DataSource } from "typeorm"
-import { PostsTypeORMRepository } from "../../../Blogger/infrastructure/posts/typeORM/posts-typeORM-repository"
+import { PostsTypeORMRepository } from "../../../../Blogger/infrastructure/posts/typeORM/posts-typeORM-repository"
 
 export class BanUserCommand {
     constructor(

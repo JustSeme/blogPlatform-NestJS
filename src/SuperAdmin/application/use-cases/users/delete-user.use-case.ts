@@ -1,7 +1,7 @@
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
-import { UsersTypeORMRepository } from "../../infrastructure/typeORM/users-typeORM-repository"
+import { UsersTypeORMRepository } from "../../../infrastructure/typeORM/users-typeORM-repository"
 
 export class DeleteUserCommand {
     constructor(

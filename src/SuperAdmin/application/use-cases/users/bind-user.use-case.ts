@@ -1,11 +1,11 @@
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs"
-import { generateErrorsMessages } from "../../../general/helpers/helpers"
+import { generateErrorsMessages } from "../../../../general/helpers/helpers"
 import { BadRequestException } from '@nestjs/common'
-import { BlogsQueryTypeORMRepository } from "../../../Blogger/infrastructure/blogs/typeORM/blogs-query-typeORM-repository"
-import { BlogsTypeORMRepository } from "../../../Blogger/infrastructure/blogs/typeORM/blogs-typeORM-repository"
-import { UsersTypeORMQueryRepository } from "../../infrastructure/typeORM/users-typeORM-query-repository"
+import { BlogsQueryTypeORMRepository } from "../../../../Blogger/infrastructure/blogs/typeORM/blogs-query-typeORM-repository"
+import { BlogsTypeORMRepository } from "../../../../Blogger/infrastructure/blogs/typeORM/blogs-typeORM-repository"
+import { UsersTypeORMQueryRepository } from "../../../infrastructure/typeORM/users-typeORM-query-repository"
 
 export class BindUserCommand {
     constructor(
