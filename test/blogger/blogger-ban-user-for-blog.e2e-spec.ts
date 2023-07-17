@@ -21,7 +21,9 @@ describe('blogger-ban-user-for-blog', () => {
 
     let bloggerAccessToken = ''
     let bloggerId
-    let userId
+    let userId1
+    let userId2
+    let userId3
 
     const createBloggerInputModel: UserInputModel = {
         login: 'blogger',
@@ -29,10 +31,22 @@ describe('blogger-ban-user-for-blog', () => {
         email: 'blogger@email.ru'
     }
 
-    const userInputModel: UserInputModel = {
+    const userInputModel1: UserInputModel = {
         login: 'user',
         password: 'password',
         email: 'user@email.ru'
+    }
+
+    const userInputModel2: UserInputModel = {
+        login: 'user2',
+        password: 'password',
+        email: 'user2@email.ru'
+    }
+
+    const userInputModel3: UserInputModel = {
+        login: 'user3',
+        password: 'password',
+        email: 'user3@email.ru'
     }
 
     it('should create blogger and should login, getting access token', async () => {
@@ -55,14 +69,30 @@ describe('blogger-ban-user-for-blog', () => {
         bloggerAccessToken = accesTokenData.body.accessToken
     })
 
-    it('should create user for get userId for ban it', async () => {
-        const userData = await request(httpServer)
+    it('should create 3 users for get userIds for ban it', async () => {
+        const userData1 = await request(httpServer)
             .post(`/sa/users`)
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
-            .send(userInputModel)
+            .send(userInputModel1)
             .expect(HttpStatus.CREATED)
 
-        userId = userData.body.id
+        userId1 = userData1.body.id
+
+        const userData2 = await request(httpServer)
+            .post(`/sa/users`)
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .send(userInputModel2)
+            .expect(HttpStatus.CREATED)
+
+        userId2 = userData2.body.id
+
+        const userData3 = await request(httpServer)
+            .post(`/sa/users`)
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .send(userInputModel3)
+            .expect(HttpStatus.CREATED)
+
+        userId3 = userData3.body.id
     })
 
     const createBlogInputModel: BlogInputModel = {
@@ -98,11 +128,11 @@ describe('blogger-ban-user-for-blog', () => {
         blogId
     }
 
-    let userIdForBanList
+    let userId1FromBanList
 
     it('blogger should ban user for current blog and user should appear in ban list', async () => {
         await request(httpServer)
-            .put(`/blogger/users/${userId}/ban`)
+            .put(`/blogger/users/${userId1}/ban`)
             .set('Authorization', `Bearer ${bloggerAccessToken}`)
             .send(banInputModel)
             .expect(HttpStatus.NO_CONTENT)
@@ -113,11 +143,11 @@ describe('blogger-ban-user-for-blog', () => {
             .expect(HttpStatus.OK)
 
         expect(bannedUsersForBlogData.body.items.length).toEqual(1)
-        expect(bannedUsersForBlogData.body.items[0].id).toEqual(userId)
+        expect(bannedUsersForBlogData.body.items[0].id).toEqual(userId1)
         expect(bannedUsersForBlogData.body.items[0].banInfo.isBanned).toEqual(true)
         expect(bannedUsersForBlogData.body.items[0].banInfo.banReason).toEqual(banInputModel.banReason)
 
-        userIdForBanList = bannedUsersForBlogData.body.items[0].id
+        userId1FromBanList = bannedUsersForBlogData.body.items[0].id
     })
 
     const unbanInputModel: BanUserForBlogInputModel = {
@@ -128,7 +158,7 @@ describe('blogger-ban-user-for-blog', () => {
 
     it('blogger should unban user for current blog and user should disappear in ban list', async () => {
         await request(httpServer)
-            .put(`/blogger/users/${userIdForBanList}/ban`)
+            .put(`/blogger/users/${userId1FromBanList}/ban`)
             .set('Authorization', `Bearer ${bloggerAccessToken}`)
             .send(unbanInputModel)
             .expect(HttpStatus.NO_CONTENT)
@@ -138,6 +168,43 @@ describe('blogger-ban-user-for-blog', () => {
             .set('Authorization', `Bearer ${bloggerAccessToken}`)
             .expect(HttpStatus.OK)
 
-        expect(bannedUsersForBlogData.body.items[0].banInfo.isBanned).toEqual(false)
+        expect(bannedUsersForBlogData.body.items.length).toEqual(0)
+    })
+
+    let userId2FromBanList, userId3FromBanList
+
+    it('blogger should ban another two users and ban list should contain that two users', async () => {
+        await request(httpServer)
+            .put(`/blogger/users/${userId2}/ban`)
+            .set('Authorization', `Bearer ${bloggerAccessToken}`)
+            .send(banInputModel)
+            .expect(HttpStatus.NO_CONTENT)
+
+        await request(httpServer)
+            .put(`/blogger/users/${userId3}/ban`)
+            .set('Authorization', `Bearer ${bloggerAccessToken}`)
+            .send(banInputModel)
+            .expect(HttpStatus.NO_CONTENT)
+
+        const bannedUsersForBlogData = await request(httpServer)
+            .get(`/blogger/users/blog/${blogId}?sortDirection=ASC`)
+            .set('Authorization', `Bearer ${bloggerAccessToken}`)
+            .expect(HttpStatus.OK)
+
+        // check user1 is not banned
+        expect(bannedUsersForBlogData.body.items.length).toEqual(2)
+
+        //check user2 is banned
+        expect(bannedUsersForBlogData.body.items[0].id).toEqual(userId2)
+        expect(bannedUsersForBlogData.body.items[0].banInfo.isBanned).toEqual(true)
+        expect(bannedUsersForBlogData.body.items[0].banInfo.banReason).toEqual(banInputModel.banReason)
+
+        //check user3 is banned
+        expect(bannedUsersForBlogData.body.items[1].id).toEqual(userId3)
+        expect(bannedUsersForBlogData.body.items[1].banInfo.isBanned).toEqual(true)
+        expect(bannedUsersForBlogData.body.items[1].banInfo.banReason).toEqual(banInputModel.banReason)
+
+        userId2FromBanList = bannedUsersForBlogData.body.items[0].id
+        userId3FromBanList = bannedUsersForBlogData.body.items[1].id
     })
 })

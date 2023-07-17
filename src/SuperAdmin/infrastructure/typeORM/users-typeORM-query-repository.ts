@@ -100,7 +100,7 @@ export class UsersTypeORMQueryRepository {
             .leftJoinAndSelect('ue.bansForUser', 'bufb')
             .where('lower(ue.login) LIKE :loginTerm', { loginTerm })
             .andWhere('"bufb"."blogId" = :blogId', { blogId })
-
+            .andWhere('"bufb"."isBanned" = true')
 
         //TODO тут добавить andWhere чтобы проверять что в bufb.isBanned
         const totalCount = await totalCountBuilder
@@ -117,6 +117,7 @@ export class UsersTypeORMQueryRepository {
                 .leftJoinAndSelect('ue.bansForUser', 'bufb')
                 .where('lower(ue.login) LIKE :loginTerm', { loginTerm })
                 .andWhere('"bufb"."blogId" = :blogId', { blogId })
+                .andWhere('"bufb"."isBanned" = true')
                 .orderBy(`ue.${sortBy}`, sortDirection)
                 .limit(pageSize)
                 .offset(skipCount)

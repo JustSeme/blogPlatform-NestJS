@@ -1,7 +1,7 @@
 import request from 'supertest';
 import { HttpStatus } from '@nestjs/common';
-import { funcSleep } from '../src/general/helpers';
 import { initAppAndGetHttpServer } from './test-utils';
+import { funcSleep } from '../src/general/helpers/helpers';
 
 describe('ip-restriction', () => {
     let httpServer;
