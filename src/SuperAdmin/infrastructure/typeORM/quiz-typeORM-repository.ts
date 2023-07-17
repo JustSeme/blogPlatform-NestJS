@@ -7,7 +7,6 @@ import {
     DataSource,
     EntityManager, Repository
 } from "typeorm"
-import { Answer } from "../../domain/typeORM/answer.entity"
 import { QuizEntitiesType } from "../QuizTypes"
 
 @Injectable()
@@ -15,8 +14,6 @@ export class QuizRepository {
     constructor(
         @InjectRepository(Question)
         private questionsRepository: Repository<Question>,
-        @InjectRepository(Answer)
-        private answersRepository: Repository<Answer>,
         @InjectDataSource() private dataSource: DataSource,
     ) { }
 

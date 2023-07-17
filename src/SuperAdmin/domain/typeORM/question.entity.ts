@@ -1,9 +1,8 @@
 import {
     Column,
     CreateDateColumn,
-    Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn
+    Entity, PrimaryGeneratedColumn, UpdateDateColumn
 } from "typeorm"
-import { Answer } from "./answer.entity"
 
 @Entity()
 export class Question {
@@ -11,10 +10,10 @@ export class Question {
     id: string
 
     @Column()
-    body
+    body: string
 
-    @OneToMany(() => Answer, (answers) => answers.question)
-    answers: Answer[]
+    @Column('simple-array')
+    answers: string[]
 
     @Column({ default: false })
     isPublished: boolean

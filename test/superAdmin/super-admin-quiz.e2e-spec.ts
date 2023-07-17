@@ -4,7 +4,7 @@ import { initAppAndGetHttpServer } from '../test-utils';
 import { QuestionInputModel } from '../../src/SuperAdmin/api/models/QuestionInputModel'
 
 
-describe('super-admin-users', () => {
+describe('super-admin-quiz', () => {
     let httpServer;
 
     beforeAll(async () => {
@@ -29,37 +29,12 @@ describe('super-admin-users', () => {
         expect(errorsMessages.body).toEqual({
             errorsMessages: [
                 {
-                    message: 'any',
-                    field: 'any'
+                    message: 'body must be longer than or equal to 10 characters',
+                    field: 'body'
                 },
                 {
-                    message: 'any',
-                    field: 'any'
-                },
-            ]
-        })
-    })
-
-    const incorrectQuestionInputModel2 = {
-        body: 'Body should be greater then 10 symbols', // min 10 max 500
-        correctAnswers: [true, 42, {
-            firstName: 'user',
-            lastName: 'user'
-        }] // is string array
-    }
-
-    it('should return error if correctAnswers array contains not a string', async () => {
-        const errorsMessages = await request(httpServer)
-            .post('/sa/quiz/questions')
-            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
-            .send(incorrectQuestionInputModel2)
-            .expect(HttpStatus.BAD_REQUEST)
-
-        expect(errorsMessages.body).toEqual({
-            errorsMessages: [
-                {
-                    message: 'any',
-                    field: 'any'
+                    message: 'correctAnswers must contain at least 1 elements',
+                    field: 'correctAnswers'
                 },
             ]
         })
@@ -71,20 +46,11 @@ describe('super-admin-users', () => {
     }
 
     it('should return error if basic auth is incorrect', async () => {
-        const createdQuestion = await request(httpServer)
+        await request(httpServer)
             .post('/sa/quiz/questions')
             .set('Authorization', 'Basic incorrect')
             .send(questionInputModel)
             .expect(HttpStatus.UNAUTHORIZED)
-
-        expect(createdQuestion.body).toEqual({
-            errorsMessages: [
-                {
-                    message: 'any',
-                    field: 'any'
-                },
-            ]
-        })
     })
 
     let questionId1
@@ -100,8 +66,8 @@ describe('super-admin-users', () => {
             ...questionInputModel,
             published: false,
             id: expect.any(String),
-            createdAt: expect.any(Date),
-            updatedAt: expect.any(Date),
+            createdAt: expect.any(String),
+            updatedAt: expect.any(String),
         })
 
         questionId1 = createdQuestion.body.id

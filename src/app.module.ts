@@ -120,6 +120,11 @@ import { AttemptsTypeORMRepository } from "./security/infrastructure/typeORM/att
 import { PostsTypeORMRepository } from "./Blogger/infrastructure/posts/typeORM/posts-typeORM-repository"
 import { AuthQueryTypeORMRepository } from "./auth/infrastructure/typeORM/auth-query-typeORM-repository"
 import { JwtGetUserId } from "./general/guards/jwt-get-userId.guard"
+import { SuperAdminQuizController } from "./SuperAdmin/api/supr-admin-quiz.controller"
+import { QuizQueryRepository } from "./SuperAdmin/infrastructure/typeORM/quiz-typeORM-query-repository"
+import { QuizRepository } from "./SuperAdmin/infrastructure/typeORM/quiz-typeORM-repository"
+import { Question } from "./SuperAdmin/domain/typeORM/question.entity"
+import { CreateQuestionUseCase } from "./SuperAdmin/application/use-cases/quiz/create-question.use-case"
 
 const authUseCases = [
   LogoutUseCase,
@@ -162,6 +167,10 @@ const securityUseCases = [
   RemoveAllSessionsExcludeCurrentUseCase,
   DeleteDeviceUseCase,
   GetActiveDevicesUseCase,
+]
+
+const quizUseCases = [
+  CreateQuestionUseCase,
 ]
 
 const strategies = [
@@ -227,6 +236,8 @@ const typeORMRepositories = [
   DevicesTypeORMRepository,
   AttemptsTypeORMRepository,
   PostsTypeORMRepository,
+  QuizRepository,
+  QuizQueryRepository,
 ]
 
 const decorators = [
@@ -262,6 +273,7 @@ const controllers = [
   BloggerBlogsController,
   SuperAdminBlogsController,
   BloggerUsersController,
+  SuperAdminQuizController,
 ]
 
 const {
@@ -281,6 +293,7 @@ const typeORMEntityes = [
   CommentEntity,
   CommentLikesInfo,
   PostLikesInfo,
+  Question,
 ]
 
 @Module({
@@ -337,6 +350,7 @@ const typeORMEntityes = [
     ...authUseCases,
     ...blogsUseCases,
     ...securityUseCases,
+    ...quizUseCases,
     ...services,
     ...adapters,
     ...repositories,

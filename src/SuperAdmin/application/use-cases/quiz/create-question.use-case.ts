@@ -6,7 +6,6 @@ import { DataSource } from "typeorm"
 import { QuestionInputModel } from "../../../api/models/QuestionInputModel"
 import { QuizRepository } from "../../../infrastructure/typeORM/quiz-typeORM-repository"
 import { Question } from "../../../domain/typeORM/question.entity"
-import { Answer } from "../../../domain/typeORM/answer.entity"
 
 export class CreateQuestionCommand {
     constructor(
@@ -15,7 +14,7 @@ export class CreateQuestionCommand {
 }
 
 @CommandHandler(CreateQuestionCommand)
-export class CreatQuestionUseCase implements ICommandHandler<CreateQuestionCommand> {
+export class CreateQuestionUseCase implements ICommandHandler<CreateQuestionCommand> {
     constructor(
         @InjectDataSource() private dataSource: DataSource,
         private quizRepository: QuizRepository,
@@ -24,29 +23,13 @@ export class CreatQuestionUseCase implements ICommandHandler<CreateQuestionComma
     async execute(command: CreateQuestionCommand): Promise<string | null> {
         const questionInputModel = command.questionInputModel
 
-        const queryRunner = this.dataSource.createQueryRunner()
+        const creatingQuestion = new Question()
+        creatingQuestion.body = questionInputModel.body
+        creatingQuestion.answers = questionInputModel.correctAnswers
+        creatingQuestion.updatedAt = new Date()
 
-        await queryRunner.connect()
+        const savedQuestion = await this.quizRepository.dataSourceSave(creatingQuestion)
 
-        await queryRunner.startTransaction()
-
-        try {
-            const queryRunnerManager = queryRunner.manager
-
-            const creatingQuestion = new Question()
-            creatingQuestion.body = questionInputModel.body
-
-            const creatingAnswer = new Answer(0)
-
-            await queryRunner.commitTransaction()
-        } catch (err) {
-            console.error(err)
-
-            await queryRunner.rollbackTransaction()
-
-            return null
-        } finally {
-            await queryRunner.release()
-        }
+        return savedQuestion ? savedQuestion.id : null
     }
 }
