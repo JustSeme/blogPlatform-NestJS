@@ -16,13 +16,14 @@ export class QuizQueryRepository {
 
     async findQuestions(queryParams: ReadQuestionsQuery): Promise<QuestionsWithQueryOutputModel> {
         const {
-            sortDirection = 'DESC', sortBy = 'createdAt', pageNumber = 1, pageSize = 10, bodySearchTerm = '%%', publishedStatus = 'all'
+            sortDirection = 'DESC', sortBy = 'createdAt', pageNumber = 1, pageSize = 10, bodySearchTerm = '', publishedStatus = 'all'
         } = queryParams
-        bodySearchTerm.toLowerCase()
+
+        const preparedBodySearchTerm = `%${bodySearchTerm.toLowerCase()}%`
 
         const totalCountBuilder = this.questionsRepository
             .createQueryBuilder('q')
-            .andWhere('lower(q.body) LIKE :bodySearchTerm', { bodySearchTerm })
+            .andWhere('lower(q.body) LIKE :bodySearchTerm', { preparedBodySearchTerm })
 
         const isPublished = publishedStatus === 'published'
 
@@ -41,7 +42,7 @@ export class QuizQueryRepository {
         try {
             const builder = await this.questionsRepository
                 .createQueryBuilder('q')
-                .where('lower(q.body) LIKE :bodySearchTerm', { bodySearchTerm })
+                .where('lower(q.body) LIKE :bodySearchTerm', { preparedBodySearchTerm })
                 .orderBy(`q.${sortBy}`, sortDirection)
                 .limit(pageSize)
                 .offset(skipCount)
@@ -75,6 +76,16 @@ export class QuizQueryRepository {
         } catch (err) {
             console.error(err)
             return null
+        }
+    }
+
+    async isQuestionExists(questionId: string): Promise<boolean> {
+        try {
+            const questionById = await this.questionsRepository.findOne({ where: { id: questionId } })
+            return questionById ? true : false
+        } catch (error) {
+            console.error(error)
+            return false
         }
     }
 

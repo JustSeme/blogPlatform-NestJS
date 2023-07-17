@@ -1,6 +1,6 @@
 import {
     Body,
-    Controller, Get, HttpCode, HttpStatus, NotImplementedException, Post, Query, UseGuards
+    Controller, Get, HttpCode, HttpStatus, NotImplementedException, Param, Post, Put, Query, UseGuards
 } from "@nestjs/common"
 import { QuestionInputModel } from "./models/quiz/QuestionInputModel"
 import {
@@ -44,5 +44,12 @@ export class SuperAdminQuizController {
     ): Promise<QuestionsWithQueryOutputModel> {
         const questions = await this.quizQueryRepository.findQuestions(questionsQueryOptions)
         return questions
+    }
+
+    @Put('questions/:questionId')
+    async updateQuestion(
+        @Param('questionId') questionId,
+    ) {
+        await this.commandBus
     }
 }

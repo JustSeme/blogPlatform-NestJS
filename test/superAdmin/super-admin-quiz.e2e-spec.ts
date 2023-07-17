@@ -66,4 +66,76 @@ describe('super-admin-quiz', () => {
         expect(questionsData.body.totalCount).toEqual(1)
         expect(questionsData.body.items[0]).toEqual(createdQuestionExpectModel)
     })
+
+    const updateQuestionInputModel: QuestionInputModel = {
+        body: 'updated question body',
+        correctAnswers: ['answer 1', 'answer 2']
+    }
+
+    it('shouldn\'t update early created question if it is not found, should display correct info', async () => {
+        await request(httpServer)
+            .put(`/sa/quiz/questions/incorrect`)
+            .send(updateQuestionInputModel)
+            .expect(HttpStatus.NOT_FOUND)
+
+        const questionsData = await request(httpServer)
+            .get('/sa/quiz/questions')
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .expect(HttpStatus.OK)
+
+        expect(questionsData.body.items[0]).toEqual(createdQuestionExpectModel)
+    })
+
+    it('shouldn\'t update early created question if auth header is not passed, should display correct info', async () => {
+        await request(httpServer)
+            .put(`/sa/quiz/questions/${questionId1}`)
+            .send(updateQuestionInputModel)
+            .expect(HttpStatus.UNAUTHORIZED)
+
+        const questionsData = await request(httpServer)
+            .get('/sa/quiz/questions')
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .expect(HttpStatus.OK)
+
+        expect(questionsData.body.items[0]).toEqual(createdQuestionExpectModel)
+    })
+
+    const incorrectUpdateModel: QuestionInputModel = {
+        body: 'low',
+        correctAnswers: ['answer 1', 'answer 2']
+    }
+
+    it('shouldn\'t update early created question if inputModel has incorrect values, should display correct info', async () => {
+        await request(httpServer)
+            .put(`/sa/quiz/questions/${questionId1}`)
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .send(incorrectUpdateModel)
+            .expect(HttpStatus.BAD_REQUEST)
+
+        const questionsData = await request(httpServer)
+            .get('/sa/quiz/questions')
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .expect(HttpStatus.OK)
+
+        expect(questionsData.body.items[0]).toEqual(createdQuestionExpectModel)
+    })
+
+    it('should update early created question and should display correct info', async () => {
+        await request(httpServer)
+            .put(`/sa/quiz/questions/${questionId1}`)
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .send(updateQuestionInputModel)
+            .expect(HttpStatus.NO_CONTENT)
+
+        const questionsData = await request(httpServer)
+            .get('/sa/quiz/questions')
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .expect(HttpStatus.OK)
+
+        createdQuestionExpectModel.id = questionId1
+        createdQuestionExpectModel.body = updateQuestionInputModel.body
+        createdQuestionExpectModel.correctAnswers = updateQuestionInputModel.correctAnswers
+
+        expect(questionsData.body.items[0]).toEqual(createdQuestionExpectModel)
+    })
 })
