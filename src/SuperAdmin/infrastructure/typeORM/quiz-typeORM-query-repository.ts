@@ -18,6 +18,12 @@ export class QuizQueryRepository {
         const {
             sortDirection = 'DESC', sortBy = 'createdAt', pageNumber = 1, pageSize = 10, bodySearchTerm = '', publishedStatus = 'all'
         } = queryParams
+        let preparedPublishedStatus = publishedStatus
+
+        if (publishedStatus !== 'all' && publishedStatus !== 'notPublished' && publishedStatus !== 'published') {
+            //TODO спросить, как проверить publishedStatus на этапе presentation
+            preparedPublishedStatus = 'all'
+        }
 
         const preparedBodySearchTerm = `%${bodySearchTerm.toLowerCase()}%`
 
@@ -27,7 +33,7 @@ export class QuizQueryRepository {
 
         const isPublished = publishedStatus === 'published'
 
-        if (publishedStatus !== 'all') {
+        if (preparedPublishedStatus !== 'all') {
             totalCountBuilder.andWhere('q.isPublished = :isPublished', { isPublished })
         }
 
@@ -47,8 +53,8 @@ export class QuizQueryRepository {
                 .limit(pageSize)
                 .offset(skipCount)
 
-            if (isPublished) {
-                builder.andWhere('ue.isPublished = :preparedBodySearchTerm', { isPublished })
+            if (preparedPublishedStatus !== 'all') {
+                builder.andWhere('q.isPublished = :isPublished', { isPublished })
             }
 
             resultedQuestions = await builder.getMany()
