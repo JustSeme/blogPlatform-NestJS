@@ -15,6 +15,8 @@ import { ReadQuestionsQuery } from "./models/quiz/ReadQuestionsQuery"
 import { generateErrorsMessages } from "../../general/helpers/helpers"
 import { IsQuestionExists } from "./pipes/isQuestionExists.validation.pipe"
 import { UpdateQuestionCommand } from "../application/use-cases/quiz/update-question.use-case"
+import { PublishQuestionInputModel } from "./models/quiz/PublishInputModel"
+import { UpdatePublishQuestionCommand } from "../application/use-cases/quiz/update-publish-question.use-case"
 
 @UseGuards(BasicAuthGuard)
 @Controller('sa/quiz')
@@ -62,6 +64,21 @@ export class SuperAdminQuizController {
 
         if (!isUpdated) {
             throw new BadRequestException(generateErrorsMessages(`You can't set empty correctAnswers array - this question is published`, 'correctAnswers'))
+        }
+    }
+
+    @HttpCode(HttpStatus.NO_CONTENT)
+    @Put('questions/:questionId/publish')
+    async updatePublishQuestion(
+        @Body() publishInputModel: PublishQuestionInputModel,
+        @Param('questionId', IsQuestionExists) questionId,
+    ) {
+        const isUpdated = await this.commandBus.execute(
+            new UpdatePublishQuestionCommand(publishInputModel.published, questionId)
+        )
+
+        if (!isUpdated) {
+            throw new BadRequestException(generateErrorsMessages(`You can't publish question - this question correctAnswers array is empty`, 'published'))
         }
     }
 }

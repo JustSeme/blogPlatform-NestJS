@@ -126,6 +126,7 @@ import { QuizRepository } from "./SuperAdmin/infrastructure/typeORM/quiz-typeORM
 import { Question } from "./SuperAdmin/domain/typeORM/question.entity"
 import { CreateQuestionUseCase } from "./SuperAdmin/application/use-cases/quiz/create-question.use-case"
 import { UpdateQuestionUseCase } from "./SuperAdmin/application/use-cases/quiz/update-question.use-case"
+import { UpdatePublishQuestionUseCase } from "./SuperAdmin/application/use-cases/quiz/update-publish-question.use-case"
 
 const authUseCases = [
   LogoutUseCase,
@@ -173,6 +174,7 @@ const securityUseCases = [
 const quizUseCases = [
   CreateQuestionUseCase,
   UpdateQuestionUseCase,
+  UpdatePublishQuestionUseCase,
 ]
 
 const strategies = [

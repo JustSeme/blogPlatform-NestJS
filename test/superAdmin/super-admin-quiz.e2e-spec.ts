@@ -2,6 +2,7 @@ import request from 'supertest';
 import { HttpStatus } from '@nestjs/common';
 import { initAppAndGetHttpServer } from '../test-utils';
 import { QuestionInputModel } from '../../src/SuperAdmin/api/models/quiz/QuestionInputModel'
+import { PublishQuestionInputModel } from '../../src/SuperAdmin/api/models/quiz/PublishInputModel'
 
 
 describe('super-admin-quiz', () => {
@@ -122,7 +123,7 @@ describe('super-admin-quiz', () => {
     })
 
     it('should update early created question and should display correct info', async () => {
-        const res = await request(httpServer)
+        await request(httpServer)
             .put(`/sa/quiz/questions/${questionId1}`)
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
             .send(updateQuestionInputModel)
@@ -136,6 +137,148 @@ describe('super-admin-quiz', () => {
         createdQuestionExpectModel.id = questionId1
         createdQuestionExpectModel.body = updateQuestionInputModel.body
         createdQuestionExpectModel.correctAnswers = updateQuestionInputModel.correctAnswers
+
+        expect(questionsData.body.items[0]).toEqual(createdQuestionExpectModel)
+    })
+
+    const incorrectPublishInputModel = {
+        published: 'true'
+    }
+
+    it(`shouldn't to publish early created question if inputModel is incorrect`, async () => {
+        const errorsMessages = await request(httpServer)
+            .put(`/sa/quiz/questions/${questionId1}/publish`)
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .send(incorrectPublishInputModel)
+            .expect(HttpStatus.BAD_REQUEST)
+
+        expect(errorsMessages.body).toEqual({
+            errorsMessages: [{
+                message: 'published must be a boolean value',
+                field: 'published'
+            }]
+        })
+
+        const questionsData = await request(httpServer)
+            .get('/sa/quiz/questions')
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .expect(HttpStatus.OK)
+
+        expect(questionsData.body.items[0]).toEqual(createdQuestionExpectModel)
+    })
+
+    const publishInputModel: PublishQuestionInputModel = {
+        published: true
+    }
+
+    it(`shouldn't to publish early created question if question is not found`, async () => {
+        await request(httpServer)
+            .put(`/sa/quiz/questions/incorrect/publish`)
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .send(publishInputModel)
+            .expect(HttpStatus.NOT_FOUND)
+
+        const questionsData = await request(httpServer)
+            .get('/sa/quiz/questions')
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .expect(HttpStatus.OK)
+
+        expect(questionsData.body.items[0]).toEqual(createdQuestionExpectModel)
+    })
+
+    it(`shouldn't to publish early created question if auth header is not passed`, async () => {
+        await request(httpServer)
+            .put(`/sa/quiz/questions/${questionId1}/publish`)
+            .send(publishInputModel)
+            .expect(HttpStatus.UNAUTHORIZED)
+
+        const questionsData = await request(httpServer)
+            .get('/sa/quiz/questions')
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .expect(HttpStatus.OK)
+
+        expect(questionsData.body.items[0]).toEqual(createdQuestionExpectModel)
+    })
+
+    it('should to publish early created question - update publish to true', async () => {
+        await request(httpServer)
+            .put(`/sa/quiz/questions/${questionId1}/publish`)
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .send(publishInputModel)
+            .expect(HttpStatus.NO_CONTENT)
+
+        const questionsData = await request(httpServer)
+            .get('/sa/quiz/questions')
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .expect(HttpStatus.OK)
+
+        createdQuestionExpectModel.published = true
+
+        expect(questionsData.body.items[0]).toEqual(createdQuestionExpectModel)
+    })
+
+    const updateModelWithEmptyAnswersArray: QuestionInputModel = {
+        body: 'any should be greater then 10',
+        correctAnswers: []
+    }
+
+    it(`shouldn't update question if correctAnswers is empty and question is already published`, async () => {
+        const errorsMessages = await request(httpServer)
+            .put(`/sa/quiz/questions/${questionId1}`)
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .send(updateModelWithEmptyAnswersArray)
+            .expect(HttpStatus.BAD_REQUEST)
+
+        expect(errorsMessages.body).toEqual({
+            errorsMessages: [{
+                message: `You can't set empty correctAnswers array - this question is published`,
+                field: 'correctAnswers'
+            }]
+        })
+
+        const questionsData = await request(httpServer)
+            .get('/sa/quiz/questions')
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .expect(HttpStatus.OK)
+
+        expect(questionsData.body.items[0]).toEqual(createdQuestionExpectModel)
+    })
+
+    const unpublishInputModel: PublishQuestionInputModel = {
+        published: false
+    }
+
+    it('should to unpublish early created question - update publish to false', async () => {
+        await request(httpServer)
+            .put(`/sa/quiz/questions/${questionId1}/publish`)
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .send(unpublishInputModel)
+            .expect(HttpStatus.NO_CONTENT)
+
+        const questionsData = await request(httpServer)
+            .get('/sa/quiz/questions')
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .expect(HttpStatus.OK)
+
+        createdQuestionExpectModel.published = false
+
+        expect(questionsData.body.items[0]).toEqual(createdQuestionExpectModel)
+    })
+
+    it(`should update question - correctAnswers is empty, but question is not published`, async () => {
+        await request(httpServer)
+            .put(`/sa/quiz/questions/${questionId1}`)
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .send(updateModelWithEmptyAnswersArray)
+            .expect(HttpStatus.NO_CONTENT)
+
+        const questionsData = await request(httpServer)
+            .get('/sa/quiz/questions')
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .expect(HttpStatus.OK)
+
+        createdQuestionExpectModel.correctAnswers = []
+        createdQuestionExpectModel.body = updateModelWithEmptyAnswersArray.body
 
         expect(questionsData.body.items[0]).toEqual(createdQuestionExpectModel)
     })
