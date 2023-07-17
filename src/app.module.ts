@@ -127,6 +127,7 @@ import { Question } from "./SuperAdmin/domain/typeORM/question.entity"
 import { CreateQuestionUseCase } from "./SuperAdmin/application/use-cases/quiz/create-question.use-case"
 import { UpdateQuestionUseCase } from "./SuperAdmin/application/use-cases/quiz/update-question.use-case"
 import { UpdatePublishQuestionUseCase } from "./SuperAdmin/application/use-cases/quiz/update-publish-question.use-case"
+import { DeleteQuestionUseCase } from "./SuperAdmin/application/use-cases/quiz/delete-question.use-case"
 
 const authUseCases = [
   LogoutUseCase,
@@ -175,6 +176,7 @@ const quizUseCases = [
   CreateQuestionUseCase,
   UpdateQuestionUseCase,
   UpdatePublishQuestionUseCase,
+  DeleteQuestionUseCase,
 ]
 
 const strategies = [

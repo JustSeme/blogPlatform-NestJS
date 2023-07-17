@@ -39,4 +39,17 @@ export class QuizRepository {
             return null
         }
     }
+
+    async removeEntity(
+        entity: QuizEntitiesType
+    ): Promise<boolean> {
+        try {
+            const deleteResult = await this.dataSource.manager.remove(entity)
+
+            return deleteResult ? true : false
+        } catch (err) {
+            console.error(err)
+            return false
+        }
+    }
 }

@@ -1,7 +1,7 @@
 import {
     BadRequestException,
     Body,
-    Controller, Get, HttpCode, HttpStatus, NotImplementedException, Param, Post, Put, Query, UseGuards
+    Controller, Get, HttpCode, HttpStatus, NotImplementedException, Param, Post, Put, Query, UseGuards, Delete
 } from "@nestjs/common"
 import { QuestionInputModel } from "./models/quiz/QuestionInputModel"
 import {
@@ -17,6 +17,7 @@ import { IsQuestionExists } from "./pipes/isQuestionExists.validation.pipe"
 import { UpdateQuestionCommand } from "../application/use-cases/quiz/update-question.use-case"
 import { PublishQuestionInputModel } from "./models/quiz/PublishInputModel"
 import { UpdatePublishQuestionCommand } from "../application/use-cases/quiz/update-publish-question.use-case"
+import { DeleteQuestionCommand } from "../application/use-cases/quiz/delete-question.use-case"
 
 @UseGuards(BasicAuthGuard)
 @Controller('sa/quiz')
@@ -79,6 +80,20 @@ export class SuperAdminQuizController {
 
         if (!isUpdated) {
             throw new BadRequestException(generateErrorsMessages(`You can't publish question - this question correctAnswers array is empty`, 'published'))
+        }
+    }
+
+    @HttpCode(HttpStatus.NO_CONTENT)
+    @Delete('questions/:questionId')
+    async deleteQuestion(
+        @Param('questionId', IsQuestionExists) questionId,
+    ) {
+        const isDeleted = await this.commandBus.execute(
+            new DeleteQuestionCommand(questionId)
+        )
+
+        if (!isDeleted) {
+            throw new NotImplementedException('This question wasn\'t remove ')
         }
     }
 }

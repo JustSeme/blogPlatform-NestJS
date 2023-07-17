@@ -16,7 +16,7 @@ describe('super-admin-quiz', () => {
     });
 
     const questionInputModel: QuestionInputModel = {
-        body: 'How year today?', // min 10 max 500
+        body: 'What year today?', // min 10 max 500
         correctAnswers: ['2023', 'две тысячи двадцать третий', 'two thousand twenty-third'] // is string array
     }
 
@@ -265,7 +265,7 @@ describe('super-admin-quiz', () => {
         expect(questionsData.body.items[0]).toEqual(createdQuestionExpectModel)
     })
 
-    it(`should update question - correctAnswers is empty, but question is not published`, async () => {
+    it(`should update question correctAnswers to empty array because question is not published`, async () => {
         await request(httpServer)
             .put(`/sa/quiz/questions/${questionId1}`)
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
@@ -281,5 +281,62 @@ describe('super-admin-quiz', () => {
         createdQuestionExpectModel.body = updateModelWithEmptyAnswersArray.body
 
         expect(questionsData.body.items[0]).toEqual(createdQuestionExpectModel)
+    })
+
+    it('shouldn\'t delete question if question id incorrect', async () => {
+        await request(httpServer)
+            .delete(`/sa/quiz/questions/incorrect`)
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .expect(HttpStatus.NOT_FOUND)
+
+        const questionsData = await request(httpServer)
+            .get('/sa/quiz/questions')
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .expect(HttpStatus.OK)
+
+        expect(questionsData.body.items[0]).toEqual(createdQuestionExpectModel)
+    })
+
+    it('shouldn\'t delete question if auth header is incorrect', async () => {
+        await request(httpServer)
+            .delete(`/sa/quiz/questions/${questionId1}`)
+            .set('Authorization', 'Basic incorrect')
+            .expect(HttpStatus.UNAUTHORIZED)
+
+        const questionsData = await request(httpServer)
+            .get('/sa/quiz/questions')
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .expect(HttpStatus.OK)
+
+        expect(questionsData.body.items[0]).toEqual(createdQuestionExpectModel)
+    })
+
+    it('should delete early created question', async () => {
+        await request(httpServer)
+            .delete(`/sa/quiz/questions/${questionId1}`)
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .expect(HttpStatus.NO_CONTENT)
+
+        const questionsData = await request(httpServer)
+            .get('/sa/quiz/questions')
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .expect(HttpStatus.OK)
+
+        expect(questionsData.body.totalCount).toEqual(0)
+        expect(questionsData.body.items.length).toEqual(0)
+    })
+
+    it('shouldn\'t delete early deleted question', async () => {
+        const errorsMessages = await request(httpServer)
+            .delete(`/sa/quiz/questions/${questionId1}`)
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .expect(HttpStatus.NOT_FOUND)
+
+        expect(errorsMessages.body).toEqual({
+            errorsMessages: [{
+                message: 'Question by questionId parameter is not exists',
+                field: 'questionId'
+            }]
+        })
     })
 })
