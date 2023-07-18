@@ -9,15 +9,15 @@ import {
 import { PostsTypeORMRepository } from "../../../../Blogger/infrastructure/posts/typeORM/posts-typeORM-repository"
 import { TransactionBaseUseCase } from "../../../../general/use-cases/transaction-base.use-case"
 
-export class BanBlogCommand {
+export class UpdateBanBlogCommand {
     constructor(
         public readonly banInputModel: BanBlogInputModel,
         public readonly blogId: string,
     ) { }
 }
 
-@CommandHandler(BanBlogCommand)
-export class BanBlogUseCase extends TransactionBaseUseCase<BanBlogCommand, boolean>{
+@CommandHandler(UpdateBanBlogCommand)
+export class UpdateBanBlogUseCase extends TransactionBaseUseCase<UpdateBanBlogCommand, boolean>{
     constructor(
         protected blogsRepository: BlogsTypeORMRepository,
         protected blogsQueryRepository: BlogsQueryTypeORMRepository,
@@ -27,25 +27,25 @@ export class BanBlogUseCase extends TransactionBaseUseCase<BanBlogCommand, boole
         super(dataSource)
     }
 
-    async doLogic(input: BanBlogCommand, manager: EntityManager): Promise<boolean> {
+    async doLogic(input: UpdateBanBlogCommand, manager: EntityManager): Promise<boolean> {
         const blogByBlogId = await this.blogsQueryRepository.findBlogById(input.blogId)
 
         blogByBlogId.banDate = new Date()
-        blogByBlogId.isBanned = true
+        blogByBlogId.isBanned = input.banInputModel.isBanned
 
         const savedBlog = await this.blogsRepository.queryRunnerSave(blogByBlogId, manager)
 
-        const isPostsHided = await this.postsRepository.hidePostsForBlog(input.blogId)
+        const isPostsSaved = await this.postsRepository.updateIsBannedForPostsByBlogId(input.blogId, input.banInputModel.isBanned)
 
-        if (!savedBlog && !isPostsHided) {
+        if (!savedBlog && !isPostsSaved) {
             throw new Error('Blog is not saved or posts is not hided, rollback transaction')
         }
 
-        return (isPostsHided && savedBlog) ? true : false
+        return (isPostsSaved && savedBlog) ? true : false
     }
 
 
-    async execute(command: BanBlogCommand): Promise<boolean> {
+    async execute(command: UpdateBanBlogCommand): Promise<boolean> {
         return super.execute(command)
     }
 }

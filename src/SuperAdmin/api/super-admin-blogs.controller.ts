@@ -4,6 +4,7 @@ import {
     Get,
     HttpCode,
     HttpStatus,
+    NotImplementedException,
     Param,
     Put,
     Query,
@@ -17,9 +18,8 @@ import { BindUserCommand } from '../application/use-cases/users/bind-user.use-ca
 import { BlogsWithQuerySuperAdminOutputModel } from '../application/dto/blogs/BlogSuperAdminViewModel'
 import { ReadBlogsQueryParams } from '../../blogs/api/models/ReadBlogsQuery'
 import { BanBlogInputModel } from './models/blogs/BanBlogInputModel'
-import { BanBlogCommand } from '../application/use-cases/blogs/ban-blog.use-case'
-import { UnbanBlogCommand } from '../application/use-cases/blogs/unban-blog.use-case'
 import { BlogsQueryTypeORMRepository } from '../../Blogger/infrastructure/blogs/typeORM/blogs-query-typeORM-repository'
+import { UpdateBanBlogCommand } from '../application/use-cases/blogs/update-ban-blog.use-case'
 
 
 @UseGuards(BasicAuthGuard)
@@ -54,14 +54,12 @@ export class SuperAdminBlogsController {
         @Body() banInputModel: BanBlogInputModel,
         @Param('blogId', IsBlogExistOrThrow400Pipe) blogId,
     ) {
-        if (banInputModel.isBanned) {
-            await this.commandBus.execute(
-                new BanBlogCommand(banInputModel, blogId)
-            )
-        } else {
-            await this.commandBus.execute(
-                new UnbanBlogCommand(banInputModel, blogId)
-            )
+        const result = await this.commandBus.execute(
+            new UpdateBanBlogCommand(banInputModel, blogId)
+        )
+
+        if (!result) {
+            throw new NotImplementedException('Blog is not banned')
         }
     }
 }

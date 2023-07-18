@@ -54,20 +54,9 @@ export class PostsTypeORMRepository {
         }
     }
 
-    async hidePostsForBlog(blogId: string): Promise<boolean> {
+    async updateIsBannedForPostsByBlogId(blogId: string, isBanned: boolean): Promise<boolean> {
         try {
-            const updateResult = await this.postsRepository.update({ blog: { id: blogId } }, { isBanned: true })
-
-            return updateResult ? true : false
-        } catch (err) {
-            console.error(err)
-            return false
-        }
-    }
-
-    async unHidePostsForBlog(blogId: string): Promise<boolean> {
-        try {
-            const updateResult = await this.postsRepository.update({ blog: { id: blogId } }, { isBanned: false })
+            const updateResult = await this.postsRepository.update({ blog: { id: blogId } }, { isBanned: isBanned })
 
             return updateResult ? true : false
         } catch (err) {

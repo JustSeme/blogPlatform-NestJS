@@ -84,8 +84,6 @@ import { UsersService } from "./SuperAdmin/application/users.service"
 import {
   User, UsersSchema
 } from "./SuperAdmin/domain/mongoose/UsersSchema"
-import { BanBlogUseCase } from "./SuperAdmin/application/use-cases/blogs/ban-blog.use-case"
-import { UnbanBlogUseCase } from "./SuperAdmin/application/use-cases/blogs/unban-blog.use-case"
 import { UpdateCommentUseCase } from "./blogs/application/use-cases/comments/update-comment.use-case"
 import { BloggerUsersController } from "./Blogger/api/blogger-users.controller"
 import { BanUserForBlogUseCase } from "./Blogger/application/use-cases/users/ban-user-for-blog.use-case"
@@ -128,6 +126,7 @@ import { CreateQuestionUseCase } from "./SuperAdmin/application/use-cases/quiz/c
 import { UpdateQuestionUseCase } from "./SuperAdmin/application/use-cases/quiz/update-question.use-case"
 import { UpdatePublishQuestionUseCase } from "./SuperAdmin/application/use-cases/quiz/update-publish-question.use-case"
 import { DeleteQuestionUseCase } from "./SuperAdmin/application/use-cases/quiz/delete-question.use-case"
+import { UpdateBanBlogUseCase } from "./SuperAdmin/application/use-cases/blogs/update-ban-blog.use-case"
 
 const authUseCases = [
   LogoutUseCase,
@@ -159,8 +158,7 @@ const blogsUseCases = [
   BindUserUseCase,
   BanUserUseCase,
   UnbanUserUseCase,
-  BanBlogUseCase,
-  UnbanBlogUseCase,
+  UpdateBanBlogUseCase,
   UpdateCommentUseCase,
   BanUserForBlogUseCase,
   GetAllBannedUsersForBlogUseCase,
