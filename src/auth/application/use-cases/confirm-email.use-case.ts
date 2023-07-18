@@ -1,63 +1,49 @@
-import {
-    CommandHandler, ICommandHandler
-} from "@nestjs/cqrs"
+import { CommandHandler } from "@nestjs/cqrs"
 import { AuthTypeORMRepository } from "../../infrastructure/typeORM/auth-typeORM-repository"
 import { UserEmailConfirmation } from "../../../SuperAdmin/domain/typeORM/user-email-confirmation.entity"
 import { AuthQueryTypeORMRepository } from "../../infrastructure/typeORM/auth-query-typeORM-repository"
 import { InjectDataSource } from "@nestjs/typeorm"
-import { DataSource } from "typeorm"
+import {
+    DataSource, EntityManager
+} from "typeorm"
+import { TransactionBaseUseCase } from "../../../general/use-cases/transaction-base.use-case"
 
 export class ConfirmEmailCommand {
     constructor(public readonly code: string) { }
 }
 
 @CommandHandler(ConfirmEmailCommand)
-export class ConfirmEmailUseCase implements ICommandHandler<ConfirmEmailCommand> {
+export class ConfirmEmailUseCase extends TransactionBaseUseCase<ConfirmEmailCommand, boolean> {
     constructor(
-        private authRepository: AuthTypeORMRepository,
-        private authQueryRepository: AuthQueryTypeORMRepository,
-        @InjectDataSource() private dataSource: DataSource,
-    ) { }
+        protected authRepository: AuthTypeORMRepository,
+        protected authQueryRepository: AuthQueryTypeORMRepository,
+        @InjectDataSource() protected dataSource: DataSource,
+    ) {
+        super(dataSource)
+    }
 
-    async execute(command: ConfirmEmailCommand) {
-        const queryRunner = this.dataSource.createQueryRunner()
+    async doLogic(input: ConfirmEmailCommand, manager: EntityManager): Promise<boolean> {
+        const userEmailConfirmationData = await this.authQueryRepository.findUserEmailConfirmationDataByCode(input.code)
 
-        await queryRunner.connect()
-
-        await queryRunner.startTransaction()
-
-        let savedUserEmailConfirmtaionData, savedUser
-
-        try {
-            const userEmailConfirmationData = await this.authQueryRepository.findUserEmailConfirmationDataByCode(command.code)
-
-            if (!this.isUserCanBeConfirmed(userEmailConfirmationData, command.code)) {
-                return false
-            }
-
-            userEmailConfirmationData.isEmailConfirmed = true
-
-            savedUserEmailConfirmtaionData = await this.authRepository.queryRunnerSave(userEmailConfirmationData, queryRunner.manager)
-
-            const user = await this.authQueryRepository.findUserData(userEmailConfirmationData.user.id)
-
-            user.isConfirmed = true
-
-            savedUser = await this.authRepository.queryRunnerSave(user, queryRunner.manager)
-
-            await queryRunner.commitTransaction()
-        } catch (err) {
-            console.error(err)
-
-            await queryRunner.rollbackTransaction()
-
+        if (!this.isUserCanBeConfirmed(userEmailConfirmationData, input.code)) {
             return false
-        } finally {
-            await queryRunner.release()
         }
 
+        userEmailConfirmationData.isEmailConfirmed = true
 
-        return savedUserEmailConfirmtaionData && savedUser
+        const savedUserEmailConfirmtaionData = await this.authRepository.queryRunnerSave(userEmailConfirmationData, manager)
+
+        const user = await this.authQueryRepository.findUserData(userEmailConfirmationData.user.id)
+
+        user.isConfirmed = true
+
+        const savedUser = await this.authRepository.queryRunnerSave(user, manager)
+
+        return (savedUserEmailConfirmtaionData && savedUser) ? true : false
+    }
+
+    async execute(command: ConfirmEmailCommand): Promise<boolean> {
+        return super.execute(command)
     }
 
     isUserCanBeConfirmed(emailConfirmation: UserEmailConfirmation, recievedConfirmationCode: string) {
