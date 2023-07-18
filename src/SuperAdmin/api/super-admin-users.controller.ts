@@ -14,11 +14,10 @@ import { CreateUserCommand } from '../application/use-cases/users/create-user.us
 import { ReadUsersQuery } from './models/users/ReadUsersQuery'
 import { IsUserExistOrThrow400Pipe } from './pipes/isUserExistsOrThrow400.validation.pipe'
 import { IsUserExistPipe } from './pipes/isUserExists.validation.pipe'
-import { BanUserCommand } from '../application/use-cases/users/ban-user.use-case'
-import { UnbanUserCommand } from '../application/use-cases/users/unban-user.use-case'
 import { UsersService } from '../application/users.service'
 import { BanUserInputModel } from './models/users/BanUserInputModel'
 import { UsersTypeORMQueryRepository } from '../infrastructure/typeORM/users-typeORM-query-repository'
+import { UpdateBanUserCommand } from '../application/use-cases/users/ban-user.use-case'
 
 @UseGuards(BasicAuthGuard)
 @Controller('sa/users')
@@ -70,16 +69,9 @@ export class SuperAdminUsersController {
         @Param('userId', IsUserExistOrThrow400Pipe) userId: string,
         @Body() banUserInputModel: BanUserInputModel
     ) {
-        let isImplemented
-        if (banUserInputModel.isBanned) {
-            isImplemented = await this.commandBus.execute(
-                new BanUserCommand(banUserInputModel.banReason, userId)
-            )
-        } else {
-            isImplemented = await this.commandBus.execute(
-                new UnbanUserCommand(userId)
-            )
-        }
+        const isImplemented = await this.commandBus.execute(
+            new UpdateBanUserCommand(banUserInputModel, userId)
+        )
 
         if (!isImplemented) {
             throw new NotImplementedException()

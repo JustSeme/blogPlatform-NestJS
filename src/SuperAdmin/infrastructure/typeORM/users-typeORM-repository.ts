@@ -10,6 +10,7 @@ import { UserBanInfo } from "../../domain/typeORM/user-ban-info.entity"
 import { UserEntitiesType } from "../UsersTypes"
 import { UserPasswordRecovery } from "../../domain/typeORM/user-password-recovery.entity"
 import { UserEmailConfirmation } from "../../domain/typeORM/user-email-confirmation.entity"
+import { BanUserInputModel } from "../../api/models/users/BanUserInputModel"
 
 @Injectable()
 export class UsersTypeORMRepository {
@@ -93,29 +94,14 @@ export class UsersTypeORMRepository {
         }
     }
 
-    async banUserById(userId: string, banReason: string): Promise<boolean> {
+    async updateBanForUser(userId: string, banInputModel: BanUserInputModel): Promise<boolean> {
         try {
             await this.usersBanInfoRepository.update({ userId }, {
-                isBanned: true,
-                banDate: new Date(),
-                banReason: banReason
+                isBanned: banInputModel.isBanned,
+                banDate: banInputModel.isBanned ? new Date() : null,
+                banReason: banInputModel.isBanned ? banInputModel.banReason : null
             })
-            await this.usersRepository.update({ id: userId }, { isBanned: true })
-            return true
-        } catch (err) {
-            console.error(err)
-            return false
-        }
-    }
-
-    async unbanUserById(userId: string): Promise<boolean> {
-        try {
-            await this.usersBanInfoRepository.update({ userId }, {
-                isBanned: false,
-                banDate: null,
-                banReason: null
-            })
-            await this.usersRepository.update({ id: userId }, { isBanned: false })
+            await this.usersRepository.update({ id: userId }, { isBanned: banInputModel.isBanned })
             return true
         } catch (err) {
             console.error(err)

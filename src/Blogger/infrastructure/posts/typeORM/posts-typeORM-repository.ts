@@ -42,18 +42,6 @@ export class PostsTypeORMRepository {
         }
     }
 
-    async unHideAllLikeEntitiesForPostsByUserId(userId: string): Promise<boolean> {
-        try {
-            const updateResult = await this.postLikesInfoRepository
-                .update({ user: { id: userId } }, { isBanned: false })
-
-            return updateResult ? true : false
-        } catch (err) {
-            console.error(err)
-            return false
-        }
-    }
-
     async updateIsBannedForPostsByBlogId(blogId: string, isBanned: boolean): Promise<boolean> {
         try {
             const updateResult = await this.postsRepository.update({ blog: { id: blogId } }, { isBanned: isBanned })
@@ -65,10 +53,10 @@ export class PostsTypeORMRepository {
         }
     }
 
-    async hideAllLikeEntitiesForPostsByUserId(userId: string): Promise<boolean> {
+    async updateIsBannedForLikeEntitiesForPostsByUserId(userId: string, isBanned: boolean): Promise<boolean> {
         try {
             const updateResult = await this.postLikesInfoRepository
-                .update({ user: { id: userId } }, { isBanned: true })
+                .update({ user: { id: userId } }, { isBanned: isBanned })
 
             return updateResult ? true : false
         } catch (err) {
@@ -88,20 +76,9 @@ export class PostsTypeORMRepository {
         }
     }
 
-    async hideAllPostsForCurrentUser(userId: string): Promise<boolean> {
+    async updateIsBannedByUserId(userId: string, isBanned: boolean): Promise<boolean> {
         try {
-            const updateResult = await this.postsRepository.update({ owner: { id: userId } }, { isBanned: true })
-
-            return updateResult ? true : false
-        } catch (err) {
-            console.error(err)
-            return false
-        }
-    }
-
-    async unhideAllPostsForCurrentUser(userId: string): Promise<boolean> {
-        try {
-            const updateResult = await this.postsRepository.update({ owner: { id: userId } }, { isBanned: false })
+            const updateResult = await this.postsRepository.update({ owner: { id: userId } }, { isBanned: isBanned })
 
             return updateResult ? true : false
         } catch (err) {

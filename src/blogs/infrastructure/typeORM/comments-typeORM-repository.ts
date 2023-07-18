@@ -99,9 +99,9 @@ export class CommentsTypeORMRepository {
         }
     }
 
-    async hideAllCommentsForCurrentUser(userId: string): Promise<boolean> {
+    async updateIsBannedCommentsByUserId(userId: string, isBanned: boolean): Promise<boolean> {
         try {
-            const updateResult = await this.commentsRepository.update({ commentator: { id: userId } }, { isBanned: true })
+            const updateResult = await this.commentsRepository.update({ commentator: { id: userId } }, { isBanned: isBanned })
 
             return updateResult ? true : false
         } catch (err) {
@@ -110,28 +110,9 @@ export class CommentsTypeORMRepository {
         }
     }
 
-    async unhideAllCommentsForCurrentUser(userId: string): Promise<boolean> {
+    async updateIsBannedLikeEntitiesForCommentsByUserId(userId: string, isBanned: boolean): Promise<boolean> {
         try {
-            await this.commentsRepository.update({ commentator: { id: userId } }, { isBanned: false })
-            return true
-        } catch (err) {
-            console.error(err)
-            return false
-        }
-    }
-
-    async hideAllLikeEntitiesForCommentsByUserId(userId: string): Promise<boolean> {
-        try {
-            await this.commentLikesInfoRepository.update({ user: { id: userId } }, { isBanned: true })
-            return true
-        } catch (err) {
-            return false
-        }
-    }
-
-    async unhideAllLikeEntitiesForCommentsByUserId(userId: string): Promise<boolean> {
-        try {
-            await this.commentLikesInfoRepository.update({ user: { id: userId } }, { isBanned: false })
+            await this.commentLikesInfoRepository.update({ user: { id: userId } }, { isBanned: isBanned })
             return true
         } catch (err) {
             return false

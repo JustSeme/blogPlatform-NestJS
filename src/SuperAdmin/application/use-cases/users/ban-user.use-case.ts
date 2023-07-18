@@ -1,72 +1,65 @@
-import {
-    CommandHandler, ICommandHandler
-} from "@nestjs/cqrs"
+import { CommandHandler } from "@nestjs/cqrs"
 import { UsersTypeORMRepository } from "../../../infrastructure/typeORM/users-typeORM-repository"
 import { CommentsTypeORMRepository } from "../../../../blogs/infrastructure/typeORM/comments-typeORM-repository"
 import { DevicesTypeORMRepository } from "../../../../security/infrastructure/typeORM/devices-typeORM-repository"
 import { InjectDataSource } from "@nestjs/typeorm"
 import { DataSource } from "typeorm"
 import { PostsTypeORMRepository } from "../../../../Blogger/infrastructure/posts/typeORM/posts-typeORM-repository"
+import { TransactionBaseUseCase } from "../../../../general/use-cases/transaction-base.use-case"
+import { BanUserInputModel } from "../../../api/models/users/BanUserInputModel"
 
-export class BanUserCommand {
+export class UpdateBanUserCommand {
     constructor(
-        public readonly banReason: string,
+        public readonly banInputModel: BanUserInputModel,
         public readonly userId: string,
     ) { }
 }
 
-@CommandHandler(BanUserCommand)
-export class BanUserUseCase implements ICommandHandler<BanUserCommand> {
+@CommandHandler(UpdateBanUserCommand)
+export class UpdateBanUserUseCase extends TransactionBaseUseCase<UpdateBanUserCommand, boolean> {
     constructor(
-        private usersRepository: UsersTypeORMRepository,
-        private deviceRepository: DevicesTypeORMRepository,
-        private postsRepository: PostsTypeORMRepository,
-        private commentsRepository: CommentsTypeORMRepository,
-        @InjectDataSource() private dataSource: DataSource
-    ) { }
-
-    async execute(command: BanUserCommand) {
-        const {
-            banReason,
-            userId,
-        } = command
-
-        const queryRunner = this.dataSource.createQueryRunner()
-
-        await queryRunner.connect()
-
-        await queryRunner.startTransaction()
-
-        try {
-            const isBanned = await this.usersRepository.banUserById(userId, banReason)
-
-            const isEntitiesHided = await this.hideUserEntities(userId)
-
-            if (!isEntitiesHided) {
-                throw new Error('Something wrong with hiding all entities, transacion is not completed')
-            }
-
-            await queryRunner.commitTransaction()
-
-            return isEntitiesHided && isBanned
-        } catch (err) {
-            console.error(err)
-            await queryRunner.rollbackTransaction()
-            return false
-        } finally {
-            await queryRunner.release()
-        }
+        protected usersRepository: UsersTypeORMRepository,
+        protected deviceRepository: DevicesTypeORMRepository,
+        protected postsRepository: PostsTypeORMRepository,
+        protected commentsRepository: CommentsTypeORMRepository,
+        @InjectDataSource() protected dataSource: DataSource
+    ) {
+        super(dataSource)
     }
 
-    async hideUserEntities(userId: string) {
+    async doLogic(input: UpdateBanUserCommand): Promise<boolean> {
+        const {
+            banInputModel,
+            userId,
+        } = input
+
+        const isBanned = await this.usersRepository.updateBanForUser(userId, banInputModel)
+
+        const isEntitiesHided = await this.updateIsBannedForUserEntities(userId, input.banInputModel.isBanned)
+
+        if (!isEntitiesHided) {
+            throw new Error('Something wrong with hiding all entities, transacion is not completed')
+        }
+
+        return isEntitiesHided && isBanned
+    }
+
+    async execute(command: UpdateBanUserCommand) {
+        return super.execute(command)
+    }
+
+    async updateIsBannedForUserEntities(userId: string, isBanned: boolean) {
         try {
-            const isSessionsDeleted = await this.deviceRepository.deleteAllSessions(userId)
+            let isSessionsDeleted = true
+            if (isBanned) {
+                isSessionsDeleted = await this.deviceRepository.deleteAllSessions(userId)
+            }
 
-            const isPostsHided = await this.postsRepository.hideAllPostsForCurrentUser(userId)
-            const isPostsLikesHided = await this.postsRepository.hideAllLikeEntitiesForPostsByUserId(userId)
+            const isPostsHided = await this.postsRepository.updateIsBannedByUserId(userId, isBanned)
+            const isPostsLikesHided = await this.postsRepository.updateIsBannedForLikeEntitiesForPostsByUserId(userId, isBanned)
 
-            const isCommentsHided = await this.commentsRepository.hideAllCommentsForCurrentUser(userId)
-            const isCommentLikesHided = await this.commentsRepository.hideAllLikeEntitiesForCommentsByUserId(userId)
+            const isCommentsHided = await this.commentsRepository.updateIsBannedCommentsByUserId(userId, isBanned)
+            const isCommentLikesHided = await this.commentsRepository.updateIsBannedLikeEntitiesForCommentsByUserId(userId, isBanned)
 
             return isSessionsDeleted && isPostsHided && isPostsLikesHided && isCommentsHided && isCommentLikesHided
         } catch (err) {
