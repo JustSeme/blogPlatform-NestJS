@@ -1,8 +1,6 @@
 import { BcryptAdapter } from "../../../general/adapters/bcrypt.adapter"
 import { EmailManager } from "../../../general/managers/emailManager"
-import {
-    CommandHandler, ICommandHandler
-} from "@nestjs/cqrs"
+import { CommandHandler } from "@nestjs/cqrs"
 import { FieldError } from "../../../general/types/ErrorMessagesOutputModel"
 import { BadRequestException } from '@nestjs/common'
 import { UsersTypeORMRepository } from "../../../SuperAdmin/infrastructure/typeORM/users-typeORM-repository"
@@ -13,78 +11,83 @@ import { UserEntity } from "../../../SuperAdmin/domain/typeORM/user.entity"
 import { v4 as uuidv4 } from 'uuid'
 import { InjectDataSource } from "@nestjs/typeorm"
 import { add } from 'date-fns'
-import { DataSource } from "typeorm"
+import {
+    DataSource, EntityManager
+} from "typeorm"
 import { AuthQueryTypeORMRepository } from "../../infrastructure/typeORM/auth-query-typeORM-repository"
+import { TransactionBaseUseCase } from "../../../general/use-cases/transaction-base.use-case"
 
 export class RegistrationUserCommand {
     constructor(public login: string, public password: string, public email: string) { }
 }
 
 @CommandHandler(RegistrationUserCommand)
-export class RegistrationUserUseCase implements ICommandHandler<RegistrationUserCommand> {
+export class RegistrationUserUseCase extends TransactionBaseUseCase<RegistrationUserCommand, boolean> {
     constructor(
-        private bcryptAdapter: BcryptAdapter,
-        private usersRepository: UsersTypeORMRepository,
-        private emailManager: EmailManager,
-        private authQueryRepository: AuthQueryTypeORMRepository,
-        @InjectDataSource() private dataSource: DataSource
-    ) { }
+        protected bcryptAdapter: BcryptAdapter,
+        protected usersRepository: UsersTypeORMRepository,
+        protected emailManager: EmailManager,
+        protected authQueryRepository: AuthQueryTypeORMRepository,
+        @InjectDataSource() protected dataSource: DataSource
+    ) {
+        super(dataSource)
+    }
+
+    async doLogic(input: RegistrationUserCommand, manager: EntityManager) {
+        // if already used - throw bad request exception 
+        await this.isEmailOrLoginAlreadyUsed(input.login, input.email)
+
+        const passwordHash = await this.bcryptAdapter.generatePasswordHash(input.password, 10)
+
+        const userEntityData = new UserEntity()
+        userEntityData.login = input.login
+        userEntityData.email = input.email
+        userEntityData.passwordHash = passwordHash
+        userEntityData.isConfirmed = false
+
+        await this.usersRepository.queryRunnerSave(userEntityData, manager)
+
+        const userBanInfoData = new UserBanInfo()
+        userBanInfoData.userId = userEntityData
+
+        await this.usersRepository.queryRunnerSave(userBanInfoData, manager)
+
+        const userEmailConfirmationData = new UserEmailConfirmation()
+        userEmailConfirmationData.emailConfirmationCode = uuidv4()
+        userEmailConfirmationData.emailExpirationDate = add(new Date(), {
+            hours: 1,
+            minutes: 3
+        })
+        userEmailConfirmationData.user = userEntityData
+
+        await this.usersRepository.queryRunnerSave(userEmailConfirmationData, manager)
+
+        const userPasswordRecoveryData = new UserPasswordRecovery()
+        userPasswordRecoveryData.user = userEntityData
+
+        await this.usersRepository.queryRunnerSave(userPasswordRecoveryData, manager)
+
+        await this.sendConfirmationCode(
+            input.email,
+            input.login,
+            userEmailConfirmationData.emailConfirmationCode,
+            userEntityData.id
+        )
+
+        return true
+    }
 
     async execute(command: RegistrationUserCommand): Promise<boolean> {
-        // if already used - throw bad request exception 
-        await this.isEmailOrLoginAlreadyUsed(command.login, command.email)
+        return super.execute(command)
+    }
 
-        const passwordHash = await this.bcryptAdapter.generatePasswordHash(command.password, 10)
-
-        const queryRunner = this.dataSource.createQueryRunner()
-
-        await queryRunner.connect()
-
-        await queryRunner.startTransaction()
-
+    async sendConfirmationCode(email: string, login: string, emailConfirmationCode: string, userId: string) {
         try {
-            const queryRunnerManager = queryRunner.manager
-
-            const userEntityData = new UserEntity()
-            userEntityData.login = command.login
-            userEntityData.email = command.email
-            userEntityData.passwordHash = passwordHash
-            userEntityData.isConfirmed = false
-
-            await this.usersRepository.queryRunnerSave(userEntityData, queryRunnerManager)
-
-            const userBanInfoData = new UserBanInfo()
-            userBanInfoData.userId = userEntityData
-
-            await this.usersRepository.queryRunnerSave(userBanInfoData, queryRunnerManager)
-
-            const userEmailConfirmationData = new UserEmailConfirmation()
-            userEmailConfirmationData.emailConfirmationCode = uuidv4()
-            userEmailConfirmationData.emailExpirationDate = add(new Date(), {
-                hours: 1,
-                minutes: 3
-            })
-            userEmailConfirmationData.user = userEntityData
-
-            await this.usersRepository.queryRunnerSave(userEmailConfirmationData, queryRunnerManager)
-
-            const userPasswordRecoveryData = new UserPasswordRecovery()
-            userPasswordRecoveryData.user = userEntityData
-
-            await this.usersRepository.queryRunnerSave(userPasswordRecoveryData, queryRunnerManager)
-
-            await this.emailManager.sendConfirmationCode(command.email, command.login, userEmailConfirmationData.emailConfirmationCode)
-
-            await queryRunner.commitTransaction()
-            return true
+            await this.emailManager.sendConfirmationCode(email, login, emailConfirmationCode)
         } catch (err) {
             console.error(err)
-
-            await queryRunner.rollbackTransaction()
-
+            await this.usersRepository.deleteUser(userId)
             return null
-        } finally {
-            await queryRunner.release()
         }
     }
 
