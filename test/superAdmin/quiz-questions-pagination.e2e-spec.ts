@@ -1,7 +1,7 @@
 import request from 'supertest';
 import { HttpStatus } from '@nestjs/common';
-import { QuestionInputModel } from "../../src/SuperAdmin/api/models/quiz/QuestionInputModel";
 import { initAppAndGetHttpServer } from "../test-utils";
+import { QuestionInputModel } from '../../src/SuperAdmin/api/models/questions/QuestionInputModel';
 
 describe('quiz-questions-pagination', () => {
     let httpServer;

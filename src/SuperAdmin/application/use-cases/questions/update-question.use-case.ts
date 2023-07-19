@@ -1,9 +1,9 @@
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs/dist"
-import { QuestionInputModel } from "../../api/models/QuestionInputModel"
-import { QuizRepository } from "../../infrastructure/quiz-typeORM-repository"
-import { QuizQueryRepository } from "../../infrastructure/quiz-typeORM-query-repository"
+import { QuestionInputModel } from "../../../api/models/questions/QuestionInputModel"
+import { QuizRepository } from "../../../infrastructure/typeORM/quiz-typeORM-repository"
+import { QuizQueryRepository } from "../../../infrastructure/typeORM/quiz-typeORM-query-repository"
 import { log } from "console"
 
 export class UpdateQuestionCommand {

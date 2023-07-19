@@ -1,11 +1,11 @@
 import { Injectable } from "@nestjs/common"
 import { InjectRepository } from "@nestjs/typeorm"
-import { Question } from "../domain/question.entity"
+import { Question } from "../../domain/typeORM/questions/question.entity"
 import { Repository } from "typeorm"
 import {
-    QuestionViewModel, QuestionsWithQueryOutputModel
-} from "../application/dto/QuestionViewModel"
-import { ReadQuestionsQuery } from "../api/models/ReadQuestionsQuery"
+    QuestionViewModelForSA, QuestionsWithQueryOutputModel
+} from "../../application/dto/questions/QuestionViewModelForSA"
+import { ReadQuestionsQuery } from "../../api/models/questions/ReadQuestionsQuery"
 
 @Injectable()
 export class QuizQueryRepository {
@@ -63,7 +63,7 @@ export class QuizQueryRepository {
             throw new Error(err)
         }
 
-        const displayedQuestions = resultedQuestions.map(question => new QuestionViewModel(question))
+        const displayedQuestions = resultedQuestions.map(question => new QuestionViewModelForSA(question))
 
         return {
             pagesCount: pagesCount,
@@ -74,11 +74,11 @@ export class QuizQueryRepository {
         }
     }
 
-    async findQuestionById(questionId: string): Promise<QuestionViewModel> {
+    async findQuestionById(questionId: string): Promise<QuestionViewModelForSA> {
         try {
             const findedQuestion = await this.getQuestionById(questionId)
 
-            return new QuestionViewModel(findedQuestion)
+            return new QuestionViewModelForSA(findedQuestion)
         } catch (err) {
             console.error(err)
             return null

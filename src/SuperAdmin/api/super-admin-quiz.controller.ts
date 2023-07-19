@@ -3,21 +3,21 @@ import {
     Body,
     Controller, Get, HttpCode, HttpStatus, NotImplementedException, Param, Post, Put, Query, UseGuards, Delete
 } from "@nestjs/common"
-import { QuestionInputModel } from "../../quiz/api/models/QuestionInputModel"
+import { QuestionInputModel } from "./models/questions/QuestionInputModel"
 import {
-    QuestionViewModel, QuestionsWithQueryOutputModel
-} from "../../quiz/application/dto/QuestionViewModel"
+    QuestionViewModelForSA, QuestionsWithQueryOutputModel
+} from "../application/dto/questions/QuestionViewModelForSA"
 import { CommandBus } from "@nestjs/cqrs"
-import { CreateQuestionCommand } from "../../quiz/application/use-cases/create-question.use-case"
-import { QuizQueryRepository } from "../../quiz/infrastructure/quiz-typeORM-query-repository"
+import { CreateQuestionCommand } from "../application/use-cases/questions/create-question.use-case"
+import { QuizQueryRepository } from "../infrastructure/typeORM/quiz-typeORM-query-repository"
 import { BasicAuthGuard } from "../../general/guards/basic-auth.guard"
-import { ReadQuestionsQuery } from "../../quiz/api/models/ReadQuestionsQuery"
+import { ReadQuestionsQuery } from "./models/questions/ReadQuestionsQuery"
 import { generateErrorsMessages } from "../../general/helpers/helpers"
-import { IsQuestionExists } from "../../quiz/api/pipes/isQuestionExists.validation.pipe"
-import { UpdateQuestionCommand } from "../../quiz/application/use-cases/update-question.use-case"
-import { PublishQuestionInputModel } from "../../quiz/api/models/PublishInputModel"
-import { UpdatePublishQuestionCommand } from "../../quiz/application/use-cases/update-publish-question.use-case"
-import { DeleteQuestionCommand } from "../../quiz/application/use-cases/delete-question.use-case"
+import { IsQuestionExists } from "./pipes/isQuestionExists.validation.pipe"
+import { UpdateQuestionCommand } from "../application/use-cases/questions/update-question.use-case"
+import { PublishQuestionInputModel } from "./models/questions/PublishInputModel"
+import { UpdatePublishQuestionCommand } from "../application/use-cases/questions/update-publish-question.use-case"
+import { DeleteQuestionCommand } from "../application/use-cases/questions/delete-question.use-case"
 
 @UseGuards(BasicAuthGuard)
 @Controller('sa/quiz')
@@ -32,7 +32,7 @@ export class SuperAdminQuizController {
     @Post('questions')
     async createQuestion(
         @Body() questionInputModel: QuestionInputModel
-    ): Promise<QuestionViewModel> {
+    ): Promise<QuestionViewModelForSA> {
         const createdQuestionId = await this.commandBus.execute(
             new CreateQuestionCommand(questionInputModel)
         )

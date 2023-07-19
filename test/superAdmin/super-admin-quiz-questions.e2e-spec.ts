@@ -1,8 +1,8 @@
 import request from 'supertest';
 import { HttpStatus } from '@nestjs/common';
 import { initAppAndGetHttpServer } from '../test-utils';
-import { QuestionInputModel } from '../../src/quiz/api/models/QuestionInputModel'
-import { PublishQuestionInputModel } from '../../src/quiz/api/models/PublishInputModel'
+import { QuestionInputModel } from '../../src/SuperAdmin/api/models/questions/QuestionInputModel';
+import { PublishQuestionInputModel } from '../../src/SuperAdmin/api/models/questions/PublishInputModel';
 
 
 describe('super-admin-quiz-questions', () => {

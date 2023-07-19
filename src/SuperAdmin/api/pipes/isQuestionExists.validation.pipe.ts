@@ -3,7 +3,7 @@ import {
     Injectable, PipeTransform
 } from "@nestjs/common"
 import { generateErrorsMessages } from "../../../general/helpers/helpers"
-import { QuizQueryRepository } from "../../infrastructure/quiz-typeORM-query-repository"
+import { QuizQueryRepository } from "../../infrastructure/typeORM/quiz-typeORM-query-repository"
 
 @Injectable()
 export class IsQuestionExists implements PipeTransform {

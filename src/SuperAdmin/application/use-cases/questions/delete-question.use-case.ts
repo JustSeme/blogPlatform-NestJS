@@ -1,8 +1,8 @@
 import {
     CommandHandler, ICommandHandler
 } from "@nestjs/cqrs/dist"
-import { QuizRepository } from "../../infrastructure/quiz-typeORM-repository"
-import { QuizQueryRepository } from "../../infrastructure/quiz-typeORM-query-repository"
+import { QuizRepository } from "../../../infrastructure/typeORM/quiz-typeORM-repository"
+import { QuizQueryRepository } from "../../../infrastructure/typeORM/quiz-typeORM-query-repository"
 
 export class DeleteQuestionCommand {
     constructor(

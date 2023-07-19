@@ -1,4 +1,4 @@
-import { ReadInputQuery } from "../../../general/types/ReadQuery"
+import { ReadInputQuery } from "../../../../general/types/ReadQuery"
 
 export class ReadQuestionsQuery extends ReadInputQuery {
     constructor() {
