@@ -1,11 +1,11 @@
 import request from 'supertest';
 import { HttpStatus } from '@nestjs/common';
 import { initAppAndGetHttpServer } from '../test-utils';
-import { QuestionInputModel } from '../../src/SuperAdmin/api/models/quiz/QuestionInputModel'
-import { PublishQuestionInputModel } from '../../src/SuperAdmin/api/models/quiz/PublishInputModel'
+import { QuestionInputModel } from '../../src/quiz/api/models/QuestionInputModel'
+import { PublishQuestionInputModel } from '../../src/quiz/api/models/PublishInputModel'
 
 
-describe('super-admin-quiz', () => {
+describe('super-admin-quiz-questions', () => {
     let httpServer;
 
     beforeAll(async () => {

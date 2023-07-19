@@ -17,7 +17,7 @@ import { IsUserExistPipe } from './pipes/isUserExists.validation.pipe'
 import { UsersService } from '../application/users.service'
 import { BanUserInputModel } from './models/users/BanUserInputModel'
 import { UsersTypeORMQueryRepository } from '../infrastructure/typeORM/users-typeORM-query-repository'
-import { UpdateBanUserCommand } from '../application/use-cases/users/ban-user.use-case'
+import { UpdateBanUserCommand } from '../application/use-cases/users/update-ban-user.use-case'
 
 @UseGuards(BasicAuthGuard)
 @Controller('sa/users')

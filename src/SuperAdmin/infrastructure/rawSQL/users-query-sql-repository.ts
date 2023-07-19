@@ -5,7 +5,7 @@ import {
 } from "../../application/dto/users/UsersViewModel"
 import { ReadUsersQuery } from "../../api/models/users/ReadUsersQuery"
 import { UserEntity } from "../../domain/typeORM/user.entity"
-import { UserBanInfo } from "../../domain/typeORM/user-ban-info.entity"
+import { UserBanInfo } from "../../domain/typeORM/users/user-ban-info.entity"
 import { ReadBannedUsersQueryParams } from "../../../Blogger/api/models/ReadBannedUsersQueryParams"
 import { UsersBloggerViewModel } from "../../application/dto/users/UsersBloggerViewModel"
 import { BansUsersForBlogs } from "../../../Blogger/domain/blogs/typeORM/bans-users-for-blogs.entity"

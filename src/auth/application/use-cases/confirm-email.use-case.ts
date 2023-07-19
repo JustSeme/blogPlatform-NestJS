@@ -1,6 +1,6 @@
 import { CommandHandler } from "@nestjs/cqrs"
 import { AuthTypeORMRepository } from "../../infrastructure/typeORM/auth-typeORM-repository"
-import { UserEmailConfirmation } from "../../../SuperAdmin/domain/typeORM/user-email-confirmation.entity"
+import { UserEmailConfirmation } from "../../../SuperAdmin/domain/typeORM/users/user-email-confirmation.entity"
 import { AuthQueryTypeORMRepository } from "../../infrastructure/typeORM/auth-query-typeORM-repository"
 import { InjectDataSource } from "@nestjs/typeorm"
 import {

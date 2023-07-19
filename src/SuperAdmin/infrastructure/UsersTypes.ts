@@ -5,9 +5,9 @@ import {
 } from "../domain/UsersTypes"
 import { BanInfoDBType } from "../application/dto/users/UsersViewModel"
 import { UserEntity } from "../domain/typeORM/user.entity"
-import { UserEmailConfirmation } from "../domain/typeORM/user-email-confirmation.entity"
-import { UserPasswordRecovery } from "../domain/typeORM/user-password-recovery.entity"
-import { UserBanInfo } from "../domain/typeORM/user-ban-info.entity"
+import { UserEmailConfirmation } from "../domain/typeORM/users/user-email-confirmation.entity"
+import { UserPasswordRecovery } from "../domain/typeORM/users/user-password-recovery.entity"
+import { UserBanInfo } from "../domain/typeORM/users/user-ban-info.entity"
 
 export type HydratedUser = HydratedDocument<User>
 

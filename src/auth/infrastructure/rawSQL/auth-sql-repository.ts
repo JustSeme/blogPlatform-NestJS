@@ -2,9 +2,9 @@ import { InjectDataSource } from '@nestjs/typeorm'
 import { Injectable } from "@nestjs/common"
 import { DataSource } from 'typeorm'
 import { EmailConfirmationType } from '../../../SuperAdmin/domain/UsersTypes'
-import { UserPasswordRecovery } from '../../../SuperAdmin/domain/typeORM/user-password-recovery.entity'
+import { UserPasswordRecovery } from '../../../SuperAdmin/domain/typeORM/users/user-password-recovery.entity'
 import { UserEntity } from '../../../SuperAdmin/domain/typeORM/user.entity'
-import { UserEmailConfirmation } from '../../../SuperAdmin/domain/typeORM/user-email-confirmation.entity'
+import { UserEmailConfirmation } from '../../../SuperAdmin/domain/typeORM/users/user-email-confirmation.entity'
 
 
 @Injectable()

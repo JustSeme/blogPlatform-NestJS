@@ -2,12 +2,12 @@ import { Injectable } from "@nestjs/common"
 import {
     InjectDataSource, InjectRepository
 } from "@nestjs/typeorm"
-import { Question } from "../../domain/typeORM/question.entity"
+import { Question } from "../domain/question.entity"
 import {
     DataSource,
     EntityManager, Repository
 } from "typeorm"
-import { QuizEntitiesType } from "../QuizTypes"
+import { QuizEntitiesType } from "./QuizTypes"
 
 @Injectable()
 export class QuizRepository {

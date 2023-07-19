@@ -1,5 +1,5 @@
-import { OutputData } from "../../../../general/types/OutputData"
-import { Question } from "../../../domain/typeORM/question.entity"
+import { OutputData } from "../../../general/types/OutputData"
+import { Question } from "../../domain/question.entity"
 
 export class QuestionViewModel {
     id: string

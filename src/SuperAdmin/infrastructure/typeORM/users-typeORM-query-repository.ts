@@ -5,7 +5,7 @@ import { Repository } from "typeorm"
 import {
     UserViewModelType, UsersWithQueryOutputModel
 } from "../../application/dto/users/UsersViewModel"
-import { UserBanInfo } from "../../domain/typeORM/user-ban-info.entity"
+import { UserBanInfo } from "../../domain/typeORM/users/user-ban-info.entity"
 import { ReadUsersQuery } from "../../api/models/users/ReadUsersQuery"
 import { ReadBannedUsersQueryParams } from "../../../Blogger/api/models/ReadBannedUsersQueryParams"
 import { BannedUsersOutputModel } from "../../../Blogger/application/dto/BannedUserViewModel"

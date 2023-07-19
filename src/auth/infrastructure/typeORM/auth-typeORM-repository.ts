@@ -6,9 +6,9 @@ import { UserEntity } from "../../../SuperAdmin/domain/typeORM/user.entity"
 import {
     DataSource, EntityManager, Repository
 } from "typeorm"
-import { UserPasswordRecovery } from "../../../SuperAdmin/domain/typeORM/user-password-recovery.entity"
+import { UserPasswordRecovery } from "../../../SuperAdmin/domain/typeORM/users/user-password-recovery.entity"
 import { UserEntitiesType } from "../../../SuperAdmin/infrastructure/UsersTypes"
-import { UserEmailConfirmation } from "../../../SuperAdmin/domain/typeORM/user-email-confirmation.entity"
+import { UserEmailConfirmation } from "../../../SuperAdmin/domain/typeORM/users/user-email-confirmation.entity"
 
 @Injectable()
 export class AuthTypeORMRepository {

@@ -1,11 +1,11 @@
 import { Injectable } from "@nestjs/common"
 import { InjectRepository } from "@nestjs/typeorm"
-import { Question } from "../../domain/typeORM/question.entity"
+import { Question } from "../domain/question.entity"
 import { Repository } from "typeorm"
 import {
     QuestionViewModel, QuestionsWithQueryOutputModel
-} from "../../application/dto/quiz/QuestionViewModel"
-import { ReadQuestionsQuery } from "../../api/models/quiz/ReadQuestionsQuery"
+} from "../application/dto/QuestionViewModel"
+import { ReadQuestionsQuery } from "../api/models/ReadQuestionsQuery"
 
 @Injectable()
 export class QuizQueryRepository {

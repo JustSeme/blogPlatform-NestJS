@@ -3,21 +3,21 @@ import {
     Body,
     Controller, Get, HttpCode, HttpStatus, NotImplementedException, Param, Post, Put, Query, UseGuards, Delete
 } from "@nestjs/common"
-import { QuestionInputModel } from "./models/quiz/QuestionInputModel"
+import { QuestionInputModel } from "../../quiz/api/models/QuestionInputModel"
 import {
     QuestionViewModel, QuestionsWithQueryOutputModel
-} from "../application/dto/quiz/QuestionViewModel"
+} from "../../quiz/application/dto/QuestionViewModel"
 import { CommandBus } from "@nestjs/cqrs"
-import { CreateQuestionCommand } from "../application/use-cases/quiz/create-question.use-case"
-import { QuizQueryRepository } from "../infrastructure/typeORM/quiz-typeORM-query-repository"
+import { CreateQuestionCommand } from "../../quiz/application/use-cases/create-question.use-case"
+import { QuizQueryRepository } from "../../quiz/infrastructure/quiz-typeORM-query-repository"
 import { BasicAuthGuard } from "../../general/guards/basic-auth.guard"
-import { ReadQuestionsQuery } from "./models/quiz/ReadQuestionsQuery"
+import { ReadQuestionsQuery } from "../../quiz/api/models/ReadQuestionsQuery"
 import { generateErrorsMessages } from "../../general/helpers/helpers"
-import { IsQuestionExists } from "./pipes/isQuestionExists.validation.pipe"
-import { UpdateQuestionCommand } from "../application/use-cases/quiz/update-question.use-case"
-import { PublishQuestionInputModel } from "./models/quiz/PublishInputModel"
-import { UpdatePublishQuestionCommand } from "../application/use-cases/quiz/update-publish-question.use-case"
-import { DeleteQuestionCommand } from "../application/use-cases/quiz/delete-question.use-case"
+import { IsQuestionExists } from "../../quiz/api/pipes/isQuestionExists.validation.pipe"
+import { UpdateQuestionCommand } from "../../quiz/application/use-cases/update-question.use-case"
+import { PublishQuestionInputModel } from "../../quiz/api/models/PublishInputModel"
+import { UpdatePublishQuestionCommand } from "../../quiz/application/use-cases/update-publish-question.use-case"
+import { DeleteQuestionCommand } from "../../quiz/application/use-cases/delete-question.use-case"
 
 @UseGuards(BasicAuthGuard)
 @Controller('sa/quiz')

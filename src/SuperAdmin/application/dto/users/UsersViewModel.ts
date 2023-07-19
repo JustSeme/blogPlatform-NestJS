@@ -1,5 +1,5 @@
 import { OutputData } from "../../../../general/types/OutputData"
-import { UserBanInfo } from "../../../domain/typeORM/user-ban-info.entity"
+import { UserBanInfo } from "../../../domain/typeORM/users/user-ban-info.entity"
 import { UserEntity } from "../../../domain/typeORM/user.entity"
 
 export class UserViewModelType {

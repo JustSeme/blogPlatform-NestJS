@@ -8,9 +8,9 @@ import {
     DataSource, EntityManager
 } from "typeorm"
 import { UserEntity } from "../../../domain/typeORM/user.entity"
-import { UserBanInfo } from "../../../domain/typeORM/user-ban-info.entity"
-import { UserEmailConfirmation } from "../../../domain/typeORM/user-email-confirmation.entity"
-import { UserPasswordRecovery } from "../../../domain/typeORM/user-password-recovery.entity"
+import { UserBanInfo } from "../../../domain/typeORM/users/user-ban-info.entity"
+import { UserEmailConfirmation } from "../../../domain/typeORM/users/user-email-confirmation.entity"
+import { UserPasswordRecovery } from "../../../domain/typeORM/users/user-password-recovery.entity"
 import { AuthQueryTypeORMRepository } from "../../../../auth/infrastructure/typeORM/auth-query-typeORM-repository"
 import { TransactionBaseUseCase } from "../../../../general/use-cases/transaction-base.use-case"
 

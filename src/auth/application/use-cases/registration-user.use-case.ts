@@ -4,9 +4,9 @@ import { CommandHandler } from "@nestjs/cqrs"
 import { FieldError } from "../../../general/types/ErrorMessagesOutputModel"
 import { BadRequestException } from '@nestjs/common'
 import { UsersTypeORMRepository } from "../../../SuperAdmin/infrastructure/typeORM/users-typeORM-repository"
-import { UserPasswordRecovery } from "../../../SuperAdmin/domain/typeORM/user-password-recovery.entity"
-import { UserEmailConfirmation } from "../../../SuperAdmin/domain/typeORM/user-email-confirmation.entity"
-import { UserBanInfo } from "../../../SuperAdmin/domain/typeORM/user-ban-info.entity"
+import { UserPasswordRecovery } from "../../../SuperAdmin/domain/typeORM/users/user-password-recovery.entity"
+import { UserEmailConfirmation } from "../../../SuperAdmin/domain/typeORM/users/user-email-confirmation.entity"
+import { UserBanInfo } from "../../../SuperAdmin/domain/typeORM/users/user-ban-info.entity"
 import { UserEntity } from "../../../SuperAdmin/domain/typeORM/user.entity"
 import { v4 as uuidv4 } from 'uuid'
 import { InjectDataSource } from "@nestjs/typeorm"

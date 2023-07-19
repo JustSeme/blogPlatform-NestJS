@@ -96,9 +96,9 @@ import {
 } from "./security/domain/mongoose/DeviceAuthSessionSchema"
 import { BansUsersForBlogs } from "./Blogger/domain/blogs/typeORM/bans-users-for-blogs.entity"
 import { PostEntity } from "./Blogger/domain/posts/typeORM/post.entity"
-import { UserBanInfo } from "./SuperAdmin/domain/typeORM/user-ban-info.entity"
-import { UserEmailConfirmation } from "./SuperAdmin/domain/typeORM/user-email-confirmation.entity"
-import { UserPasswordRecovery } from "./SuperAdmin/domain/typeORM/user-password-recovery.entity"
+import { UserBanInfo } from "./SuperAdmin/domain/typeORM/users/user-ban-info.entity"
+import { UserEmailConfirmation } from "./SuperAdmin/domain/typeORM/users/user-email-confirmation.entity"
+import { UserPasswordRecovery } from "./SuperAdmin/domain/typeORM/users/user-password-recovery.entity"
 import { CommentEntity } from "./blogs/domain/typeORM/comment.entity"
 import { CommentLikesInfo } from "./blogs/domain/typeORM/comment-likes-info.entity"
 import { PostLikesInfo } from "./Blogger/domain/posts/typeORM/post-likes-info"
@@ -117,15 +117,16 @@ import { PostsTypeORMRepository } from "./Blogger/infrastructure/posts/typeORM/p
 import { AuthQueryTypeORMRepository } from "./auth/infrastructure/typeORM/auth-query-typeORM-repository"
 import { JwtGetUserId } from "./general/guards/jwt-get-userId.guard"
 import { SuperAdminQuizController } from "./SuperAdmin/api/super-admin-quiz.controller"
-import { QuizQueryRepository } from "./SuperAdmin/infrastructure/typeORM/quiz-typeORM-query-repository"
-import { QuizRepository } from "./SuperAdmin/infrastructure/typeORM/quiz-typeORM-repository"
-import { Question } from "./SuperAdmin/domain/typeORM/question.entity"
-import { CreateQuestionUseCase } from "./SuperAdmin/application/use-cases/quiz/create-question.use-case"
-import { UpdateQuestionUseCase } from "./SuperAdmin/application/use-cases/quiz/update-question.use-case"
-import { UpdatePublishQuestionUseCase } from "./SuperAdmin/application/use-cases/quiz/update-publish-question.use-case"
-import { DeleteQuestionUseCase } from "./SuperAdmin/application/use-cases/quiz/delete-question.use-case"
+import { QuizQueryRepository } from "./quiz/infrastructure/quiz-typeORM-query-repository"
+import { QuizRepository } from "./quiz/infrastructure/quiz-typeORM-repository"
+import { Question } from "./quiz/domain/question.entity"
+import { CreateQuestionUseCase } from "./quiz/application/use-cases/create-question.use-case"
+import { UpdateQuestionUseCase } from "./quiz/application/use-cases/update-question.use-case"
+import { UpdatePublishQuestionUseCase } from "./quiz/application/use-cases/update-publish-question.use-case"
+import { DeleteQuestionUseCase } from "./quiz/application/use-cases/delete-question.use-case"
 import { UpdateBanBlogUseCase } from "./SuperAdmin/application/use-cases/blogs/update-ban-blog.use-case"
-import { UpdateBanUserUseCase } from "./SuperAdmin/application/use-cases/users/ban-user.use-case"
+import { UpdateBanUserUseCase } from "./SuperAdmin/application/use-cases/users/update-ban-user.use-case"
+import { Pair } from "./quiz/domain/pair.entity"
 
 const authUseCases = [
   LogoutUseCase,
@@ -296,6 +297,7 @@ const typeORMEntityes = [
   CommentLikesInfo,
   PostLikesInfo,
   Question,
+  Pair,
 ]
 
 @Module({
