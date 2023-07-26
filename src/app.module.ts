@@ -127,6 +127,7 @@ import { DeleteQuestionUseCase } from "./SuperAdmin/application/use-cases/questi
 import { UpdateBanBlogUseCase } from "./SuperAdmin/application/use-cases/blogs/update-ban-blog.use-case"
 import { UpdateBanUserUseCase } from "./SuperAdmin/application/use-cases/users/update-ban-user.use-case"
 import { Pair } from "./quiz/domain/pair.entity"
+import { PairGameQuizController } from "./quiz/api/pair-game-quiz.controller"
 
 const authUseCases = [
   LogoutUseCase,
@@ -277,6 +278,7 @@ const controllers = [
   SuperAdminBlogsController,
   BloggerUsersController,
   SuperAdminQuizController,
+  PairGameQuizController,
 ]
 
 const {

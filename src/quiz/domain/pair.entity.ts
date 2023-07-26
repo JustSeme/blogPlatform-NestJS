@@ -1,8 +1,9 @@
 import {
     Column,
     CreateDateColumn,
-    Entity, PrimaryGeneratedColumn
+    Entity, OneToOne, PrimaryGeneratedColumn
 } from "typeorm"
+import { UserEntity } from "../../SuperAdmin/domain/typeORM/user.entity"
 
 @Entity()
 export class Pair {
@@ -24,6 +25,12 @@ export class Pair {
         nullable: true, default: null
     })
     finishGameDate: Date | null
+
+    @OneToOne(() => UserEntity, (user) => user.activePair)
+    firstUser: UserEntity
+
+    @OneToOne(() => UserEntity, (user) => user.activePair)
+    secondUser: UserEntity
 }
 
 export enum GameStatusesEnum {

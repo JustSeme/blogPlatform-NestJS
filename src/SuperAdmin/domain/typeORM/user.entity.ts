@@ -13,6 +13,7 @@ import { CommentEntity } from "../../../blogs/domain/typeORM/comment.entity"
 import { CommentLikesInfo } from "../../../blogs/domain/typeORM/comment-likes-info.entity"
 import { PostLikesInfo } from "../../../Blogger/domain/posts/typeORM/post-likes-info"
 import { BlogEntity } from "../../../Blogger/domain/blogs/typeORM/blog.entity"
+import { Pair } from "../../../quiz/domain/pair.entity"
 
 @Entity()
 export class UserEntity {
@@ -66,4 +67,7 @@ export class UserEntity {
 
     @OneToMany(() => PostLikesInfo, (like) => like.user)
     postLikeEntities: PostLikesInfo
+
+    @OneToOne(() => Pair, (pair) => pair.firstUser)
+    activePair: Pair
 }

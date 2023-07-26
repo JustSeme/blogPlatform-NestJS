@@ -6,12 +6,17 @@ import {
     QuestionViewModelForSA, QuestionsWithQueryOutputModel
 } from "../../application/dto/questions/QuestionViewModelForSA"
 import { ReadQuestionsQuery } from "../../api/models/questions/ReadQuestionsQuery"
+import {
+    GameStatusesEnum, Pair
+} from "../../../quiz/domain/pair.entity"
 
 @Injectable()
 export class QuizQueryRepository {
     constructor(
         @InjectRepository(Question)
         private questionsRepository: Repository<Question>,
+        @InjectRepository(Pair)
+        private pairsRepository: Repository<Pair>,
     ) { }
 
     async findQuestions(queryParams: ReadQuestionsQuery): Promise<QuestionsWithQueryOutputModel> {
@@ -101,6 +106,17 @@ export class QuizQueryRepository {
             const questionById = await this.questionsRepository.findOne({ where: { id: questionId } })
 
             return questionById
+        } catch (err) {
+            console.error(err)
+            return null
+        }
+    }
+
+    async findWaitingPair(): Promise<Pair> {
+        try {
+            const waitingPair = await this.pairsRepository.findOne({ where: { status: GameStatusesEnum.PendingSecondPlayer } })
+
+            return waitingPair ? waitingPair : null
         } catch (err) {
             console.error(err)
             return null

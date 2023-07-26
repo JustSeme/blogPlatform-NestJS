@@ -59,7 +59,8 @@ export class PostsQuerySQLRepository {
                             WHERE pli."isBanned" = false AND pli."likeStatus" = 'Like' AND pli."postId" = pe.id
                             ORDER BY pli."createdAt" DESC
                             LIMIT 3
-                        ) as agg ) as "newestLikes"
+                        ) as agg 
+            ) as "newestLikes"
                 FROM public."post_entity" pe
                 WHERE pe."isBanned"=false
                 ORDER BY "${sortBy}" ${sortDirection}
